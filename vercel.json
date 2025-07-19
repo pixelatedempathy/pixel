@@ -6,11 +6,11 @@
   "installCommand": "pnpm install --no-frozen-lockfile",
   "functions": {
     "src/pages/api/**/*.ts": {
-      "runtime": "nodejs22.x",
+      "runtime": "nodejs@22",
       "maxDuration": 30
     },
     "dist/server/entry.mjs": {
-      "runtime": "nodejs22.x",
+      "runtime": "nodejs@22",
       "maxDuration": 30
     }
   },
