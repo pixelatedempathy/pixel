@@ -1,0 +1,6 @@
+# tasks action_plan
+Action plan includes resolving missing modules, verifying `tsconfig.json` paths, compatibility checks, Astro test types, resolving imports, fixing TypeScript scaffolding, and automating linting.
+
+# jsx typescript
+Resolved property mismatch for `AdminLayoutAdapter` component in `src/components/admin/AdminLayoutAdapter.tsx`. Corrected `_title`, `_description`, and `_activeItem` to `title`, `description`, and `activeItem`.
+

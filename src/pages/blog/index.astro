@@ -1,0 +1,669 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+
+// PERFORMANCE: Add caching for expensive operations
+const CACHE_TTL = 1000 * 60 * 10 // 10 minutes cache
+
+// Define types for use in the template
+type BlogPost = {
+  data: {
+    draft: boolean
+    pubDate: Date
+    category?: string
+    tags?: string[]
+    featured?: boolean
+    image?: { url: string; alt: string }
+    title: string
+    description: string
+    slug: string
+    readingTime?: number
+  }
+  id: string
+  slug: string
+}
+
+// PERFORMANCE OPTIMIZATION: Limit initial posts and add pagination
+const POSTS_PER_PAGE = 12 // Show 12 posts initially
+
+// PERFORMANCE: Cache expensive getCollection call
+let cachedPosts: BlogPost[] | null = null
+let cacheTimestamp = 0
+
+async function getCachedPosts(): Promise<BlogPost[]> {
+  const now = Date.now()
+
+  if (cachedPosts && now - cacheTimestamp < CACHE_TTL) {
+    return cachedPosts
+  }
+
+  // Only fetch essential fields to reduce processing time
+  const posts = await getCollection('blog', ({ data }: BlogPost) => {
+    return import.meta.env.PROD ? !data.draft : true
+  })
+
+  cachedPosts = posts
+  cacheTimestamp = now
+  return posts
+}
+
+// Get cached posts and sort by date (performance optimized)
+const allPosts = await getCachedPosts()
+const sortedPosts = allPosts
+  .sort(
+    (a, b) =>
+      new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+  )
+  .slice(0, POSTS_PER_PAGE)
+
+// Get featured posts
+const featuredPosts = sortedPosts
+  .filter((post) => post.data.featured)
+  .slice(0, 3)
+const regularPosts = sortedPosts.filter((post) => !post.data.featured)
+
+// Get categories for the category showcase
+const categories = [
+  ...new Set(allPosts.map((post) => post.data.category).filter(Boolean)),
+]
+const topCategories = categories.slice(0, 6)
+
+// Blog stats
+const blogStats = [
+  { value: allPosts.length.toString(), label: 'Articles Published' },
+  { value: categories.length.toString(), label: 'Categories' },
+  { value: '50K+', label: 'Monthly Readers' },
+  { value: '15+', label: 'Universities Featured' },
+]
+
+// Category descriptions
+const categoryInfo = {
+  'AI Training': {
+    description: 'Breakthrough AI technologies transforming therapy education',
+    icon: '🤖',
+    color: 'cyan',
+  },
+  'Clinical Practice': {
+    description: 'Real-world insights from therapy training programs',
+    icon: '🏥',
+    color: 'green',
+  },
+  'Student Success': {
+    description: 'Stories and strategies from successful therapy students',
+    icon: '🎓',
+    color: 'blue',
+  },
+  'Technology': {
+    description: 'The tech stack behind revolutionary training platforms',
+    icon: '⚡',
+    color: 'purple',
+  },
+  'Research': {
+    description: 'Latest research in psychology education and training',
+    icon: '📊',
+    color: 'orange',
+  },
+  'University Spotlight': {
+    description: 'Featuring innovative therapy training programs',
+    icon: '🏛️',
+    color: 'red',
+  },
+}
+
+export const prerender = true
+---
+
+<BaseLayout
+  title="Blog - Insights from the Therapy Training Revolution"
+  description="Discover breakthrough insights, university success stories, and the future of AI-powered therapy training. Written by experts, for educators."
+  bgType="plum"
+>
+  <div class="relative min-h-screen text-white">
+    <!-- Floating Particles -->
+    <div
+      class="particles-container absolute inset-0 overflow-hidden pointer-events-none"
+    >
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+      <div class="particle particle-5"></div>
+    </div>
+
+    <div class="relative z-10 py-8">
+      <div class="container mx-auto px-4">
+        <!-- Hero Header -->
+        <div class="text-center mb-16">
+          <div class="mb-8 animate-breathe">
+            <Badge
+              className="inline-flex items-center gap-3 px-6 py-3 text-sm bg-blue-500/20 border border-blue-400/40 text-blue-200 rounded-full"
+            >
+              <span class="relative flex h-3 w-3">
+                <span
+                  class="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"
+                ></span>
+                <span
+                  class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"
+                ></span>
+              </span>
+              Fresh Insights Weekly
+            </Badge>
+          </div>
+
+          <h1 class="text-3xl lg:text-5xl font-bold mb-6 leading-tight">
+            Inside the Therapy Training
+            <span class="text-blue-400 golden-shimmer block mt-2"
+              >Revolution</span
+            >
+          </h1>
+
+          <p
+            class="text-lg text-green-200/90 mb-8 max-w-3xl mx-auto leading-relaxed"
+          >
+            Real stories from universities transforming therapy education.
+            Breakthrough research, student success stories, and the technology
+            making it all possible.
+          </p>
+
+          <!-- Blog Stats -->
+          <div
+            class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto"
+          >
+            {
+              blogStats.map((stat) => (
+                <div class="text-center p-4 rounded-2xl border border-blue-600/30 hover:border-blue-400/50 transition-all duration-500 organic-card">
+                  <div class="text-2xl lg:text-3xl font-bold text-blue-400 mb-2">
+                    {stat.value}
+                  </div>
+                  <div class="text-xs lg:text-sm text-blue-200/80 tracking-wide">
+                    {stat.label}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Featured Posts -->
+        {
+          featuredPosts.length > 0 && (
+            <div class="mb-20">
+              <div class="text-center mb-12">
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4">
+                  Featured Stories
+                  <span class="text-green-400 golden-shimmer">This Month</span>
+                </h2>
+                <p class="text-base text-green-100/90 max-w-2xl mx-auto">
+                  The most impactful stories from universities revolutionizing
+                  therapy training
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {featuredPosts.map((post) => (
+                  <Card className="border border-green-600/30 hover:border-green-400/60 rounded-2xl overflow-hidden group transition-all duration-700 organic-card bg-slate-900/50">
+                    <CardHeader className="pb-4">
+                      {post.data.image && (
+                        <div class="w-full h-48 bg-gradient-to-br from-green-400/20 to-emerald-500/20 rounded-lg mb-4 overflow-hidden">
+                          <img
+                            src={post.data.image.url}
+                            alt={post.data.image.alt}
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                        </div>
+                      )}
+
+                      <div class="flex items-center gap-2 mb-3">
+                        {post.data.category && (
+                          <Badge className="bg-green-500/20 text-green-300 text-xs">
+                            {post.data.category}
+                          </Badge>
+                        )}
+                        <Badge className="bg-yellow-500/20 text-yellow-300 text-xs">
+                          ⭐ Featured
+                        </Badge>
+                      </div>
+
+                      <CardTitle className="text-lg font-bold text-green-100 tracking-wide mb-3 group-hover:text-green-50 transition-colors">
+                        <a href={`/blog/${post.slug}`} class="hover:underline">
+                          {post.data.title}
+                        </a>
+                      </CardTitle>
+
+                      <CardDescription className="text-sm text-green-200/80 leading-relaxed mb-4">
+                        {post.data.description}
+                      </CardDescription>
+
+                      <div class="flex items-center justify-between text-xs text-green-300/70">
+                        <span>
+                          {new Date(post.data.pubDate).toLocaleDateString()}
+                        </span>
+                        {post.data.readingTime && (
+                          <span>{post.data.readingTime} min read</span>
+                        )}
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )
+        }
+
+        <!-- Categories Showcase -->
+        <div class="mb-20">
+          <div class="text-center mb-12">
+            <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4">
+              Explore by
+              <span class="text-purple-400 golden-shimmer">Category</span>
+            </h2>
+            <p class="text-base text-green-100/90 max-w-2xl mx-auto">
+              Dive deep into the topics that matter most to therapy educators
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {
+              topCategories.map((category) => {
+                const info = categoryInfo[category] || {
+                  description: 'Insights and updates',
+                  icon: '📝',
+                  color: 'gray',
+                }
+                const categoryPosts = allPosts.filter(
+                  (post) => post.data.category === category,
+                )
+
+                return (
+                  <Card
+                    className={`border border-${info.color}-600/30 hover:border-${info.color}-400/60 rounded-2xl overflow-hidden group transition-all duration-700 organic-card bg-slate-900/50`}
+                  >
+                    <CardHeader className="pb-4">
+                      <div class="flex items-center gap-4 mb-4">
+                        <div
+                          class={`text-4xl group-hover:scale-110 transition-transform duration-700 text-${info.color}-400`}
+                        >
+                          {info.icon}
+                        </div>
+                        <div>
+                          <CardTitle
+                            className={`text-lg font-bold text-${info.color}-100 tracking-wide mb-1`}
+                          >
+                            {category}
+                          </CardTitle>
+                          <Badge
+                            className={`bg-${info.color}-500/20 text-${info.color}-300 text-xs`}
+                          >
+                            {categoryPosts.length} articles
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <CardDescription
+                        className={`text-sm text-${info.color}-200/80 leading-relaxed mb-4`}
+                      >
+                        {info.description}
+                      </CardDescription>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`border-${info.color}-500/50 text-${info.color}-300 hover:bg-${info.color}-500/10 w-full`}
+                        data-category-link={`/blog/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        Explore {category} →
+                      </Button>
+                    </CardHeader>
+                  </Card>
+                )
+              })
+            }
+          </div>
+        </div>
+
+        <!-- Recent Posts -->
+        <div class="mb-20">
+          <div class="text-center mb-12">
+            <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4">
+              Latest
+              <span class="text-orange-400 golden-shimmer">Insights</span>
+            </h2>
+            <p class="text-base text-green-100/90 max-w-2xl mx-auto">
+              Fresh perspectives from the front lines of therapy training
+              innovation
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {
+              regularPosts.slice(0, 9).map((post) => (
+                <Card className="border border-orange-600/30 hover:border-orange-400/60 rounded-2xl overflow-hidden group transition-all duration-700 organic-card bg-slate-900/50">
+                  <CardHeader className="pb-4">
+                    {post.data.image && (
+                      <div class="w-full h-40 bg-gradient-to-br from-orange-400/20 to-red-500/20 rounded-lg mb-4 overflow-hidden">
+                        <img
+                          src={post.data.image.url}
+                          alt={post.data.image.alt}
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+                    )}
+
+                    <div class="flex items-center gap-2 mb-3">
+                      {post.data.category && (
+                        <Badge className="bg-orange-500/20 text-orange-300 text-xs">
+                          {post.data.category}
+                        </Badge>
+                      )}
+                      {post.data.tags &&
+                        post.data.tags
+                          .slice(0, 2)
+                          .map((tag) => (
+                            <Badge className="bg-gray-500/20 text-gray-300 text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                    </div>
+
+                    <CardTitle className="text-base font-bold text-orange-100 tracking-wide mb-3 group-hover:text-orange-50 transition-colors">
+                      <a href={`/blog/${post.slug}`} class="hover:underline">
+                        {post.data.title}
+                      </a>
+                    </CardTitle>
+
+                    <CardDescription className="text-sm text-orange-200/80 leading-relaxed mb-4">
+                      {post.data.description}
+                    </CardDescription>
+
+                    <div class="flex items-center justify-between text-xs text-orange-300/70">
+                      <span>
+                        {new Date(post.data.pubDate).toLocaleDateString()}
+                      </span>
+                      {post.data.readingTime && (
+                        <span>{post.data.readingTime} min read</span>
+                      )}
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))
+            }
+          </div>
+
+          {
+            allPosts.length > POSTS_PER_PAGE && (
+              <div class="text-center mt-12">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white px-8 py-3 rounded-full transform hover:scale-105 transition-all duration-300"
+                >
+                  Load More Articles →
+                </Button>
+              </div>
+            )
+          }
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="text-center">
+          <Card
+            className="border border-green-500/40 bg-slate-900/50 rounded-3xl overflow-hidden"
+          >
+            <CardContent className="p-8 lg:p-12">
+              <div class="text-6xl text-green-400 mb-6">📬</div>
+
+              <h2 class="text-2xl lg:text-3xl font-bold text-green-100 mb-6">
+                Never Miss a
+                <br />
+                <span class="text-green-400 golden-shimmer">Breakthrough</span>
+              </h2>
+
+              <p
+                class="text-base text-green-200/90 mb-8 leading-relaxed max-w-2xl mx-auto"
+              >
+                Get weekly insights delivered to your inbox. University success
+                stories, new AI training breakthroughs, and practical tips for
+                therapy educators.
+              </p>
+
+              <div
+                class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6 max-w-md mx-auto"
+              >
+                <input
+                  type="email"
+                  placeholder="your.email@university.edu"
+                  class="flex-1 px-4 py-3 rounded-full bg-slate-800/50 border border-green-500/30 text-green-100 placeholder-green-300/50 focus:outline-none focus:border-green-400"
+                />
+                <Button
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-400 hover:to-emerald-400 text-white px-6 py-3 rounded-full transform hover:scale-105 transition-all duration-300"
+                >
+                  Subscribe
+                </Button>
+              </div>
+
+              <p class="text-xs text-green-300/70">
+                📧 Weekly insights • 🎓 University-focused • 🔒 No spam, ever
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Organic Particles */
+  .particles-container {
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #3b82f6;
+    border-radius: 50%;
+    animation: float-organic 12s ease-in-out infinite;
+    opacity: 0.6;
+  }
+
+  .particle-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 15s;
+  }
+
+  .particle-2 {
+    top: 40%;
+    right: 20%;
+    animation-delay: 3s;
+    animation-duration: 18s;
+  }
+
+  .particle-3 {
+    bottom: 30%;
+    left: 25%;
+    animation-delay: 6s;
+    animation-duration: 12s;
+  }
+
+  .particle-4 {
+    top: 60%;
+    right: 40%;
+    animation-delay: 9s;
+    animation-duration: 20s;
+  }
+
+  .particle-5 {
+    bottom: 10%;
+    right: 10%;
+    animation-delay: 12s;
+    animation-duration: 16s;
+  }
+
+  @keyframes float-organic {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) scale(1);
+      opacity: 0.6;
+    }
+    25% {
+      transform: translateY(-30px) translateX(20px) scale(1.2);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translateY(-10px) translateX(-15px) scale(0.9);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translateY(20px) translateX(10px) scale(1.1);
+      opacity: 0.7;
+    }
+  }
+
+  /* Text Effects */
+  .golden-shimmer {
+    background: linear-gradient(45deg, #3b82f6, #1d4ed8, #1e40af);
+    background-size: 200% 200%;
+    animation: shimmer 3s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Card Effects */
+  .organic-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .organic-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: transparent;
+    animation: organic-pulse 4s ease-in-out infinite;
+    transform: scale(0);
+  }
+
+  .organic-card:hover::before {
+    transform: scale(1);
+  }
+
+  @keyframes organic-pulse {
+    0%,
+    100% {
+      transform: scale(0) rotate(0deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1) rotate(180deg);
+      opacity: 1;
+    }
+  }
+
+  /* Breathing Animation */
+  .animate-breathe {
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .particle {
+      width: 3px;
+      height: 3px;
+    }
+  }
+</style>
+
+<script>
+  // Track blog interactions
+  document.addEventListener('DOMContentLoaded', () => {
+    // Handle category navigation
+    document.querySelectorAll('[data-category-link]').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        const link = e.target.dataset.categoryLink
+        if (link) {
+          window.location.href = link
+        }
+      })
+    })
+
+    // Track page view
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'page_view', {
+        page_title: 'Blog Landing Page',
+        page_location: window.location.href,
+      })
+    }
+
+    // Track article clicks
+    document.querySelectorAll('a[href*="/blog/"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'blog_article_click', {
+            article_title: e.target.textContent,
+            article_url: e.target.href,
+          })
+        }
+      })
+    })
+
+    // Track category clicks
+    document.querySelectorAll('[data-category-link]').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'blog_category_click', {
+            category_name: e.target.textContent,
+          })
+        }
+      })
+    })
+
+    // Track newsletter signup
+    document
+      .querySelector('input[type="email"]')
+      ?.addEventListener('focus', () => {
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'newsletter_signup_start', {
+            page_location: window.location.href,
+          })
+        }
+      })
+  })
+</script>

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sourcebot-dev/sourcebot/main/schemas/v3/index.json",
+  "connections": {
+    "aztec-azure": {
+      "type": "git",
+      "url": "file:///root/aztec"
+    },
+    "aztec-github": {
+      "type": "git",
+      "url": "file:///root/hub"
+    },
+    "aztec-gitlab": {
+      "type": "git",
+      "url": "file:///root/lab"
+    }
+  }
+}

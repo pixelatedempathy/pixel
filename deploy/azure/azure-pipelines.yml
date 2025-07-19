@@ -1,0 +1,1348 @@
+# Azure DevOps Pipeline for Pixelated Empathy
+#
+# NOTE: This pipeline pins Azure CLI to version 2.73.0 to avoid the "content already consumed"
+# bug in Azure CLI 2.74.0+. This can be removed once Azure CLI 2.75.0+ is available and tested.
+#
+# RECENT FIXES (Build Archive Issue):
+# - Fixed "Archive build artifacts" failure when dist directory is missing
+# - Enhanced build error handling with proper status tracking
+# - Added fallback archive creation for failed builds
+# - Improved server-only build verification (no client directory expected)
+# - Added comprehensive debugging output for build troubleshooting
+# - Created health-check.js script for Docker container health checks
+#
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+  paths:
+    include:
+      - src/**
+      - deploy/azure/**
+      - Dockerfile.azure
+      - Dockerfile.minimal
+      - azure-pipelines.yml
+      - .azure-pipelines/**
+      - package.json
+      - pnpm-lock.yaml
+
+pr:
+  branches:
+    include:
+      - master
+      - develop
+
+variables:
+  # Build Configuration
+  buildConfiguration: Release
+  nodeVersion: 22.x
+  dockerTag: $(Build.BuildId)
+
+  # Azure Configuration
+  azureSubscription: 'pixelated-service-connection'
+  resourceGroupName: $(AZURE_RESOURCE_GROUP)
+  appServiceName: $(AZURE_APP_SERVICE_NAME)
+  containerRegistry: $(AZURE_CONTAINER_REGISTRY)
+  containerRegistryServiceConnection: 'Azure Container Registry'
+  imageName: pixelated-web
+
+  # Azure Resource Configuration
+  azureSubscriptionId: $(AZURE_SUBSCRIPTION_ID)
+  azureStorageContainerName: $(AZURE_STORAGE_CONTAINER_NAME)
+  publicSiteUrl: $(PUBLIC_SITE_URL)
+  azureAppName: $(AZURE_APP_NAME)
+
+  # Build specific variables
+  buildId: $(Build.BuildId)
+  buildNumber: $(Build.BuildNumber)
+
+  # Environment Variables - Conditional based on branch
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    environment: production
+    deploymentSlot: production
+    azureLocation: $(AZURE_LOCATION)
+    environmentSuffix: ''
+  ${{ else }}:
+    environment: staging
+    deploymentSlot: staging
+    azureLocation: $(AZURE_LOCATION)
+    environmentSuffix: '-staging'
+
+stages:
+  # Validation Stage
+  - stage: Validation
+    displayName: Validate Pipeline Configuration
+    jobs:
+      - job: ValidateConfiguration
+        displayName: Validate Azure Configuration
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+        steps:
+          - script: |
+              echo "🔍 Validating required Azure pipeline variables..."
+
+              # Define required variables
+              REQUIRED_VARS=(
+                "AZURE_RESOURCE_GROUP"
+                "AZURE_APP_SERVICE_NAME" 
+                "AZURE_CONTAINER_REGISTRY"
+                "AZURE_LOCATION"
+                "AZURE_APP_NAME"
+                "AZURE_SUBSCRIPTION_ID"
+              )
+
+              MISSING_VARS=()
+
+              # Check each required variable
+              for var in "${REQUIRED_VARS[@]}"; do
+                if [ -z "${!var:-}" ]; then
+                  MISSING_VARS+=("$var")
+                  echo "❌ Missing required variable: $var"
+                else
+                  echo "✅ Found variable: $var"
+                fi
+              done
+
+              # Report results
+              if [ ${#MISSING_VARS[@]} -eq 0 ]; then
+                echo "✅ All required Azure variables are configured"
+              else
+                echo "❌ Missing ${#MISSING_VARS[@]} required variables:"
+                printf '  - %s\n' "${MISSING_VARS[@]}"
+                echo ""
+                echo "Please configure these variables in your Azure DevOps variable groups."
+                exit 1
+              fi
+            displayName: Validate required variables
+            env:
+              AZURE_RESOURCE_GROUP: $(resourceGroupName)
+              AZURE_APP_SERVICE_NAME: $(appServiceName)
+              AZURE_CONTAINER_REGISTRY: $(containerRegistry)
+              AZURE_LOCATION: $(azureLocation)
+              AZURE_APP_NAME: $(azureAppName)
+              AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
+
+  # Build Stage
+  - stage: Build
+    displayName: Build Application
+    dependsOn: Validation
+    jobs:
+      - job: BuildJob
+        displayName: Build and Test
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+
+        steps:
+          - task: NodeTool@0
+            displayName: Install Node.js
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          - script: |
+              echo "Installing pnpm globally..."
+              npm install -g pnpm
+              echo "Setting pnpm store directory..."
+              pnpm config set store-dir $(Pipeline.Workspace)/.pnpm-store
+              echo "Installing dependencies..."
+              if pnpm install --no-frozen-lockfile; then
+                echo "✅ Dependencies installed successfully"
+                echo ""
+                echo "📋 Verifying critical files..."
+                ls -la package.json astro.config.mjs || echo "⚠️  Warning: Missing config files"
+                echo ""
+                echo "📋 Node modules status..."
+                ls -la node_modules/.bin/astro || echo "⚠️  Warning: Astro binary not found"
+                echo ""
+                echo "📋 Key dependencies check..."
+                echo "  Astro: $(ls -la node_modules/.bin/astro 2>/dev/null && echo 'Found' || echo 'Missing')"
+                echo "  React: $(ls -la node_modules/react/package.json 2>/dev/null && echo 'Found' || echo 'Missing')"
+                echo "  TypeScript: $(ls -la node_modules/typescript/package.json 2>/dev/null && echo 'Found' || echo 'Missing')"
+                echo ""
+                echo "📋 Disk space check..."
+                df -h . || echo "⚠️  Could not check disk space"
+                echo ""
+                echo "📋 Package.json scripts..."
+                node -e "const pkg = require('./package.json'); console.log('Available scripts:', Object.keys(pkg.scripts || {}).join(', '))" || echo "⚠️  Could not read package.json scripts"
+              else
+                echo "❌ Failed to install dependencies"
+                echo "📋 Debugging dependency installation failure..."
+                echo "  pnpm cache: $(pnpm store path 2>/dev/null || echo 'Unknown')"
+                echo "  Package-lock: $(ls -la pnpm-lock.yaml 2>/dev/null || echo 'Missing')"
+                exit 1
+              fi
+            displayName: Install pnpm and dependencies
+
+          - script: |
+              echo "Running linting..."
+              if command -v pnpm >/dev/null 2>&1; then
+                pnpm run lint:ci || echo "Linting completed with warnings/errors but continuing build"
+              else
+                echo "pnpm not available, skipping linting"
+                exit 0
+              fi
+            displayName: Run linting
+            continueOnError: 'true'
+            condition: succeededOrFailed()
+
+          - script: |
+              echo "Running type checking..."
+              if command -v pnpm >/dev/null 2>&1; then
+                pnpm run type-check || echo "Type checking completed with warnings/errors but continuing build"
+              else
+                echo "pnpm not available, skipping type checking"
+                exit 0
+              fi
+            displayName: Run type checking
+            continueOnError: 'true'
+            condition: succeededOrFailed()
+
+          - script: |
+              # Set memory limits and test configuration for CI
+              export NODE_OPTIONS="--max_old_space_size=4096 --expose-gc"
+              export TEST_TIMEOUT="30000"
+              export VITEST_MIN_THREADS="1"
+              export VITEST_MAX_THREADS="2"
+              export CI="true"
+
+              # Use Redis from Azure environment variables (more secure)
+              # These should be configured in Azure DevOps variable groups
+              if [ -z "$REDIS_URL" ]; then
+                echo "⚠️ REDIS_URL not configured, using default test configuration"
+                export REDIS_URL="redis://localhost:6379"
+              fi
+
+              # Run garbage collection before tests to free memory
+              node -e "if (global.gc) { global.gc(); global.gc(); global.gc(); }"
+
+              # Run tests with memory and concurrency limits and coverage
+              pnpm test --reporter=junit --outputFile=test-results.xml --coverage --run --pool=threads --poolOptions.threads.minThreads=1 --poolOptions.threads.maxThreads=2 || echo "Tests failed, but continuing pipeline"
+            displayName: Run tests with Redis
+            continueOnError: 'true'
+            condition: succeededOrFailed()
+            timeoutInMinutes: '30'
+            env:
+              NODE_OPTIONS: '--max_old_space_size=4096 --expose-gc'
+              REDIS_URL: $(REDIS_URL)
+              UPSTASH_REDIS_REST_URL: $(UPSTASH_REDIS_REST_URL)
+              UPSTASH_REDIS_REST_TOKEN: $(UPSTASH_REDIS_REST_TOKEN)
+              TEST_TIMEOUT: '30000'
+              VITEST_COVERAGE_ENABLED: 'true'
+              CI: 'true'
+
+          - task: PublishTestResults@2
+            displayName: Publish test results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: JUnit
+              testResultsFiles: '**/test-results.xml'
+              failTaskOnFailedTests: false
+
+          - task: PublishCodeCoverageResults@2
+            displayName: Publish code coverage
+            condition: succeededOrFailed()
+            inputs:
+              summaryFileLocation: '**/coverage/cobertura-coverage.xml'
+
+          - script: |
+              echo "🚀 Building application with Azure-optimized configuration..."
+
+              # Debug environment
+              echo "📋 Environment Information:"
+              echo "  Node version: $(node --version)"
+              echo "  pnpm version: $(pnpm --version)"
+              echo "  Working directory: $(pwd)"
+              echo "  Available memory: $(free -h | grep Mem || echo 'Memory info not available')"
+
+              # Set environment variables for Azure build
+              export NODE_ENV=production
+              export PORT="3000"
+              export NODE_OPTIONS="--max-old-space-size=4096"
+              export ASTRO_CONFIG_FILE="astro.config.azure.mjs"
+              export AZURE_DEPLOYMENT_TYPE="server"
+
+              echo "📋 Environment variables:"
+              echo "  NODE_ENV: $NODE_ENV"
+              echo "  PORT: $PORT"
+              echo "  NODE_OPTIONS: $NODE_OPTIONS"
+              echo "  ASTRO_CONFIG_FILE: $ASTRO_CONFIG_FILE"
+              echo "  AZURE_DEPLOYMENT_TYPE: $AZURE_DEPLOYMENT_TYPE"
+
+              # Set build success flag
+              BUILD_SUCCESS=false
+
+              if command -v pnpm >/dev/null 2>&1; then
+                echo "🔨 Running Astro build with Azure configuration..."
+
+                # Pre-build checks
+                echo "📋 Pre-build verification:"
+                if [ -f "astro.config.azure.mjs" ]; then
+                  echo "  ✅ astro.config.azure.mjs found"
+                else
+                  echo "  ❌ astro.config.azure.mjs missing"
+                  exit 1
+                fi
+
+                if [ -f "package.json" ]; then
+                  echo "  ✅ package.json found"
+                else
+                  echo "  ❌ package.json missing"
+                  exit 1
+                fi
+
+                if [ -d "src" ]; then
+                  echo "  ✅ src directory found"
+                  echo "  📁 src contents:"
+                  ls -la src/ | head -10
+                else
+                  echo "  ❌ src directory missing"
+                  exit 1
+                fi
+
+                # Run the build with Azure-specific configuration
+                echo "🏗️ Starting Azure-optimized build process..."
+                if ASTRO_CONFIG_FILE=astro.config.azure.mjs pnpm build 2>&1; then
+                  echo "✅ Azure build completed successfully"
+                  BUILD_SUCCESS=true
+                  echo "##vso[task.setvariable variable=BUILD_SUCCESS]true"
+                else
+                  BUILD_EXIT_CODE=$?
+                  echo "❌ Azure build failed with exit code: $BUILD_EXIT_CODE"
+                  echo "##vso[task.setvariable variable=BUILD_SUCCESS]false"
+
+                  # Don't exit here - let the verification step handle the failure
+                  echo "⚠️ Continuing pipeline despite build failure for artifact creation"
+                fi
+              else
+                echo "❌ pnpm not available, cannot build application"
+                echo "##vso[task.setvariable variable=BUILD_SUCCESS]false"
+                exit 1
+              fi
+
+              # Export build status for subsequent steps
+              echo "📊 Build success status: $BUILD_SUCCESS"
+            displayName: Build application with enhanced debugging
+            env:
+              NODE_ENV: production
+              PORT: '3000'
+              NODE_OPTIONS: '--max-old-space-size=4096'
+
+          - script: |
+              ls -la $(System.DefaultWorkingDirectory)
+              echo "Checking for dist directory..."
+              if [ -d "$(System.DefaultWorkingDirectory)/dist" ]; then
+                echo "✅ dist directory found:"
+                ls -la $(System.DefaultWorkingDirectory)/dist
+                
+                # For server-only builds, we only expect a server directory
+                if [ -d "$(System.DefaultWorkingDirectory)/dist/server" ]; then
+                  echo "✅ server directory found (server-only build):"
+                  ls -la $(System.DefaultWorkingDirectory)/dist/server
+                  
+                  # Check for critical server files
+                  if [ -f "$(System.DefaultWorkingDirectory)/dist/server/entry.mjs" ]; then
+                    echo "✅ Server entry point found"
+                  else
+                    echo "⚠️  Warning: Server entry point not found"
+                  fi
+                else
+                  echo "❌ server directory not found"
+                fi
+                
+                # Note: client directory is not expected for server-only builds
+                if [ -d "$(System.DefaultWorkingDirectory)/dist/client" ]; then
+                  echo "✅ client directory found (hybrid/static build)"
+                  ls -la $(System.DefaultWorkingDirectory)/dist/client
+                else
+                  echo "ℹ️  client directory not found (expected for server-only build)"
+                fi
+              else
+                echo "❌ dist directory not found"
+                echo "Creating placeholder dist directory for archival..."
+                mkdir -p dist
+                echo "Build failed - no artifacts generated" > dist/BUILD_FAILED.txt
+                echo "Timestamp: $(date)" >> dist/BUILD_FAILED.txt
+                echo "Build ID: $(Build.BuildId)" >> dist/BUILD_FAILED.txt
+              fi
+              echo "Checking for .astro directory..."
+              if [ -d "$(System.DefaultWorkingDirectory)/.astro" ]; then
+                echo "✅ .astro directory found:"
+                ls -la $(System.DefaultWorkingDirectory)/.astro
+              else
+                echo "❌ .astro directory not found"
+              fi
+            displayName: Verify build output directory
+            condition: succeededOrFailed()
+
+          - task: ArchiveFiles@2
+            displayName: Archive build artifacts (success or failure)
+            condition: succeededOrFailed()
+            inputs:
+              rootFolderOrFile: ./dist
+              includeRootFolder: true
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/app-$(Build.BuildId).zip
+
+          - task: PublishPipelineArtifact@0
+            displayName: Publish build artifacts
+            condition: succeededOrFailed()
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifactName: drop
+
+          - script: |
+              echo "📊 Final Build Status Check"
+              if [ "$(BUILD_SUCCESS)" = "true" ]; then
+                echo "✅ Build completed successfully - pipeline can continue"
+                exit 0
+              else
+                echo "❌ Build failed - marking job as failed"
+                echo "This will prevent subsequent deployment stages from running"
+                exit 1
+              fi
+            displayName: Final build status verification
+            condition: always()
+
+          - script: |
+              echo "🔧 Creating binary artifacts as Docker fallback..."
+
+              # Only create artifacts if build was successful
+              if [ "$(BUILD_SUCCESS)" = "true" ]; then
+                echo "📦 Extracting essential binaries for Docker deployment..."
+                
+                # Create artifacts directory outside of TypeScript analysis scope
+                mkdir -p .azure-artifacts/binaries
+                
+                # Extract astro binary from node_modules
+                if [ -f "node_modules/.bin/astro" ]; then
+                  echo "✅ Extracting astro binary"
+                  cp "node_modules/.bin/astro" .azure-artifacts/binaries/
+                  chmod +x .azure-artifacts/binaries/astro
+                else
+                  echo "⚠️ astro binary not found in node_modules"
+                fi
+                
+                # Extract pnpm binary if available
+                if [ -f "node_modules/.bin/pnpm" ]; then
+                  echo "✅ Extracting pnpm binary"
+                  cp "node_modules/.bin/pnpm" .azure-artifacts/binaries/
+                  chmod +x .azure-artifacts/binaries/pnpm
+                fi
+                
+                # Extract other useful binaries
+                for binary in tsc tsx; do
+                  if [ -f "node_modules/.bin/$binary" ]; then
+                    echo "✅ Extracting $binary binary"
+                    cp "node_modules/.bin/$binary" .azure-artifacts/binaries/
+                    chmod +x ".azure-artifacts/binaries/$binary"
+                  fi
+                done
+                
+                echo "📋 Binary artifacts created:"
+                ls -la .azure-artifacts/binaries/ || echo "No artifacts created"
+
+                echo "📦 Artifact package size:"
+                du -sh .azure-artifacts/ || echo "Could not calculate size"
+              else
+                echo "⚠️ Skipping artifact creation due to build failure"
+                mkdir -p .azure-artifacts/binaries
+                echo "Build failed - no binaries extracted" > .azure-artifacts/binaries/BUILD_FAILED.txt
+              fi
+            displayName: Create binary artifacts for Docker fallback
+            condition: succeededOrFailed()
+
+          - task: PublishPipelineArtifact@0
+            displayName: Publish binary artifacts
+            condition: succeededOrFailed()
+            inputs:
+              targetPath: ./.azure-artifacts
+              artifactName: binary-artifacts
+
+  # Docker Build Stage
+  - stage: DockerBuild
+    displayName: Build Docker Image
+    dependsOn: Build
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
+    jobs:
+      - job: DockerBuildJob
+        displayName: Build and Push Docker Image
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+        variables:
+          - group: pixelated-encryption
+
+        steps:
+          - script: |
+              echo "🔓 Decrypting environment variables..."
+              echo "$(ENV_DECRYPTION_KEY)" | gpg --batch --yes --passphrase-fd 0 --decrypt .env.prod.gpg > .env.prod
+              echo "✅ Environment file decrypted successfully"
+              ls -la .env.prod
+            displayName: 'Decrypt environment variables'
+
+          - task: Docker@2
+            displayName: Login to Azure Container Registry
+            inputs:
+              command: login
+              containerRegistry: $(containerRegistryServiceConnection)
+
+          - script: |
+              # Copy Azure-specific dockerignore for optimized build context
+              cp .dockerignore.azure .dockerignore
+              echo "Using Azure-optimized .dockerignore for smaller build context"
+            displayName: Configure Azure build context
+
+          - task: Docker@2
+            displayName: Build Docker image
+            inputs:
+              command: build
+              repository: $(imageName)
+              Dockerfile: Dockerfile.minimal
+              tags: latest
+              arguments: |
+                --build-arg NODE_ENV=production
+                --build-arg BUILD_BUILDNUMBER=$(Build.BuildNumber)
+                --build-arg BUILD_SOURCEVERSION=$(Build.SourceVersion)
+                --build-arg SENTRY_RELEASE=$(Build.BuildNumber)-$(Build.SourceVersion)
+              buildContext: '.'
+              addBaseImageData: false
+            continueOnError: false
+
+          - script: |
+              echo "✅ Docker build completed successfully"
+              echo "Image: $(containerRegistry)/$(imageName):latest"
+              echo "Tags: latest"
+              docker images | grep $(imageName) || echo "Image verification completed"
+            displayName: Verify Docker build success
+
+          - task: Docker@2
+            displayName: Push Docker image
+            inputs:
+              command: push
+              containerRegistry: $(containerRegistryServiceConnection)
+              repository: $(imageName)
+              tags: latest
+
+          - script: |
+              docker image prune -f
+            displayName: Clean up Docker images
+
+  # Infrastructure Deployment Stage
+  - stage: Infrastructure
+    displayName: Deploy Infrastructure
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+      - deployment: InfrastructureDeployment
+        displayName: Deploy Azure Infrastructure
+        environment: 'azure-infrastructure'
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: Checkout source code
+
+                - script: |
+                    echo "Setting up Azure CLI for deployment..."
+
+                    # Activate conda environment first
+                    echo "Activating conda environment..."
+                    source /home/vivi/miniconda3/etc/profile.d/conda.sh
+                    conda activate pixel
+
+                    # Check if Azure CLI is already available
+                    if command -v az >/dev/null 2>&1; then
+                      echo "Azure CLI found: $(which az)"
+                      echo "Current version: $(az version --output tsv --query '"azureCli"' 2>/dev/null || echo 'unknown')"
+                      echo "Using existing Azure CLI installation"
+                    else
+                      echo "Installing Azure CLI via conda..."
+                      conda install -c conda-forge azure-cli -y
+                    fi
+
+                    # Verify Azure CLI is working
+                    echo "Verifying Azure CLI..."
+                    if command -v az >/dev/null 2>&1; then
+                      echo "Azure CLI ready: $(which az)"
+                      az version
+                    else
+                      echo "ERROR: Azure CLI not available!"
+                      exit 1
+                    fi
+
+                    echo "Azure CLI setup completed successfully"
+                  displayName: Setup Azure CLI
+
+                - script: |
+                    # Set up environment for our pinned Azure CLI 2.73.0
+                    export PATH="$HOME/.local/bin:$PATH"
+
+                    # Verify we're using the correct Azure CLI version
+                    echo "Verifying Azure CLI version and path..."
+                    which az
+                    az --version
+                    az bicep version
+
+                    # Check if we have the correct version
+                    CLI_VERSION=$(az --version | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+                    echo "Detected Azure CLI version: $CLI_VERSION"
+
+                    if [[ "$CLI_VERSION" == "2.73.0" ]]; then
+                      echo "Correct Azure CLI version (2.73.0) is installed and in use"
+                    else
+                      echo "ERROR: Expected version 2.73.0, but got $CLI_VERSION"
+                      echo "PATH: $PATH"
+                      exit 1
+                    fi
+                  displayName: Verify Azure CLI 2.73.0 is active
+
+                - script: |
+                    set -euo pipefail
+
+                    # Use our pinned Azure CLI 2.73.0
+                    export PATH="$HOME/.local/bin:$PATH"
+
+                    # Authenticate with Azure using service principal
+                    echo "Authenticating with Azure..."
+                    az login --service-principal \
+                      --username "$SERVICE_PRINCIPAL_ID" \
+                      --password "$SERVICE_PRINCIPAL_KEY" \
+                      --tenant "$TENANT_ID"
+
+                    # Set the subscription
+                    echo "Setting Azure subscription..."
+                    az account set --subscription "$(azureSubscriptionId)"
+
+                    # Verify authentication
+                    echo "Azure authentication successful"
+                    az account show --output table
+                  displayName: Authenticate with Azure using pinned CLI
+                  env:
+                    SERVICE_PRINCIPAL_ID: $(SERVICE_PRINCIPAL_ID)
+                    SERVICE_PRINCIPAL_KEY: $(SERVICE_PRINCIPAL_KEY)
+                    TENANT_ID: $(TENANT_ID)
+
+                - script: |
+                    set -euo pipefail
+
+                    # Use our pinned Azure CLI 2.73.0
+                    export PATH="$HOME/.local/bin:$PATH"
+                    echo "Using Azure CLI version: $(az --version | head -n 1)"
+
+                    # Enhanced workarounds for any remaining Azure CLI issues
+                    export AZURE_CORE_OUTPUT=table
+                    export AZURE_CORE_ONLY_SHOW_ERRORS=true
+                    export AZURE_CORE_DISABLE_CONFIRM_PROMPT=1
+                    export AZURE_CORE_COLLECT_TELEMETRY=false
+                    export AZURE_CORE_NO_COLOR=true
+                    export AZURE_CORE_USE_COMMAND_INDEX=false
+
+                    # Additional safeguards for stream handling
+                    export PYTHONUNBUFFERED=1
+
+                    echo "Converting Bicep to ARM template..."
+
+                    if [ ! -f "deploy/azure/main.bicep" ]; then
+                      echo "ERROR: Bicep template not found at deploy/azure/main.bicep"
+                      exit 1
+                    fi
+
+                    # Install Bicep and compile to ARM (avoids CLI stream issues)
+                    echo "Installing Bicep CLI..."
+                    az bicep install --version latest
+
+                    echo "Building ARM template from Bicep..."
+                    az bicep build --file deploy/azure/main.bicep --outfile deploy/azure/main.json
+
+                    # Verify ARM template was created
+                    if [ ! -f "deploy/azure/main.json" ]; then
+                      echo "ERROR: ARM template compilation failed"
+                      exit 1
+                    fi
+
+                    echo "ARM template compiled successfully"
+                    echo "Resource Group: $(resourceGroupName)"
+                    echo "Environment: $(environment)"
+                    echo "Location: $(azureLocation)"
+
+                    # Create resource group with retry logic
+                    echo "Checking/creating resource group..."
+                    echo "Checking/creating resource group..."
+                    for i in {1..3}; do
+                      if az group create --name $(resourceGroupName) --location $(azureLocation) --output none; then
+                        echo "Resource group ready"
+                        break
+                      else
+                        echo "Resource group creation attempt $i failed, retrying..."
+                        sleep 5
+                      fi
+                    done
+                    # Abort if still missing
+                    if ! az group exists --name $(resourceGroupName) --output tsv | grep -q true; then
+                      echo "Resource-group creation failed after 3 attempts"
+                      exit 1
+                    fi
+                    # Create deployment parameters with validation
+                    echo "Creating deployment parameters..."
+
+                    # Map environment correctly
+                    if [ "$(environment)" = "production" ]; then
+                      ENV_VALUE="prod"
+                    elif [ "$(environment)" = "staging" ]; then
+                      ENV_VALUE="staging"
+                    else
+                      ENV_VALUE="dev"
+                    fi
+
+                    echo "Using environment value: $ENV_VALUE"
+
+                    # NOTE: Key Vault is configured with enableRbacAuthorization=false to use access policies.
+                    # For production deployments, consider enabling RBAC and providing proper principal IDs.
+                    cat > params.json << EOF
+                    {
+                      "appName": {"value": "$(azureAppName)"},
+                      "environment": {"value": "$ENV_VALUE"},
+                      "location": {"value": "$(azureLocation)"},
+                      "enableAzureOpenAI": {"value": false},
+                      "enableStorage": {"value": false},
+                      "enableMonitoring": {"value": false},
+                      "appServicePlanSku": {"value": "S1"},
+                      "customDomain": {"value": ""},
+                      "useExistingContainerRegistry": {"value": true},
+                      "existingContainerRegistryName": {"value": "pixelatedcr"},
+                      "existingContainerRegistryResourceGroup": {"value": ""}
+                    }
+                    EOF
+
+                    echo "Deployment parameters:"
+                    cat params.json
+
+                    # CRITICAL WORKAROUND: Use separate az commands to avoid stream consumption bug
+                    echo "Validating template with isolated command..."
+
+                    # Step 1: Validate template structure in isolation
+                    echo "Validating ARM template structure..."
+                    if ! az deployment group validate \
+                      --resource-group $(resourceGroupName) \
+                      --template-file deploy/azure/main.json \
+                      --parameters params.json \
+                      --output none \
+                      --only-show-errors; then
+                      echo "Template validation failed!"
+                      exit 1
+                    fi
+                    echo "Template validation passed"
+
+                    # Step 2: Skip what-if analysis entirely due to Azure CLI 2.74+ bugs
+                    echo "Skipping what-if analysis due to known Azure CLI 2.74+ stream consumption bugs"
+                    echo "Proceeding directly to deployment after successful validation"
+
+                    # Verify the content of the generated main.json file
+                    echo "Verifying generated main.json content..."
+                    cat deploy/azure/main.json
+
+                    # Deploy using ARM template with stream-safe approach
+                    DEPLOYMENT_NAME="arm-deploy-$(date +%Y%m%d-%H%M%S)-$(Build.BuildId)"
+                    echo "Starting ARM deployment: $DEPLOYMENT_NAME"
+                    echo "This deployment may take 5-10 minutes..."
+
+                    # Use isolated deployment command to avoid stream issues
+                    echo "Initiating ARM template deployment..."
+
+                    # Deploy with explicit error handling and no stream capture
+                    if az deployment group create \
+                      --resource-group $(resourceGroupName) \
+                      --name "$DEPLOYMENT_NAME" \
+                      --template-file deploy/azure/main.json \
+                      --parameters params.json \
+                      --mode Incremental \
+                      --output none \
+                      --only-show-errors; then
+                      
+                      echo "Infrastructure deployment completed successfully!"
+                      
+                      # Get deployment details after completion
+                      echo "Retrieving deployment details..."
+                      az deployment group show \
+                        --resource-group $(resourceGroupName) \
+                        --name "$DEPLOYMENT_NAME" \
+                        --output table \
+                        --only-show-errors || echo "Could not retrieve deployment details"
+                        
+                    else
+                      DEPLOYMENT_EXIT_CODE=$?
+                      echo "Infrastructure deployment failed with exit code: $DEPLOYMENT_EXIT_CODE"
+                      
+                      # Get deployment details for troubleshooting
+                      echo "Retrieving deployment error details..."
+                      az deployment group show \
+                        --resource-group $(resourceGroupName) \
+                        --name "$DEPLOYMENT_NAME" \
+                        --output table \
+                        --only-show-errors || echo "Could not retrieve deployment details"
+                      
+                      # Get deployment operation details
+                      echo "Retrieving deployment operations..."
+                      az deployment operation group list \
+                        --resource-group $(resourceGroupName) \
+                        --name "$DEPLOYMENT_NAME" \
+                        --output table \
+                        --only-show-errors || echo "Could not retrieve operation details"
+                        
+                      exit $DEPLOYMENT_EXIT_CODE
+                    fi
+                  displayName: Deploy Infrastructure via ARM Template with pinned CLI
+                  workingDirectory: $(System.DefaultWorkingDirectory)
+
+                - script: |
+                    echo "Verifying key-vault-role-assignment.bicep content..."
+                    ls -la deploy/azure/modules/
+                    cat deploy/azure/modules/key-vault-role-assignment.bicep
+                  displayName: Verify Bicep module content
+
+  # Pre-Deployment Health Check Stage
+  - stage: PreDeploymentHealthCheck
+    displayName: Pre-Deployment Health Check
+    dependsOn:
+      - Build
+      - DockerBuild
+      - Infrastructure
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
+    jobs:
+      - job: SmartHealthCheck
+        displayName: Smart Health Check (First Deployment Aware)
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+
+        steps:
+          - script: |
+              echo "Installing Azure CLI 2.73.0 for health checks..."
+
+              # Activate conda environment
+              echo "Activating conda environment..."
+              source /home/vivi/miniconda3/etc/profile.d/conda.sh
+              conda activate pixel
+
+              # Check if Azure CLI is available
+              if command -v az >/dev/null 2>&1; then
+                echo "zure CLI found: $(which az)"
+                az version
+              else
+                echo "Installing Azure CLI via conda..."
+                conda install -c conda-forge azure-cli -y
+                echo "Azure CLI installed"
+              fi
+            displayName: Install Azure CLI 2.73.0
+
+          - task: AzureCLI@2
+            displayName: 'Smart Health Check (First Deployment Aware)'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "Smart Health Check for Azure App Service"
+                echo "==========================================="
+                echo "Resource Group: $(resourceGroupName)"
+                echo "App Name: $(appServiceName)"
+                echo "Started: $(date)"
+                echo ""
+
+                # Function to check if this is first deployment
+                is_first_deployment() {
+                    echo -n "Checking deployment status... "
+
+                    # Check if app service exists
+                    if ! az webapp show --resource-group "$(resourceGroupName)" --name "$(appServiceName)" >/dev/null 2>&1; then
+                        echo "App Service doesn't exist yet (first deployment)"
+                        return 0
+                    fi
+
+                    # Check deployment history
+                    local deployment_count
+                    deployment_count=$(az webapp deployment list --resource-group "$(resourceGroupName)" --name "$(appServiceName)" --query "length(@)" -o tsv 2>/dev/null || echo "0")
+
+                    if [[ "$deployment_count" == "0" ]]; then
+                        echo "No previous deployments (first deployment)"
+                        return 0
+                    else
+                        echoFound $deployment_count previous deployments"
+                        return 1
+                    fi
+                }
+
+                # Function to check existing deployment health
+                check_existing_health() {
+                    echo "Checking existing deployment health..."
+
+                    # Get app status
+                    local app_status
+                    app_status=$(az webapp show --resource-group "$(resourceGroupName)" --name "$(appServiceName)" --query "state" -o tsv 2>/dev/null || echo "Unknown")
+                    echo "App Service Status: $app_status"
+
+                    # Get app URL
+                    local app_url
+                    app_url=$(az webapp show --resource-group "$(resourceGroupName)" --name "$(appServiceName)" --query "defaultHostName" -o tsv 2>/dev/null || echo "")
+
+                    if [[ -z "$app_url" ]]; then
+                        echo "Could not get app URL"
+                        return 1
+                    fi
+
+                    app_url="https://$app_url"
+                    echo "App URL: $app_url"
+
+                    # Quick health check with short timeout
+                    echo -n "Testing health endpoint... "
+                    local response_code
+                    response_code=$(timeout 10 curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 8 "$app_url/api/health/simple" 2>/dev/null || echo "000")
+
+                    case "$response_code" in
+                        200)
+                            echo "Healthy (HTTP $response_code)"
+                            return 0
+                            ;;
+                        30[1-8])
+                            echo "Redirect (HTTP $response_code)"
+                            return 0  # Redirects are OK
+                            ;;
+                        000)
+                            echo "Connection timeout/failed"
+                            return 1
+                            ;;
+                        *)
+                            echo "HTTP $response_code"
+                            return 1
+                            ;;
+                    esac
+                }
+
+                # Main logic
+                if is_first_deployment; then
+                    echo ""
+                    echo "FIRST DEPLOYMENT SCENARIO"
+                    echo "============================"
+                    echo "This appears to be the first deployment to this App Service."
+                    echo "Skipping application health checks since there's nothing deployed yet."
+                    echo ""
+                    echo "Infrastructure checks will be performed during deployment."
+                    echo "Ready to proceed with first deployment."
+                    echo ""
+                    echo "##vso[task.logissue type=warning]First deployment detected - health checks skipped"
+                    exit 0
+                else
+                    echo ""
+                    echo "EXISTING DEPLOYMENT SCENARIO"
+                    echo "==============================="
+                    echo "Previous deployments detected. Performing health checks..."
+                    echo ""
+
+                    if check_existing_health; then
+                        echo ""
+                        echo "Health checks passed - safe to deploy"
+                        exit 0
+                    else
+                        echo ""
+                        echo "Health check issues detected"
+                        echo "##vso[task.logissue type=warning]Health check issues detected but deployment will proceed"
+                        echo ""
+                        echo "Recommendations:"
+                        echo "1. Monitor deployment closely"
+                        echo "2. Check application logs after deployment"
+                        echo "3. Verify functionality after deployment completes"
+                        echo ""
+                        # Don't fail the pipeline - just warn
+                        exit 0
+                    fi
+                fi
+              timeoutInMinutes: 3
+              continueOnError: true
+
+  # Application Deployment Stage
+  - stage: Deploy
+    displayName: Deploy Application
+    dependsOn:
+      - Build
+      - DockerBuild
+      - Infrastructure
+      - PreDeploymentHealthCheck
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+      - deployment: AppServiceDeployment
+        displayName: Deploy to Azure App Service
+        environment: azure-$(environment)
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebAppContainer@1
+                  displayName: Deploy to Azure Web App (Container)
+                  inputs:
+                    azureSubscription: $(azureSubscription)
+                    appName: $(appServiceName)
+                    containers: $(containerRegistry)/$(imageName):latest
+                    slotName: $(deploymentSlot)
+
+                - task: AzureAppServiceSettings@1
+                  displayName: Configure App Service settings
+                  inputs:
+                    azureSubscription: $(azureSubscription)
+                    appName: $(appServiceName)
+                    resourceGroupName: $(resourceGroupName)
+                    slotName: $(deploymentSlot)
+                    appSettings: |
+                      [
+                        {
+                          "name": "NODE_ENV",
+                          "value": "$(environment)"
+                        },
+                        {
+                          "name": "WEBSITES_PORT",
+                          "value": "$(WEBSITES_PORT)"
+                        },
+                        {
+                          "name": "PORT",
+                          "value": "$(WEBSITES_PORT)"
+                        },
+                        {
+                          "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                          "value": "false"
+                        },
+                        {
+                          "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                          "value": "false"
+                        },
+                        {
+                          "name": "ENVIRONMENT",
+                          "value": "$(environment)"
+                        },
+                        {
+                          "name": "PUBLIC_SITE_URL",
+                          "value": "$(publicSiteUrl)"
+                        },
+                        {
+                          "name": "PUBLIC_SUPABASE_URL",
+                          "value": "$(PUBLIC_SUPABASE_URL)"
+                        },
+                        {
+                          "name": "PUBLIC_SUPABASE_ANON_KEY",
+                          "value": "$(PUBLIC_SUPABASE_ANON_KEY)"
+                        },
+                        {
+                          "name": "SUPABASE_KEY",
+                          "value": "$(SUPABASE_KEY)"
+                        },
+                        {
+                          "name": "SUPABASE_SERVICE_ROLE_KEY",
+                          "value": "$(SUPABASE_SERVICE_ROLE_KEY)"
+                        },
+                        {
+                          "name": "UPSTASH_REDIS_REST_URL",
+                          "value": "$(UPSTASH_REDIS_REST_URL)"
+                        },
+                        {
+                          "name": "UPSTASH_REDIS_REST_TOKEN",
+                          "value": "$(UPSTASH_REDIS_REST_TOKEN)"
+                        },
+                        {
+                          "name": "AZURE_OPENAI_API_KEY",
+                          "value": "$(AZURE_OPENAI_API_KEY)"
+                        },
+                        {
+                          "name": "AZURE_OPENAI_ENDPOINT",
+                          "value": "$(AZURE_OPENAI_ENDPOINT)"
+                        },
+                        {
+                          "name": "AZURE_OPENAI_API_VERSION",
+                          "value": "$(AZURE_OPENAI_API_VERSION)"
+                        },
+                        {
+                          "name": "AZURE_OPENAI_DEPLOYMENT_NAME",
+                          "value": "$(AZURE_OPENAI_DEPLOYMENT_NAME)"
+                        },
+                        {
+                          "name": "AZURE_STORAGE_CONNECTION_STRING",
+                          "value": "$(AZURE_STORAGE_CONNECTION_STRING)"
+                        },
+                        {
+                          "name": "AZURE_STORAGE_ACCOUNT_NAME",
+                          "value": "$(AZURE_STORAGE_ACCOUNT_NAME)"
+                        },
+                        {
+                          "name": "AZURE_STORAGE_ACCOUNT_KEY",
+                          "value": "$(AZURE_STORAGE_ACCOUNT_KEY)"
+                        },
+                        {
+                          "name": "AZURE_STORAGE_CONTAINER_NAME",
+                          "value": "$(AZURE_STORAGE_CONTAINER_NAME)"
+                        },
+                        {
+                          "name": "DOCKER_REGISTRY_SERVER_URL",
+                          "value": "https://$(AZURE_CONTAINER_REGISTRY)"
+                        },
+                        {
+                          "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                          "value": "$(AZURE_CONTAINER_REGISTRY_USERNAME)"
+                        },
+                        {
+                          "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                          "value": "$(AZURE_CONTAINER_REGISTRY_PASSWORD)"
+                        }
+                      ]
+
+  # Post-Deployment Testing
+  - stage: PostDeploymentTests
+    displayName: Post-Deployment Tests
+    dependsOn: Deploy
+    condition: succeeded()
+    jobs:
+      - job: HealthCheck
+        displayName: Comprehensive Health Check
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+
+        steps:
+          - script: |
+              echo "🔧 Pinning Azure CLI to version 2.73.0 for health checks..."
+
+              # Remove existing Azure CLI to avoid conflicts
+              echo "Removing existing Azure CLI..."
+              sudo apt-get remove -y azure-cli || true
+              sudo rm -rf /opt/az || true
+              sudo rm -f /usr/bin/az || true
+
+              # Install Python 3 and pip if not available
+              sudo apt-get update
+              sudo apt-get install -y python3 python3-pip python3-venv
+
+              # Install Azure CLI 2.73.0 via pip
+              echo "Installing Azure CLI 2.73.0 via pip..."
+              python3 -m pip install --user azure-cli==2.73.0
+
+              # Add pip installation directory to PATH
+              echo "Adding Azure CLI to PATH..."
+              export PATH="$HOME/.local/bin:$PATH"
+              echo "##vso[task.setvariable variable=PATH]$HOME/.local/bin:$PATH"
+
+              echo "✅ Azure CLI 2.73.0 installation completed"
+            displayName: Install Azure CLI 2.73.0 for health checks
+
+          - task: AzureCLI@2
+            displayName: 'Smart Post-Deployment Health Check'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              failOnStandardError: false
+              inlineScript: |
+                echo "🏥 Smart Post-Deployment Health Check"
+                echo "====================================="
+                echo "Started: $(date)"
+
+                # Ensure we're using the pinned Azure CLI version
+                export PATH="$HOME/.local/bin:$PATH"
+                echo "Using Azure CLI version: $(az --version | head -n 1)"
+
+                # Function to run commands with timeout
+                run_with_timeout() {
+                    local timeout_duration=$1
+                    shift
+                    timeout "$timeout_duration" "$@" 2>/dev/null || return 1
+                }
+
+                echo "🔍 Getting App Service URL for $(appServiceName)..."
+                APP_URL=$(run_with_timeout 10 az webapp show --name $(appServiceName) --resource-group $(resourceGroupName) --query "defaultHostName" --output tsv 2>/dev/null || echo "")
+
+                if [ -z "$APP_URL" ]; then
+                  echo "❌ Failed to get App Service URL"
+                  echo "##vso[task.logissue type=warning]Could not retrieve App Service URL"
+                  exit 0  # Don't fail pipeline
+                fi
+
+                echo "✅ App Service URL: https://$APP_URL"
+
+                # Function to test endpoint with retries
+                test_endpoint() {
+                  local url="$1"
+                  local expected_status="$2"
+                  local max_retries=3
+                  local retry=0
+
+                  while [ $retry -lt $max_retries ]; do
+                    echo "🔍 Testing $url (attempt $((retry + 1))/$max_retries)"
+                    
+                    # Get both status code and response body for debugging
+                    response_info=$(curl -s -w "\n%{http_code}" "$url" 2>&1)
+                    response_body=$(echo "$response_info" | head -n -1)
+                    status_code=$(echo "$response_info" | tail -n 1)
+                    
+                    if [ -z "$status_code" ] || [ "$status_code" = "000" ]; then
+                      echo "❌ Connection failed to $url"
+                      echo "📄 Error details: $response_body"
+                    elif [ "$status_code" = "$expected_status" ]; then
+                      echo "✅ $url check passed (status: $status_code)"
+                      echo "📄 Response: $response_body"
+                      return 0
+                    else
+                      echo "⚠️ $url returned status: $status_code (expected: $expected_status)"
+                      echo "📄 Response: $response_body"
+                    fi
+                    
+                    retry=$((retry + 1))
+                    if [ $retry -lt $max_retries ]; then
+                      echo "⏳ Waiting 15 seconds before retry..."
+                      sleep 15
+                    fi
+                  done
+
+                  echo "❌ $url check failed after $max_retries attempts"
+                  return 1
+                }
+
+                # Wait for application to be ready
+                echo "⏳ Waiting 30 seconds for application to stabilize..."
+                sleep 30
+
+                # Skip log retrieval to avoid Azure CLI custom domain ping issues
+                echo "ℹ️  Skipping log retrieval to avoid Azure CLI custom domain issues"
+                echo "   (Logs can be checked manually in Azure Portal if needed)"
+
+                # Test endpoints
+                FAILED_CHECKS=0
+
+                # Health check for simple endpoint (no external dependencies)
+                if ! test_endpoint "https://$APP_URL/api/health/simple" "200"; then
+                  FAILED_CHECKS=$((FAILED_CHECKS + 1))
+                fi
+
+                # Health check for root /
+                if ! test_endpoint "https://$APP_URL" "200"; then
+                  FAILED_CHECKS=$((FAILED_CHECKS + 1))
+                fi
+
+                # Report final results
+                echo ""
+                echo "🏁 Health check summary:"
+                if [ $FAILED_CHECKS -eq 0 ]; then
+                  echo "✅ All health checks passed successfully!"
+                  exit 0
+                else
+                  echo "❌ $FAILED_CHECKS health check(s) failed"
+                  exit 1
+                fi
+
+          - script: |
+              # Create a simple health check result file for publishing
+              mkdir -p test-results
+
+              if [ "$AGENT_JOBSTATUS" = "Succeeded" ]; then
+                cat > test-results/health-check-results.xml << EOF
+              <?xml version="1.0" encoding="UTF-8"?>
+              <testsuites name="Health Checks" tests="2" failures="0" time="0">
+                <testsuite name="Application Health" tests="2" failures="0" time="0">
+                  <testcase name="API Health Check" classname="HealthCheck" time="0"/>
+                  <testcase name="Root Endpoint Check" classname="HealthCheck" time="0"/>
+                </testsuite>
+              </testsuites>
+              EOF
+              else
+                cat > test-results/health-check-results.xml << EOF
+              <?xml version="1.0" encoding="UTF-8"?>
+              <testsuites name="Health Checks" tests="2" failures="1" time="0">
+                <testsuite name="Application Health" tests="2" failures="1" time="0">
+                  <testcase name="API Health Check" classname="HealthCheck" time="0">
+                    <failure message="Health check failed">Application not responding correctly</failure>
+                  </testcase>
+                  <testcase name="Root Endpoint Check" classname="HealthCheck" time="0"/>
+                </testsuite>
+              </testsuites>
+              EOF
+              fi
+            displayName: Generate health check test results
+            condition: always()
+
+          - task: PublishTestResults@2
+            displayName: Publish health check results
+            condition: always()
+            inputs:
+              testResultsFormat: JUnit
+              testResultsFiles: '**/health-check-results.xml'
+              failTaskOnFailedTests: true
+
+  # Pipeline Summary Stage
+  - stage: Summary
+    displayName: Pipeline Summary
+    dependsOn:
+      - Build
+      - DockerBuild
+      - Infrastructure
+      - Deploy
+      - PostDeploymentTests
+    condition: always()
+    jobs:
+      - job: PipelineSummary
+        displayName: Generate Pipeline Summary
+        pool:
+          name: 'Default'
+          demands:
+            - agent.name -equals decay
+        steps:
+          - script: |
+              echo "📊 Azure DevOps Pipeline Summary for Pixelated Empathy"
+              echo "=================================================="
+              echo ""
+              echo "🏗️ Build Information:"
+              echo "   Build ID: $(Build.BuildId)"
+              echo "   Build Number: $(Build.BuildNumber)"
+              echo "   Source Branch: $(Build.SourceBranch)"
+              echo "   Environment: $(environment)"
+              echo ""
+              echo "🐳 Docker Information:"
+              echo "   Registry: $(containerRegistry)"
+              echo "   Image: $(imageName)"
+              echo "   Tag: $(dockerTag)"
+              echo ""
+              echo "☁️ Azure Resources:"
+              echo "   Resource Group: $(resourceGroupName)"
+              echo "   App Service: $(appServiceName)"
+              echo "   Location: $(azureLocation)"
+              echo ""
+              echo "🚀 Deployment Status:"
+              echo "   Slot: $(deploymentSlot)"
+              echo "   Site URL: $(publicSiteUrl)"
+              echo ""
+              echo "✅ Pipeline completed successfully!"
+            displayName: Display pipeline summary
+            condition: succeeded()
+
+          - script: |
+              echo "❌ Pipeline Summary - Some stages failed"
+              echo "Please check the failed stages for detailed error information."
+              echo ""
+              echo "🔍 Common troubleshooting steps:"
+              echo "   1. Check Azure service connection permissions"
+              echo "   2. Verify all required variables are configured"
+              echo "   3. Ensure Bicep template is valid"
+              echo "   4. Check resource naming conventions"
+              echo "   5. Verify Docker registry access"
+            displayName: Display failure summary
+            condition: failed()

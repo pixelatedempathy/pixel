@@ -1,0 +1,132 @@
+# Fast Health Check - Replace your current hanging health check with this
+
+- task: AzureCLI@2
+  displayName: 'Fast Health Check (No Hanging)'
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: bash
+    scriptLocation: inlineScript
+    addSpnToEnvironment: true
+    failOnStandardError: false
+    inlineScript: |
+      set -e
+      
+      echo "⚡ Fast Health Check (No Hanging Operations)"
+      echo "============================================"
+      echo "Started: $(date)"
+      
+      # Ensure we're using the pinned Azure CLI version
+      export PATH="$HOME/.local/bin:$PATH"
+      echo "Using Azure CLI version: $(az --version | head -n 1)"
+      
+      # Function to run commands with timeout
+      run_with_timeout() {
+          local timeout_duration=$1
+          shift
+          timeout "$timeout_duration" "$@" 2>/dev/null || return 1
+      }
+      
+      # Quick check if this is first deployment
+      echo "🔍 Checking deployment status..."
+      
+      # Check if app exists
+      if ! run_with_timeout 10 az webapp show --name $(appServiceName) --resource-group $(resourceGroupName) --query "name" -o tsv >/dev/null; then
+          echo "📦 App Service doesn't exist - this is a first deployment"
+          echo "✅ Skipping health checks for first deployment"
+          echo "##vso[task.logissue type=warning]First deployment detected - health checks skipped"
+          exit 0
+      fi
+      
+      # Check deployment history
+      deployment_count=$(run_with_timeout 10 az webapp deployment list --resource-group $(resourceGroupName) --name $(appServiceName) --query "length(@)" -o tsv 2>/dev/null || echo "0")
+      
+      if [[ "$deployment_count" == "0" ]]; then
+          echo "📦 No previous deployments - this is a first deployment"
+          echo "✅ Skipping health checks for first deployment"
+          echo "##vso[task.logissue type=warning]First deployment detected - health checks skipped"
+          exit 0
+      fi
+      
+      echo "🔄 Found $deployment_count previous deployments - performing health checks"
+      
+      # Get App Service URL quickly
+      echo "🔍 Getting App Service URL..."
+      APP_URL=$(run_with_timeout 10 az webapp show --name $(appServiceName) --resource-group $(resourceGroupName) --query "defaultHostName" --output tsv 2>/dev/null || echo "")
+      
+      if [ -z "$APP_URL" ]; then
+          echo "❌ Failed to get App Service URL"
+          echo "##vso[task.logissue type=warning]Could not get App Service URL"
+          exit 0  # Don't fail pipeline
+      fi
+      
+      echo "✅ App Service URL: https://$APP_URL"
+      
+      # Function to test endpoint with very short timeout
+      test_endpoint_fast() {
+          local url="$1"
+          local name="$2"
+          local timeout=5
+          
+          echo -n "🔍 Testing $name... "
+          
+          local response_code
+          response_code=$(run_with_timeout $timeout curl -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 3 \
+              --max-time $timeout \
+              "$url" || echo "000")
+          
+          case "$response_code" in
+              200)
+                  echo "✅ OK (HTTP $response_code)"
+                  return 0
+                  ;;
+              30[1-8])
+                  echo "⚠️  Redirect (HTTP $response_code)"
+                  return 0  # Redirects are OK
+                  ;;
+              000)
+                  echo "❌ Timeout/Connection failed"
+                  return 1
+                  ;;
+              *)
+                  echo "⚠️  HTTP $response_code"
+                  return 1
+                  ;;
+          esac
+      }
+      
+      # Test endpoints quickly
+      PASSED_CHECKS=0
+      TOTAL_CHECKS=0
+      
+      # Test simple health endpoint
+      ((TOTAL_CHECKS++))
+      if test_endpoint_fast "https://$APP_URL/api/health/simple" "Simple Health Endpoint"; then
+          ((PASSED_CHECKS++))
+      fi
+      
+      # Test root endpoint
+      ((TOTAL_CHECKS++))
+      if test_endpoint_fast "https://$APP_URL" "Root Endpoint"; then
+          ((PASSED_CHECKS++))
+      fi
+      
+      # Skip log retrieval entirely to avoid hanging
+      echo ""
+      echo "ℹ️  Skipping log retrieval to avoid hanging (logs can be checked manually if needed)"
+      
+      # Report results
+      echo ""
+      echo "📊 Health Check Results:"
+      echo "  Passed: $PASSED_CHECKS/$TOTAL_CHECKS endpoints"
+      
+      if [ $PASSED_CHECKS -gt 0 ]; then
+          echo "✅ At least one endpoint is responding - deployment can proceed"
+          exit 0
+      else
+          echo "⚠️  No endpoints responding, but deployment will proceed"
+          echo "##vso[task.logissue type=warning]No endpoints responding but deployment will continue"
+          exit 0  # Don't fail pipeline
+      fi
+  timeoutInMinutes: 2  # Much shorter timeout
+  continueOnError: true

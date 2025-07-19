@@ -1,0 +1,13 @@
+# Dataset Pipeline Core Dependencies
+pandas
+numpy
+scikit-learn
+tqdm
+requests
+pyyaml
+pytest
+huggingface_hub
+transformers
+yt-dlp
+faster-whisper
+pydub

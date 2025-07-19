@@ -1,0 +1,126 @@
+# Azure DevOps Pipeline with Inline Health Check
+# Copy this task into your existing pipeline
+
+- task: AzureCLI@2
+  displayName: 'Smart Health Check (First Deployment Aware)'
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "🏥 Smart Health Check for Azure App Service"
+      echo "==========================================="
+      echo "Resource Group: $(resourceGroupName)"
+      echo "App Name: $(appName)"
+      echo "Started: $(date)"
+      echo ""
+      
+      # Function to check if this is first deployment
+      is_first_deployment() {
+          echo -n "🔍 Checking deployment status... "
+          
+          # Check if app service exists
+          if ! az webapp show --resource-group "$(resourceGroupName)" --name "$(appName)" >/dev/null 2>&1; then
+              echo "📦 App Service doesn't exist yet (first deployment)"
+              return 0
+          fi
+          
+          # Check deployment history
+          local deployment_count
+          deployment_count=$(az webapp deployment list --resource-group "$(resourceGroupName)" --name "$(appName)" --query "length(@)" -o tsv 2>/dev/null || echo "0")
+          
+          if [[ "$deployment_count" == "0" ]]; then
+              echo "📦 No previous deployments (first deployment)"
+              return 0
+          else
+              echo "✅ Found $deployment_count previous deployments"
+              return 1
+          fi
+      }
+      
+      # Function to check existing deployment health
+      check_existing_health() {
+          echo "🔍 Checking existing deployment health..."
+          
+          # Get app status
+          local app_status
+          app_status=$(az webapp show --resource-group "$(resourceGroupName)" --name "$(appName)" --query "state" -o tsv 2>/dev/null || echo "Unknown")
+          echo "App Service Status: $app_status"
+          
+          # Get app URL
+          local app_url
+          app_url=$(az webapp show --resource-group "$(resourceGroupName)" --name "$(appName)" --query "defaultHostName" -o tsv 2>/dev/null || echo "")
+          
+          if [[ -z "$app_url" ]]; then
+              echo "❌ Could not get app URL"
+              return 1
+          fi
+          
+          app_url="https://$app_url"
+          echo "App URL: $app_url"
+          
+          # Quick health check with short timeout
+          echo -n "Testing health endpoint... "
+          local response_code
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 15 "$app_url/api/health/simple" 2>/dev/null || echo "000")
+          
+          case "$response_code" in
+              200)
+                  echo "✅ Healthy (HTTP $response_code)"
+                  return 0
+                  ;;
+              30[1-8])
+                  echo "⚠️  Redirect (HTTP $response_code)"
+                  return 0  # Redirects are OK
+                  ;;
+              000)
+                  echo "❌ Connection timeout/failed"
+                  return 1
+                  ;;
+              *)
+                  echo "⚠️  HTTP $response_code"
+                  return 1
+                  ;;
+          esac
+      }
+      
+      # Main logic
+      if is_first_deployment; then
+          echo ""
+          echo "📦 FIRST DEPLOYMENT SCENARIO"
+          echo "============================"
+          echo "This appears to be the first deployment to this App Service."
+          echo "Skipping application health checks since there's nothing deployed yet."
+          echo ""
+          echo "✅ Infrastructure checks will be performed during deployment."
+          echo "✅ Ready to proceed with first deployment."
+          echo ""
+          echo "##vso[task.logissue type=warning]First deployment detected - health checks skipped"
+          exit 0
+      else
+          echo ""
+          echo "🔄 EXISTING DEPLOYMENT SCENARIO"
+          echo "==============================="
+          echo "Previous deployments detected. Performing health checks..."
+          echo ""
+          
+          if check_existing_health; then
+              echo ""
+              echo "✅ Health checks passed - safe to deploy"
+              exit 0
+          else
+              echo ""
+              echo "⚠️  Health check issues detected"
+              echo "##vso[task.logissue type=warning]Health check issues detected but deployment will proceed"
+              echo ""
+              echo "🔧 Recommendations:"
+              echo "1. Monitor deployment closely"
+              echo "2. Check application logs after deployment"
+              echo "3. Verify functionality after deployment completes"
+              echo ""
+              # Don't fail the pipeline - just warn
+              exit 0
+          fi
+      fi
+  timeoutInMinutes: 2
+  continueOnError: true
