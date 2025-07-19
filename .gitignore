@@ -119,3 +119,6 @@ mcp-sourcebot-config.json
 pixelatedcr.azurecr.io_pixelated-web_latest.json
 security-baseline.json
 .trunk
+
+__azurite_db_blob_extent__.json
+__azurite_db_blob__.json

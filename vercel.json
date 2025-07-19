@@ -1,15 +1,16 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "pnpm run build:vercel",
   "outputDirectory": "dist",
   "framework": "astro",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "functions": {
     "src/pages/api/**/*.ts": {
-      "runtime": "nodejs@22",
+      "runtime": "nodejs22.x",
       "maxDuration": 30
     },
     "dist/server/entry.mjs": {
-      "runtime": "nodejs@22",
+      "runtime": "nodejs22.x",
       "maxDuration": 30
     }
   },
@@ -86,7 +87,6 @@
       "permanent": false
     }
   ],
-  "regions": ["iad1", "sfo1"],
   "cleanUrls": true,
   "trailingSlash": false
 }

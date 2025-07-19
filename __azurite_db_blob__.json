@@ -1,5 +1,5 @@
 {
-  "filename": "/root/pixel/__azurite_db_blob__.json",
+  "filename": "__azurite_db_blob__.json",
   "collections": [
     {
       "name": "$SERVICES_COLLECTION$",
