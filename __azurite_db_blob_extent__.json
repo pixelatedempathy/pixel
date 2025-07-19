@@ -1,5 +1,5 @@
 {
-  "filename": "/root/aztec/__azurite_db_blob_extent__.json",
+  "filename": "/root/pixel/__azurite_db_blob_extent__.json",
   "collections": [
     {
       "name": "$EXTENTS_COLLECTION$",

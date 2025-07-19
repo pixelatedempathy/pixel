@@ -8,7 +8,7 @@ Sourcebot provides an MCP (Model Context Protocol) server that enables LLMs to s
 ### 1. Start Sourcebot
 The Sourcebot Docker container should be running on port 3001:
 ```bash
-docker run -d -p 3001:3000 -v $(pwd):/data -e CONFIG_PATH=/data/sourcebot-config.json --name sourcebot-aztec ghcr.io/sourcebot-dev/sourcebot:latest
+docker run -d -p 3001:3000 -v $(pwd):/data -e CONFIG_PATH=/data/sourcebot-config.json --name sourcebot-pixel ghcr.io/sourcebot-dev/sourcebot:latest
 ```
 
 ### 2. Complete Onboarding
