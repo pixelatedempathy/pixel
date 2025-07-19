@@ -1,4 +1,5 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "buildCommand": "ASTRO_CONFIG_FILE=astro.config.vercel.mjs pnpm run build",
   "outputDirectory": "dist",
@@ -6,9 +7,11 @@
   "installCommand": "pnpm install --no-frozen-lockfile",
   "functions": {
     "src/pages/api/**/*.ts": {
+      "runtime": "nodejs22",
       "maxDuration": 30
     },
     "dist/server/entry.mjs": {
+      "runtime": "nodejs22",
       "maxDuration": 30
     }
   },
