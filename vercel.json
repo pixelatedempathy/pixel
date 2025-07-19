@@ -5,9 +5,6 @@
   "framework": "astro",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "functions": {
-    "src/pages/api/**/*.ts": {
-      "maxDuration": 30
-    },
     "dist/server/entry.mjs": {
       "maxDuration": 30
     }
