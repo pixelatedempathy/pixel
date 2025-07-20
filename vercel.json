@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm run build:vercel",
-  "outputDirectory": "dist",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": ".amplify-hosting/compute/default",
   "framework": "astro",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "headers": [
