@@ -4,18 +4,6 @@
   "outputDirectory": "dist",
   "framework": "astro",
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "crons": [
-    {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 2 * * *"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ],
   "headers": [
     {
       "source": "/_astro/(.*)",
