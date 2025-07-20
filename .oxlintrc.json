@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "react", "jsx-a11y"],
+  "plugins": ["typescript", "react", "jsx-a11y", "vitest", "node"],
   "categories": {
     "correctness": "error",
     "perf": "warn",
@@ -20,8 +20,6 @@
     "storybook-static/**",
     "docs/**",
     "tmp/**",
-
-    ".astro/**",
     ".vscode/**",
     ".git/**",
     ".github/**",
