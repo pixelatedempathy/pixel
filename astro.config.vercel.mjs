@@ -17,7 +17,7 @@ import vercel from '@astrojs/vercel/serverless'
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://pixelatedempathy.com',
 
-  // Use hybrid output for Vercel - static by default, server when needed
+  // Use hybrid output for Vercel as recommended by official docs
   output: 'hybrid',
 
   // Vercel handles routing optimally
