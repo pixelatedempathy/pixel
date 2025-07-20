@@ -1,26 +1,67 @@
 version: 1
-
 frontend:
-  environment:
-    variables:
-      _CUSTOM_IMAGE: 'amplify:al2023'
-      NODE_OPTIONS: '--max-old-space-size=8192'
   phases:
     preBuild:
       commands:
         - npm i -g pnpm
         - pnpm config set store-dir .pnpm-store
         - pnpm i
+        - mv node_modules ./.amplify-hosting/compute/default/
     build:
       commands:
-        - env >> .env
         - pnpm run build
-        - mv .env ./.amplify-hosting/compute/default/.env
   artifacts:
     baseDirectory: .amplify-hosting
     files:
       - '**/*'
   cache:
     paths:
-      - '.pnpm-store/**/*'
-      - '.astro/**/*'
+      - node_modules/**/*
+      - .pnpm-store/**/*
+      - .astro/**/*
+  customRules:
+    - source: '/'
+      target: '/index.html'
+      status: 200
+    - source: '/<*>/'
+      target: '/<*>/index.html'
+      status: 200
+    - source: '/<*>'
+      target: '/<*>/index.html'
+      status: 200
+    - source: '/blog/<slug>'
+      target: '/blog/<slug>/index.html'
+      status: 200
+    - source: '/blog/tag/<tag>'
+      target: '/blog/tag/<tag>/index.html'
+      status: 200
+    - source: '/blog/page/<page>'
+      target: '/blog/page/<page>/index.html'
+      status: 200
+    - source: '/blog/series/<name>'
+      target: '/blog/series/<name>/index.html'
+      status: 200
+    - source: '/changelog/<slug>'
+      target: '/changelog/<slug>/index.html'
+      status: 200
+    - source: '/docs/<slug>'
+      target: '/docs/<slug>/index.html'
+      status: 200
+    - source: '/blog/<slug>/'
+      target: '/blog/<slug>/index.html'
+      status: 200
+    - source: '/blog/tag/<tag>/'
+      target: '/blog/tag/<tag>/index.html'
+      status: 200
+    - source: '/blog/page/<page>/'
+      target: '/blog/page/<page>/index.html'
+      status: 200
+    - source: '/blog/series/<name>/'
+      target: '/blog/series/<name>/index.html'
+      status: 200
+    - source: '/changelog/<slug>/'
+      target: '/changelog/<slug>/index.html'
+      status: 200
+    - source: '/docs/<slug>/'
+      target: '/docs/<slug>/index.html'
+      status: 200
