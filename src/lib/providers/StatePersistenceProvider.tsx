@@ -351,7 +351,9 @@ export function StatePersistenceDebugger() {
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      return
+    }
 
     const reader = new FileReader()
     reader.onload = async (e) => {

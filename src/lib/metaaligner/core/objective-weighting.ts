@@ -210,7 +210,7 @@ export class ObjectiveWeightingEngine {
     context: AlignmentContext,
   ): Record<string, number> {
     const weights = { ...baseWeights }
-    const userProfile = context.userProfile
+    const {userProfile} = context
 
     if (userProfile?.preferences?.objectiveWeightAdjustments) {
       for (const [objectiveId, multiplier] of Object.entries(

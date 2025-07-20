@@ -189,9 +189,9 @@ const ClinicalFormulationDemo: React.FC<ClinicalFormulationDemoProps> = ({
     problem: string,
     complexity: 'low' | 'medium' | 'high',
   ): string => {
-    const age = patient.age
-    const gender = patient.gender
-    const occupation = patient.occupation
+    const {age} = patient
+    const {gender} = patient
+    const {occupation} = patient
 
     let summary = `${age}-year-old ${gender} ${occupation.toLowerCase()} presenting with ${problem.toLowerCase()}. `
 

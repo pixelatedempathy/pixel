@@ -97,7 +97,9 @@ const TherapeuticApproachShowcase: React.FC<
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     const scenario = scenarioOptions.find((s) => s.value === selectedScenario)
-    if (!scenario) return
+    if (!scenario) {
+      return
+    }
 
     const responses: TherapeuticResponse[] = selectedApproaches.map(
       (approach) => generateApproachResponse(approach, scenario),

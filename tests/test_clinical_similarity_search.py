@@ -512,7 +512,7 @@ class TestClinicalSimilaritySearch:
 
         # Should include depression-related suggestions
         depression_suggestions = [s for s in suggestions if "depression" in s.lower()]
-        assert len(depression_suggestions) > 0
+        assert depression_suggestions
 
     def test_get_search_suggestions_partial_match(self):
         """Test search suggestions with partial matches."""
@@ -526,7 +526,7 @@ class TestClinicalSimilaritySearch:
 
         # Should include cognitive-related suggestions
         cognitive_suggestions = [s for s in suggestions if "cognitive" in s.lower()]
-        assert len(cognitive_suggestions) > 0
+        assert cognitive_suggestions
 
 
 class TestIntegration:

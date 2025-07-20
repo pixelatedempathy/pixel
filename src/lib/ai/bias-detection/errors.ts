@@ -734,8 +734,12 @@ export class BiasErrorAggregator {
 
     for (const [_key, samples] of Array.from(this.errorSamples)) {
       for (const sample of samples) {
-        if (sample.severity === 'critical') criticalErrors++
-        if (sample.recoverable) recoverableErrors++
+        if (sample.severity === 'critical') {
+          criticalErrors++
+        }
+        if (sample.recoverable) {
+          recoverableErrors++
+        }
       }
     }
 

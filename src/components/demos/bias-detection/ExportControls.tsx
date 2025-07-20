@@ -35,13 +35,21 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
   // Calculate export size estimate
   const getExportSizeEstimate = () => {
     let size = 0
-    if (includeComponents.analysis) size += 15 // KB
-    if (includeComponents.counterfactual)
+    if (includeComponents.analysis) {
+      size += 15 // KB
+    }
+    if (includeComponents.counterfactual) {
       size += counterfactualScenarios.length * 2
-    if (includeComponents.historical) size += 5
-    if (includeComponents.recommendations)
+    }
+    if (includeComponents.historical) {
+      size += 5
+    }
+    if (includeComponents.recommendations) {
       size += analysisResults.recommendations.length * 0.5
-    if (includeComponents.demographics) size += 2
+    }
+    if (includeComponents.demographics) {
+      size += 2
+    }
     return Math.max(size, 1)
   }
 

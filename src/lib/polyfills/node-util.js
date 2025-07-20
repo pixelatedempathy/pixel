@@ -4,7 +4,9 @@
 
 export function format(format, ...args) {
   return String(format).replace(/%[sdifjoO%]/g, (match) => {
-    if (match === '%%') return '%'
+    if (match === '%%') {
+      return '%'
+    }
     return String(args.shift() || '')
   })
 }

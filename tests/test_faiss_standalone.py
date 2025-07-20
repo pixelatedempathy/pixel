@@ -65,11 +65,11 @@ def test_faiss_index_structure():
             "def benchmark_search_performance",
         ]
 
-        missing_components = []
-        for component in required_components:
-            if component not in content:
-                missing_components.append(component)
-
+        missing_components = [
+            component
+            for component in required_components
+            if component not in content
+        ]
         if not missing_components:
             print("✓ All required components found in implementation")
         else:
@@ -100,7 +100,8 @@ def test_faiss_index_structure():
     try:
         print("\nTesting Mock FAISS Index...")
 
-        # Simple mock test without imports
+
+
         class SimpleMockIndex:
             def __init__(self, dimension):
                 self.dimension = dimension
@@ -108,10 +109,7 @@ def test_faiss_index_structure():
                 self.ntotal = 0
 
             def add(self, vectors):
-                if isinstance(vectors, list):
-                    self.vectors.extend(vectors)
-                else:
-                    self.vectors.extend(vectors)
+                self.vectors.extend(vectors)
                 self.ntotal = len(self.vectors)
 
             def search(self, query, k):
@@ -121,15 +119,19 @@ def test_faiss_index_structure():
                 else:
                     query_vec = query
 
-                distances = []
-                for i, vec in enumerate(self.vectors):
-                    dist = sum((a - b) ** 2 for a, b in zip(query_vec, vec)) ** 0.5
-                    distances.append((dist, i))
-
+                distances = [
+                    (
+                        sum((a - b) ** 2 for a, b in zip(query_vec, vec))
+                        ** 0.5,
+                        i,
+                    )
+                    for i, vec in enumerate(self.vectors)
+                ]
                 distances.sort()
                 top_k = distances[:k]
 
                 return [d[0] for d in top_k], [d[1] for d in top_k]
+
 
         # Test mock index
         mock_index = SimpleMockIndex(3)

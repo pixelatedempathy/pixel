@@ -198,7 +198,9 @@ export class CrisisProtocol {
     confidence: number,
     detectedRisks: string[],
   ): AlertConfiguration['level'] {
-    if (!this.config) return 'concern'
+    if (!this.config) {
+      return 'concern'
+    }
 
     // Check for emergency keywords
     const emergencyTerms = [
@@ -216,16 +218,24 @@ export class CrisisProtocol {
     }
 
     // Check confidence thresholds
-    if (confidence >= 0.9) return 'emergency'
-    if (confidence >= 0.7) return 'severe'
-    if (confidence >= 0.5) return 'moderate'
+    if (confidence >= 0.9) {
+      return 'emergency'
+    }
+    if (confidence >= 0.7) {
+      return 'severe'
+    }
+    if (confidence >= 0.5) {
+      return 'moderate'
+    }
     return 'concern'
   }
 
   private getAlertConfiguration(
     level: AlertConfiguration['level'],
   ): AlertConfiguration | null {
-    if (!this.config) return null
+    if (!this.config) {
+      return null
+    }
     return (
       this.config.alertConfigurations.find(
         (config) => config.level === level,
@@ -250,7 +260,9 @@ export class CrisisProtocol {
     event: CrisisEvent,
     config: AlertConfiguration,
   ): Promise<void> {
-    if (!this.config) return
+    if (!this.config) {
+      return
+    }
 
     try {
       const channels = this.config.staffChannels[event.alertLevel] || []
@@ -273,7 +285,9 @@ export class CrisisProtocol {
     event: CrisisEvent,
     config: AlertConfiguration,
   ): Promise<void> {
-    if (!this.config?.slackWebhookUrl) return
+    if (!this.config?.slackWebhookUrl) {
+      return
+    }
 
     try {
       const message = this.formatSlackMessage(event, config)

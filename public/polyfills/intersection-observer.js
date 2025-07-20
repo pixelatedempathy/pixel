@@ -298,7 +298,9 @@ IntersectionObserver.prototype.takeRecords = function() {
  */
 IntersectionObserver.prototype._initThresholds = function(opt_threshold) {
   var threshold = opt_threshold || [0];
-  if (!Array.isArray(threshold)) threshold = [threshold];
+  if (!Array.isArray(threshold)) {
+    threshold = [threshold];
+  }
 
   return threshold.sort().filter(function(t, i, a) {
     if (typeof t != 'number' || isNaN(t) || t < 0 || t > 1) {
@@ -468,7 +470,7 @@ IntersectionObserver.prototype._unmonitorIntersections = function(doc) {
  * @private
  */
 IntersectionObserver.prototype._unmonitorAllIntersections = function() {
-  var unsubscribes = this._monitoringUnsubscribes.slice(0);
+  var unsubscribes = this._monitoringUnsubscribes.slice();
   this._monitoringDocuments.length = 0;
   this._monitoringUnsubscribes.length = 0;
   for (var i = 0; i < unsubscribes.length; i++) {
@@ -518,19 +520,15 @@ IntersectionObserver.prototype._checkForIntersections = function() {
     if (!oldEntry) {
       this._queuedEntries.push(newEntry);
     } else if (rootIsInDom && rootContainsTarget) {
-      // If the new entry intersection ratio has crossed any of the
-      // thresholds, add a new entry.
-      if (this._hasCrossedThreshold(oldEntry, newEntry)) {
-        this._queuedEntries.push(newEntry);
-      }
-    } else {
-      // If the root is not in the DOM or target is not contained within
-      // root but the previous entry for this target had an intersection,
-      // add a new record indicating removal.
-      if (oldEntry && oldEntry.isIntersecting) {
-        this._queuedEntries.push(newEntry);
-      }
-    }
+                 // If the new entry intersection ratio has crossed any of the
+                 // thresholds, add a new entry.
+                 if (this._hasCrossedThreshold(oldEntry, newEntry)) {
+                   this._queuedEntries.push(newEntry);
+                 }
+               }
+           else if (oldEntry && oldEntry.isIntersecting) {
+                   this._queuedEntries.push(newEntry);
+                 }
   }, this);
 
   if (this._queuedEntries.length) {
@@ -555,7 +553,9 @@ IntersectionObserver.prototype._checkForIntersections = function() {
 IntersectionObserver.prototype._computeTargetAndRootIntersection =
     function(target, targetRect, rootRect) {
   // If the element isn't displayed, an intersection can't happen.
-  if (window.getComputedStyle(target).display == 'none') return;
+  if (window.getComputedStyle(target).display == 'none') {
+    return;
+  }
 
   var intersectionRect = targetRect;
   var parent = getParentNode(target);
@@ -567,7 +567,9 @@ IntersectionObserver.prototype._computeTargetAndRootIntersection =
         window.getComputedStyle(parent) : {};
 
     // If the parent isn't displayed, an intersection can't happen.
-    if (parentComputedStyle.display == 'none') return null;
+    if (parentComputedStyle.display == 'none') {
+      return null;
+    }
 
     if (parent == this.root || parent.nodeType == /* DOCUMENT */ 9) {
       atRoot = true;
@@ -618,7 +620,9 @@ IntersectionObserver.prototype._computeTargetAndRootIntersection =
     if (parentRect) {
       intersectionRect = computeRectIntersection(parentRect, intersectionRect);
     }
-    if (!intersectionRect) break;
+    if (!intersectionRect) {
+      break;
+    }
     parent = parent && getParentNode(parent);
   }
   return intersectionRect;
@@ -697,7 +701,9 @@ IntersectionObserver.prototype._hasCrossedThreshold =
       newEntry.intersectionRatio || 0 : -1;
 
   // Ignore unchanged ratios
-  if (oldRatio === newRatio) return;
+  if (oldRatio === newRatio) {
+    return;
+  }
 
   for (var i = 0; i < this.thresholds.length; i++) {
     var threshold = this.thresholds[i];
@@ -756,7 +762,9 @@ IntersectionObserver.prototype._registerInstance = function() {
  */
 IntersectionObserver.prototype._unregisterInstance = function() {
   var index = registry.indexOf(this);
-  if (index != -1) registry.splice(index, 1);
+  if (index != -1) {
+    registry.splice(index, 1);
+  }
 };
 
 
@@ -868,7 +876,9 @@ function getBoundingClientRect(el) {
     // https://github.com/w3c/IntersectionObserver/pull/205
   }
 
-  if (!rect) return getEmptyRect();
+  if (!rect) {
+    return getEmptyRect();
+  }
 
   // Older IE
   if (!(rect.width && rect.height)) {
@@ -962,7 +972,9 @@ function convertFromParentRect(parentBoundingRect, parentIntersectionRect) {
 function containsDeep(parent, child) {
   var node = child;
   while (node) {
-    if (node == parent) return true;
+    if (node == parent) {
+      return true;
+    }
 
     node = getParentNode(node);
   }

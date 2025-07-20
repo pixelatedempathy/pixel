@@ -63,7 +63,9 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validateForm()) return
+    if (!validateForm()) {
+      return
+    }
 
     onSubmit({
       scenario: formData.scenario || undefined,

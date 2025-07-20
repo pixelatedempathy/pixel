@@ -53,7 +53,7 @@ class PsychologyPipelineDemo:
         self.validator = ClinicalAccuracyValidator()
         self.balancer = KnowledgeCategoryBalancer()
 
-        print(f"🧠 Psychology Pipeline Demo Initialized")
+        print("🧠 Psychology Pipeline Demo Initialized")
         print(f"📁 Output Directory: {self.output_dir}")
         print(f"🎯 Target Total Items: {self.target_total}")
         print("=" * 60)
@@ -61,7 +61,6 @@ class PsychologyPipelineDemo:
     def run_complete_pipeline(self) -> Dict[str, Any]:
         """Run the complete psychology knowledge integration pipeline."""
 
-        results = {}
         start_time = time.time()
 
         print("\n🚀 Starting Psychology Knowledge Integration Pipeline")
@@ -71,8 +70,7 @@ class PsychologyPipelineDemo:
         print("\n📚 STEP 1: Parsing Psychology Knowledge")
         print("-" * 40)
         knowledge_results = self._step1_parse_knowledge()
-        results["knowledge_parsing"] = knowledge_results
-
+        results = {"knowledge_parsing": knowledge_results}
         # Step 2: Generate Client Scenarios
         print("\n👥 STEP 2: Generating Client Scenarios")
         print("-" * 40)
@@ -252,7 +250,8 @@ class PsychologyPipelineDemo:
         self.validator.export_validation_results(validations, validation_output)
 
         # Analyze validation results
-        approved_count = sum(1 for v in validations if v.approved_for_training)
+        approved_count = sum(bool(v.approved_for_training)
+                         for v in validations)
         avg_score = (
             sum(v.overall_score for v in validations) / len(validations) if validations else 0
         )
@@ -289,17 +288,16 @@ class PsychologyPipelineDemo:
         balancing_output = self.output_dir / "06_category_balancing.json"
         self.balancer.export_balancing_report(balancing_result, balancing_output)
 
-        # Analyze balancing results
-        category_stats = {}
-        for balance in balancing_result.category_balances:
-            category_stats[balance.category.value] = {
+        category_stats = {
+            balance.category.value: {
                 "current": balance.current_count,
                 "target": balance.target_count,
                 "percentage": f"{balance.current_percentage:.1%}",
                 "quality": f"{balance.quality_score:.2f}",
                 "deficit": balance.deficit,
             }
-
+            for balance in balancing_result.category_balances
+        }
         print(
             f"   ✓ Balanced {balancing_result.total_items} items across categories → {balancing_output}"
         )

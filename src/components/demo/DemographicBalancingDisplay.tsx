@@ -87,58 +87,71 @@ const DemographicBalancingDisplay: React.FC<
   }
 
   const getAgeCategory = (age: number): string => {
-    if (age <= 25) return '18-25'
-    if (age <= 35) return '26-35'
-    if (age <= 50) return '36-50'
-    if (age <= 65) return '51-65'
+    if (age <= 25) {
+      return '18-25'
+    }
+    if (age <= 35) {
+      return '26-35'
+    }
+    if (age <= 50) {
+      return '36-50'
+    }
+    if (age <= 65) {
+      return '51-65'
+    }
     return '65+'
   }
 
   const getOccupationCategory = (occupation: string): string => {
     const occ = occupation.toLowerCase()
-    if (
-      occ.includes('doctor') ||
-      occ.includes('nurse') ||
-      occ.includes('therapist') ||
-      occ.includes('medical')
-    )
+    if (occ.includes('doctor') ||
+          occ.includes('nurse') ||
+          occ.includes('therapist') ||
+          occ.includes('medical')) {
       return 'Healthcare'
-    if (
-      occ.includes('teacher') ||
-      occ.includes('professor') ||
-      occ.includes('education')
-    )
+    }
+    if (occ.includes('teacher') ||
+          occ.includes('professor') ||
+          occ.includes('education')) {
       return 'Education'
-    if (
-      occ.includes('engineer') ||
-      occ.includes('developer') ||
-      occ.includes('tech') ||
-      occ.includes('software')
-    )
+    }
+    if (occ.includes('engineer') ||
+          occ.includes('developer') ||
+          occ.includes('tech') ||
+          occ.includes('software')) {
       return 'Technology'
-    if (
-      occ.includes('manager') ||
-      occ.includes('analyst') ||
-      occ.includes('finance') ||
-      occ.includes('business')
-    )
+    }
+    if (occ.includes('manager') ||
+          occ.includes('analyst') ||
+          occ.includes('finance') ||
+          occ.includes('business')) {
       return 'Business/Finance'
-    if (
-      occ.includes('service') ||
-      occ.includes('retail') ||
-      occ.includes('restaurant')
-    )
+    }
+    if (occ.includes('service') ||
+          occ.includes('retail') ||
+          occ.includes('restaurant')) {
       return 'Service Industry'
-    if (occ.includes('student')) return 'Student'
-    if (occ.includes('retired')) return 'Retired'
+    }
+    if (occ.includes('student')) {
+      return 'Student'
+    }
+    if (occ.includes('retired')) {
+      return 'Retired'
+    }
     return 'Other'
   }
 
   const getBackgroundCategory = (background: string): string => {
     const bg = background.toLowerCase()
-    if (bg.includes('urban') || bg.includes('city')) return 'Urban'
-    if (bg.includes('suburban') || bg.includes('suburb')) return 'Suburban'
-    if (bg.includes('rural') || bg.includes('country')) return 'Rural'
+    if (bg.includes('urban') || bg.includes('city')) {
+      return 'Urban'
+    }
+    if (bg.includes('suburban') || bg.includes('suburb')) {
+      return 'Suburban'
+    }
+    if (bg.includes('rural') || bg.includes('country')) {
+      return 'Rural'
+    }
     return 'Urban' // Default
   }
 
@@ -221,16 +234,22 @@ const DemographicBalancingDisplay: React.FC<
   }, [currentProfile, onBalanceUpdate])
 
   const getBalanceColor = (percentage: number) => {
-    if (percentage >= 90 && percentage <= 110)
+    if (percentage >= 90 && percentage <= 110) {
       return 'text-green-600 bg-green-50'
-    if (percentage >= 75 && percentage <= 125)
+    }
+    if (percentage >= 75 && percentage <= 125) {
       return 'text-yellow-600 bg-yellow-50'
+    }
     return 'text-red-600 bg-red-50'
   }
 
   const getProgressBarColor = (percentage: number) => {
-    if (percentage >= 90 && percentage <= 110) return 'bg-green-500'
-    if (percentage >= 75 && percentage <= 125) return 'bg-yellow-500'
+    if (percentage >= 90 && percentage <= 110) {
+      return 'bg-green-500'
+    }
+    if (percentage >= 75 && percentage <= 125) {
+      return 'bg-yellow-500'
+    }
     return 'bg-red-500'
   }
 
@@ -243,18 +262,26 @@ const DemographicBalancingDisplay: React.FC<
     const occupationCategory = getOccupationCategory(currentProfile.occupation)
     const backgroundCategory = getBackgroundCategory(currentProfile.background)
 
-    if (category === 'Age' && subcategory === ageCategory) return true
-    if (category === 'Gender' && subcategory === genderCategory) return true
-    if (category === 'Occupation' && subcategory === occupationCategory)
+    if (category === 'Age' && subcategory === ageCategory) {
       return true
-    if (category === 'Background' && subcategory === backgroundCategory)
+    }
+    if (category === 'Gender' && subcategory === genderCategory) {
       return true
+    }
+    if (category === 'Occupation' && subcategory === occupationCategory) {
+      return true
+    }
+    if (category === 'Background' && subcategory === backgroundCategory) {
+      return true
+    }
     return false
   }
 
   const groupedStats = demographicStats.reduce(
     (acc, stat) => {
-      if (!acc[stat.category]) acc[stat.category] = []
+      if (!acc[stat.category]) {
+        acc[stat.category] = []
+      }
       acc[stat.category].push(stat)
       return acc
     },

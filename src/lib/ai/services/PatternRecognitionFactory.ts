@@ -426,12 +426,10 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
         this.filterSignificantCorrelations(correlationResults)
 
       // Generate clinically relevant insights
-      const clinicalCorrelations = this.generateClinicalCorrelations(
-        significantCorrelations,
-        analyses,
-      )
-
-      return clinicalCorrelations
+      return this.generateClinicalCorrelations(
+              significantCorrelations,
+              analyses,
+            );
     } catch (error) {
       logger.error('Error in risk factor correlation analysis', {
         clientId,
@@ -478,15 +476,13 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       const stlDecomposition = this.performSTLDecomposition(historicalData)
 
       // Generate trend patterns with statistical validation
-      const trendPatterns = this.generateTrendPatterns(
-        decomposition,
-        changePoints,
-        stlDecomposition,
-        startDate,
-        endDate,
-      )
-
-      return trendPatterns
+      return this.generateTrendPatterns(
+              decomposition,
+              changePoints,
+              stlDecomposition,
+              startDate,
+              endDate,
+            );
     } catch (error) {
       logger.error('Error in long-term trend analysis', {
         clientId,
@@ -523,14 +519,12 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       const temporalPatterns = await this.mineTemporalPatterns(sessions)
 
       // Generate advanced cross-session patterns
-      const patterns = this.generateAdvancedCrossSessionPatterns(
-        clusters,
-        networkAnalysis,
-        temporalPatterns,
-        sessions,
-      )
-
-      return patterns
+      return this.generateAdvancedCrossSessionPatterns(
+              clusters,
+              networkAnalysis,
+              temporalPatterns,
+              sessions,
+            );
     } catch (error) {
       logger.error('Error in advanced cross-session pattern detection', {
         clientId,
@@ -553,7 +547,7 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       const dayOfWeek = session.startTime.getDay()
 
       // Extract AI analysis features if available
-      const aiAnalysis = session.aiAnalysis
+      const {aiAnalysis} = session
       const riskScore =
         aiAnalysis?.riskAssessment === 'critical'
           ? 1
@@ -583,11 +577,9 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     // Simplified hierarchical clustering implementation
     // In production, would use libraries like ml-hclust or similar
     const numClusters = Math.min(5, Math.ceil(features.length / 3))
-    const clusters = new Array(features.length)
-      .fill(0)
-      .map((_, i) => i % numClusters)
-
-    return clusters
+    return new Array(features.length)
+          .fill(0)
+          .map((_, i) => i % numClusters);
   }
 
   /**
@@ -825,13 +817,12 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   private analyzeEmotionalTransitions(
     sessionFeatures: any,
   ): Array<{ confidence: number; intensity: number }> {
-    const transitions = sessionFeatures.emotionalStates.map(
-      (_: any, index: number) => ({
-        confidence: 0.7 + Math.random() * 0.3,
-        intensity: 0.5 + Math.random() * 0.5,
-      }),
-    )
-    return transitions
+    return sessionFeatures.emotionalStates.map(
+          (_: any, index: number) => ({
+            confidence: 0.7 + Math.random() * 0.3,
+            intensity: 0.5 + Math.random() * 0.5,
+          }),
+        );
   }
 
   private detectCommunicationAnomalies(sessionFeatures: any): any[] {
@@ -851,10 +842,16 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   private determineTrend(
     values: number[],
   ): 'increasing' | 'decreasing' | 'stable' {
-    if (values.length < 2) return 'stable'
+    if (values.length < 2) {
+      return 'stable'
+    }
     const trend = StatisticalAnalysis.calculateTrend(values)
-    if (trend > 0.1) return 'increasing'
-    if (trend < -0.1) return 'decreasing'
+    if (trend > 0.1) {
+      return 'increasing'
+    }
+    if (trend < -0.1) {
+      return 'decreasing'
+    }
     return 'stable'
   }
 
@@ -866,7 +863,9 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   private detectSeasonality(
     values: number[],
   ): { period: number; amplitude: number; confidence: number } | undefined {
-    if (values.length < 12) return undefined
+    if (values.length < 12) {
+      return undefined
+    }
     return {
       period: 7, // Weekly pattern
       amplitude: this.calculateStandardDeviation(values),
@@ -879,8 +878,12 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   ): 'low' | 'medium' | 'high' {
     const avgIntensity =
       transitions.reduce((a, t) => a + t.intensity, 0) / transitions.length
-    if (avgIntensity > 0.8) return 'high'
-    if (avgIntensity > 0.6) return 'medium'
+    if (avgIntensity > 0.8) {
+      return 'high'
+    }
+    if (avgIntensity > 0.6) {
+      return 'medium'
+    }
     return 'low'
   }
 
@@ -906,17 +909,23 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   ): 'none' | 'low' | 'medium' | 'high' | 'critical' {
     const avgIntensity =
       transitions.reduce((a, t) => a + t.intensity, 0) / transitions.length
-    if (avgIntensity > 0.9) return 'critical'
-    if (avgIntensity > 0.8) return 'high'
-    if (avgIntensity > 0.6) return 'medium'
-    if (avgIntensity > 0.4) return 'low'
+    if (avgIntensity > 0.9) {
+      return 'critical'
+    }
+    if (avgIntensity > 0.8) {
+      return 'high'
+    }
+    if (avgIntensity > 0.6) {
+      return 'medium'
+    }
+    if (avgIntensity > 0.4) {
+      return 'low'
+    }
     return 'none'
   }
 
   private calculateEvidenceScore(transitions: any[]): number {
-    const avgConfidence =
-      transitions.reduce((a, t) => a + t.confidence, 0) / transitions.length
-    return avgConfidence
+    return transitions.reduce((a, t) => a + t.confidence, 0) / transitions.length;
   }
 
   private calculateMean(values: number[]): number {
@@ -965,7 +974,9 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     let similarity = 0
 
     // Type similarity
-    if (p1.type === p2.type) similarity += 0.3
+    if (p1.type === p2.type) {
+      similarity += 0.3
+    }
 
     // Description similarity (simplified - would use NLP in production)
     const desc1Words = p1.description.toLowerCase().split(' ')
@@ -1190,9 +1201,15 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     const maxCorrelation = Math.max(
       ...correlatedFactors.map((f) => Math.abs(f.correlation)),
     )
-    if (maxCorrelation > 0.8) return 'critical'
-    if (maxCorrelation > 0.7) return 'high'
-    if (maxCorrelation > 0.5) return 'medium'
+    if (maxCorrelation > 0.8) {
+      return 'critical'
+    }
+    if (maxCorrelation > 0.7) {
+      return 'high'
+    }
+    if (maxCorrelation > 0.5) {
+      return 'medium'
+    }
     return 'low'
   }
 

@@ -61,7 +61,9 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
   }, [])
 
   const refreshMemories = useCallback(async () => {
-    if (!userId) return
+    if (!userId) {
+      return
+    }
 
     setIsLoading(true)
     setError(null)
@@ -127,15 +129,13 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
       setError(null)
 
       try {
-        const results = await memoryManager.searchMemories({
-          query,
-          userId,
-          category,
-          limit: 10,
-          ...searchOptions,
-        })
-
-        return results
+        return await memoryManager.searchMemories({
+                  query,
+                  userId,
+                  category,
+                  limit: 10,
+                  ...searchOptions,
+                });
       } catch (err) {
         handleError(err)
         return []

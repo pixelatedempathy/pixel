@@ -46,7 +46,9 @@ export class UniversalDemoAnalytics {
   }
 
   async initialize(): Promise<void> {
-    if (this.isInitialized) return
+    if (this.isInitialized) {
+      return
+    }
 
     try {
       // Apply A/B test variant
@@ -83,7 +85,9 @@ export class UniversalDemoAnalytics {
     const stored = sessionStorage.getItem(
       ANALYTICS_CONFIG.STORAGE_KEYS.SESSION_ID,
     )
-    if (stored) return stored
+    if (stored) {
+      return stored
+    }
 
     const newId = `demo_${this.pageName}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
     sessionStorage.setItem(ANALYTICS_CONFIG.STORAGE_KEYS.SESSION_ID, newId)
@@ -372,7 +376,9 @@ export class UniversalDemoAnalytics {
   }
 
   private async flushEvents(): Promise<void> {
-    if (this.eventQueue.length === 0) return
+    if (this.eventQueue.length === 0) {
+      return
+    }
 
     const eventsToSend = [...this.eventQueue]
     this.eventQueue = []

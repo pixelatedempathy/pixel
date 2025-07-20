@@ -68,9 +68,15 @@ export const HistoricalProgressTracker: React.FC<
 
   // Helper function to get percentile color
   const getPercentileColor = (percentile: number) => {
-    if (percentile >= 80) return 'text-green-600'
-    if (percentile >= 60) return 'text-yellow-600'
-    if (percentile >= 40) return 'text-orange-600'
+    if (percentile >= 80) {
+      return 'text-green-600'
+    }
+    if (percentile >= 60) {
+      return 'text-yellow-600'
+    }
+    if (percentile >= 40) {
+      return 'text-orange-600'
+    }
     return 'text-red-600'
   }
 

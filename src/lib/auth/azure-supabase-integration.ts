@@ -128,7 +128,9 @@ export class AzureSupabaseIntegration {
           .select()
           .single()
 
-        if (error) throw error
+        if (error) {
+          throw error
+        }
         supabaseUser = data
       } else {
         // Create new user
@@ -141,7 +143,9 @@ export class AzureSupabaseIntegration {
           .select()
           .single()
 
-        if (error) throw error
+        if (error) {
+          throw error
+        }
         supabaseUser = data
       }
 
@@ -200,7 +204,9 @@ export class AzureSupabaseIntegration {
           },
         })
 
-      if (error) throw error
+      if (error) {
+        throw error
+      }
 
       return {
         user,
@@ -243,7 +249,9 @@ export class AzureSupabaseIntegration {
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        throw error
+      }
 
       // Get user roles
       const { data: userRoles } = await this.supabase
@@ -323,7 +331,9 @@ export class AzureSupabaseIntegration {
         .single()
 
       if (error) {
-        if (error.code === 'PGRST116') return null
+        if (error.code === 'PGRST116') {
+          return null
+        }
         throw error
       }
 

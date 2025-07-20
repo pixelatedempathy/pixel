@@ -346,12 +346,12 @@ class BiasDetectionService:
         # Calculate imbalance
         imbalance = abs(male_count - female_count) / total_gendered
 
-        # Check for stereotypical language
-        stereotype_score = 0
-        for term in gendered_terms["stereotypical_male"] + gendered_terms["stereotypical_female"]:
-            if term in text_lower:
-                stereotype_score += 0.1
-
+        stereotype_score = sum(
+            0.1
+            for term in gendered_terms["stereotypical_male"]
+            + gendered_terms["stereotypical_female"]
+            if term in text_lower
+        )
         return min(imbalance + stereotype_score, 1.0)
 
     def _detect_racial_bias(self, doc) -> float:
@@ -431,18 +431,17 @@ class BiasDetectionService:
         text_lower = doc.text.lower()
 
         for bias_type, terms in biased_terms_db.items():
-            for term in terms:
-                if term in text_lower:
-                    detected_terms.append(
-                        {
-                            "term": term,
-                            "bias_type": bias_type,
-                            "severity": "medium",  # Could be enhanced with ML scoring
-                            "context": self._extract_context(doc, term),
-                            "suggested_alternative": self._suggest_alternative(term),
-                        }
-                    )
-
+            detected_terms.extend(
+                {
+                    "term": term,
+                    "bias_type": bias_type,
+                    "severity": "medium",  # Could be enhanced with ML scoring
+                    "context": self._extract_context(doc, term),
+                    "suggested_alternative": self._suggest_alternative(term),
+                }
+                for term in terms
+                if term in text_lower
+            )
         return detected_terms
 
     def _extract_context(self, doc, term: str, window: int = 10) -> str:
@@ -728,13 +727,12 @@ class BiasDetectionService:
 
         # AI responses
         for response in session_data.ai_responses:
-            text_parts.append(response.get("content", ""))
-            text_parts.append(response.get("reasoning", ""))
-
+            text_parts.extend((response.get("content", ""), response.get("reasoning", "")))
         # Transcripts
-        for transcript in session_data.transcripts:
-            text_parts.append(transcript.get("content", ""))
-
+        text_parts.extend(
+            transcript.get("content", "")
+            for transcript in session_data.transcripts
+        )
         return " ".join(filter(None, text_parts))
 
     def _calculate_overall_bias_score(self, layer_results: List[Dict[str, Any]]) -> float:

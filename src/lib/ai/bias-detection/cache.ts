@@ -539,7 +539,9 @@ export class BiasDetectionCache {
           const cached = this.cacheService
             ? await this.cacheService.get(redisKey)
             : null
-          if (!cached) continue
+          if (!cached) {
+            continue
+          }
           let cacheData
           try {
             cacheData = JSON.parse(cached)
@@ -893,7 +895,9 @@ export class BiasAnalysisCache {
         const keys = await this.cache.getRedisKeys()
         for (const redisKey of keys) {
           const cached = await this.cache.getFromRedisCache(redisKey)
-          if (!cached) continue
+          if (!cached) {
+            continue
+          }
           let cacheData
           try {
             cacheData = JSON.parse(cached)

@@ -13,12 +13,8 @@ if (SENTRY_DSN && window.Sentry) {
   } catch (err) {
     console.warn('Failed to initialize Sentry:', err)
   }
-} else {
-  // Don't show warning in production to avoid console noise
-  if (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1'
-  ) {
+}
+else if (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1') {
     console.warn('Sentry not initialized: missing DSN or Sentry library')
   }
-}

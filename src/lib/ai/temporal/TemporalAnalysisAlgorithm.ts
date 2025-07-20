@@ -72,7 +72,9 @@ export class TemporalAnalysisAlgorithm {
     const trends: MultidimensionalPattern[] = []
     const windowSize = Math.min(10, Math.floor(maps.length / 3))
 
-    if (windowSize < 3) return trends
+    if (windowSize < 3) {
+      return trends
+    }
 
     for (let i = 0; i <= maps.length - windowSize; i++) {
       const window = maps.slice(i, i + windowSize)
@@ -250,7 +252,9 @@ export class TemporalAnalysisAlgorithm {
     window: DimensionalMap[],
     dimension: keyof EmotionDimensions,
   ): number {
-    if (window.length < 2) return 0
+    if (window.length < 2) {
+      return 0
+    }
 
     const values = window.map((w) => w.dimensions[dimension])
     const n = values.length
@@ -271,7 +275,9 @@ export class TemporalAnalysisAlgorithm {
     maps: DimensionalMap[],
     lag: number,
   ): number {
-    if (maps.length <= lag) return 0
+    if (maps.length <= lag) {
+      return 0
+    }
 
     const values = maps.map(
       (m) =>
@@ -320,7 +326,9 @@ export class TemporalAnalysisAlgorithm {
       0,
     )
 
-    if (totalVariance === 0) return 0
+    if (totalVariance === 0) {
+      return 0
+    }
 
     // Simple linear regression
     const n = values.length
@@ -346,7 +354,9 @@ export class TemporalAnalysisAlgorithm {
   private static calculateStabilityConfidence(
     window: DimensionalMap[],
   ): number {
-    if (window.length < 2) return 0
+    if (window.length < 2) {
+      return 0
+    }
 
     const changes = []
     for (let i = 1; i < window.length; i++) {

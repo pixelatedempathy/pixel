@@ -192,7 +192,9 @@ export const BiasDetectionDemo: React.FC<BiasDetectionDemoProps> = ({
 
   // Handle export
   const handleExport = useCallback(() => {
-    if (!analysisResults || !counterfactualScenarios) return
+    if (!analysisResults || !counterfactualScenarios) {
+      return
+    }
 
     const exportData = createExportData(
       analysisResults,

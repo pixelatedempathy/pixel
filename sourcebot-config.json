@@ -1,17 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/sourcebot-dev/sourcebot/main/schemas/v3/index.json",
   "connections": {
-    "pixel-azure": {
-      "type": "git",
-      "url": "file:///root/pixel"
-    },
-    "pixel-github": {
-      "type": "git",
-      "url": "file:///root/hub"
-    },
     "pixel-gitlab": {
       "type": "git",
-      "url": "file:///root/lab"
+      "url": "file:///root/pixel"
     }
   }
 }

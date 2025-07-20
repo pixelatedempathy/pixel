@@ -390,7 +390,9 @@ describe('API Service Integration Tests', () => {
           try {
             return await fetch(url, options)
           } catch (error) {
-            if (i === maxRetries - 1) throw error
+            if (i === maxRetries - 1) {
+              throw error
+            }
             await new Promise((resolve) =>
               setTimeout(resolve, Math.pow(2, i) * 1000),
             )

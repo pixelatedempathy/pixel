@@ -307,20 +307,19 @@ browsers.forEach((browserName) => {
       await test.step('Modern JavaScript features', async () => {
         // Test modern JS features support
         const jsFeatures = await page.evaluate(() => {
-          const features = {
-            arrow_functions: (() => true)(),
-            async_await: typeof (async () => {})().then === 'function',
-            promises: typeof Promise !== 'undefined',
-            fetch: typeof fetch !== 'undefined',
-            const_let: (() => {
-              try {
-                return true
-              } catch (e) {
-                return false
-              }
-            })(),
-          }
-          return features
+          return {
+                      arrow_functions: (() => true)(),
+                      async_await: typeof (async () => {})().then === 'function',
+                      promises: typeof Promise !== 'undefined',
+                      fetch: typeof fetch !== 'undefined',
+                      const_let: (() => {
+                        try {
+                          return true
+                        } catch (e) {
+                          return false
+                        }
+                      })(),
+                    };
         })
 
         // Modern browsers should support these features

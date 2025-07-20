@@ -14,8 +14,12 @@ export const PercentileBar: React.FC<PercentileBarProps> = ({
 
   // Determine color based on percentile (better contrast)
   const getBarColor = (value: number): string => {
-    if (value < 30) return '#d9534f' // red (danger) for low values
-    if (value < 70) return '#f0ad4e' // yellow (warning) for medium values
+    if (value < 30) {
+      return '#d9534f' // red (danger) for low values
+    }
+    if (value < 70) {
+      return '#f0ad4e' // yellow (warning) for medium values
+    }
     return '#5cb85c' // green (success) for high values
   }
 

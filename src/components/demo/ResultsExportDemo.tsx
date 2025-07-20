@@ -364,7 +364,9 @@ const ResultsExportDemo: React.FC<ResultsExportDemoProps> = ({
 
     for (const formatId of formatIds) {
       const format = exportFormats.find((f) => f.id === formatId)
-      if (!format) continue
+      if (!format) {
+        continue
+      }
 
       const job: ExportJob = {
         id: `export-${Date.now()}-${formatId}`,
@@ -1056,7 +1058,9 @@ startxref
   }
 
   const downloadBalanceReport = () => {
-    if (!balanceReport) return
+    if (!balanceReport) {
+      return
+    }
 
     const reportData = {
       ...balanceReport,
@@ -1141,7 +1145,9 @@ startxref
     format: string,
   ) => {
     const integration = apiIntegrations.find((i) => i.id === integrationId)
-    if (!integration) return
+    if (!integration) {
+      return
+    }
 
     // Simulate sending data to training pipeline
     const exportJob: ExportJob = {

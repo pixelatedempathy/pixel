@@ -434,7 +434,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
   }, [selectedFormat, conversation, therapeuticApproach, qualityScore])
 
   const downloadData = (format: string) => {
-    if (!standardizedData) return
+    if (!standardizedData) {
+      return
+    }
 
     const filename = `training_data_${format}_${Date.now()}`
     let content: string

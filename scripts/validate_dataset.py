@@ -30,8 +30,7 @@ def load_conversations(path: Path) -> list[Conversation]:
     elif path.suffix == ".json":
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-            for item in data:
-                conversations.append(Conversation(**item))
+            conversations.extend(Conversation(**item) for item in data)
     else:
         raise ValueError("Input file must be .jsonl or .json")
     return conversations

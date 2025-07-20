@@ -170,7 +170,9 @@ export class EdgeComputing {
   }
 
   private async processQueue(): Promise<void> {
-    if (this.isProcessing || this.taskQueue.length === 0) return
+    if (this.isProcessing || this.taskQueue.length === 0) {
+      return
+    }
 
     this.isProcessing = true
     logger.debug('Starting queue processing')

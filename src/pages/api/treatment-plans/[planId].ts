@@ -48,27 +48,30 @@ const updateTreatmentPlanClientSchema = z.object({
 })
 
 export const GET: APIRoute = async ({ params, locals }) => {
-  const supabase = locals.supabase
-  if (!supabase)
+  const {supabase} = locals
+  if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not found' }),
       { status: 500 },
     )
+  }
 
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser()
-  if (authError || !user)
+  if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Not authenticated' }), {
       status: 401,
     })
+  }
 
-  const planId = params.planId
-  if (!planId)
+  const {planId} = params
+  if (!planId) {
     return new Response(JSON.stringify({ error: 'Plan ID is required' }), {
       status: 400,
     })
+  }
 
   try {
     const { data: plan, error } = await supabase
@@ -112,27 +115,30 @@ export const GET: APIRoute = async ({ params, locals }) => {
 }
 
 export const PUT: APIRoute = async ({ params, request, locals }) => {
-  const supabase = locals.supabase
-  if (!supabase)
+  const {supabase} = locals
+  if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not found' }),
       { status: 500 },
     )
+  }
 
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser()
-  if (authError || !user)
+  if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Not authenticated' }), {
       status: 401,
     })
+  }
 
-  const planId = params.planId
-  if (!planId)
+  const {planId} = params
+  if (!planId) {
     return new Response(JSON.stringify({ error: 'Plan ID is required' }), {
       status: 400,
     })
+  }
 
   try {
     const body = await request.json()
@@ -161,12 +167,15 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       .select_one('id') // Check if update was successful and against a valid row
       .single()
 
-    if (planUpdateError) throw planUpdateError
-    if (!updatedPlanData)
+    if (planUpdateError) {
+      throw planUpdateError
+    }
+    if (!updatedPlanData) {
       return new Response(
         JSON.stringify({ error: 'Plan not found or update failed.' }),
         { status: 404 },
       )
+    }
 
     // 2. Handle goals and objectives (simplified: upsert based on ID)
     if (clientGoals) {
@@ -179,18 +188,20 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
             .update(goalData)
             .eq('id', clientGoal.id)
             .eq('plan_id', planId)
-          if (goalUpdateError)
+          if (goalUpdateError) {
             console.warn(
               `Error updating goal ${clientGoal.id}:`,
               goalUpdateError,
             )
+          }
         } else {
           // New goal
           const { error: goalInsertError } = await supabase
             .from('treatment_goals')
             .insert({ ...goalData, plan_id: planId, user_id: user.id })
-          if (goalInsertError)
+          if (goalInsertError) {
             console.warn(`Error inserting new goal:`, goalInsertError)
+          }
           // For simplicity, we are not getting the new goal ID back here to add objectives in the same pass.
           // A DB function would handle this more gracefully.
         }
@@ -206,11 +217,12 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
                 .update(objectiveData)
                 .eq('id', clientObjective.id)
                 .eq('goal_id', clientGoal.id)
-              if (objUpdateError)
+              if (objUpdateError) {
                 console.warn(
                   `Error updating objective ${clientObjective.id}:`,
                   objUpdateError,
                 )
+              }
             } else {
               // New objective
               const { error: objInsertError } = await supabase
@@ -220,11 +232,12 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
                   goal_id: clientGoal.id,
                   user_id: user.id,
                 })
-              if (objInsertError)
+              if (objInsertError) {
                 console.warn(
                   `Error inserting new objective for goal ${clientGoal.id}:`,
                   objInsertError,
                 )
+              }
             }
           }
         }
@@ -242,7 +255,9 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       .eq('user_id', user.id)
       .single()
 
-    if (fetchError) throw fetchError
+    if (fetchError) {
+      throw fetchError
+    }
 
     return new Response(JSON.stringify(finalUpdatedPlan as TreatmentPlan), {
       status: 200,
@@ -260,27 +275,30 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 }
 
 export const DELETE: APIRoute = async ({ params, locals }) => {
-  const supabase = locals.supabase
-  if (!supabase)
+  const {supabase} = locals
+  if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not found' }),
       { status: 500 },
     )
+  }
 
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser()
-  if (authError || !user)
+  if (authError || !user) {
     return new Response(JSON.stringify({ error: 'Not authenticated' }), {
       status: 401,
     })
+  }
 
-  const planId = params.planId
-  if (!planId)
+  const {planId} = params
+  if (!planId) {
     return new Response(JSON.stringify({ error: 'Plan ID is required' }), {
       status: 400,
     })
+  }
 
   try {
     const { error } = await supabase
@@ -289,7 +307,9 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       .eq('id', planId)
       .eq('user_id', user.id) // Ensure user owns the plan
 
-    if (error) throw error
+    if (error) {
+      throw error
+    }
     // Check if any row was actually deleted if needed, e.g. by checking result.count if API provides it.
     // Here, we assume if no error, it worked or the row didn't exist for this user.
 

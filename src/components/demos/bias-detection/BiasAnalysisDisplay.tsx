@@ -36,9 +36,15 @@ export const BiasAnalysisDisplay: React.FC<BiasAnalysisDisplayProps> = ({
 
   // Helper function to get score color
   const getScoreColor = (score: number) => {
-    if (score >= 0.8) return 'text-red-600'
-    if (score >= 0.6) return 'text-orange-600'
-    if (score >= 0.4) return 'text-yellow-600'
+    if (score >= 0.8) {
+      return 'text-red-600'
+    }
+    if (score >= 0.6) {
+      return 'text-orange-600'
+    }
+    if (score >= 0.4) {
+      return 'text-yellow-600'
+    }
     return 'text-green-600'
   }
 

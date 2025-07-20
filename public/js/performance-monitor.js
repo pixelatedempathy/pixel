@@ -20,7 +20,7 @@
       return
     }
 
-    const timing = window.performance.timing
+    const {timing} = window.performance
     metrics.navigationStart = timing.navigationStart
     metrics.domContentLoaded =
       timing.domContentLoadedEventEnd - timing.navigationStart
@@ -62,7 +62,7 @@
     }
 
     // Simple TTI approximation: when main thread is quiet for 5 seconds
-    const timing = window.performance.timing
+    const {timing} = window.performance
     const domInteractive = timing.domInteractive - timing.navigationStart
     metrics.timeToInteractive = domInteractive
   }
@@ -131,11 +131,21 @@
   // Helper functions
   function getPageType() {
     const path = window.location.pathname
-    if (path === '/') return 'home'
-    if (path.startsWith('/blog')) return 'blog'
-    if (path.startsWith('/features')) return 'features'
-    if (path.startsWith('/dashboard')) return 'dashboard'
-    if (path.startsWith('/login')) return 'login'
+    if (path === '/') {
+      return 'home'
+    }
+    if (path.startsWith('/blog')) {
+      return 'blog'
+    }
+    if (path.startsWith('/features')) {
+      return 'features'
+    }
+    if (path.startsWith('/dashboard')) {
+      return 'dashboard'
+    }
+    if (path.startsWith('/login')) {
+      return 'login'
+    }
     return 'other'
   }
 

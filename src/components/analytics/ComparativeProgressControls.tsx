@@ -26,7 +26,9 @@ export function ComparativeProgressControls({
   const [dateError, setDateError] = useState<string | null>(null)
 
   const validateDateRange = (startDate: string, endDate: string): boolean => {
-    if (!startDate || !endDate) return true
+    if (!startDate || !endDate) {
+      return true
+    }
 
     const start = new Date(startDate)
     const end = new Date(endDate)

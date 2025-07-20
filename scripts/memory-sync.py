@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Optimized Memory Synchronization Tool for Mem0 and OpenMemory"""
 
+
 import asyncio
 import json
 import logging
@@ -27,8 +28,8 @@ try:
     parsed = urlparse(OPENMEMORY_BASE_URL)
     if parsed.scheme not in ["http", "https"]:
         raise ValueError("Invalid URL scheme")
-except Exception:
-    raise ValueError(f"Invalid OPENMEMORY_BASE_URL: {OPENMEMORY_BASE_URL}")
+except Exception as e:
+    raise ValueError(f"Invalid OPENMEMORY_BASE_URL: {OPENMEMORY_BASE_URL}") from e
 
 # Rate limiting
 RATE_LIMIT_BATCH_SIZE = 10

@@ -26,8 +26,12 @@ export interface BuildSafeLogger {
 function getLogLevel(): BuildSafeLogLevel {
   if (typeof process !== 'undefined' && process.env) {
     const envLevel = process.env.NODE_ENV
-    if (envLevel === 'production') return BuildSafeLogLevel.ERROR
-    if (envLevel === 'test') return BuildSafeLogLevel.WARN
+    if (envLevel === 'production') {
+      return BuildSafeLogLevel.ERROR
+    }
+    if (envLevel === 'test') {
+      return BuildSafeLogLevel.WARN
+    }
   }
   return BuildSafeLogLevel.INFO
 }
@@ -39,7 +43,9 @@ export function createBuildSafeLogger(prefix = 'app'): BuildSafeLogger {
 
   return {
     debug(message: string, data?: unknown): void {
-      if (BuildSafeLogLevel.DEBUG < level) return
+      if (BuildSafeLogLevel.DEBUG < level) {
+        return
+      }
       const timestamp = new Date().toISOString()
       const formatted = `[${timestamp}] [DEBUG] [${prefix}] ${message}`
       if (data !== undefined) {
@@ -50,7 +56,9 @@ export function createBuildSafeLogger(prefix = 'app'): BuildSafeLogger {
     },
 
     info(message: string, data?: unknown): void {
-      if (BuildSafeLogLevel.INFO < level) return
+      if (BuildSafeLogLevel.INFO < level) {
+        return
+      }
       const timestamp = new Date().toISOString()
       const formatted = `[${timestamp}] [INFO] [${prefix}] ${message}`
       if (data !== undefined) {
@@ -61,7 +69,9 @@ export function createBuildSafeLogger(prefix = 'app'): BuildSafeLogger {
     },
 
     warn(message: string, data?: unknown): void {
-      if (BuildSafeLogLevel.WARN < level) return
+      if (BuildSafeLogLevel.WARN < level) {
+        return
+      }
       const timestamp = new Date().toISOString()
       const formatted = `[${timestamp}] [WARN] [${prefix}] ${message}`
       if (data !== undefined) {
@@ -72,7 +82,9 @@ export function createBuildSafeLogger(prefix = 'app'): BuildSafeLogger {
     },
 
     error(message: string, data?: unknown): void {
-      if (BuildSafeLogLevel.ERROR < level) return
+      if (BuildSafeLogLevel.ERROR < level) {
+        return
+      }
       const timestamp = new Date().toISOString()
       const formatted = `[${timestamp}] [ERROR] [${prefix}] ${message}`
       if (data !== undefined) {

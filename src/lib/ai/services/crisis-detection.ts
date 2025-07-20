@@ -133,10 +133,9 @@ export class CrisisDetectionService {
     options: CrisisDetectionOptions,
   ): Promise<CrisisDetectionResult[]> {
     try {
-      const results = await Promise.all(
-        texts.map((text) => this.detectCrisis(text, options)),
-      )
-      return results
+      return await Promise.all(
+              texts.map((text) => this.detectCrisis(text, options)),
+            );
     } catch (error) {
       appLogger.error('Error in batch crisis detection:', {
         message: error instanceof Error ? error.message : String(error),
@@ -219,7 +218,7 @@ export class CrisisDetectionService {
       )
 
       // Parse AI response
-      const content = response.content
+      const {content} = response
       try {
         const parsed = JSON.parse(content)
 
@@ -263,7 +262,9 @@ export class CrisisDetectionService {
     keywords: string[],
     aiCategory?: string,
   ): string {
-    if (aiCategory && aiCategory !== 'analysis_error') return aiCategory
+    if (aiCategory && aiCategory !== 'analysis_error') {
+      return aiCategory
+    }
 
     // Determine category based on keywords
     if (
@@ -300,9 +301,15 @@ export class CrisisDetectionService {
   private determineRiskLevel(
     score: number,
   ): 'low' | 'medium' | 'high' | 'critical' {
-    if (score >= 0.8) return 'critical'
-    if (score >= 0.6) return 'high'
-    if (score >= 0.4) return 'medium'
+    if (score >= 0.8) {
+      return 'critical'
+    }
+    if (score >= 0.6) {
+      return 'high'
+    }
+    if (score >= 0.4) {
+      return 'medium'
+    }
     return 'low'
   }
 
@@ -314,9 +321,15 @@ export class CrisisDetectionService {
       CrisisDetectionService.CRISIS_KEYWORDS.emergency.includes(ind),
     )
 
-    if (hasEmergencyKeywords || score >= 0.9) return 'immediate'
-    if (score >= 0.7) return 'high'
-    if (score >= 0.5) return 'medium'
+    if (hasEmergencyKeywords || score >= 0.9) {
+      return 'immediate'
+    }
+    if (score >= 0.7) {
+      return 'high'
+    }
+    if (score >= 0.5) {
+      return 'medium'
+    }
     return 'low'
   }
 

@@ -206,41 +206,40 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
   // Real-time balancing effect
   useEffect(() => {
     if (isRealTimeMode) {
-      const interval = setInterval(() => {
-        setCategories((prevCategories) => {
-          const updatedCategories = prevCategories.map((cat) => {
-            const deviation = cat.currentRatio - cat.targetRatio
-            if (Math.abs(deviation) > 0.1) {
-              // Gradually adjust current ratio towards target
-              const adjustment = deviation * 0.1 * balancingSpeed
-              const newCurrentRatio = cat.currentRatio - adjustment
-              const newCurrentCount = Math.round(
-                (newCurrentRatio / 100) * targetTotal,
-              )
-
-              return {
-                ...cat,
-                currentRatio: newCurrentRatio,
-                currentCount: newCurrentCount,
-              }
-            }
-            return cat
-          })
-
-          calculateMetrics(updatedCategories)
-          return updatedCategories
-        })
-      }, 500) // Update every 500ms
-
-      setRealTimeInterval(interval)
-
-      return () => clearInterval(interval)
-    } else {
-      if (realTimeInterval) {
-        clearInterval(realTimeInterval)
-        setRealTimeInterval(null)
-      }
-    }
+          const interval = setInterval(() => {
+            setCategories((prevCategories) => {
+              const updatedCategories = prevCategories.map((cat) => {
+                const deviation = cat.currentRatio - cat.targetRatio
+                if (Math.abs(deviation) > 0.1) {
+                  // Gradually adjust current ratio towards target
+                  const adjustment = deviation * 0.1 * balancingSpeed
+                  const newCurrentRatio = cat.currentRatio - adjustment
+                  const newCurrentCount = Math.round(
+                    (newCurrentRatio / 100) * targetTotal,
+                  )
+    
+                  return {
+                    ...cat,
+                    currentRatio: newCurrentRatio,
+                    currentCount: newCurrentCount,
+                  }
+                }
+                return cat
+              })
+    
+              calculateMetrics(updatedCategories)
+              return updatedCategories
+            })
+          }, 500) // Update every 500ms
+    
+          setRealTimeInterval(interval)
+    
+          return () => clearInterval(interval)
+        }
+    else if (realTimeInterval) {
+            clearInterval(realTimeInterval)
+            setRealTimeInterval(null)
+          }
   }, [isRealTimeMode, balancingSpeed, targetTotal])
 
   // Auto-balance when threshold is exceeded
@@ -544,7 +543,9 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
   }
 
   const pushBalanceUpdate = async (updatedCategories: CategoryData[]) => {
-    if (!enableLiveIntegration) return
+    if (!enableLiveIntegration) {
+      return
+    }
 
     try {
       await fetch(`${knowledgeBalancerEndpoint}/update`, {
@@ -569,7 +570,9 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
   }
 
   const fetchLiveData = async () => {
-    if (!enableLiveIntegration) return
+    if (!enableLiveIntegration) {
+      return
+    }
 
     try {
       const response = await fetch(`${knowledgeBalancerEndpoint}/status`)
@@ -612,8 +615,12 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
 
   const getDeviationColor = (deviation: number) => {
     const absDeviation = Math.abs(deviation)
-    if (absDeviation <= 1) return 'text-green-600'
-    if (absDeviation <= 3) return 'text-yellow-600'
+    if (absDeviation <= 1) {
+      return 'text-green-600'
+    }
+    if (absDeviation <= 3) {
+      return 'text-yellow-600'
+    }
     return 'text-red-600'
   }
 

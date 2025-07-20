@@ -109,7 +109,9 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
   }, [content])
 
   const validateContent = async () => {
-    if (!content.trim()) return
+    if (!content.trim()) {
+      return
+    }
 
     setIsValidating(true)
 
@@ -165,19 +167,27 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
     let score = 85
 
     // Check for common issues
-    if (text.length < 50) score -= 20
-    if (!/[.!?]$/.test(text.trim())) score -= 10
-    if ((text.match(/\b(very|really|quite|pretty)\b/gi) || []).length > 2)
+    if (text.length < 50) {
+      score -= 20
+    }
+    if (!/[.!?]$/.test(text.trim())) {
+      score -= 10
+    }
+    if ((text.match(/\b(very|really|quite|pretty)\b/gi) || []).length > 2) {
       score -= 5
-    if (text.includes('  ')) score -= 5 // Double spaces
+    }
+    if (text.includes('  ')) {
+      score -= 5 // Double spaces
+    }
 
     // Positive indicators
-    if (text.length > 100 && text.length < 500) score += 5
-    if (
-      (text.match(/\b(therapeutic|clinical|assessment|intervention)\b/gi) || [])
-        .length > 0
-    )
+    if (text.length > 100 && text.length < 500) {
       score += 5
+    }
+    if ((text.match(/\b(therapeutic|clinical|assessment|intervention)\b/gi) || [])
+            .length > 0) {
+      score += 5
+    }
 
     return Math.max(0, Math.min(100, score))
   }
@@ -217,9 +227,15 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
     let score = 90
 
     // Check for potential PII
-    if (/\b[A-Z][a-z]+ [A-Z][a-z]+\b/.test(text)) score -= 20 // Potential names
-    if (/\b\d{3}-\d{2}-\d{4}\b/.test(text)) score -= 30 // SSN pattern
-    if (/\b\d{3} [A-Za-z]+ (St|Ave|Rd|Dr)\b/.test(text)) score -= 25 // Address pattern
+    if (/\b[A-Z][a-z]+ [A-Z][a-z]+\b/.test(text)) {
+      score -= 20 // Potential names
+    }
+    if (/\b\d{3}-\d{2}-\d{4}\b/.test(text)) {
+      score -= 30 // SSN pattern
+    }
+    if (/\b\d{3} [A-Za-z]+ (St|Ave|Rd|Dr)\b/.test(text)) {
+      score -= 25 // Address pattern
+    }
 
     // Check for respectful language
     const respectfulIndicators = ['client', 'patient', 'individual', 'person']
@@ -227,7 +243,9 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
       text.toLowerCase().includes(term.toLowerCase()),
     ).length
 
-    if (foundRespectful > 0) score += 5
+    if (foundRespectful > 0) {
+      score += 5
+    }
 
     return Math.max(0, Math.min(100, score))
   }
@@ -236,9 +254,15 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
     let score = 75
 
     // Check structure
-    if (text.includes('\n')) score += 10 // Has paragraphs
-    if (text.match(/^\s*-|\*|\d+\./m)) score += 10 // Has lists
-    if (text.length > 200) score += 10 // Adequate length
+    if (text.includes('\n')) {
+      score += 10 // Has paragraphs
+    }
+    if (text.match(/^\s*-|\*|\d+\./m)) {
+      score += 10 // Has lists
+    }
+    if (text.length > 200) {
+      score += 10 // Adequate length
+    }
 
     return Math.max(0, Math.min(100, score))
   }
@@ -246,26 +270,37 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
   const getScoreStatus = (
     score: number,
   ): 'excellent' | 'good' | 'needs-improvement' | 'poor' => {
-    if (score >= 90) return 'excellent'
-    if (score >= 75) return 'good'
-    if (score >= 60) return 'needs-improvement'
+    if (score >= 90) {
+      return 'excellent'
+    }
+    if (score >= 75) {
+      return 'good'
+    }
+    if (score >= 60) {
+      return 'needs-improvement'
+    }
     return 'poor'
   }
 
   const getContentQualityIssues = (text: string): string[] => {
     const issues = []
-    if (text.length < 50)
+    if (text.length < 50) {
       issues.push('Content too short for meaningful analysis')
-    if (!/[.!?]$/.test(text.trim()))
+    }
+    if (!/[.!?]$/.test(text.trim())) {
       issues.push('Missing proper sentence ending')
-    if (text.includes('  ')) issues.push('Contains double spaces')
+    }
+    if (text.includes('  ')) {
+      issues.push('Contains double spaces')
+    }
     return issues
   }
 
   const getContentQualitySuggestions = (_text: string): string[] => {
     const suggestions = []
-    if (text.length < 100)
+    if (text.length < 100) {
       suggestions.push('Consider expanding content for better analysis')
+    }
     suggestions.push('Use professional terminology where appropriate')
     suggestions.push('Ensure proper grammar and punctuation')
     return suggestions
@@ -309,8 +344,9 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
 
   const getFormatValidationIssues = (text: string): string[] => {
     const issues = []
-    if (text.length < 100)
+    if (text.length < 100) {
       issues.push('Content may be too brief for training purposes')
+    }
     return issues
   }
 

@@ -176,7 +176,7 @@ Patient: You're making assumptions about my family structure and my life.`,
  */
 export function calculateBiasFactors(sessionData: SessionData): BiasFactors {
   const content = sessionData.content.toLowerCase()
-  const demographics = sessionData.demographics
+  const {demographics} = sessionData
 
   // Base bias scores
   let linguistic = 0.15 + Math.random() * 0.1
@@ -545,9 +545,15 @@ export function getPresetScenariosByRiskLevel(
 export function determineAlertLevel(
   biasScore: number,
 ): 'low' | 'medium' | 'high' | 'critical' {
-  if (biasScore >= 0.8) return 'critical'
-  if (biasScore >= 0.6) return 'high'
-  if (biasScore >= 0.4) return 'medium'
+  if (biasScore >= 0.8) {
+    return 'critical'
+  }
+  if (biasScore >= 0.6) {
+    return 'high'
+  }
+  if (biasScore >= 0.4) {
+    return 'medium'
+  }
   return 'low'
 }
 

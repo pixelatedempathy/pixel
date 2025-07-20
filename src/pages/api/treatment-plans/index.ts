@@ -53,7 +53,7 @@ const newTreatmentPlanClientSchema = z.object({
 })
 
 export const GET: APIRoute = async ({ locals }) => {
-  const supabase = locals.supabase // Assuming supabase client is on locals
+  const {supabase} = locals
   if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not available.' }),
@@ -101,7 +101,9 @@ export const GET: APIRoute = async ({ locals }) => {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
-    if (plansError) throw plansError
+    if (plansError) {
+      throw plansError
+    }
 
     return new Response(JSON.stringify(plans as TreatmentPlan[]), {
       status: 200,
@@ -120,21 +122,23 @@ export const GET: APIRoute = async ({ locals }) => {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const supabase = locals.supabase
-  if (!supabase)
+  const {supabase} = locals
+  if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not available.' }),
       { status: 500 },
     )
+  }
 
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser()
-  if (authError || !user)
+  if (authError || !user) {
     return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
       status: 401,
     })
+  }
 
   try {
     const body = await request.json()

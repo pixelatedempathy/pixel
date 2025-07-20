@@ -62,7 +62,9 @@ class MemoryStorageProvider implements StorageProvider {
 
   async get(key: string): Promise<string | null> {
     const entry = this.storage.get(key)
-    if (!entry) return null
+    if (!entry) {
+      return null
+    }
 
     if (entry.expires && Date.now() > entry.expires) {
       this.storage.delete(key)
@@ -183,7 +185,9 @@ class SecureStorageProvider implements StorageProvider {
   async get(key: string): Promise<string | null> {
     try {
       const encryptedValue = await this.fallbackProvider.get(key)
-      if (!encryptedValue) return null
+      if (!encryptedValue) {
+        return null
+      }
 
       const encryptedBlob = Buffer.from(encryptedValue, 'base64')
       const decryptCommand = new DecryptCommand({
@@ -340,7 +344,9 @@ export function generateSecureKey(): string {
  * Creates a secure hash using SHA-256
  */
 export function createHash(data: string): string {
-  if (!data) return ''
+  if (!data) {
+    return ''
+  }
   return CryptoJS.SHA256(data).toString()
 }
 
@@ -450,7 +456,9 @@ export class KeyStorage {
     keyId: string,
   ): Promise<{ keyId: string; keyData: KeyData } | null> {
     const existingKey = await this.getKey(keyId)
-    if (!existingKey) return null
+    if (!existingKey) {
+      return null
+    }
 
     const timestamp = Date.now()
     const newKeyId = `${existingKey.purpose || 'key'}-${timestamp}`
@@ -479,7 +487,9 @@ export class KeyStorage {
 
   async deleteKey(keyId: string): Promise<boolean> {
     const keyData = await this.getKey(keyId)
-    if (!keyData) return false
+    if (!keyData) {
+      return false
+    }
 
     const storageKey = `${this.keyPrefix}${keyData.purpose ? `${keyData.purpose}:` : ''}${keyId}`
     await this.storageProvider.delete(storageKey)
@@ -566,7 +576,9 @@ export function createCryptoSystem(options: CryptoSystemOptions = {}) {
       data: string,
       purpose = 'default',
     ): Promise<string> {
-      if (!data) throw new Error('Cannot encrypt empty data')
+      if (!data) {
+        throw new Error('Cannot encrypt empty data')
+      }
 
       // Get or create key
       const keys = await keyStorage.listKeys(purpose)
@@ -592,7 +604,9 @@ export function createCryptoSystem(options: CryptoSystemOptions = {}) {
      * High-level decrypt with automatic key lookup
      */
     async decryptWithKeyManagement(encryptedData: string): Promise<string> {
-      if (!encryptedData) throw new Error('Cannot decrypt empty data')
+      if (!encryptedData) {
+        throw new Error('Cannot decrypt empty data')
+      }
 
       const [purpose, ...encryptedParts] = encryptedData.split(':')
       const encrypted = encryptedParts.join(':')
@@ -627,7 +641,9 @@ export function createCryptoSystem(options: CryptoSystemOptions = {}) {
 
       for (const keyId of allKeys) {
         const keyData = await keyStorage.getKey(keyId)
-        if (!keyData) continue
+        if (!keyData) {
+          continue
+        }
 
         if (keyRotationManager.needsRotation(keyData.createdAt)) {
           const rotated = await keyStorage.rotateKey(keyId)

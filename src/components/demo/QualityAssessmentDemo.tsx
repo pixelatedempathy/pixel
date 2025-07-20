@@ -113,7 +113,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
     therapistTurns: ConversationTurn[],
     approach: string,
   ): number => {
-    if (therapistTurns.length === 0) return 0
+    if (therapistTurns.length === 0) {
+      return 0
+    }
 
     let score = 85 // Base score
 
@@ -175,7 +177,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
     therapistTurns: ConversationTurn[],
     approach: string,
   ): number => {
-    if (therapistTurns.length === 0) return 0
+    if (therapistTurns.length === 0) {
+      return 0
+    }
 
     let score = 80 // Base score
 
@@ -227,7 +231,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
   }
 
   const calculateConversationFlow = (conv: ConversationTurn[]): number => {
-    if (conv.length < 2) return 50
+    if (conv.length < 2) {
+      return 50
+    }
 
     let score = 85 // Base score
 
@@ -260,7 +266,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
     therapistTurns: ConversationTurn[],
     approach: string,
   ): number => {
-    if (therapistTurns.length === 0) return 0
+    if (therapistTurns.length === 0) {
+      return 0
+    }
 
     const expectedTechniques = {
       CBT: [
@@ -440,14 +448,22 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
   }
 
   const getScoreColor = (score: number): string => {
-    if (score >= 85) return 'text-green-600 bg-green-50'
-    if (score >= 70) return 'text-yellow-600 bg-yellow-50'
+    if (score >= 85) {
+      return 'text-green-600 bg-green-50'
+    }
+    if (score >= 70) {
+      return 'text-yellow-600 bg-yellow-50'
+    }
     return 'text-red-600 bg-red-50'
   }
 
   const getScoreIcon = (score: number): string => {
-    if (score >= 85) return '✓'
-    if (score >= 70) return '⚠'
+    if (score >= 85) {
+      return '✓'
+    }
+    if (score >= 70) {
+      return '⚠'
+    }
     return '✗'
   }
 

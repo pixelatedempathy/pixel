@@ -87,7 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
 }
 
 export const GET: APIRoute = async ({ url }) => {
-  const searchParams = new URL(url).searchParams
+  const {searchParams} = new URL(url)
   const sessionId = searchParams.get('session_id')
   const abVariant = searchParams.get('ab_variant')
   const event = searchParams.get('event')
@@ -126,7 +126,7 @@ export const GET: APIRoute = async ({ url }) => {
 async function sendToGoogleAnalytics(event: DemoAnalyticsEvent) {
   // Google Analytics 4 Measurement Protocol
   const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID
-  const GA_API_SECRET = import.meta.env.GA_API_SECRET
+  const {GA_API_SECRET} = import.meta.env
 
   if (!GA_MEASUREMENT_ID || !GA_API_SECRET) {
     console.warn('Google Analytics credentials not configured')
@@ -180,7 +180,7 @@ async function sendToGoogleAnalytics(event: DemoAnalyticsEvent) {
 }
 
 async function sendToMixpanel(event: DemoAnalyticsEvent) {
-  const MIXPANEL_TOKEN = import.meta.env.MIXPANEL_TOKEN
+  const {MIXPANEL_TOKEN} = import.meta.env
 
   if (!MIXPANEL_TOKEN) {
     console.warn('Mixpanel token not configured')
@@ -214,7 +214,7 @@ async function sendToMixpanel(event: DemoAnalyticsEvent) {
 
 async function sendToCustomAnalytics(event: DemoAnalyticsEvent) {
   // Send to your custom analytics service
-  const CUSTOM_ANALYTICS_ENDPOINT = import.meta.env.CUSTOM_ANALYTICS_ENDPOINT
+  const {CUSTOM_ANALYTICS_ENDPOINT} = import.meta.env
 
   if (!CUSTOM_ANALYTICS_ENDPOINT) {
     return

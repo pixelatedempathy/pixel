@@ -14,7 +14,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 function formatBytes(bytes) {
-  if (bytes === 0) return '0 B'
+  if (bytes === 0) {
+    return '0 B'
+  }
   const k = 1024
   const sizes = ['B', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
@@ -27,8 +29,7 @@ function getDirectorySize(dirPath) {
       `du -sb "${dirPath}" 2>/dev/null || echo "0\t${dirPath}"`,
       { encoding: 'utf8' },
     )
-    const sizeBytes = parseInt(result.split('\t')[0])
-    return sizeBytes
+    return parseInt(result.split('\t')[0]);
   } catch (error) {
     return 0
   }

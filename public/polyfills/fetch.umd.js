@@ -171,7 +171,9 @@
   }
 
   function consumed(body) {
-    if (body._noBody) return
+    if (body._noBody) {
+      return
+    }
     if (body.bodyUsed) {
       return Promise.reject(new TypeError('Already read'))
     }
@@ -217,7 +219,7 @@
 
   function bufferClone(buf) {
     if (buf.slice) {
-      return buf.slice(0)
+      return buf.slice()
     } else {
       var view = new Uint8Array(buf.byteLength);
       view.set(new Uint8Array(buf));
@@ -240,7 +242,7 @@
         _initBody is called.
       */
       // eslint-disable-next-line no-self-assign
-      this.bodyUsed = this.bodyUsed;
+      ;
       this._bodyInit = body;
       if (!body) {
         this._noBody = true;
@@ -400,19 +402,16 @@
     }
     this._initBody(body);
 
-    if (this.method === 'GET' || this.method === 'HEAD') {
-      if (options.cache === 'no-store' || options.cache === 'no-cache') {
-        // Search for a '_' parameter in the query string
-        var reParamSearch = /([?&])_=[^&]*/;
-        if (reParamSearch.test(this.url)) {
-          // If it already exists then set the value with the current time
-          this.url = this.url.replace(reParamSearch, '$1_=' + new Date().getTime());
-        } else {
-          // Otherwise add a new '_' parameter to the end with the current time
-          var reQueryString = /\?/;
-          this.url += (reQueryString.test(this.url) ? '&' : '?') + '_=' + new Date().getTime();
-        }
-      }
+    if ((this.method === 'GET' || this.method === 'HEAD') && (options.cache === 'no-store' || options.cache === 'no-cache')) {
+          var reParamSearch = /([?&])_=[^&]*/;
+          if (reParamSearch.test(this.url)) {
+            // If it already exists then set the value with the current time
+            this.url = this.url.replace(reParamSearch, '$1_=' + new Date().getTime());
+          } else {
+            // Otherwise add a new '_' parameter to the end with the current time
+            var reQueryString = /\?/;
+            this.url += (reQueryString.test(this.url) ? '&' : '?') + '_=' + new Date().getTime();
+          }
     }
   }
 

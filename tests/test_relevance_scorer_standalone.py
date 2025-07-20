@@ -113,7 +113,8 @@ def test_relevance_scorer_structure():
             tf = document.count(term) / len(document.split())
 
             # Document frequency
-            df = sum(1 for doc in corpus if term in doc)
+            df = sum(bool(term in doc)
+                 for doc in corpus)
 
             # Inverse document frequency
             idf = math.log(len(corpus) / max(1, df))
@@ -138,7 +139,8 @@ def test_relevance_scorer_structure():
             avg_doc_length = sum(len(doc.split()) for doc in corpus) / len(corpus)
 
             # Document frequency
-            df = sum(1 for doc in corpus if term in doc)
+            df = sum(bool(term in doc)
+                 for doc in corpus)
             idf = math.log(len(corpus) / max(1, df))
 
             # BM25 formula
@@ -322,7 +324,8 @@ def test_relevance_scorer_structure():
         ]
 
         diverse_ranked = diversity_aware_ranking(diverse_results, max_per_type=2)
-        dsm5_count = sum(1 for r in diverse_ranked if r.knowledge_type == "dsm5")
+        dsm5_count = sum(bool(r.knowledge_type == "dsm5")
+                     for r in diverse_ranked)
         assert dsm5_count <= 2  # Should limit DSM-5 results
         print("✓ Diversity-aware ranking verified")
 

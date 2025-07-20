@@ -128,8 +128,12 @@ describe('PatientProfileService', () => {
         'some_other_key',
       ])
       mockKvStoreInstance.get.mockImplementation(async (key: string) => {
-        if (key === 'profile_p1') return profile1
-        if (key === 'profile_p2') return profile2
+        if (key === 'profile_p1') {
+          return profile1
+        }
+        if (key === 'profile_p2') {
+          return profile2
+        }
         return null
       })
 

@@ -112,7 +112,9 @@ test.describe('Accessibility Audit and Compliance', () => {
           (el, other) => el === other,
           await nextElement.elementHandle(),
         )
-        if (isSameElement && i > 10) break
+        if (isSameElement && i > 10) {
+          break
+        }
 
         currentElement = nextElement
       }
@@ -340,7 +342,7 @@ test.describe('Accessibility Audit and Compliance', () => {
           // Basic contrast check (simplified)
           const hasGoodContrast = await element.evaluate((el) => {
             const computed = window.getComputedStyle(el)
-            const color = computed.color
+            const {color} = computed
             const bgColor = computed.backgroundColor
 
             // Simple check: ensure text is not the same color as background

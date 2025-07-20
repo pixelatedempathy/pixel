@@ -166,7 +166,9 @@ describe('AdaptiveSelector', () => {
     // We expect it to be the highest or significantly higher
     let highestWeight = 0
     result.selectedObjectives.forEach((so) => {
-      if (so.weight > highestWeight) highestWeight = so.weight
+      if (so.weight > highestWeight) {
+        highestWeight = so.weight
+      }
     })
     expect(safetyObjective!.weight).toBe(highestWeight)
     expect(safetyObjective!.weight).toBeGreaterThan(

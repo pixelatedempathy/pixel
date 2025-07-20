@@ -812,7 +812,9 @@ export class AIModelRegistry {
     }
 
     const config = getConfig()
-    if (!config) return false
+    if (!config) {
+      return false
+    }
 
     switch (provider) {
       case 'openai':
@@ -874,7 +876,9 @@ export class AIModelRegistry {
 
     if (requirements.maxCostPerToken && candidates.length > 0) {
       candidates = candidates.filter((model) => {
-        if (!model.pricing) return true
+        if (!model.pricing) {
+          return true
+        }
         const costPerToken = model.pricing.outputTokensPerMillion / 1000000
         return costPerToken <= requirements.maxCostPerToken!
       })
@@ -903,7 +907,9 @@ export class AIModelRegistry {
       }
     }
 
-    if (candidates.length === 0) return null
+    if (candidates.length === 0) {
+      return null
+    }
 
     // Score and rank candidates
     const scoredCandidates = candidates
