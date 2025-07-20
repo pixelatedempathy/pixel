@@ -34,6 +34,7 @@ Requires-Dist: psutil>=7.0.0
 Requires-Dist: chardet>=5.2.0
 Requires-Dist: pydub>=0.25.1
 Requires-Dist: hatch>=1.14.1
+Requires-Dist: sourcery>=1.37.0
 Provides-Extra: test
 Requires-Dist: pytest; extra == "test"
 Requires-Dist: pytest-cov; extra == "test"

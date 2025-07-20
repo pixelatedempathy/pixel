@@ -27,6 +27,7 @@ psutil>=7.0.0
 chardet>=5.2.0
 pydub>=0.25.1
 hatch>=1.14.1
+sourcery>=1.37.0
 
 [dev]
 black

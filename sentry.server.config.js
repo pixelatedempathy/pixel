@@ -36,7 +36,7 @@ Sentry.init({
   initialScope: {
     tags: {
       component: 'astro-server',
-      platform: 'azure',
+      platform: 'aws',
     },
     context: {
       app: {
