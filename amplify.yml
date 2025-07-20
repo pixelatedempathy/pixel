@@ -1,5 +1,7 @@
 version: 1
 frontend:
+  environment:
+    _CUSTOM_IMAGE: amplify:al2023
   phases:
     preBuild:
       commands:

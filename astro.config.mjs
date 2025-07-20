@@ -14,7 +14,7 @@ import awsAmplify from 'astro-aws-amplify';
 // https://astro.build/config
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://pixelatedempathy.com',
-  output: 'hybrid',
+  output: 'server',
   adapter: awsAmplify(),
   trailingSlash: 'ignore',
   build: {
