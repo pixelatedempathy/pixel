@@ -1,6 +1,5 @@
 import type { AIService, AICompletion, AIStreamChunk } from './models/ai-types'
 import { createTogetherAIService } from './services/together'
-import { createAzureOpenAIService } from './services/azure-openai'
 import { createBuildSafeLogger } from '../logging/build-safe-logger'
 
 const appLogger = createBuildSafeLogger('ai-providers')
@@ -149,8 +148,6 @@ export function getAIServiceByProvider(
         return createAnthropicServiceAdapter(config)
       case 'openai':
         return createOpenAIServiceAdapter(config)
-      case 'azure-openai':
-        return createAzureOpenAIServiceAdapter(config)
       case 'huggingface':
         return createHuggingFaceServiceAdapter(config)
       default:
@@ -265,46 +262,6 @@ function createOpenAIServiceAdapter(config: AIProviderConfig): AIService {
     }),
     dispose: () => {
       // Cleanup if needed
-    },
-  }
-}
-
-function createAzureOpenAIServiceAdapter(config: AIProviderConfig): AIService {
-  const azureService = createAzureOpenAIService()
-
-  return {
-    createChatCompletion: async (messages, options) => {
-      return await azureService.createChatCompletion(messages, options)
-    },
-    createStreamingChatCompletion: async (messages, options) => {
-      const stream = await azureService.streamCompletion(messages, options)
-
-      // Convert the stream to the expected format
-      const convertStream = async function* () {
-        for await (const chunk of stream) {
-          yield {
-            id: 'azure-stream',
-            model: config.defaultModel,
-            created: Date.now(),
-            content: chunk,
-            done: false,
-            finishReason: undefined,
-          } as AIStreamChunk
-        }
-      }
-
-      return convertStream()
-    },
-    getModelInfo: (model: string) => ({
-      id: model,
-      name: model,
-      provider: 'azure-openai',
-      capabilities: config.capabilities,
-      contextWindow: 128000, // Azure OpenAI GPT-4 context window
-      maxTokens: 4096,
-    }),
-    dispose: () => {
-      azureService.dispose()
     },
   }
 }

@@ -32,10 +32,15 @@ export default defineConfig({
       },
     },
     ssr: {
-      external: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node'],
+      external: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node', 'pdfkit'],
     },
     optimizeDeps: {
-      exclude: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node'],
+      exclude: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node', 'pdfkit'],
+    },
+    build: {
+      rollupOptions: {
+        external: ['pdfkit'],
+      },
     },
   },
   integrations: [

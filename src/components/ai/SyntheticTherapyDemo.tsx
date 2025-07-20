@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -92,7 +92,6 @@ export default function SyntheticTherapyDemo() {
                 'physical tension',
                 'avoidance of anxiety-provoking situations',
               ],
-
               cognitions: [
                 'catastrophizing',
                 'overestimation of threat',
@@ -115,11 +114,9 @@ export default function SyntheticTherapyDemo() {
                 'difficulty completing tasks',
                 'requiring more rest than usual',
               ],
-
               cognitions: ['feeling overwhelmed', 'diminished self-efficacy'],
             },
           ],
-
           decodedSymptoms: ['anxiety', 'insomnia', 'fatigue'],
           sessionSummary:
             "Session Summary:\n\nPatient presented with excessive worry, restlessness, fatigue.\nTherapist identified: anxiety, insomnia, fatigue.\n\nSymptom detection accuracy: 67%\n\nThe conversation covered the patient's experiences with excessive worry, fatigue.\nThe therapist may have missed: restlessness.\n\nThis simulated interaction demonstrates the importance of thorough assessment and active listening in the therapeutic relationship.",
@@ -180,7 +177,7 @@ export default function SyntheticTherapyDemo() {
                 max={5}
                 step={1}
                 value={[config.numSessions]}
-                onValueChange={(value) =>
+                onValueChange={(value: number[]) =>
                   setConfig({ ...config, numSessions: value[0] ?? 1 })
                 }
               />
@@ -198,7 +195,7 @@ export default function SyntheticTherapyDemo() {
                 max={10}
                 step={1}
                 value={[config.maxTurns]}
-                onValueChange={(value) =>
+                onValueChange={(value: number[]) =>
                   setConfig({ ...config, maxTurns: value[0] ?? 3 })
                 }
               />
@@ -235,9 +232,9 @@ export default function SyntheticTherapyDemo() {
               <div className="flex flex-wrap gap-2">
                 {(Object.values(DisorderCategory) as string[])
                   .slice(0, 5)
-                  .map((disorder) => (
+                  .map((disorder, index) => (
                     <Badge
-                      key={disorder}
+                      key={index}
                       variant={
                         config.disorders.includes(disorder as DisorderCategory)
                           ? 'default'
@@ -263,7 +260,7 @@ export default function SyntheticTherapyDemo() {
               <Switch
                 id="pythonBridge"
                 checked={config.usePythonBridge}
-                onCheckedChange={(checked) =>
+                onCheckedChange={(checked: boolean) =>
                   setConfig({ ...config, usePythonBridge: checked })
                 }
               />
@@ -387,10 +384,12 @@ export default function SyntheticTherapyDemo() {
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                   {symptom.manifestations.map(
-                                    (manifestation, idx) => (
-                                      <Badge key={idx} variant="secondary">
-                                        {manifestation}
-                                      </Badge>
+                                    (manifestation, mIndex) => (
+                                      <React.Fragment key={mIndex}>
+                                        <Badge variant="secondary">
+                                          {manifestation}
+                                        </Badge>
+                                      </React.Fragment>
                                     ),
                                   )}
                                 </div>
@@ -400,10 +399,12 @@ export default function SyntheticTherapyDemo() {
                                   Cognitions:
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                  {symptom.cognitions.map((cognition, idx) => (
-                                    <Badge key={idx} variant="outline">
-                                      {cognition}
-                                    </Badge>
+                                  {symptom.cognitions.map((cognition, cIndex) => (
+                                    <React.Fragment key={cIndex}>
+                                      <Badge variant="outline">
+                                        {cognition}
+                                      </Badge>
+                                    </React.Fragment>
                                   ))}
                                 </div>
                               </div>
@@ -417,43 +418,15 @@ export default function SyntheticTherapyDemo() {
                       <CardHeader>
                         <CardTitle>Decoded Symptoms (Therapist)</CardTitle>
                         <CardDescription>
-                          Symptoms identified by the therapist
+                          Symptoms identified by the therapist model
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="rounded-lg border p-4 space-y-2">
-                          <div className="flex justify-between items-center">
-                            <h3 className="font-medium">Identified Symptoms</h3>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Badge
-                                    variant={
-                                      selectedConversation.accuracyScore &&
-                                      selectedConversation.accuracyScore >= 0.7
-                                        ? 'default'
-                                        : 'destructive'
-                                    }
-                                  >
-                                    {(
-                                      (selectedConversation.accuracyScore ||
-                                        0) * 100
-                                    ).toFixed(0)}
-                                    % Accuracy
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>
-                                    Percentage of patient symptoms correctly
-                                    identified by the therapist
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
+                          <div className="font-medium">Identified Symptoms</div>
                           <div className="flex flex-wrap gap-2 mt-2">
                             {selectedConversation.decodedSymptoms.map(
-                              (symptom, idx) => {
+                              (symptom, index) => {
                                 const isCorrect =
                                   selectedConversation.encodedSymptoms.some(
                                     (s) =>
@@ -461,90 +434,81 @@ export default function SyntheticTherapyDemo() {
                                       symptom.includes(s.name),
                                   )
                                 return (
-                                  <Badge
-                                    key={idx}
-                                    variant={isCorrect ? 'default' : 'outline'}
-                                  >
-                                    {symptom}
-                                  </Badge>
+                                  <React.Fragment key={index}>
+                                    <Badge
+                                      variant={isCorrect ? 'default' : 'outline'}
+                                    >
+                                      {symptom}
+                                    </Badge>
+                                  </React.Fragment>
                                 )
                               },
                             )}
                           </div>
                         </div>
 
-                        <div className="rounded-lg border p-4">
-                          <h3 className="font-medium mb-2">
-                            Symptom Matching Analysis
-                          </h3>
-                          <div className="space-y-2">
-                            {/* Matched symptoms */}
-                            <div>
-                              <div className="text-sm font-medium text-green-600">
-                                Correctly Identified:
-                              </div>
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                {selectedConversation.encodedSymptoms
-                                  .filter((encoded) =>
-                                    selectedConversation.decodedSymptoms.some(
-                                      (decoded) =>
-                                        decoded.includes(encoded.name) ||
-                                        encoded.name.includes(decoded),
-                                    ),
-                                  )
-                                  .map((symptom, idx) => (
-                                    <Badge key={idx} variant="default">
-                                      {symptom.name}
-                                    </Badge>
-                                  ))}
-                              </div>
-                            </div>
+                        <div className="rounded-lg border p-4 space-y-2">
+                          <div className="font-medium">Correctly Identified</div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {selectedConversation.encodedSymptoms
+                              .filter((encoded) =>
+                                selectedConversation.decodedSymptoms.some(
+                                  (decoded) =>
+                                    decoded.includes(encoded.name) ||
+                                    encoded.name.includes(decoded),
+                                ),
+                              )
+                              .map((symptom, index) => (
+                                <React.Fragment key={index}>
+                                  <Badge variant="default">
+                                    {symptom.name}
+                                  </Badge>
+                                </React.Fragment>
+                              ))}
+                          </div>
+                        </div>
 
-                            {/* Missed symptoms */}
-                            <div>
-                              <div className="text-sm font-medium text-red-600">
-                                Missed:
-                              </div>
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                {selectedConversation.encodedSymptoms
-                                  .filter(
-                                    (encoded) =>
-                                      !selectedConversation.decodedSymptoms.some(
-                                        (decoded) =>
-                                          decoded.includes(encoded.name) ||
-                                          encoded.name.includes(decoded),
-                                      ),
-                                  )
-                                  .map((symptom, idx) => (
-                                    <Badge key={idx} variant="outline">
-                                      {symptom.name}
-                                    </Badge>
-                                  ))}
-                              </div>
-                            </div>
-
-                            {/* Incorrect symptoms */}
-                            <div>
-                              <div className="text-sm font-medium text-yellow-600">
-                                False Positives:
-                              </div>
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                {selectedConversation.decodedSymptoms
-                                  .filter(
+                        <div className="rounded-lg border p-4 space-y-2">
+                          <div className="font-medium">Missed by Therapist</div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {selectedConversation.encodedSymptoms
+                              .filter(
+                                (encoded) =>
+                                  !selectedConversation.decodedSymptoms.some(
                                     (decoded) =>
-                                      !selectedConversation.encodedSymptoms.some(
-                                        (encoded) =>
-                                          encoded.name.includes(decoded) ||
-                                          decoded.includes(encoded.name),
-                                      ),
-                                  )
-                                  .map((symptom, idx) => (
-                                    <Badge key={idx} variant="secondary">
-                                      {symptom}
-                                    </Badge>
-                                  ))}
-                              </div>
-                            </div>
+                                      decoded.includes(encoded.name) ||
+                                      encoded.name.includes(decoded),
+                                  ),
+                              )
+                              .map((symptom, index) => (
+                                <React.Fragment key={index}>
+                                  <Badge variant="outline">
+                                    {symptom.name}
+                                  </Badge>
+                                </React.Fragment>
+                              ))}
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border p-4 space-y-2">
+                          <div className="font-medium">Incorrectly Identified</div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {selectedConversation.decodedSymptoms
+                              .filter(
+                                (decoded) =>
+                                  !selectedConversation.encodedSymptoms.some(
+                                    (encoded) =>
+                                      encoded.name.includes(decoded) ||
+                                      decoded.includes(encoded.name),
+                                  ),
+                              )
+                              .map((symptom, index) => (
+                                <React.Fragment key={index}>
+                                  <Badge variant="secondary">
+                                    {symptom}
+                                  </Badge>
+                                </React.Fragment>
+                              ))}
                           </div>
                         </div>
                       </CardContent>
@@ -552,31 +516,36 @@ export default function SyntheticTherapyDemo() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="summary" className="mt-4">
+                <TabsContent value="summary" className="space-y-4 mt-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Session Summary</CardTitle>
+                      <CardTitle>Session Summary & Analysis</CardTitle>
                       <CardDescription>
-                        Automated analysis of the therapeutic interaction
+                        AI-generated summary and accuracy score
                       </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="whitespace-pre-line rounded-lg bg-muted p-4">
+                    <CardContent className="space-y-4">
+                      <div className="rounded-lg bg-muted p-4 whitespace-pre-wrap font-mono text-sm">
                         {selectedConversation.sessionSummary}
                       </div>
+                      <div className="flex justify-end">
+                        <Badge
+                          variant={
+                            selectedConversation.accuracyScore &&
+                            selectedConversation.accuracyScore >= 0.7
+                              ? 'default'
+                              : 'destructive'
+                          }
+                        >
+                          {((selectedConversation.accuracyScore || 0) * 100).toFixed(0)}%
+                          Accuracy
+                        </Badge>
+                      </div>
                     </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={!selectedConversation.accuracyScore}
-                      >
-                        <MessageSquareIcon className="mr-2 h-4 w-4" />
-                        Share Feedback
-                      </Button>
-                      <Button variant="outline" size="sm">
+                    <CardFooter className="flex justify-end">
+                      <Button variant="outline">
                         <DownloadIcon className="mr-2 h-4 w-4" />
-                        Export Data
+                        Download Report
                       </Button>
                     </CardFooter>
                   </Card>
@@ -584,18 +553,15 @@ export default function SyntheticTherapyDemo() {
               </Tabs>
             </>
           ) : (
-            <Card className="h-[400px] flex items-center justify-center">
-              <CardContent className="text-center">
-                <BrainIcon className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-
-                <h3 className="text-xl font-medium mb-2">
-                  No Conversations Generated
-                </h3>
-                <p className="text-muted-foreground">
-                  Configure the settings and click &quot;Generate
-                  Conversations&quot; to create synthetic therapy interactions
-                  between patients and therapists.
-                </p>
+            <Card className="flex flex-col items-center justify-center h-96 border-dashed">
+              <CardHeader>
+                <CardTitle>No Conversations Generated</CardTitle>
+                <CardDescription>
+                  Click the button to generate synthetic conversations.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MessageSquareIcon className="h-16 w-16 text-muted-foreground" />
               </CardContent>
             </Card>
           )}
