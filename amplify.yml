@@ -58,8 +58,7 @@ frontend:
         - mkdir -p .amplify-hosting/static
         - echo '{"status":"ok","version":"'$(node -e "console.log(require('./package.json').version)")'"}' > .amplify-hosting/static/health.json
         # Create deploy-manifest.json file required by Amplify with SSR configuration
-        - |-
-          echo '{ "version": 1, "routes": [ { "path": "/_astro/*", "target": { "kind": "static" }, "fallback": { "kind": "compute", "src": "default" } }, { "path": "/*", "target": { "kind": "compute", "src": "default" } } ], "computeResources": [ { "name": "default", "runtime": "nodejs22.x", "entrypoint": "server/entry.mjs" } ], "framework": { "name": "astro", "version": "'$(node -e "console.log(require('./package.json').dependencies.astro)")'" } }' > .amplify-hosting/deploy-manifest.json
+        - node scripts/generate-deploy-manifest.mjs
         # Run verification script to check deployment structure
         - ./scripts/check-amplify-deployment.sh
         
