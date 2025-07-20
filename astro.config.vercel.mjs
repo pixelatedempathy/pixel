@@ -11,11 +11,11 @@ import flexsearchSSRPlugin from './src/plugins/vite-plugin-flexsearch-ssr'
 import sentry from '@sentry/astro'
 import markdoc from '@astrojs/markdoc'
 import keystatic from '@keystatic/astro'
-import vercel from '@astrojs/vercel/serverless'
+import vercel from '@astrojs/vercel'
 
 // Vercel-optimized configuration
 export default defineConfig({
-  site: process.env.PUBLIC_SITE_URL || 'https://pixelatedempathy.com',
+  // site: process.env.PUBLIC_SITE_URL || 'https://pixelatedempathy.com',
 
   // Use hybrid output for Vercel as recommended by official docs
   output: 'hybrid',
@@ -84,12 +84,6 @@ export default defineConfig({
 
     // Suppress warnings during build
     logLevel: 'warn',
-
-    define: {
-      // Environment variables for Vercel
-      'process.env.VERCEL_ENV': JSON.stringify(process.env.VERCEL_ENV),
-      'process.env.VERCEL_URL': JSON.stringify(process.env.VERCEL_URL),
-    },
 
     build: {
       // Optimize for Vercel serverless functions
@@ -223,8 +217,6 @@ export default defineConfig({
     speedInsights: {
       enabled: true,
     },
-    functionPerRoute: false, // Use single function for better cold start performance
-    edgeMiddleware: true,
   }),
 
   // Image optimization for Vercel
