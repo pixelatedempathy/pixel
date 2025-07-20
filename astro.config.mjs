@@ -47,7 +47,6 @@ export default defineConfig({
     }),
     react(),
     mdx({
-      // @ts-expect-error - This is a path, not a component
       components: path.resolve('./mdx-components.js'),
     }),
     UnoCSS({
