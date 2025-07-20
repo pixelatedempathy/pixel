@@ -6,7 +6,7 @@ const packageJsonPath = path.resolve(process.cwd(), 'package.json');
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
 // Get the Astro version from dependencies
-const astroVersion = packageJson.dependencies.astro;
+const astroVersion = packageJson.dependencies?.astro || packageJson.devDependencies?.astro;
 
 if (!astroVersion) {
   console.error('Error: Astro version not found in package.json dependencies.');
