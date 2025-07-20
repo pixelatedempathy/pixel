@@ -2,6 +2,7 @@ version: 1
 frontend:
   environment:
     _CUSTOM_IMAGE: amplify:al2023
+    NODE_OPTIONS: --max-old-space-size=8192
   phases:
     preBuild:
       commands:
