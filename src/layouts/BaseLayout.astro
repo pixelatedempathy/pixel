@@ -111,9 +111,6 @@ const isAuthPage = isLoginPage ||
     <script src="/js/sentry-globals.js" is:inline></script>
     <script src="/js/sentry-init.js" is:inline></script>
 
-    <!-- GoatCounter Analytics -->
-    <script data-goatcounter="https://pixelated.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-
     <!-- Load CSS and JS directly instead of preloading -->
     <script src="/js/force-dark-mode.js" nonce={cspNonce} is:inline></script>
     <link rel="stylesheet" href="/css/layout-fixes.css">
@@ -136,9 +133,6 @@ const isAuthPage = isLoginPage ||
 
     <!-- Disable source map errors -->
     <script src="/js/suppress-sourcemap-errors.js" is:inline></script>
-
-    <!-- Polyfill strategy: Use feature detection only -->
-    <!-- Removed obsolete polyfill-detector.js inclusion -->
 
     <!-- Auth page optimizations -->
     {isAuthPage && (

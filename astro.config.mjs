@@ -13,7 +13,7 @@ import sentry from '@sentry/astro'
 
 import markdoc from '@astrojs/markdoc'
 import keystatic from '@keystatic/astro'
-import node from '@astrojs/node'
+import awsAmplify from 'astro-aws-amplify'
 
 // Validate Azure configuration for production deployments only (skip during builds)
 try {
@@ -390,9 +390,7 @@ export default defineConfig({
   },
 
   // Adapter configuration for Azure App Service
-  adapter: node({
-    mode: 'standalone',
-  }),
+  adapter: awsAmplify(),
 
   // Image optimization
   image: {

@@ -1,68 +1,7 @@
-// Import shared types to avoid circular dependencies
 import type { SessionDocumentation, EHRExportOptions, EHRExportResult } from './types'
 import { createBuildSafeLogger } from '../logging/build-safe-logger'
 
 const logger = createBuildSafeLogger('ehr-integration')
-  /**
-   * The format to export the documentation in
-   */
-  format: 'fhir' | 'ccda' | 'pdf'
-
-  /**
-   * The patient ID in the EHR system
-   */
-  patientId: string
-
-  /**
-   * The provider ID in the EHR system
-   */
-  providerId: string
-
-  /**
-   * The encounter ID in the EHR system (if applicable)
-   */
-  encounterId?: string
-
-  /**
-   * Custom metadata to include in the export
-   */
-  metadata?: Record<string, unknown>
-
-  /**
-   * Whether to include emotion analysis data
-   */
-  includeEmotionData?: boolean
-}
-
-/**
- * Interface for EHR export result
- */
-export interface EHRExportResult {
-  /**
-   * Whether the export was successful
-   */
-  success: boolean
-
-  /**
-   * The ID of the document in the EHR system (if successful)
-   */
-  documentId?: string
-
-  /**
-   * The status of the export
-   */
-  status: 'completed' | 'pending' | 'failed'
-
-  /**
-   * Error message if the export failed
-   */
-  error?: string
-
-  /**
-   * URL to access the document in the EHR system (if available)
-   */
-  documentUrl?: string
-}
 
 /**
  * Class that handles integration between our documentation system and EHR systems
@@ -119,12 +58,19 @@ export class EHRIntegration {
         })
       }
 
-      return {
+      // Compose EHRExportResult according to the imported type
+      const result: EHRExportResult = {
         success: true,
-        documentId: documentReference.id,
-        status: 'completed',
-        documentUrl: `${this.fhirClient}/DocumentReference/${documentReference.id}`,
+        data: documentReference,
+        format: options.format,
+        metadata: {
+          exportedAt: new Date(),
+          exportedBy: options.providerId,
+          patientId: options.patientId,
+          providerId: options.providerId,
+        }
       }
+      return result
     } catch (error) {
       logger.error('Failed to export documentation to EHR', {
         error,
@@ -132,11 +78,18 @@ export class EHRIntegration {
         patientId: options.patientId,
       })
 
-      return {
+      const result: EHRExportResult = {
         success: false,
-        status: 'failed',
-        error: error instanceof Error ? error.message : String(error),
+        errors: [error instanceof Error ? error.message : String(error)],
+        format: options.format,
+        metadata: {
+          exportedAt: new Date(),
+          exportedBy: options.providerId,
+          patientId: options.patientId,
+          providerId: options.providerId,
+        }
       }
+      return result
     }
   }
 
@@ -197,17 +150,10 @@ export class EHRIntegration {
       title: 'Therapy Session Documentation',
       section: [
         {
-          title: 'Summary',
+          title: 'Notes',
           text: {
             status: 'additional',
-            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.summary}</div>`,
-          },
-        },
-        {
-          title: 'Key Insights',
-          text: {
-            status: 'additional',
-            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.keyInsights.join(', ')}</div>`,
+            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.notes}</div>`,
           },
         },
         {
@@ -218,17 +164,24 @@ export class EHRIntegration {
           },
         },
         {
-          title: 'Recommendations',
+          title: 'Outcomes',
           text: {
             status: 'additional',
-            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.recommendations.join('<br/>')}</div>`,
+            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.outcomes.join('<br/>')}</div>`,
           },
         },
         {
-          title: 'Notes',
+          title: 'Next Steps',
           text: {
             status: 'additional',
-            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.notes}</div>`,
+            div: `<div xmlns="http://www.w3.org/1999/xhtml">${documentation.nextSteps.join('<br/>')}</div>`,
+          },
+        },
+        {
+          title: 'Risk Assessment',
+          text: {
+            status: 'additional',
+            div: `<div xmlns="http://www.w3.org/1999/xhtml">Level: ${documentation.riskAssessment.level}<br/>Factors: ${documentation.riskAssessment.factors.join(', ')}<br/>Recommendations: ${documentation.riskAssessment.recommendations.join(', ')}</div>`,
           },
         },
       ],
@@ -252,20 +205,24 @@ export class EHRIntegration {
           <title>Therapy Session Documentation</title>
           <component>
             <section>
-              <title>Summary</title>
-              <text>${documentation.summary}</text>
-            </section>
-            <section>
-              <title>Key Insights</title>
-              <text>${documentation.keyInsights.join(', ')}</text>
+              <title>Notes</title>
+              <text>${documentation.notes}</text>
             </section>
             <section>
               <title>Interventions</title>
               <text>${documentation.interventions.join(', ')}</text>
             </section>
             <section>
-              <title>Recommendations</title>
-              <text>${documentation.recommendations.join(', ')}</text>
+              <title>Outcomes</title>
+              <text>${documentation.outcomes.join(', ')}</text>
+            </section>
+            <section>
+              <title>Next Steps</title>
+              <text>${documentation.nextSteps.join(', ')}</text>
+            </section>
+            <section>
+              <title>Risk Assessment</title>
+              <text>Level: ${documentation.riskAssessment.level}; Factors: ${documentation.riskAssessment.factors.join(', ')}; Recommendations: ${documentation.riskAssessment.recommendations.join(', ')}</text>
             </section>
           </component>
         </ClinicalDocument>`,
@@ -290,23 +247,22 @@ export class EHRIntegration {
         Patient ID: ${_options.patientId}
         Provider ID: ${_options.providerId}
 
-        SUMMARY:
-        ${documentation.summary}
-
-        KEY INSIGHTS:
-        ${documentation.keyInsights.join('\n- ')}
+        NOTES:
+        ${documentation.notes}
 
         INTERVENTIONS:
         ${documentation.interventions.join('\n- ')}
 
-        RECOMMENDATIONS:
-        ${documentation.recommendations.join('\n- ')}
+        OUTCOMES:
+        ${documentation.outcomes.join('\n- ')}
 
-        EMOTION SUMMARY:
-        ${documentation.emotionSummary}
+        NEXT STEPS:
+        ${documentation.nextSteps.join('\n- ')}
 
-        NOTES:
-        ${documentation.notes}
+        RISK ASSESSMENT:
+        Level: ${documentation.riskAssessment.level}
+        Factors: ${documentation.riskAssessment.factors.join(', ')}
+        Recommendations: ${documentation.riskAssessment.recommendations.join(', ')}
       `),
     }
   }
@@ -354,20 +310,11 @@ export class EHRIntegration {
           attachment: {
             contentType: this.getContentType(options.format),
             data: this.getEncodedData(formattedDocument),
-            title: formattedDocument.title || 'Therapy Session Documentation',
+            title: formattedDocument['title'] || 'Therapy Session Documentation',
             creation: now,
           },
         },
       ],
-      context: options.encounterId
-        ? {
-            encounter: [
-              {
-                reference: `Encounter/${options.encounterId}`,
-              },
-            ],
-          }
-        : undefined,
     }
 
     // Create the DocumentReference in the EHR system
@@ -466,12 +413,12 @@ export class EHRIntegration {
    * @returns Base64 encoded data
    */
   private getEncodedData(document: Record<string, unknown>): string {
-    if (typeof document.content === 'string') {
-      return Buffer.from(document.content).toString('base64')
+    if (typeof document['content'] === 'string') {
+      return Buffer.from(document['content']).toString('base64')
     }
 
-    if (document.content instanceof Buffer) {
-      return document.content.toString('base64')
+    if (document['content'] instanceof Buffer) {
+      return document['content'].toString('base64')
     }
 
     return Buffer.from(JSON.stringify(document)).toString('base64')

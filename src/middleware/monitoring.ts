@@ -1,4 +1,3 @@
-import type { MiddlewareNext } from 'astro'
 import { azureInsights } from '../lib/monitoring/azure-insights'
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
@@ -19,10 +18,10 @@ export interface RequestMetrics {
  * Monitoring middleware for Astro
  * Tracks requests, performance, and errors
  */
-export async function monitoringMiddleware(context: any, next: MiddlewareNext) {
+export async function monitoringMiddleware(context: any, next: any) {
   const startTime = Date.now()
-  const url = context.url
-  const method = context.request.method
+  const {url} = context
+  const {method} = context.request
   const userAgent = context.request.headers.get('user-agent') || 'unknown'
   const ip =
     context.request.headers.get('x-forwarded-for') ||
@@ -50,7 +49,7 @@ export async function monitoringMiddleware(context: any, next: MiddlewareNext) {
     startTime,
     userAgent,
     ip,
-    userId,
+    userId: userId ?? '',
   }
 
   // Track page view for GET requests to pages (not API routes)
@@ -272,8 +271,8 @@ export function trackBusinessEvent(
 ) {
   azureInsights.trackEvent({
     name: eventName,
-    properties,
-    measurements,
+    properties: properties ?? {},
+    measurements: measurements ?? {},
   })
 
   logger.info('Business event tracked', {

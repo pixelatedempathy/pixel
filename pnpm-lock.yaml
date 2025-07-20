@@ -660,6 +660,9 @@ importers:
       astro:
         specifier: ^5.10.1
         version: 5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
+      astro-aws-amplify:
+        specifier: ^0.2.1
+        version: 0.2.1(astro@5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))
       astro-eslint-parser:
         specifier: ^1.2.2
         version: 1.2.2
@@ -7661,6 +7664,11 @@ packages:
     resolution: {integrity: sha512-LElXdjswlqjWrPpJFg1Fx4wpkOCxj1TDHlSV4PlaRxHGWko024xICaa97ZkMfs6DRKlCguiAI+rbXv5GWwXIkg==}
     hasBin: true
 
+  astro-aws-amplify@0.2.1:
+    resolution: {integrity: sha512-S3dzYh2TMY1aW7DF8T7HkKUTy8y7zmj/gynwtTfXyMjuM4X1aJkQaFg90R6e24Y2D5Z8rydjT9d7ACzeJFuiNw==}
+    peerDependencies:
+      astro: ^4.0.0 || ^5.0.0
+
   astro-compress@2.3.8:
     resolution: {integrity: sha512-XajjEtSTJuVRBOrtZ/Siavd4KcH47SEHo0XoZZeYVRF6BODSBqxVdtlfkqYJKM+F4XRUmLDS5ncVTILnQYvvXw==}
 
@@ -7715,6 +7723,11 @@ packages:
     engines: {node: ^18.18.0 || >=20.9.0}
     peerDependencies:
       '@astrojs/compiler': '>=0.27.0'
+
+  astrojs-node-aws-amplify@7.0.1:
+    resolution: {integrity: sha512-Ay3FEx6ZQKiyFzp7Yln0fKRFy8OjrBlkk3PdjSNuGS82d2dww3C2DGv3c/YW+FWbNCFlk6lGD6BF1Sc368Vfyw==}
+    peerDependencies:
+      astro: ^4.0.0
 
   async-function@1.0.0:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
@@ -8739,6 +8752,14 @@ packages:
   debounce-promise@3.1.2:
     resolution: {integrity: sha512-rZHcgBkbYavBeD9ej6sP56XfG53d51CD4dnaw989YX/nZ/ZJfgRx/9ePKmTNiUiyQvh4mtrMoS3OAWW+yoYtpg==}
 
+  debug@2.6.9:
+    resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
   debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -8858,6 +8879,10 @@ packages:
 
   destr@2.0.5:
     resolution: {integrity: sha512-ugFTXCtDZunbzasqBxrK93Ik/DRYsO6S/fedkWEMKqt04xZ4csmnmwGDBAb07QWNaGMAmnTIemsYZCksjATwsA==}
+
+  destroy@1.2.0:
+    resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
+    engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
   detect-indent@4.0.0:
     resolution: {integrity: sha512-BDKtmHlOzwI7iRuEkhzsnPoi5ypEhWAJB5RvHWe1kMr06js3uK5B3734i3ui5Yd+wOJV1cpE4JnivPD283GU/A==}
@@ -9068,6 +9093,10 @@ packages:
 
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
+
+  encodeurl@1.0.2:
+    resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
+    engines: {node: '>= 0.8'}
 
   encodeurl@2.0.0:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
@@ -9823,6 +9852,10 @@ packages:
         optional: true
       react-dom:
         optional: true
+
+  fresh@0.5.2:
+    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
+    engines: {node: '>= 0.6'}
 
   fresh@2.0.0:
     resolution: {integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==}
@@ -11698,6 +11731,11 @@ packages:
     resolution: {integrity: sha512-xRc4oEhT6eaBpU1XF7AjpOFD+xQmXNB5OVKwp4tqCuBpHLS/ZbBDrc07mYTDqVMg6PfxUjjNp85O6Cd2Z/5HWA==}
     engines: {node: '>= 0.6'}
 
+  mime@1.6.0:
+    resolution: {integrity: sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==}
+    engines: {node: '>=4'}
+    hasBin: true
+
   mime@2.6.0:
     resolution: {integrity: sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg==}
     engines: {node: '>=4.0.0'}
@@ -11847,6 +11885,9 @@ packages:
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
     engines: {node: '>=10'}
+
+  ms@2.0.0:
+    resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
@@ -13442,6 +13483,10 @@ packages:
     resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
     engines: {node: '>=10'}
     hasBin: true
+
+  send@0.18.0:
+    resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
+    engines: {node: '>= 0.8.0'}
 
   send@1.2.0:
     resolution: {integrity: sha512-uaW0WwXKpL9blXE2o0bRhoL2EGXIrZxQ2ZQ4mgcfoBxdFmQold+qWsD2jLrfZ0trjKL6vOw0j//eAwcALFjKSw==}
@@ -25895,6 +25940,14 @@ snapshots:
 
   astring@1.9.0: {}
 
+  astro-aws-amplify@0.2.1(astro@5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)):
+    dependencies:
+      astro: 5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
+      astrojs-node-aws-amplify: 7.0.1(astro@5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))
+      dotenv: 16.6.1
+    transitivePeerDependencies:
+      - supports-color
+
   astro-compress@2.3.8(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(rollup@4.45.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0):
     dependencies:
       '@playform/pipe': 0.1.3
@@ -26234,6 +26287,14 @@ snapshots:
     dependencies:
       '@astrojs/compiler': 2.12.2
       synckit: 0.11.8
+
+  astrojs-node-aws-amplify@7.0.1(astro@5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)):
+    dependencies:
+      astro: 5.12.0(@azure/storage-blob@12.27.0)(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.14)(@upstash/redis@1.35.1)(@vercel/kv@3.0.0)(encoding@0.1.13)(idb-keyval@6.2.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
+      send: 0.18.0
+      server-destroy: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   async-function@1.0.0: {}
 
@@ -27397,6 +27458,10 @@ snapshots:
 
   debounce-promise@3.1.2: {}
 
+  debug@2.6.9:
+    dependencies:
+      ms: 2.0.0
+
   debug@4.3.4:
     dependencies:
       ms: 2.1.2
@@ -27494,6 +27559,8 @@ snapshots:
   dequal@2.0.3: {}
 
   destr@2.0.5: {}
+
+  destroy@1.2.0: {}
 
   detect-indent@4.0.0:
     dependencies:
@@ -27695,6 +27762,8 @@ snapshots:
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
+
+  encodeurl@1.0.2: {}
 
   encodeurl@2.0.0: {}
 
@@ -28747,6 +28816,8 @@ snapshots:
       '@emotion/is-prop-valid': 1.3.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+
+  fresh@0.5.2: {}
 
   fresh@2.0.0: {}
 
@@ -31160,6 +31231,8 @@ snapshots:
     dependencies:
       mime-db: 1.54.0
 
+  mime@1.6.0: {}
+
   mime@2.6.0: {}
 
   mime@3.0.0: {}
@@ -31288,6 +31361,8 @@ snapshots:
   mri@1.2.0: {}
 
   mrmime@2.0.1: {}
+
+  ms@2.0.0: {}
 
   ms@2.1.2: {}
 
@@ -33187,6 +33262,24 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.2: {}
+
+  send@0.18.0:
+    dependencies:
+      debug: 2.6.9
+      depd: 2.0.0
+      destroy: 1.2.0
+      encodeurl: 1.0.2
+      escape-html: 1.0.3
+      etag: 1.8.1
+      fresh: 0.5.2
+      http-errors: 2.0.0
+      mime: 1.6.0
+      ms: 2.1.3
+      on-finished: 2.4.1
+      range-parser: 1.2.1
+      statuses: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   send@1.2.0:
     dependencies:

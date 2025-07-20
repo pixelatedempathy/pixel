@@ -13,35 +13,9 @@ import type {
   SessionDocumentation,
   EHRExportOptions,
   EHRExportResult,
-  DocumentationGenerationOptions,
-  DocumentationValidationResult,
-  RiskAssessment,
-  SessionMetadata
 } from './types'
 
 const logger = createBuildSafeLogger('documentation')
-  summary: string
-  keyInsights: readonly string[]
-  recommendations: readonly string[]
-  emotionSummary: string
-  interventions: readonly string[]
-  notes: string
-  readonly metadata: Readonly<Record<string, unknown>>
-  readonly version: number
-  readonly lastModified: Date
-  // Additional properties used in the component
-  therapeuticTechniques: readonly { name: string; description: string; effectiveness: number }[]
-  emotionalPatterns: readonly { pattern: string; significance: string }[]
-  recommendedFollowUp: string
-  treatmentProgress: {
-    goals: readonly { description: string; progress: number; notes: string }[]
-    overallAssessment: string
-  }
-  nextSessionPlan: string
-  emergentIssues?: readonly string[] | undefined
-  clientStrengths?: readonly string[] | undefined
-  outcomePredictions?: readonly { technique: string; predictedEfficacy: number; confidence: number; rationale: string} [] | undefined
-}
 
 export interface TherapyAIOptions {
   readonly temperature?: number
@@ -323,8 +297,6 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
         const documentationSystem = await getDocumentationSystemInstance()
         const docToSave = {
           ...updatedDocumentation,
-          keyInsights: [...updatedDocumentation.keyInsights],
-          recommendations: [...updatedDocumentation.recommendations],
           interventions: [...updatedDocumentation.interventions],
         }
         const success = await documentationSystem.saveDocumentation(
@@ -385,10 +357,15 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
   // Export to EHR with comprehensive error handling
   const exportToEHR = useCallback(
     async (options: EHRExportOptions): Promise<EHRExportResult> => {
-      const failureResult = (error: string): EHRExportResult => ({
+      const failureResult = (
+        error: string,
+        format: 'fhir' | 'ccda' | 'pdf',
+        metadata: { exportedAt: Date; exportedBy: string; patientId: string; providerId: string }
+      ): EHRExportResult => ({
         success: false,
-        status: 'failed',
-        error,
+        errors: [error],
+        format,
+        metadata,
       })
 
       try {
@@ -409,22 +386,50 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
         }
 
         const documentationSystem = await getDocumentationSystemInstance()
-        const result = await documentationSystem.exportToEHR(sessionId, options)
+        const rawResult = await documentationSystem.exportToEHR(sessionId, options) as any;
 
-        safeSetState(setExportResult, result)
+        // Construct a fully type-safe EHRExportResult
+        const result: EHRExportResult = {
+          success: typeof rawResult.success === 'boolean' ? rawResult.success : false,
+          format: typeof rawResult.format === 'string' ? rawResult.format : options.format,
+          metadata: typeof rawResult.metadata === 'object' && rawResult.metadata !== null
+            ? rawResult.metadata
+            : {
+                exportedAt: new Date(),
+                exportedBy: 'system',
+                patientId: options.patientId,
+                providerId: options.providerId,
+              },
+          ...(rawResult.data !== undefined ? { data: rawResult.data } : {}),
+          ...(Array.isArray(rawResult.errors) ? { errors: rawResult.errors } : {}),
+        };
+
+        safeSetState(setExportResult, result);
 
         if (result.success) {
           toast.success(
             `Documentation exported successfully to ${options.format.toUpperCase()}`,
-          )
+          );
         } else {
-          toast.error(`Export failed: ${result.error}`)
+          const errorMsg =
+            Array.isArray(result.errors) && result.errors.length > 0
+              ? result.errors.join(', ')
+              : 'Unknown error';
+          toast.error(`Export failed: ${errorMsg}`);
         }
 
-        return result
+        return result;
       } catch (error) {
         const errorObj = handleError(error, 'exportToEHR')
-        const result = failureResult(errorObj.message)
+        // Fallbacks for format and metadata if options is not available
+        const fallbackFormat: 'fhir' | 'ccda' | 'pdf' = options?.format || 'pdf'
+        const fallbackMetadata = {
+          exportedAt: new Date(),
+          exportedBy: 'system',
+          patientId: options?.patientId || '',
+          providerId: options?.providerId || '',
+        }
+        const result = failureResult(errorObj.message, fallbackFormat, fallbackMetadata)
         safeSetState(setError, errorObj)
         safeSetState(setExportResult, result)
         toast.error('Failed to export documentation')
