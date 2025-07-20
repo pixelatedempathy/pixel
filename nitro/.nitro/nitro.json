@@ -1,0 +1,17 @@
+{
+  "date": "2025-07-20T05:10:13.510Z",
+  "preset": "nitro-dev",
+  "framework": {
+    "name": "nitro",
+    "version": ""
+  },
+  "versions": {
+    "nitro": "3.0.0-20250718-230035.acdda3a4"
+  },
+  "dev": {
+    "pid": 28216,
+    "workerAddress": {
+      "socketPath": "\u0000nitro-dev-7-28216-119.sock"
+    }
+  }
+}

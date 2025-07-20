@@ -28,9 +28,9 @@ if (!isBuildTime) {
 
 export interface TelemetryEvent {
   name: string
-  properties?: Record<string, string>
-  measurements?: Record<string, number>
-  timestamp?: Date
+  properties?: Record<string, string> | undefined
+  measurements?: Record<string, number> | undefined
+  timestamp?: Date | undefined
 }
 
 export interface TelemetryException {
