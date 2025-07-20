@@ -6,7 +6,12 @@ const packageJsonPath = path.resolve(process.cwd(), 'package.json');
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
 // Get the Astro version from dependencies
-const astroVersion = packageJson.dependencies?.astro || packageJson.devDependencies?.astro;
+let astroVersion = packageJson.dependencies?.astro || packageJson.devDependencies?.astro;
+
+// Clean the version string to remove characters like '^' or '~'
+if (astroVersion) {
+  astroVersion = astroVersion.replace(/^[^\d]*/, '');
+}
 
 if (!astroVersion) {
   console.error('Error: Astro version not found in package.json dependencies.');
