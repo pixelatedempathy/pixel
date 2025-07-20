@@ -57,7 +57,18 @@ frontend:
         # Create static directory and health check file
         - mkdir -p .amplify-hosting/static
         - echo '{"status":"ok","version":"'$(node -e "console.log(require('./package.json').version)")'"}' > .amplify-hosting/static/health.json
-        # Amplify will automatically generate the deploy-manifest.json for Astro projects.
+        # Copy server and client files to the compute and static directories
+        - mkdir -p .amplify-hosting/compute/default
+        - cp -r dist/server/ .amplify-hosting/compute/default/
+        - cp -r dist/client/ .amplify-hosting/static/
+
+        # Install production dependencies in the compute environment
+        - cd .amplify-hosting/compute/default
+        - pnpm i --prod
+        - cd ../../..
+
+        # Create the deployment manifest
+        - node scripts/generate-deploy-manifest.mjs
         
   artifacts:
     baseDirectory: .amplify-hosting
