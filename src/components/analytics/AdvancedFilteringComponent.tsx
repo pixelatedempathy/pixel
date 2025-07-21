@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Checkbox } from '@/components/ui/Checkbox'
 import { IconFilter, IconX } from '@/components/ui/icons'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -300,19 +300,32 @@ export function AdvancedFilteringComponent({
                 </span>
               </div>
               <div className="pt-2 px-2">
-                <Slider
-                  value={[
-                    options.emotions?.minIntensity || 0,
-                    options.emotions?.maxIntensity || 1,
-                  ]}
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  onValueChange={([min, max]: [number, number]) => {
-                    handleChange('emotions', 'minIntensity', min)
-                    handleChange('emotions', 'maxIntensity', max)
-                  }}
-                />
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Label className="text-xs">Min</Label>
+                    <Slider
+                      value={[options.emotions?.minIntensity || 0]}
+                      min={0}
+                      max={1}
+                      step={0.1}
+                      onValueChange={([min]: number[]) => {
+                        handleChange('emotions', 'minIntensity', min)
+                      }}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label className="text-xs">Max</Label>
+                    <Slider
+                      value={[options.emotions?.maxIntensity || 1]}
+                      min={0}
+                      max={1}
+                      step={0.1}
+                      onValueChange={([max]: number[]) => {
+                        handleChange('emotions', 'maxIntensity', max)
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -332,22 +345,60 @@ export function AdvancedFilteringComponent({
                     </span>
                   </div>
                   <div className="pt-2 px-2">
-                    <Slider
-                      value={
-                        options.emotions?.dimensionalRanges?.valence || [-1, 1]
-                      }
-                      min={-1}
-                      max={1}
-                      step={0.1}
-                      onValueChange={(value: [number, number]) =>
-                        handleNestedChange(
-                          'emotions',
-                          'dimensionalRanges',
-                          'valence',
-                          value,
-                        )
-                      }
-                    />
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <Label className="text-xs">Min</Label>
+                        <Slider
+                          value={[
+                            options.emotions?.dimensionalRanges?.valence
+                              ? options.emotions.dimensionalRanges.valence[0]
+                              : -1,
+                          ]}
+                          min={-1}
+                          max={1}
+                          step={0.1}
+                          onValueChange={([min]: number[]) =>
+                            handleNestedChange(
+                              'emotions',
+                              'dimensionalRanges',
+                              'valence',
+                              [
+                                min,
+                                options.emotions?.dimensionalRanges?.valence
+                                  ? options.emotions.dimensionalRanges.valence[1]
+                                  : 1,
+                              ],
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <Label className="text-xs">Max</Label>
+                        <Slider
+                          value={[
+                            options.emotions?.dimensionalRanges?.valence
+                              ? options.emotions.dimensionalRanges.valence[1]
+                              : 1,
+                          ]}
+                          min={-1}
+                          max={1}
+                          step={0.1}
+                          onValueChange={([max]: number[]) =>
+                            handleNestedChange(
+                              'emotions',
+                              'dimensionalRanges',
+                              'valence',
+                              [
+                                options.emotions?.dimensionalRanges?.valence
+                                  ? options.emotions.dimensionalRanges.valence[0]
+                                  : -1,
+                                max,
+                              ],
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -361,22 +412,60 @@ export function AdvancedFilteringComponent({
                     </span>
                   </div>
                   <div className="pt-2 px-2">
-                    <Slider
-                      value={
-                        options.emotions?.dimensionalRanges?.arousal || [-1, 1]
-                      }
-                      min={-1}
-                      max={1}
-                      step={0.1}
-                      onValueChange={(value: [number, number]) =>
-                        handleNestedChange(
-                          'emotions',
-                          'dimensionalRanges',
-                          'arousal',
-                          value,
-                        )
-                      }
-                    />
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <Label className="text-xs">Min</Label>
+                        <Slider
+                          value={[
+                            options.emotions?.dimensionalRanges?.arousal
+                              ? options.emotions.dimensionalRanges.arousal[0]
+                              : -1,
+                          ]}
+                          min={-1}
+                          max={1}
+                          step={0.1}
+                          onValueChange={([min]: number[]) =>
+                            handleNestedChange(
+                              'emotions',
+                              'dimensionalRanges',
+                              'arousal',
+                              [
+                                min,
+                                options.emotions?.dimensionalRanges?.arousal
+                                  ? options.emotions.dimensionalRanges.arousal[1]
+                                  : 1,
+                              ],
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <Label className="text-xs">Max</Label>
+                        <Slider
+                          value={[
+                            options.emotions?.dimensionalRanges?.arousal
+                              ? options.emotions.dimensionalRanges.arousal[1]
+                              : 1,
+                          ]}
+                          min={-1}
+                          max={1}
+                          step={0.1}
+                          onValueChange={([max]: number[]) =>
+                            handleNestedChange(
+                              'emotions',
+                              'dimensionalRanges',
+                              'arousal',
+                              [
+                                options.emotions?.dimensionalRanges?.arousal
+                                  ? options.emotions.dimensionalRanges.arousal[0]
+                                  : -1,
+                                max,
+                              ],
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -392,24 +481,60 @@ export function AdvancedFilteringComponent({
                     </span>
                   </div>
                   <div className="pt-2 px-2">
-                    <Slider
-                      value={
-                        options.emotions?.dimensionalRanges?.dominance || [
-                          -1, 1,
-                        ]
-                      }
-                      min={-1}
-                      max={1}
-                      step={0.1}
-                      onValueChange={(value: [number, number]) =>
-                        handleNestedChange(
-                          'emotions',
-                          'dimensionalRanges',
-                          'dominance',
-                          value,
-                        )
-                      }
-                    />
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <Label className="text-xs">Min</Label>
+                        <Slider
+                          value={[
+                            options.emotions?.dimensionalRanges?.dominance
+                              ? options.emotions.dimensionalRanges.dominance[0]
+                              : -1,
+                          ]}
+                          min={-1}
+                          max={1}
+                          step={0.1}
+                          onValueChange={([min]: number[]) =>
+                            handleNestedChange(
+                              'emotions',
+                              'dimensionalRanges',
+                              'dominance',
+                              [
+                                min,
+                                options.emotions?.dimensionalRanges?.dominance
+                                  ? options.emotions.dimensionalRanges.dominance[1]
+                                  : 1,
+                              ],
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <Label className="text-xs">Max</Label>
+                        <Slider
+                          value={[
+                            options.emotions?.dimensionalRanges?.dominance
+                              ? options.emotions.dimensionalRanges.dominance[1]
+                              : 1,
+                          ]}
+                          min={-1}
+                          max={1}
+                          step={0.1}
+                          onValueChange={([max]: number[]) =>
+                            handleNestedChange(
+                              'emotions',
+                              'dimensionalRanges',
+                              'dominance',
+                              [
+                                options.emotions?.dimensionalRanges?.dominance
+                                  ? options.emotions.dimensionalRanges.dominance[0]
+                                  : -1,
+                                max,
+                              ],
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

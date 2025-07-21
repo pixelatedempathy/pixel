@@ -232,9 +232,9 @@ export default function SyntheticTherapyDemo() {
               <div className="flex flex-wrap gap-2">
                 {(Object.values(DisorderCategory) as string[])
                   .slice(0, 5)
-                  .map((disorder, index) => (
+                  .map((disorder) => (
                     <Badge
-                      key={index}
+                      key={disorder}
                       variant={
                         config.disorders.includes(disorder as DisorderCategory)
                           ? 'default'
@@ -383,15 +383,14 @@ export default function SyntheticTherapyDemo() {
                                   Manifestations:
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                  {symptom.manifestations.map(
-                                    (manifestation, mIndex) => (
-                                      <React.Fragment key={mIndex}>
-                                        <Badge variant="secondary">
-                                          {manifestation}
-                                        </Badge>
-                                      </React.Fragment>
-                                    ),
-                                  )}
+                                  {symptom.manifestations.map((manifestation) => (
+                                    <Badge
+                                      key={`${symptom.name}-${manifestation}`}
+                                      variant="secondary"
+                                    >
+                                      {manifestation}
+                                    </Badge>
+                                  ))}
                                 </div>
                               </div>
                               <div className="space-y-1">
@@ -399,12 +398,13 @@ export default function SyntheticTherapyDemo() {
                                   Cognitions:
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                  {symptom.cognitions.map((cognition, cIndex) => (
-                                    <React.Fragment key={cIndex}>
-                                      <Badge variant="outline">
-                                        {cognition}
-                                      </Badge>
-                                    </React.Fragment>
+                                  {symptom.cognitions.map((cognition) => (
+                                    <Badge
+                                      key={`${symptom.name}-${cognition}`}
+                                      variant="outline"
+                                    >
+                                      {cognition}
+                                    </Badge>
                                   ))}
                                 </div>
                               </div>
@@ -426,7 +426,7 @@ export default function SyntheticTherapyDemo() {
                           <div className="font-medium">Identified Symptoms</div>
                           <div className="flex flex-wrap gap-2 mt-2">
                             {selectedConversation.decodedSymptoms.map(
-                              (symptom, index) => {
+                              (symptom) => {
                                 const isCorrect =
                                   selectedConversation.encodedSymptoms.some(
                                     (s) =>
@@ -434,13 +434,12 @@ export default function SyntheticTherapyDemo() {
                                       symptom.includes(s.name),
                                   )
                                 return (
-                                  <React.Fragment key={index}>
-                                    <Badge
-                                      variant={isCorrect ? 'default' : 'outline'}
-                                    >
-                                      {symptom}
-                                    </Badge>
-                                  </React.Fragment>
+                                  <Badge
+                                    key={symptom}
+                                    variant={isCorrect ? 'default' : 'outline'}
+                                  >
+                                    {symptom}
+                                  </Badge>
                                 )
                               },
                             )}
@@ -458,12 +457,13 @@ export default function SyntheticTherapyDemo() {
                                     encoded.name.includes(decoded),
                                 ),
                               )
-                              .map((symptom, index) => (
-                                <React.Fragment key={index}>
-                                  <Badge variant="default">
-                                    {symptom.name}
-                                  </Badge>
-                                </React.Fragment>
+                              .map((symptom) => (
+                                <Badge
+                                  key={`correctly-identified-${symptom.name}`}
+                                  variant="default"
+                                >
+                                  {symptom.name}
+                                </Badge>
                               ))}
                           </div>
                         </div>
@@ -480,12 +480,13 @@ export default function SyntheticTherapyDemo() {
                                       encoded.name.includes(decoded),
                                   ),
                               )
-                              .map((symptom, index) => (
-                                <React.Fragment key={index}>
-                                  <Badge variant="outline">
-                                    {symptom.name}
-                                  </Badge>
-                                </React.Fragment>
+                              .map((symptom) => (
+                                <Badge
+                                  key={`missed-${symptom.name}`}
+                                  variant="outline"
+                                >
+                                  {symptom.name}
+                                </Badge>
                               ))}
                           </div>
                         </div>
@@ -502,12 +503,13 @@ export default function SyntheticTherapyDemo() {
                                       decoded.includes(encoded.name),
                                   ),
                               )
-                              .map((symptom, index) => (
-                                <React.Fragment key={index}>
-                                  <Badge variant="secondary">
-                                    {symptom}
-                                  </Badge>
-                                </React.Fragment>
+                              .map((symptom) => (
+                                <Badge
+                                  key={`incorrect-${symptom}`}
+                                  variant="secondary"
+                                >
+                                  {symptom}
+                                </Badge>
                               ))}
                           </div>
                         </div>

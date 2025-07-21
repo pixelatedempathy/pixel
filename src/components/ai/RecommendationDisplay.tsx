@@ -66,8 +66,8 @@ export default function RecommendationDisplay({
                 Supporting Patterns:
               </span>
               <ul className="list-disc pl-5 text-gray-700">
-                {rec.supportingPatterns.map((pattern, idx) => (
-                  <li key={idx}>
+                {rec.supportingPatterns.map((pattern) => (
+                  <li key={`${rec.id}-${('type' in pattern ? pattern.type : pattern.riskFactor)}`}>
                     {'type' in pattern ? pattern.type : pattern.riskFactor}
                   </li>
                 ))}

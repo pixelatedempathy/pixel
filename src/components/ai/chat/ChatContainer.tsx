@@ -48,7 +48,10 @@ export function ChatContainer({
         ) : (
           <>
             {messages.map((message, index) => (
-              <ChatMessage key={index} message={message} />
+              <ChatMessage
+                key={`${message.role}-${index}-${message.content.slice(0, 20)}`}
+                message={message}
+              />
             ))}
 
             {isLoading && (

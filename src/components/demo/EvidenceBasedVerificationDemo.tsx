@@ -512,8 +512,11 @@ const EvidenceBasedVerificationDemo: React.FC<
                     Identified Gaps:
                   </h5>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    {verification.gaps.map((gap, index) => (
-                      <li key={index} className="flex items-start gap-1">
+                    {verification.gaps.map((gap) => (
+                      <li
+                        key={`${verification.interventionId}-gap-${gap.slice(0, 20)}`}
+                        className="flex items-start gap-1"
+                      >
                         <span className="text-yellow-500">•</span>
                         {gap}
                       </li>
@@ -528,8 +531,11 @@ const EvidenceBasedVerificationDemo: React.FC<
                     Recommendations:
                   </h5>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    {verification.recommendations.map((rec, index) => (
-                      <li key={index} className="flex items-start gap-1">
+                    {verification.recommendations.map((rec) => (
+                      <li
+                        key={`${verification.interventionId}-rec-${rec.slice(0, 20)}`}
+                        className="flex items-start gap-1"
+                      >
                         <span className="text-blue-500">•</span>
                         {rec}
                       </li>
@@ -673,9 +679,9 @@ const EvidenceBasedVerificationDemo: React.FC<
                             Requirements:
                           </h5>
                           <ul className="text-xs text-gray-600 space-y-1">
-                            {practice.requirements.map((req, index) => (
+                            {practice.requirements.map((req) => (
                               <li
-                                key={index}
+                                key={`${practice.id}-req-${req.slice(0, 20)}`}
                                 className="flex items-start gap-1"
                               >
                                 <span className="text-blue-500">•</span>
@@ -690,9 +696,9 @@ const EvidenceBasedVerificationDemo: React.FC<
                             Recommendations:
                           </h5>
                           <ul className="text-xs text-gray-600 space-y-1">
-                            {practice.recommendations.map((rec, index) => (
+                            {practice.recommendations.map((rec) => (
                               <li
-                                key={index}
+                                key={`${practice.id}-rec-${rec.slice(0, 20)}`}
                                 className="flex items-start gap-1"
                               >
                                 <span className="text-green-500">•</span>

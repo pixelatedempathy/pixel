@@ -351,9 +351,9 @@ export function SupervisorFeedback({
                 ) : (
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {detectedTechniques.map((technique, idx) => (
+                      {detectedTechniques.map((technique) => (
                         <Badge
-                          key={idx}
+                          key={technique.technique}
                           variant={
                             technique.confidence > 0.8 ? 'default' : 'outline'
                           }
@@ -380,9 +380,9 @@ export function SupervisorFeedback({
                         <ul className="mt-2 space-y-2">
                           {detectedTechniques
                             .find((t) => t.technique === selectedTechnique)
-                            ?.examples.map((example, idx) => (
+                            ?.examples.map((example) => (
                               <li
-                                key={idx}
+                                key={`${selectedTechnique}-${example.slice(0, 20)}`}
                                 className="text-sm text-gray-700 pl-2 border-l-2 border-green-300"
                               >
                                 &ldquo;{example}&rdquo;
@@ -407,8 +407,10 @@ export function SupervisorFeedback({
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    {missedOpportunities.map((opportunity, idx) => (
-                      <div key={idx} className="bg-blue-50 p-3 rounded-md">
+                    {missedOpportunities.map((opportunity) => (
+                      <div
+                        key={`${opportunity.suggestedTechnique}-${opportunity.context.slice(0, 20)}`}
+                        className="bg-blue-50 p-3 rounded-md">
                         <div className="font-medium flex justify-between">
                           <span>
                             Opportunity for {opportunity.suggestedTechnique}
@@ -450,9 +452,9 @@ export function SupervisorFeedback({
                   <div>
                     <h4 className="font-medium text-green-700">Strengths</h4>
                     <ul className="mt-1 space-y-1">
-                      {feedbackSummary.positivePoints.map((point, idx) => (
+                      {feedbackSummary.positivePoints.map((point) => (
                         <li
-                          key={idx}
+                          key={point}
                           className="text-sm flex items-start gap-2"
                         >
                           <span className="text-green-500">✓</span>
@@ -467,9 +469,9 @@ export function SupervisorFeedback({
                       Development Areas
                     </h4>
                     <ul className="mt-1 space-y-1">
-                      {feedbackSummary.developmentalPoints.map((point, idx) => (
+                      {feedbackSummary.developmentalPoints.map((point) => (
                         <li
-                          key={idx}
+                          key={point}
                           className="text-sm flex items-start gap-2"
                         >
                           <span className="text-amber-500">→</span>

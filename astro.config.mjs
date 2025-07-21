@@ -8,7 +8,7 @@ import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import sentry from '@sentry/astro';
 import markdoc from '@astrojs/markdoc';
-import keystatic from '@keystatic/astro';
+
 import awsAmplify from 'astro-aws-amplify';
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -89,7 +89,6 @@ export default defineConfig({
       svgdir: './src/icons',
     }),
     markdoc(),
-    ...(process.env.SKIP_KEYSTATIC !== 'true' ? [keystatic()] : []),
     sentry({
       dsn: process.env.SENTRY_DSN,
       sourceMapsUploadOptions: {

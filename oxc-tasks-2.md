@@ -142,22 +142,22 @@
 
 ### `no-array-index-key`
 
-- [ ] `src/components/ai/RecommendationDisplay.tsx:70:23`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/chat/ChatContainer.tsx:51:28`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ui/slider.tsx:22:9`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:237:23`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:358:31`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:388:55`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:403:53`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:437:51`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:462:49`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:484:49`: Usage of Array index in keys is not allowed
-- [ ] `src/components/ai/SyntheticTherapyDemo.tsx:506:49`: Usage of Array index in keys is not allowed
-- [ ] `src/components/feedback/SupervisorFeedback.tsx:350:27`: Usage of Array index in keys is not allowed
-- [ ] `src/components/feedback/SupervisorFeedback.tsx:379:33`: Usage of Array index in keys is not allowed
-- [ ] `src/components/feedback/SupervisorFeedback.tsx:405:28`: Usage of Array index in keys is not allowed
-- [ ] `src/components/feedback/SupervisorFeedback.tsx:449:27`: Usage of Array index in keys is not allowed
-- [ ] `src/components/feedback/SupervisorFeedback.tsx:466:27`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/RecommendationDisplay.tsx:70:23`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/chat/ChatContainer.tsx:51:28`: Usage of Array index in keys is not allowed
+- [x] `src/components/ui/slider.tsx:22:9`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:237:23`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:358:31`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:388:55`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:403:53`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:437:51`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:462:49`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:484:49`: Usage of Array index in keys is not allowed
+- [x] `src/components/ai/SyntheticTherapyDemo.tsx:506:49`: Usage of Array index in keys is not allowed
+- [x] `src/components/feedback/SupervisorFeedback.tsx:350:27`: Usage of Array index in keys is not allowed
+- [x] `src/components/feedback/SupervisorFeedback.tsx:379:33`: Usage of Array index in keys is not allowed
+- [x] `src/components/feedback/SupervisorFeedback.tsx:405:28`: Usage of Array index in keys is not allowed
+- [x] `src/components/feedback/SupervisorFeedback.tsx:449:27`: Usage of Array index in keys is not allowed
+- [x] `src/components/feedback/SupervisorFeedback.tsx:466:27`: Usage of Array index in keys is not allowed
 - [ ] `src/components/demo/EvidenceBasedVerificationDemo.tsx:516:27`: Usage of Array index in keys is not allowed
 - [ ] `src/components/demo/EvidenceBasedVerificationDemo.tsx:532:27`: Usage of Array index in keys is not allowed
 - [ ] `src/components/demo/SafetyCheckingDemo.tsx:501:33`: Usage of Array index in keys is not allowed
