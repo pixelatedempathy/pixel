@@ -3,44 +3,65 @@ frontend:
   environment:
     _CUSTOM_IMAGE: amplify:al2023
     NODE_OPTIONS: --max-old-space-size=12288
+
   phases:
     preBuild:
       commands:
-        # Install pnpm and configure
-        - npm i -g pnpm
+        # Set Node.js memory limit
+        - export NODE_OPTIONS=--max-old-space-size=12288
+        
+        # Configure pnpm with optimized settings
         - pnpm config set store-dir .pnpm-store
+        - pnpm config set auto-install-peers true
+        - pnpm config set strict-peer-dependencies false
         
-        # Install dependencies needed for CDN upload
-        - pnpm add --no-frozen-lockfile --prefer-offline --shamefully-hoist @aws-sdk/client-s3 @aws-sdk/credential-provider-ini
+        # Install only production dependencies with optimized flags
+        - pnpm install --prod --frozen-lockfile --prefer-offline --shamefully-hoist
         
-        # Install only production dependencies with aggressive cleanup
-        - pnpm install --prod --no-frozen-lockfile --prefer-offline --shamefully-hoist
+        # Install AWS SDK only if needed for CDN
+        - |
+          if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
+            pnpm add --save-exact --no-optional @aws-sdk/client-s3 @aws-sdk/credential-provider-ini
+          fi
         
-        # Clean up unnecessary files immediately after install
-        - find node_modules -type d -name 'test' -o -name 'tests' -o -name '__tests__' | xargs rm -rf
-        - find node_modules -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete
-        - find node_modules -type f \( -name '*.md' -o -name '*.markdown' -o -name 'LICENSE*' -o -name 'CHANGELOG*' -o -name 'README*' \) -delete
-        - rm -rf node_modules/.bin node_modules/.cache node_modules/typescript node_modules/@types
-        
-        # Create CDN asset map (will be empty in CI, populated during build)
-        - echo '{}' > src/cdn-asset-map.json
-        
+        # Clean up unnecessary files
+        - find node_modules -type d \( -name 'test' -o -name 'tests' -o -name '__tests__' -o -name 'examples' \) -exec rm -rf {} + || true
+        - find node_modules -type f \( -name '*.md' -o -name '*.markdown' -o -name 'CHANGELOG*' -o -name '*.ts' -o -name '*.tsx' -o -name '*.map' \) -delete || true
+        - find node_modules -type f -name '*.d.ts' ! -path '*/@types/*' -delete || true
+
     build:
       commands:
         # Set environment variables
         - echo "NODE_ENV=production" > .env
         - echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env
         
-        # Upload assets to CDN if CDN is configured
-        - if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
-            echo "Uploading assets to CDN...";
-            node scripts/upload-to-cdn.js;
-          else
-            echo "CDN not configured, using local assets";
-          fi
-        
         # Build with production optimizations
-        - NODE_ENV=production NODE_OPTIONS="--max-old-space-size=12288" pnpm run build
+        - pnpm run build
+        
+        # Process assets for CDN if configured
+        - |
+          if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
+            echo "Processing assets for CDN..."
+            # Create .amplify-hosting/static directory for optimized static assets
+            mkdir -p .amplify-hosting/static
+            
+            # Move public assets to .amplify-hosting/static
+            if [ -d "public" ]; then
+              cp -r public/* .amplify-hosting/static/
+            fi
+            
+            # Upload to CDN and update asset map
+            node scripts/upload-to-cdn.js
+            
+            # Clean up if upload was successful
+            if [ $? -eq 0 ]; then
+              echo "CDN upload successful"
+              # Keep only the asset map in dist
+              find dist \( -type f -not -name 'asset-manifest.json' \) -delete
+            else
+              echo "CDN upload failed, using local assets"
+            fi
+          fi
         
         # Create minimal output structure
         - mkdir -p .amplify-hosting/compute/default
