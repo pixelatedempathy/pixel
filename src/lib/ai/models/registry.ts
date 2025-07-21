@@ -1,5 +1,6 @@
 import type { AIModel } from './types'
 import { createBuildSafeLogger } from '../../logging/build-safe-logger'
+import { config as envConfig } from '@/config/env.config'
 
 const appLogger = createBuildSafeLogger('app')
 
@@ -803,8 +804,6 @@ export class AIModelRegistry {
   isProviderAvailable(provider: string): boolean {
     // Lazy load config to avoid initialization order issues
     const getConfig = () => {
-import { config as envConfig } from '@/config/env.config'
-
       try {
         return envConfig
       } catch {
@@ -920,7 +919,13 @@ import { config as envConfig } from '@/config/env.config'
       }))
       .sort((a, b) => b.score - a.score)
 
-    return scoredCandidates[0].model
+    // Safety check and explicit access to avoid TypeScript undefined error
+    const topCandidate = scoredCandidates[0]
+    if (!topCandidate) {
+      return null
+    }
+
+    return topCandidate.model
   }
 
   private calculateModelScore(

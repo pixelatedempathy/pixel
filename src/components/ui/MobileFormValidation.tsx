@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 interface ValidationRule {
   test: (value: string) => boolean
@@ -58,6 +58,101 @@ export function MobileFormValidation({
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Validate a specific field
+  const validateField = useCallback((name: string, value: string): string => {
+    const rules = validationRules[name]
+    if (!rules) {
+      return ''
+    }
+
+    for (const rule of rules) {
+      if (!rule.test(value)) {
+        return rule.message
+      }
+    }
+
+    return ''
+  }, [validationRules])
+
+  // Handle input changes
+  const handleChange = useCallback((e: Event) => {
+    const input = e.target as
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement
+    const name = input.getAttribute('name')
+    if (!name) {
+      return
+    }
+
+    // Mark field as touched
+    setTouchedFields((prev) => {
+      const newSet = new Set(prev)
+      newSet.add(name)
+      return newSet
+    })
+
+    if (validateOnChange) {
+      const { value } = input
+      const error = validateField(name, value)
+
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        if (error) {
+          newErrors[name] = error
+        } else {
+          delete newErrors[name]
+        }
+        return newErrors
+      })
+
+      // Update ARIA attributes
+      input.setAttribute('aria-invalid', error ? 'true' : 'false')
+
+      if (onValidationChange) {
+        const newErrors = { ...errors }
+        if (error) {
+          newErrors[name] = error
+        } else {
+          delete newErrors[name]
+        }
+        onValidationChange(Object.keys(newErrors).length === 0, newErrors)
+      }
+    }
+  }, [validateOnChange, validateField, onValidationChange, errors])
+
+  // Handle input blur
+  const handleBlur = useCallback((e: Event) => {
+    if (!validateOnBlur) {
+      return
+    }
+
+    const input = e.target as
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | HTMLSelectElement
+    const name = input.getAttribute('name')
+    if (!name) {
+      return
+    }
+
+    const { value } = input
+    const error = validateField(name, value)
+
+    setErrors((prev) => {
+      const newErrors = { ...prev }
+      if (error) {
+        newErrors[name] = error
+      } else {
+        delete newErrors[name]
+      }
+      return newErrors
+    })
+
+    // Update ARIA attributes
+    input.setAttribute('aria-invalid', error ? 'true' : 'false')
+  }, [validateOnBlur, validateField])
+
   // Find and enhance all form inputs with validation attributes
   useEffect(() => {
     if (!formRef.current) {
@@ -68,6 +163,33 @@ export function MobileFormValidation({
     const inputs = form.querySelectorAll('input, textarea, select')
 
     inputs.forEach((input) => {
+      const name = input.getAttribute('name')
+      if (!name || !validationRules[name]) {
+        return
+      }
+
+      // Add event listeners for input validation
+      input.addEventListener('change', handleChange)
+      input.addEventListener('blur', handleBlur)
+
+      // Add ARIA attributes
+      input.setAttribute('aria-required', 'true')
+
+      // Enhanced feedback for mobile
+      if (isMobile) {
+        // Make touch targets easier
+        input.classList.add('mobile-input')
+      }
+    })
+
+    // Clean up event listeners
+    return () => {
+      inputs.forEach((input) => {
+        input.removeEventListener('change', handleChange)
+        input.removeEventListener('blur', handleBlur)
+      })
+    }
+  }, [formRef.current, validationRules, isMobile, handleChange, handleBlur])
       const name = input.getAttribute('name')
       if (!name || !validationRules[name]) {
         return

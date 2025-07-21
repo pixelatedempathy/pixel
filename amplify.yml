@@ -8,7 +8,7 @@ frontend:
     preBuild:
       commands:
         # Install pnpm if not already installed
-        - if ! command -v pnpm &> /dev/null; then echo "Installing pnpm..." && npm install -g pnpm@10.13.1; fi
+        - npm install -g pnpm
           
         # Set Node.js memory limit
         - export NODE_OPTIONS=--max-old-space-size=12288
@@ -18,8 +18,8 @@ frontend:
         - pnpm config set auto-install-peers true
         - pnpm config set strict-peer-dependencies false
         
-        # Install all dependencies with optimized flags
-        - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist
+        # Install all dependencies with simplified flags
+        - pnpm install
         
         # Install AWS SDK only if needed for CDN
         - |

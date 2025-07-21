@@ -1,5 +1,5 @@
-import { kv } from '@vercel/kv'
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+import { Buffer } from 'buffer'
 
 const logger = createBuildSafeLogger('cache-service')
 
@@ -62,13 +62,14 @@ export interface CacheClient extends CacheService {
  * Uses Vercel KV for distributed caching across instances
  */
 class VercelKVCacheService implements CacheService {
-  private redis = kv
+  private redis: any = null
   public connected = true
   private readonly prefix = 'app:cache:'
 
   constructor() {
-    // Vercel KV is automatically configured
-    logger.info('Vercel KV cache service initialized')
+    // Disable Vercel KV for AWS deployment
+    this.connected = false
+    logger.info('Vercel KV cache service disabled for AWS deployment')
   }
 
   private getFullKey(key: string): string {
@@ -82,7 +83,7 @@ class VercelKVCacheService implements CacheService {
 
     try {
       const fullKey = this.getFullKey(key)
-      const result = await this.redis.get<T>(fullKey)
+      const result = await this.redis.get(fullKey) as T | null
 
       if (result) {
         logger.debug('Cache hit', { key })
@@ -150,7 +151,7 @@ class VercelKVCacheService implements CacheService {
 
     try {
       const fullKeys = keys.map((key) => this.getFullKey(key))
-      const results = await this.redis.mget<T[]>(...fullKeys)
+      const results = await this.redis.mget(...fullKeys) as T[]
 
       const resultMap: Record<string, T | null> = {}
       keys.forEach((key, index) => {
@@ -173,7 +174,7 @@ class MemoryCacheService implements CacheService {
   private cache = new Map<string, CacheEntry<unknown>>()
   private readonly maxEntries = 1000
   private readonly prefix = 'memory:'
-  private cleanupInterval: NodeJS.Timeout
+  private cleanupInterval: ReturnType<typeof setInterval>
 
   constructor() {
     // Periodic cleanup of expired entries

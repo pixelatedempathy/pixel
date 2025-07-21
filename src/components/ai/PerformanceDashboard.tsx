@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 
 // Define interface for the expected AIService in this component
 interface AIServiceProps {
@@ -49,6 +49,22 @@ export interface PerformanceDashboardProps {
   refreshInterval?: number // in milliseconds
 }
 
+// Mock data (in a real app, this would come from a database)
+const mockResponseTimeData = {
+  average: 450,
+  min: 120,
+  max: 1200,
+  samples: 156,
+}
+
+const mockTokenUsageData = {
+  totalPromptTokens: 45600,
+  totalCompletionTokens: 32400,
+  totalTokens: 78000,
+  averagePerRequest: 500,
+  samples: 156,
+}
+
 export function PerformanceDashboardReact({
   aiService,
   refreshInterval = 10000,
@@ -57,53 +73,37 @@ export function PerformanceDashboardReact({
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Mock response time and token usage data (in a real app, this would come from a database)
-  const mockResponseTimeData = {
-    average: 450,
-    min: 120,
-    max: 1200,
-    samples: 156,
-  }
+  const fetchMetrics = useCallback(() => {
+    try {
+      setLoading(true)
 
-  const mockTokenUsageData = {
-    totalPromptTokens: 45600,
-    totalCompletionTokens: 32400,
-    totalTokens: 78000,
-    averagePerRequest: 500,
-    samples: 156,
-  }
+      // Get real-time metrics from the AI service
+      const serviceStats = aiService.getCacheService().getStats()
+
+      // Combine with mock data (in a real app, all data would come from a database)
+      setMetrics({
+        cache: serviceStats,
+        connectionPool: {
+          totalConnections: 10,
+          activeConnections: 3,
+          idleConnections: 7,
+          maxConnections: 20,
+          enabled: true,
+        },
+        responseTime: mockResponseTimeData,
+        tokenUsage: mockTokenUsageData,
+      })
+
+      setError(null)
+    } catch (err) {
+      setError('Failed to fetch performance metrics')
+      console.error('Error fetching metrics:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [aiService])
 
   useEffect(() => {
-    const fetchMetrics = () => {
-      try {
-        setLoading(true)
-
-        // Get real-time metrics from the AI service
-        const serviceStats = aiService.getCacheService().getStats()
-
-        // Combine with mock data (in a real app, all data would come from a database)
-        setMetrics({
-          cache: serviceStats,
-          connectionPool: {
-            totalConnections: 10,
-            activeConnections: 3,
-            idleConnections: 7,
-            maxConnections: 20,
-            enabled: true,
-          },
-          responseTime: mockResponseTimeData,
-          tokenUsage: mockTokenUsageData,
-        })
-
-        setError(null)
-      } catch (err) {
-        setError('Failed to fetch performance metrics')
-        console.error('Error fetching metrics:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     // Fetch metrics immediately
     fetchMetrics()
 
@@ -112,7 +112,7 @@ export function PerformanceDashboardReact({
 
     // Clean up interval on unmount
     return () => clearInterval(intervalId)
-  }, [aiService, refreshInterval])
+  }, [fetchMetrics, refreshInterval])
 
   if (loading && !metrics) {
     return <div className="p-4 text-center">Loading performance metrics...</div>
