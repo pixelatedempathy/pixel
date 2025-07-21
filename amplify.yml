@@ -11,10 +11,10 @@ frontend:
         - pnpm config set store-dir .pnpm-store
         
         # Install dependencies needed for CDN upload
-        - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist @aws-sdk/client-s3 @aws-sdk/credential-provider-ini
+        - pnpm add --no-frozen-lockfile --prefer-offline --shamefully-hoist @aws-sdk/client-s3 @aws-sdk/credential-provider-ini
         
         # Install only production dependencies with aggressive cleanup
-        - pnpm install --prod --frozen-lockfile --prefer-offline --shamefully-hoist
+        - pnpm install --prod --no-frozen-lockfile --prefer-offline --shamefully-hoist
         
         # Clean up unnecessary files immediately after install
         - find node_modules -type d -name 'test' -o -name 'tests' -o -name '__tests__' | xargs rm -rf
