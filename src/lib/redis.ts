@@ -3,7 +3,7 @@
  * This module provides a consistent interface for Redis operations with proper error handling
  */
 
-import Redis from 'ioredis'
+
 
 // Lazy load config to avoid initialization order issues
 const getConfig = () => {

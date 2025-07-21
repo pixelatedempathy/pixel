@@ -11,7 +11,7 @@ async function performHeavyComputation(): Promise<number> {
 }
 
 // Simulates a database query
-async function simulateDatabaseQuery(): Promise<Record<string, any>> {
+async function simulateDatabaseQuery(): Promise<Record<string, unknown>> {
   // Simulate DB query delay
   await new Promise((resolve) => setTimeout(resolve, 300))
   return { id: 1, name: 'Example Record', value: Math.random() * 100 }

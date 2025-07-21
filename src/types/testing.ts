@@ -240,9 +240,9 @@ export interface BrowserCompatibilityConfig {
 
 export interface TestSection {
   title: string
-  component?: ComponentType<any>
+  component?: ComponentType<unknown>
   instructions?: string[]
-  props?: Record<string, any>
+  props?: Record<string, unknown>
 }
 
 export type TestSections = {

@@ -1,4 +1,4 @@
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+
 
 // Note: PerformanceLogger import removed - may need to be replaced with alternative implementation
 

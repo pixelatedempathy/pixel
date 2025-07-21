@@ -4,6 +4,38 @@ import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
 const logger = createBuildSafeLogger('BiasExportAPI')
 
+interface CsvSession {
+  sessionId: string;
+  timestamp: string;
+  biasScore: number;
+  alertLevel: string;
+  participantDemographics?: {
+    gender?: string;
+    age?: number;
+    ethnicity?: string;
+  };
+  scenario?: string;
+}
+
+interface CsvAlert {
+  id: string;
+  sessionId: string;
+  level: string;
+  message: string;
+  timestamp: string;
+  biasType: string;
+  confidence: number;
+  affectedDemographics?: string[];
+  recommendations?: string[];
+}
+
+interface DemographicGroup {
+  group: string;
+  count: number;
+  percentage: number;
+  averageBiasScore: number;
+}
+
 export const GET: APIRoute = async ({ request, cookies }) => {
   try {
     const url = new URL(request.url)
@@ -117,7 +149,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
   }
 }
 
-function exportAsJSON(data: any): Response {
+function exportAsJSON(data: unknown): Response {
   const exportData = {
     exportedAt: new Date().toISOString(),
     format: 'json',
@@ -133,7 +165,7 @@ function exportAsJSON(data: any): Response {
   })
 }
 
-function exportAsCSV(data: any): Response {
+function exportAsCSV(data: unknown): Response {
   // Create CSV content from dashboard data
   const csvRows = []
 
@@ -153,8 +185,13 @@ function exportAsCSV(data: any): Response {
   )
 
   // Add recent sessions data
-  if (data.recentSessions) {
-    data.recentSessions.forEach((session: any) => {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'recentSessions' in data &&
+    Array.isArray(data.recentSessions)
+  ) {
+    data.recentSessions.forEach((session: CsvSession) => {
       csvRows.push(
         [
           session.sessionId,
@@ -188,8 +225,13 @@ function exportAsCSV(data: any): Response {
     ].join(','),
   )
 
-  if (data.alerts) {
-    data.alerts.forEach((alert: any) => {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'alerts' in data &&
+    Array.isArray(data.alerts)
+  ) {
+    data.alerts.forEach((alert: CsvAlert) => {
       csvRows.push(
         [
           alert.id,
@@ -217,9 +259,22 @@ function exportAsCSV(data: any): Response {
   })
 }
 
-function exportAsPDF(data: any): Response {
+function exportAsPDF(data: unknown): Response {
   // For PDF export, we'll create a simple HTML-based PDF
   // In production, you'd use a library like Puppeteer or jsPDF
+
+  const summary =
+    data && typeof data === 'object' && 'summary' in data
+      ? (data.summary as Record<string, unknown>)
+      : {}
+  const alerts =
+    data && typeof data === 'object' && 'alerts' in data
+      ? (data.alerts as CsvAlert[])
+      : []
+  const demographics =
+    data && typeof data === 'object' && 'demographics' in data
+      ? (data.demographics as Record<string, any>)
+      : { breakdown: [] }
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -248,18 +303,18 @@ function exportAsPDF(data: any): Response {
       
       <div class="summary">
         <h2>Summary</h2>
-        <p><strong>Total Sessions:</strong> ${data.summary?.totalSessions || 'N/A'}</p>
-        <p><strong>Average Bias Score:</strong> ${data.summary?.averageBiasScore || 'N/A'}</p>
-        <p><strong>Active Alerts:</strong> ${data.summary?.alertsCount || 'N/A'}</p>
-        <p><strong>Trend:</strong> ${data.summary?.trendsDirection || 'N/A'}</p>
+        <p><strong>Total Sessions:</strong> ${summary?.totalSessions || 'N/A'}</p>
+        <p><strong>Average Bias Score:</strong> ${summary?.averageBiasScore || 'N/A'}</p>
+        <p><strong>Active Alerts:</strong> ${summary?.alertsCount || 'N/A'}</p>
+        <p><strong>Trend:</strong> ${summary?.trendsDirection || 'N/A'}</p>
       </div>
       
       <div class="section">
         <h2>Recent Alerts</h2>
         ${
-          data.alerts
+          alerts
             ?.map(
-              (alert: any) => `
+              (alert: CsvAlert) => `
           <div class="alert ${alert.level}">
             <h4>${alert.message}</h4>
             <p><strong>Session:</strong> ${alert.sessionId}</p>
@@ -286,9 +341,9 @@ function exportAsPDF(data: any): Response {
           </thead>
           <tbody>
             ${
-              data.demographics?.breakdown
+              demographics?.breakdown
                 ?.map(
-                  (group: any) => `
+                  (group: DemographicGroup) => `
               <tr>
                 <td>${group.group}</td>
                 <td>${group.count}</td>

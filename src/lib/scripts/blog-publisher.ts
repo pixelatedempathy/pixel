@@ -157,7 +157,7 @@ async function listSeries(): Promise<void> {
   const allPosts = service.getAllPosts()
 
   // Create a map of series to posts
-  const seriesMap = new Map<string, any[]>()
+  const seriesMap = new Map<string, (typeof allPosts)[0][]>()
 
   for (const post of allPosts) {
     if (post.metadata.series) {

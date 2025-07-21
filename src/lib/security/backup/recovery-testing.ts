@@ -145,13 +145,13 @@ export class RecoveryTestingManager {
     if (!this.config.testCases || this.config.testCases.length === 0) {
       this.loadDefaultTestCases()
     } else {
-      this.config.testCases.forEach((tc) => {
+      this.config.testCases.forEach((tc: any) => {
         const testCase: TestCase = {
-          id: generateUUID(), // generateUUID will now work reliably server-side
+          id: generateUUID(),
           name: tc.name,
           description: tc.description,
           backupType: tc.backupType,
-          verificationSteps: tc.dataVerification.map((dv) => ({
+          verificationSteps: tc.dataVerification.map((dv: any) => ({
             id: generateUUID(),
             type: dv.type as VerificationMethod,
             target: dv.target,
@@ -190,13 +190,13 @@ export class RecoveryTestingManager {
         this.testCases.clear()
 
         // Load provided test cases
-        config.testCases.forEach((tc) => {
+        config.testCases.forEach((tc: any) => {
           const testCase: TestCase = {
             id: generateUUID(),
             name: tc.name,
             description: tc.description,
             backupType: tc.backupType,
-            verificationSteps: tc.dataVerification.map((dv) => ({
+            verificationSteps: tc.dataVerification.map((dv: any) => ({
               id: generateUUID(),
               type: dv.type as VerificationMethod,
               target: dv.target,
@@ -240,8 +240,8 @@ export class RecoveryTestingManager {
           {
             id: generateUUID(),
             type: VerificationMethod.HASH,
-            target: 'system-files',
-            expected: undefined, // Will be compared with source system
+            target: 'system-files'
+            // expected omitted to avoid type error
           },
           {
             id: generateUUID(),
@@ -479,19 +479,17 @@ export class RecoveryTestingManager {
 
     switch (type) {
       case TestEnvironmentType.DOCKER:
-        environment = new DockerTestEnvironment(this.config.environment.config)
+        environment = new DockerTestEnvironment()
         break
       case TestEnvironmentType.KUBERNETES:
-        environment = new KubernetesTestEnvironment(
-          this.config.environment.config,
-        )
+        environment = new KubernetesTestEnvironment()
         break
       case TestEnvironmentType.VM:
-        environment = new VMTestEnvironment(this.config.environment.config)
+        environment = new VMTestEnvironment()
         break
       case TestEnvironmentType.SANDBOX:
       default:
-        environment = new SandboxTestEnvironment(this.config.environment.config)
+        environment = new SandboxTestEnvironment()
         break
     }
 
@@ -513,27 +511,25 @@ export class RecoveryTestingManager {
       details: Record<string, unknown>
     }>
   > {
-    const results = []
+    const results: Array<{
+      testCaseName: string
+      passed: boolean
+      details: Record<string, unknown>
+    }> = []
 
     // Run each test case
     for (const testCase of this.testCases.values()) {
       logger.info('Running test case', {
-        testCaseName: testCase.name,
         backupId,
+        testCaseName: testCase.name,
       })
 
-      const stepResults = []
-      let allStepsPassed = true
+      const verificationDetails = await this.verifyDataIntegrity(
+        environment,
+        testCase,
+      )
 
-      // Run each verification step in the test case
-      for (const step of testCase.verificationSteps) {
-        const stepResult = await environment.verifyStep(step)
-        stepResults.push(stepResult)
-
-        if (!stepResult.passed) {
-          allStepsPassed = false
-        }
-      }
+      const allStepsPassed = verificationDetails.every((v) => v.passed)
 
       // Add test case result
       results.push({
@@ -541,7 +537,7 @@ export class RecoveryTestingManager {
         passed: allStepsPassed,
         details: {
           description: testCase.description,
-          stepResults,
+          steps: verificationDetails,
         },
       })
     }
@@ -599,68 +595,82 @@ export class RecoveryTestingManager {
   ): Promise<
     { step: string; passed: boolean; details: Record<string, unknown> }[]
   > {
-    const results = []
+    const results: { step: string; passed: boolean; details: Record<string, unknown> }[] = []
     for (const step of testCase.verificationSteps) {
       const verificationResult = await environment.verifyStep(step)
-      if (step.type === VerificationMethod.HASH) {
-        if (!isBrowser && nodeCryptoCreateHash) {
-          if (
-            verificationResult.passed &&
-            (typeof verificationResult.actual === 'string' ||
-              verificationResult.actual instanceof Uint8Array)
-          ) {
-            const hash = nodeCryptoCreateHash('sha256')
-              .update(verificationResult.actual)
-              .digest('hex')
-            results.push({
-              step: step.id,
-              passed: hash === step.expected,
-              details: {
-                actualHash: hash,
-                expectedHash: step.expected,
-                ...verificationResult.details,
-              },
-            })
-          } else if (verificationResult.passed) {
-            results.push({
-              step: step.id,
-              passed: false,
-              details: {
-                error:
-                  'Actual data for HASH verification is not a string or Uint8Array.',
-                ...verificationResult.details,
-              },
-            })
+      switch (step.type) {
+        case VerificationMethod.HASH:
+          if (!isBrowser && nodeCryptoCreateHash) {
+            if (
+              verificationResult.passed &&
+              (typeof verificationResult.actual === 'string' ||
+                verificationResult.actual instanceof Uint8Array)
+            ) {
+              const hash = nodeCryptoCreateHash('sha256')
+                .update(verificationResult.actual)
+                .digest('hex')
+              results.push({
+                step: step.id,
+                passed: hash === step.expected,
+                details: {
+                  actualHash: hash,
+                  expectedHash: step.expected,
+                  ...verificationResult.details,
+                },
+              })
+            } else if (verificationResult.passed) {
+              results.push({
+                step: step.id,
+                passed: false,
+                details: {
+                  error:
+                    'Actual data for HASH verification is not a string or Uint8Array.',
+                  ...verificationResult.details,
+                },
+              })
+            } else {
+              results.push({
+                step: step.id,
+                passed: false,
+                details: {
+                  error: 'Hash verification skipped: data retrieval failed.',
+                  ...verificationResult.details,
+                },
+              })
+            }
           } else {
             results.push({
               step: step.id,
               passed: false,
               details: {
-                error: 'Hash verification skipped: data retrieval failed.',
-                ...verificationResult.details,
+                error:
+                  'HASH verification skipped: crypto.createHash not available on server or in browser.',
               },
             })
           }
-        } else {
+          break
+        case VerificationMethod.QUERY:
+        case VerificationMethod.CONTENT:
+        case VerificationMethod.API:
+          results.push({
+            step: step.id,
+            passed: verificationResult.passed,
+            details: {
+              actual: verificationResult.actual,
+              expected: step.expected,
+              ...verificationResult.details,
+            },
+          })
+          break
+        default:
           results.push({
             step: step.id,
             passed: false,
             details: {
-              error:
-                'HASH verification skipped: crypto.createHash not available on server or in browser.',
+              error: `Unsupported verification method: ${step.type}`,
             },
           })
-        }
-      } else {
-        results.push({
-          step: step.id,
-          passed: verificationResult.passed,
-          details: {
-            actual: verificationResult.actual,
-            expected: verificationResult.expected,
-            ...verificationResult.details,
-          },
-        })
+          break
       }
     }
     return results
@@ -687,10 +697,10 @@ interface TestEnvironment {
  * Docker-based test environment
  */
 class DockerTestEnvironment implements TestEnvironment {
-  private config: Record<string, unknown>
+  // private config: Record<string, unknown>
 
-  constructor(config: Record<string, unknown>) {
-    this.config = config
+  constructor(/* config: Record<string, unknown> */) {
+    // this.config = config
   }
 
   async initialize(): Promise<void> {
@@ -733,10 +743,10 @@ class DockerTestEnvironment implements TestEnvironment {
  * Kubernetes-based test environment
  */
 class KubernetesTestEnvironment implements TestEnvironment {
-  private config: Record<string, unknown>
+  // private config: Record<string, unknown>
 
-  constructor(config: Record<string, unknown>) {
-    this.config = config
+  constructor(/* config: Record<string, unknown> */) {
+    // this.config = config
   }
 
   async initialize(): Promise<void> {
@@ -779,10 +789,10 @@ class KubernetesTestEnvironment implements TestEnvironment {
  * VM-based test environment
  */
 class VMTestEnvironment implements TestEnvironment {
-  private config: Record<string, unknown>
+  // private config: Record<string, unknown>
 
-  constructor(config: Record<string, unknown>) {
-    this.config = config
+  constructor(/* config: Record<string, unknown> */) {
+    // this.config = config
   }
 
   async initialize(): Promise<void> {
@@ -825,11 +835,11 @@ class VMTestEnvironment implements TestEnvironment {
  * In-memory sandbox test environment (lightest option)
  */
 class SandboxTestEnvironment implements TestEnvironment {
-  private config: Record<string, unknown>
+  // private config: Record<string, unknown>
   private restoredData: Map<string, Uint8Array> = new Map()
 
-  constructor(config: Record<string, unknown>) {
-    this.config = config
+  constructor(/* config: Record<string, unknown> */) {
+    // this.config = config
   }
 
   async initialize(): Promise<void> {
@@ -903,13 +913,16 @@ class SandboxTestEnvironment implements TestEnvironment {
             result = 'query result'
           }
 
-          return {
+          const ret: any = {
             step: step.id,
             passed: !step.expected || result === step.expected,
             actual: result,
-            expected: step.expected,
             details: { query: step.query },
           }
+          if (step.expected !== undefined) {
+            ret.expected = step.expected
+          }
+          return ret
         }
         return {
           step: step.id,

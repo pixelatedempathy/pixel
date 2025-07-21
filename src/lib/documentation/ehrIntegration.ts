@@ -7,7 +7,7 @@ const logger = createBuildSafeLogger('ehr-integration')
  * Class that handles integration between our documentation system and EHR systems
  */
 export class EHRIntegration {
-  private fhirClient: any
+  private fhirClient: unknown
   private auditLog: boolean
 
   /**
@@ -15,7 +15,10 @@ export class EHRIntegration {
    * @param fhirClient The FHIR client to use for EHR integration
    * @param options Additional options for the integration
    */
-  constructor(fhirClient: any, options: { auditLog?: boolean } = {}) {
+  constructor(fhirClient: unknown, options: { auditLog?: boolean } = {}) {
+    if (!fhirClient || typeof fhirClient !== 'object') {
+      throw new Error('Invalid FHIR client provided.')
+    }
     this.fhirClient = fhirClient
     this.auditLog = options.auditLog ?? true
   }
@@ -276,7 +279,7 @@ export class EHRIntegration {
   private async createDocumentReference(
     formattedDocument: Record<string, unknown>,
     options: EHRExportOptions,
-  ): Promise<any> {
+  ): Promise<unknown> {
     const now = new Date().toISOString()
 
     // Create the DocumentReference resource
@@ -310,7 +313,9 @@ export class EHRIntegration {
           attachment: {
             contentType: this.getContentType(options.format),
             data: this.getEncodedData(formattedDocument),
-            title: formattedDocument['title'] || 'Therapy Session Documentation',
+            title:
+              (formattedDocument['title'] as string) ||
+              'Therapy Session Documentation',
             creation: now,
           },
         },
@@ -318,11 +323,15 @@ export class EHRIntegration {
     }
 
     // Create the DocumentReference in the EHR system
-    return (
-      (await this.fhirClient.createResource?.(documentReference)) || {
-        id: 'mock-doc-id',
-      }
-    )
+    if (
+      this.fhirClient &&
+      typeof this.fhirClient === 'object' &&
+      'createResource' in this.fhirClient &&
+      typeof this.fhirClient.createResource === 'function'
+    ) {
+      return await this.fhirClient.createResource(documentReference)
+    }
+    return { id: 'mock-doc-id' }
   }
 
   /**

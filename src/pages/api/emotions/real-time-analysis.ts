@@ -26,7 +26,7 @@ interface EmotionAnalysisResult {
 class PlaceholderAIService {
   async analyzeEmotionsRealTime(
     _text: string,
-    _options: { userId: string; context: any },
+    _options: { userId: string; context: unknown },
   ): Promise<EmotionAnalysisResult> {
     // Placeholder implementation
     await new Promise((resolve) => setTimeout(resolve, 100)) // Simulate processing

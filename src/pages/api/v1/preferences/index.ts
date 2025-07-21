@@ -33,7 +33,7 @@ const DEFAULT_AI_PREFERENCES: AIPreferences = {
 }
 
 function validateAIPreferences(
-  input: any,
+  input: unknown,
 ): asserts input is typeof DEFAULT_AI_PREFERENCES {
   if (typeof input !== 'object' || input == null) {
     throw new Error('Invalid preferences object')

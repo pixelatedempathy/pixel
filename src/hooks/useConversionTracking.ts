@@ -19,7 +19,7 @@ export interface ConversionTrackingOptions {
 }
 
 interface EventData {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // Hook for conversion tracking
@@ -32,7 +32,7 @@ export default function useConversionTracking(
 
   // Debug logger
   const log = useCallback(
-    (message: string, data?: any) => {
+    (message: string, data?: unknown) => {
       if (debug) {
         console.log(`🔍 Conversion Tracking: ${message}`, data || '')
       }
@@ -160,6 +160,6 @@ export default function useConversionTracking(
 // Add TypeScript declaration for dataLayer
 declare global {
   interface Window {
-    dataLayer?: any[]
+    dataLayer?: unknown[]
   }
 }

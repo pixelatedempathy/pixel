@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 import { ContactService } from '@/lib/services/contact/ContactService'
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+
 
 // Initialize contact service
 const contactService = new ContactService()

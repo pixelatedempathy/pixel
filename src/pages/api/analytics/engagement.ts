@@ -135,13 +135,17 @@ export const GET: APIRoute = async ({ request, cookies }) => {
         'Cache-Control': 'private, max-age=60',
       },
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log error securely (avoid leaking sensitive info)
     console.error('Engagement metrics API error:', error)
+    const status =
+      error && typeof error === 'object' && 'status' in error
+        ? (error as { status: number }).status
+        : 500
     return new Response(
       JSON.stringify({ error: 'Failed to fetch engagement metrics.' }),
       {
-        status: error?.status || 500,
+        status,
         headers: { 'Content-Type': 'application/json' },
       },
     )

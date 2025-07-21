@@ -9,7 +9,7 @@ interface DemoAnalyticsEvent {
   url: string
   referrer: string
   user_agent: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // In-memory storage for demo (replace with database in production)

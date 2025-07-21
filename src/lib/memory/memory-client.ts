@@ -14,10 +14,10 @@ export interface MemoryEntry {
 
 export interface SearchOptions {
   query: string
-  userId?: string
-  category?: string
-  limit?: number
-  threshold?: number
+  userId?: string | undefined
+  category?: string | undefined
+  limit?: number | undefined
+  threshold?: number | undefined
 }
 
 export interface MemoryStats {

@@ -10,7 +10,7 @@ import {
   getAllFeatures,
 } from './feature-detection'
 import { setupCSSPolyfills } from './css-polyfills'
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+
 
 /**
  * Setup browser environment

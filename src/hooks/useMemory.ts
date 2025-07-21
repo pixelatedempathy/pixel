@@ -102,7 +102,8 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
             content,
             metadata: {
               ...metadata,
-              category: metadata?.category || category,
+              role: metadata?.role || 'user',
+              category: metadata?.category || category || 'general',
               userId,
             },
           },
@@ -286,8 +287,9 @@ export function useConversationMemory(userId: string, sessionId?: string) {
       await memory.addMemory(content, {
         category: 'conversation',
         tags: ['chat-message', role],
-        sessionId,
+        ...(sessionId && { sessionId }),
         timestamp: new Date().toISOString(),
+        role,
       })
     },
     [memory, sessionId],
@@ -342,7 +344,7 @@ export function useUserPreferences(userId: string) {
       if (prefMemory) {
         try {
           const match = prefMemory.content.match(/= (.+)$/)
-          return match ? JSON.parse(match[1]) : null
+          return match && match[1] ? JSON.parse(match[1]) : null
         } catch {
           return null
         }

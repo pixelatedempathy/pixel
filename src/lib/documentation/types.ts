@@ -72,7 +72,7 @@ export interface EHRExportOptions {
   /**
    * Additional metadata to include in the export
    */
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 
   /**
    * Whether to include sensitive information
@@ -92,7 +92,7 @@ export interface EHRExportResult {
   /**
    * The exported data (format depends on the export format)
    */
-  data?: any
+  data?: unknown
 
   /**
    * Any errors that occurred during export

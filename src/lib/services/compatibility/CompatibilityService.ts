@@ -1,6 +1,6 @@
 import type { CompatibilityIssue } from '@/types/testing.ts'
 import { EmailService } from '../email/EmailService'
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+
 
 export interface BrowserCompatibilityResult {
   browser: string

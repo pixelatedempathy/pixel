@@ -6,7 +6,7 @@ import React from 'react'
 interface MockAstroComponentProps {
   title?: string
   description?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**

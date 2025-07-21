@@ -386,7 +386,7 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
         }
 
         const documentationSystem = await getDocumentationSystemInstance()
-        const rawResult = await documentationSystem.exportToEHR(sessionId, options) as any;
+        const rawResult = await documentationSystem.exportToEHR(sessionId, options) as unknown;
 
         // Construct a fully type-safe EHRExportResult
         const result: EHRExportResult = {

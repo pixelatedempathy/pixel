@@ -37,6 +37,11 @@ export interface SecurityBreach {
   type: string
 
   /**
+   * Role of the breach (e.g., 'admin', 'user', 'system')
+   */
+  role?: string
+
+  /**
    * Description of the breach
    */
   description: string
@@ -85,6 +90,46 @@ export interface SecurityBreach {
    * Risk score calculated for this breach
    */
   riskScore?: number
+
+  /**
+   * Source of the breach
+   */
+  source: string
+
+  /**
+   * Remediation steps for the breach
+   */
+  remediation: string
+
+  /**
+   * Attack vector used in the breach
+   */
+  attackVector?: string
+
+  /**
+   * Types of data affected by the breach
+   */
+  dataTypes?: string[]
+
+  /**
+   * Time taken to detect the breach
+   */
+  detectionTime?: number
+
+  /**
+   * Time taken to respond to the breach
+   */
+  responseTime?: number
+
+  /**
+   * Number of users affected by the breach
+   */
+  affectedUsers?: number
+
+  /**
+   * Status of remediation efforts
+   */
+  remediationStatus?: 'pending' | 'in_progress' | 'completed'
 }
 
 /**

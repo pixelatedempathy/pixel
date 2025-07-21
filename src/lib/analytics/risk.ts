@@ -8,51 +8,26 @@ import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 import { SecurityError } from '../security/errors'
 import { Cache } from '../cache'
 // Import shared types to avoid circular dependencies
-import { BreachSeverity, type SecurityBreach, type RiskAssessmentResult, type RiskFactor } from './types'
+import type { BreachSeverity } from './types'
 
 const logger = createBuildSafeLogger('risk-scoring')
 const cache = new Cache({ ttl: 3600 }) // 1 hour cache
 
 // Re-export types for backward compatibility
-export { BreachSeverity, type SecurityBreach, type RiskAssessmentResult, type RiskFactor } from './types'
+export { BreachSeverity, type RiskAssessmentResult } from './types'
 
 // Lazy import to avoid circular dependency
 const getBreachDataService = () => {
   const { BreachDataService } = require('./breach')
   return BreachDataService
 }
-  HIGH = 'high',
-  CRITICAL = 'critical',
-}
 
 /**
- * Interface for breach data
- */
-export interface SecurityBreach {
-  id: string
-  severity: BreachSeverity
-  timestamp: Date
-  affectedUsers: string[]
-  dataTypes: string[]
-  attackVector?: string
-  detectionTime: Date
-  responseTime: Date
-  remediationStatus: 'pending' | 'in_progress' | 'completed'
   description: string
   metadata?: Record<string, unknown>
 }
 
-/**
- * Risk factor interface with dynamic scoring
- */
-export interface RiskFactor {
-  name: string
-  weight: number
-  score: number
-  description: string
-  calculateScore: (breach: SecurityBreach) => number | Promise<number>
-  metadata?: Record<string, unknown>
-}
+
 
 /**
  * Risk assessment result
@@ -68,6 +43,35 @@ export interface RiskAssessment {
   timestamp: Date
   confidence: number
   recommendations: string[]
+}
+
+/**
+ * Interface for breach data
+ */
+/**
+ * Risk factor interface with dynamic scoring
+ */
+export interface RiskFactor {
+  name: string
+  weight: number
+  score: number
+  description: string
+  calculateScore: (breach: SecurityBreach) => number | Promise<number>
+  metadata?: Record<string, unknown>
+}
+
+export interface SecurityBreach {
+  id: string
+  severity: BreachSeverity
+  timestamp: Date
+  affectedUsers: string[]
+  dataTypes: string[]
+  attackVector?: string
+  detectionTime: Date
+  responseTime: Date
+  remediationStatus: 'pending' | 'in_progress' | 'completed'
+  description: string
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -99,9 +103,9 @@ const RISK_FACTORS: RiskFactor[] = [
     calculateScore: async (breach: SecurityBreach): Promise<number> => {
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
       const recentBreaches =
-        await BreachDataService.getBreachesSince(thirtyDaysAgo)
+        await getBreachDataService().getBreachesSince(thirtyDaysAgo)
       const similarBreaches = recentBreaches.filter(
-        (b) => b.attackVector === breach.attackVector,
+        (b: SecurityBreach) => b.attackVector === breach.attackVector,
       )
       return Math.min(similarBreaches.length * 0.1, 1)
     },

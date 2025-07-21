@@ -247,9 +247,9 @@ export class CdnService {
     }
   }
 
-  public async getEdgeMetrics(): Promise<Record<string, any>> {
+  public async getEdgeMetrics(): Promise<Record<string, unknown>> {
     try {
-      const metrics: Record<string, any> = {}
+      const metrics: Record<string, unknown> = {}
 
       // Collect metrics from each edge location
       for (const location of this.config.edgeLocations) {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ContactService } from '../ContactService'
 import { EmailService } from '@/lib/services/email/EmailService'
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+
 
 // Mock dependencies
 vi.mock('@/lib/services/email/EmailService')
