@@ -8,8 +8,33 @@ import externalNodePlugin from './src/plugins/vite-plugin-external-node'
 import flexsearchSSRPlugin from './src/plugins/vite-plugin-flexsearch-ssr'
 import middlewarePatchPlugin from './src/plugins/vite-plugin-middleware-patch'
 
+// Import the CDN asset map if it exists
+const cdnAssetMap = (() => {
+  try {
+    return JSON.parse(fs.readFileSync('./src/cdn-asset-map.json', 'utf-8'));
+  } catch (e) {
+    return {};
+  }
+})();
+
 export default defineConfig({
   plugins: [
+    // CDN asset URL replacer
+    {
+      name: 'cdn-asset-replacer',
+      transform(code, id) {
+        if (id.endsWith('.astro') || id.endsWith('.tsx') || id.endsWith('.jsx') || id.endsWith('.ts') || id.endsWith('.js')) {
+          // Replace asset paths with CDN URLs in code
+          Object.entries(cdnAssetMap).forEach(([localPath, cdnUrl]) => {
+            code = code.replace(
+              new RegExp(`(['"])${localPath.replace(/\//g, '\\/')}(['"])`, 'g'),
+              `$1${cdnUrl}$2`
+            );
+          });
+        }
+        return code;
+      },
+    },
     nodePolyfillPlugin(),
     nodeExcludePlugin(),
     externalNodePlugin(),
@@ -40,6 +65,9 @@ export default defineConfig({
       project: 'pixel-astro',
     }),
   ],
+  // Base URL for assets
+  base: process.env.NODE_ENV === 'production' ? process.env.CDN_BASE_URL || '/' : '/',
+  
   resolve: {
     alias: {
       'node:process': path.resolve('./src/lib/polyfills/browser-polyfills.ts'),

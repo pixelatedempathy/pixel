@@ -9,49 +9,70 @@ frontend:
         # Install pnpm and configure
         - npm i -g pnpm
         - pnpm config set store-dir .pnpm-store
+        
+        # Install dependencies needed for CDN upload
+        - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist @aws-sdk/client-s3 @aws-sdk/credential-provider-ini
+        
+        # Install only production dependencies with aggressive cleanup
         - pnpm install --prod --frozen-lockfile --prefer-offline --shamefully-hoist
-        # Then install dev dependencies
-        - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist --ignore-scripts
+        
+        # Clean up unnecessary files immediately after install
+        - find node_modules -type d -name 'test' -o -name 'tests' -o -name '__tests__' | xargs rm -rf
+        - find node_modules -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete
+        - find node_modules -type f \( -name '*.md' -o -name '*.markdown' -o -name 'LICENSE*' -o -name 'CHANGELOG*' -o -name 'README*' \) -delete
+        - rm -rf node_modules/.bin node_modules/.cache node_modules/typescript node_modules/@types
+        
+        # Create CDN asset map (will be empty in CI, populated during build)
+        - echo '{}' > src/cdn-asset-map.json
         
     build:
       commands:
         # Set environment variables
-        - env | grep -v '^NODE_ENV=' | grep -v '^NODE_OPTIONS=' > .env
+        - echo "NODE_ENV=production" > .env
+        - echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env
         
-        # Build with increased memory and production mode
+        # Upload assets to CDN if CDN is configured
+        - if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            echo "Uploading assets to CDN...";
+            node scripts/upload-to-cdn.js;
+          else
+            echo "CDN not configured, using local assets";
+          fi
+        
+        # Build with production optimizations
         - NODE_ENV=production NODE_OPTIONS="--max-old-space-size=12288" pnpm run build
         
-        # Create output directory structure
+        # Create minimal output structure
         - mkdir -p .amplify-hosting/compute/default
         
-        # Copy only production dependencies (already installed in preBuild)
-        - cp -R node_modules .amplify-hosting/compute/default/
-        
-        # Copy only necessary files
-        - cp -R public .amplify-hosting/compute/default/  # Static assets
+        # Copy only essential files (excluding public assets if using CDN)
+        - if [ -z "$CDN_BUCKET_NAME" ]; then
+            cp -R public .amplify-hosting/compute/default/;
+          else
+            mkdir -p .amplify-hosting/compute/default/public;
+            cp public/favicon.ico .amplify-hosting/compute/default/public/;
+          fi
+          
         - cp .env .amplify-hosting/compute/default/
         
-        # Remove development-only dependencies and files
-        - find .amplify-hosting -type d -name 'test' -o -name 'tests' -o -name '__tests__' | xargs rm -rf
-        - find .amplify-hosting -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete
-        - find .amplify-hosting -type f \( -name '*.md' -o -name '*.markdown' -o -name 'LICENSE*' -o -name 'CHANGELOG*' -o -name 'README*' \) -delete
-        - rm -rf .amplify-hosting/**/node_modules/{.bin,.cache,typescript,@types}
+        # Copy only necessary node_modules
+        - cp -R node_modules .amplify-hosting/compute/default/
         
-        # Remove any remaining source maps and development files
-        - find .amplify-hosting -type f -name '*.map' -delete
+        # Clean up development files
+        - find .amplify-hosting -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete
         - find .amplify-hosting -type d -empty -delete
+        
+        # Final size check
+        - du -sh .amplify-hosting/
         
   artifacts:
     baseDirectory: .amplify-hosting
     files:
       - '**/*'
-    discard-paths: no
     
+  # Disable caching to prevent size issues
   cache:
-    paths:
-      - '.pnpm-store/**/*'
-      - 'node_modules/.pnpm/**/*'
-      - 'node_modules/.cache/**/*'
+    paths: []
   customRules:
     - source: '/'
       target: '/index.html'
