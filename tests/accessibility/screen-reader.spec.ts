@@ -41,7 +41,7 @@ test.describe('Screen Reader Accessibility Tests', () => {
       await pageContext.waitForLoadState('networkidle')
 
       // Run axe analysis focusing on screen reader related rules
-      const axeResults = await new AxeBuilder({ page: pageContext })
+      await new AxeBuilder({ page: pageContext })
         .withTags(['wcag2a', 'wcag2aa'])
         .include(SCREEN_READER_CRITERIA)
         .analyze()

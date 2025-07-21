@@ -152,15 +152,16 @@ browsers.forEach((browserName) => {
           await expect(firstSlider).toBeVisible()
 
           // Test slider interaction
-          const initialValue = await firstSlider.getAttribute('aria-valuenow')
+          // Get initial value but don't assert on it since we're just checking for errors
+          await firstSlider.getAttribute('aria-valuenow')
 
           // Try to change slider value
           await firstSlider.focus()
           await page.keyboard.press('ArrowRight')
 
-          // Value should change (or at least not error)
-          const newValue = await firstSlider.getAttribute('aria-valuenow')
-          // Note: Some browsers might not support keyboard slider control
+          // Just check that the operation doesn't throw an error
+          // Some browsers might not support keyboard slider control
+          await firstSlider.getAttribute('aria-valuenow')
         }
       })
     })
@@ -296,7 +297,7 @@ browsers.forEach((browserName) => {
             const retrieved = localStorage.getItem('test')
             localStorage.removeItem('test')
             return retrieved === 'value'
-          } catch (e) {
+          } catch (_) {
             return false
           }
         })
@@ -315,7 +316,7 @@ browsers.forEach((browserName) => {
                       const_let: (() => {
                         try {
                           return true
-                        } catch (e) {
+                        } catch (_) {
                           return false
                         }
                       })(),

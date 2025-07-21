@@ -8,10 +8,7 @@ frontend:
     preBuild:
       commands:
         # Install pnpm if not already installed
-        - if ! command -v pnpm &> /dev/null; then
-            echo "Installing pnpm..."
-            npm install -g pnpm@8.15.0;
-          fi
+        - if ! command -v pnpm &> /dev/null; then echo "Installing pnpm..." && npm install -g pnpm@10.13.1; fi
           
         # Set Node.js memory limit
         - export NODE_OPTIONS=--max-old-space-size=12288

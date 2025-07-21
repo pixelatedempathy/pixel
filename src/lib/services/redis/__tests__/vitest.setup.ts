@@ -7,12 +7,19 @@ expect.extend(customMatchers)
 
 // Augment the global scope with custom matcher types
 declare global {
-  namespace Vi {
-    interface Assertion {
-      toBeRedisError(expectedCode: RedisErrorCode): void
-      toBeInRedis(expectedValue: unknown): Promise<void>
-      toExistInRedis(): Promise<void>
-      toHaveTTL(expectedTTL: number): Promise<void>
+  // Use module augmentation instead of namespace
+  interface ViAssertion {
+    toBeRedisError(expectedCode: RedisErrorCode): void
+    toBeInRedis(expectedValue: unknown): Promise<void>
+    toExistInRedis(): Promise<void>
+    toHaveTTL(expectedTTL: number): Promise<void>
+  }
+}
+
+// Extend Vi.Assertion interface
+declare module 'vitest' {
+  interface Assertion extends ViAssertion {}
+}
     }
     // Ensure we're not accidentally using JestAssertion
     type AsymmetricMatchersContaining = Assertion

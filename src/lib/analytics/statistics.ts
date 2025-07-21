@@ -5,16 +5,16 @@
  */
 
 /**
- * Class for statistical analysis operations
+ * Namespace for statistical analysis operations
  */
-export class StatisticalAnalysis {
+export const StatisticalAnalysis = {
   /**
    * Calculates the trend in a time series of data points
    *
    * @param dataPoints Array of numeric data points
    * @returns Trend coefficient (positive = increasing, negative = decreasing, near zero = stable)
    */
-  static calculateTrend(dataPoints: number[]): number {
+  calculateTrend(dataPoints: number[]): number {
     // Mock implementation of a simple linear regression slope
     if (!dataPoints || dataPoints.length < 2) {
       return 0
@@ -51,7 +51,7 @@ export class StatisticalAnalysis {
 
     // Normalize by dividing by mean (if mean is not zero)
     return yMean !== 0 ? slope / Math.abs(yMean) : slope
-  }
+  },
 
   /**
    * Calculates a moving average of data points
@@ -60,7 +60,7 @@ export class StatisticalAnalysis {
    * @param windowSize Size of the moving window
    * @returns Array of moving averages
    */
-  static calculateMovingAverage(
+  calculateMovingAverage(
     dataPoints: number[],
     windowSize: number = 3,
   ): number[] {

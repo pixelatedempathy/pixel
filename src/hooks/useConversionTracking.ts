@@ -57,7 +57,7 @@ export default function useConversionTracking(
     return () => {
       log('Cleaning up conversion tracking')
     }
-  }, [funnels, log])
+  }, [funnels, log, trackEvent])
 
   // Track a generic event
   const trackEventGeneric = useCallback(

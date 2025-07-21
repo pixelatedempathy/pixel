@@ -142,8 +142,8 @@ export function SimulatorDashboard() {
 
           <div className="mt-3 text-xs text-blue-600">
             You can track your progress through anonymized metrics that are only
-            stored in your browser. View your progress by clicking the "Progress
-            Metrics" button above.
+            stored in your browser. View your progress by clicking the &quot;Progress
+            Metrics&quot; button above.
           </div>
         </div>
 

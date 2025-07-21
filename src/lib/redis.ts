@@ -7,10 +7,10 @@ import Redis from 'ioredis'
 
 
 // Lazy load config to avoid initialization order issues
-const getConfig = () => {
+const getConfig = async () => {
   try {
-    const { config } = require('../config/env.config')
-    return config
+    const configModule = await import('../config/env.config')
+    return configModule.config
   } catch {
     return null
   }

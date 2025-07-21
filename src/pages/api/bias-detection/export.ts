@@ -36,7 +36,7 @@ interface DemographicGroup {
   averageBiasScore: number;
 }
 
-export const GET: APIRoute = async ({ request, cookies }) => {
+export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url)
     const format = url.searchParams.get('format') || 'json'

@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { memoryManager } from '@/server/memory/mem0-manager'
 
-export const GET: APIRoute = async ({ request, url }) => {
+export const GET: APIRoute = async ({ url }) => {
   try {
     const searchParams = new URLSearchParams(url.search)
     const action = searchParams.get('action') || 'list'

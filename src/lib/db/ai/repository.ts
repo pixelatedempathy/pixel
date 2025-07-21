@@ -980,16 +980,50 @@ export class AIRepository {
     overallBiasScore: number
     alertLevel: 'low' | 'medium' | 'high' | 'critical'
     confidenceScore: number
-    layerResults: any
-    demographics?: any
-    demographicGroups?: any
+    layerResults: BiasLayerResults
+    demographics?: DemographicData
+    demographicGroups?: DemographicGroups
     recommendations?: string[]
     explanation?: string
     latencyMs?: number
     modelId?: string
     modelProvider?: string
-    metadata?: any
+    metadata?: Record<string, unknown>
   }): Promise<string> {
+
+// Define interfaces for bias analysis types
+interface BiasLayerResults {
+  textLayer?: {
+    score: number;
+    details: Record<string, unknown>;
+  };
+  semanticLayer?: {
+    score: number;
+    details: Record<string, unknown>;
+  };
+  contextualLayer?: {
+    score: number;
+    details: Record<string, unknown>;
+  };
+  [key: string]: {
+    score: number;
+    details: Record<string, unknown>;
+  } | undefined;
+}
+
+interface DemographicData {
+  gender?: Record<string, number>;
+  age?: Record<string, number>;
+  ethnicity?: Record<string, number>;
+  religion?: Record<string, number>;
+  [key: string]: Record<string, number> | undefined;
+}
+
+interface DemographicGroups {
+  affected: string[];
+  impactScore: Record<string, number>;
+  [key: string]: string[] | Record<string, number> | unknown;
+}
     const { data, error } = await supabase
       .from('ai_bias_analysis')
       .insert({

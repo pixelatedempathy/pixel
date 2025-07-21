@@ -241,7 +241,7 @@ export class ObjectiveWeightingEngine {
 
   private applyAdaptiveWeighting(
     baseWeights: Record<string, number>,
-    context: AlignmentContext,
+    _context: AlignmentContext,
   ): Record<string, number> {
     const weights = { ...baseWeights }
 
@@ -472,11 +472,11 @@ export class ObjectiveWeightingEngine {
 /**
  * Multi-objective balancing algorithms
  */
-export class ObjectiveBalancer {
+export const ObjectiveBalancer = {
   /**
    * Balance multiple objective scores using specified aggregation method
    */
-  static balance(
+  balance(
     evaluationResults: Record<string, ObjectiveEvaluationResult>,
     weights: Record<string, number>,
     method: AggregationMethod,

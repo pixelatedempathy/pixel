@@ -168,8 +168,8 @@ const criticalAlertData = {
 }
 
 // Visual test utilities
-class DashboardVisualTestUtils {
-  static async setupMockData(page: Page, data: any) {
+const DashboardVisualTestUtils = {
+  async setupMockData(page: Page, data: any) {
     // Mock the dashboard API endpoint with consistent data
     await page.route('/api/bias-detection/dashboard*', async (route) => {
       await route.fulfill({

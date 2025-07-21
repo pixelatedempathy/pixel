@@ -266,10 +266,7 @@ export class TaskListManager {
   /**
    * Check if parent task should be marked complete based on children
    */
-  private checkParentCompletion(
-    tasks: TaskItem[],
-    completedTask: TaskItem,
-  ): void {
+  private checkParentCompletion(): void {
     // This is a simplified version - in a full implementation you'd track parent-child relationships
     // For now, we'll handle this in the markTaskCompleted method
   }

@@ -67,8 +67,35 @@ export function useSpeechRecognition({
   const [error, setError] = useState<string | null>(null)
 
   // Refs for speech recognition
-  const recognitionRef = useRef<any>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const listeningRef = useRef<boolean>(false)
+
+  // Add SpeechRecognition interface
+  interface SpeechRecognition {
+    start(): void;
+    stop(): void;
+    onresult: (event: SpeechRecognitionEvent) => void;
+    onerror: (event: SpeechRecognitionErrorEvent) => void;
+    onend: () => void;
+  }
+
+  // Add SpeechRecognitionEvent interface
+  interface SpeechRecognitionEvent {
+    resultIndex: number;
+    results: {
+      [index: number]: {
+        isFinal: boolean;
+        [index: number]: {
+          transcript: string;
+        };
+      };
+    };
+  }
+
+  // Add SpeechRecognitionErrorEvent interface
+  interface SpeechRecognitionErrorEvent {
+    error: string;
+  }
 
   // Update ref whenever state changes to avoid stale closures
   useEffect(() => {
@@ -105,7 +132,7 @@ export function useSpeechRecognition({
     }
 
     // Configure speech recognition
-    recognitionRef.current.onresult = (event: any) => {
+    recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
       let finalText = ''
       let interimText = ''
 
@@ -163,7 +190,7 @@ export function useSpeechRecognition({
       }
     }
 
-    recognitionRef.current.onerror = (event: any) => {
+    recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
       const errorMessage = `Speech recognition error: ${event.error}`
       setError(errorMessage)
 

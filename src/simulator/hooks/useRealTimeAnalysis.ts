@@ -27,6 +27,9 @@ export interface RealTimeAnalysisState {
   lastError: string | null
 }
 
+// Define an empty interface to satisfy TypeScript
+export interface EmptyInterface {}
+
 const INITIAL_STATE: RealTimeAnalysisState = {
   isConnected: false,
   isProcessing: false,

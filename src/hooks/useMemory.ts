@@ -42,7 +42,17 @@ interface UseMemoryReturn {
 
   // Memory management
   clearMemories: () => void
-  getMemoryHistory: () => Promise<any[]>
+  getMemoryHistory: () => Promise<MemoryHistoryItem[]>
+}
+
+// Define a type for memory history items
+interface MemoryHistoryItem {
+  id: string
+  timestamp: string
+  operation: string
+  memoryId: string
+  content?: string
+  metadata?: Record<string, unknown>
 }
 
 export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
@@ -53,7 +63,7 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<MemoryStats | null>(null)
 
-  const handleError = useCallback((err: unknown) => {
+  const handleError = useCallback((err: Error | unknown) => {
     const errorMessage =
       err instanceof Error ? err.message : 'An unknown error occurred'
     setError(errorMessage)
@@ -176,7 +186,7 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
   )
 
   const addUserPreference = useCallback(
-    async (preference: string, value: unknown): Promise<void> => {
+    async (preference: string, value: string | number | boolean | object): Promise<void> => {
       await memoryManager.addUserPreference(userId, preference, value)
       await refreshMemories()
     },
@@ -229,7 +239,7 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
     setError(null)
   }, [])
 
-  const getMemoryHistory = useCallback(async (): Promise<unknown[]> => {
+  const getMemoryHistory = useCallback(async (): Promise<MemoryHistoryItem[]> => {
     try {
       return await memoryManager.getMemoryHistory(userId)
     } catch (err) {
@@ -336,7 +346,7 @@ export function useUserPreferences(userId: string) {
   )
 
   const getPreference = useCallback(
-    (key: string): unknown => {
+    (key: string): string | number | boolean | object | null => {
       const prefMemory = memory.memories.find((m) =>
         m.content.includes(`User preference: ${key}`),
       )

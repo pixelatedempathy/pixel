@@ -9,10 +9,10 @@ try {
   // Import Buffer from buffer package
   const bufferPkg = require('buffer/')
   BufferPolyfill = bufferPkg.Buffer
-} catch (error) {
+} catch (_) {
   // Fallback implementation if package import fails
   BufferPolyfill = class BufferShim extends Uint8Array {
-    static from(data, encoding) {
+    static from(data, _encoding) {
       if (typeof data === 'string') {
         const encoder = new TextEncoder()
         return encoder.encode(data)
@@ -32,7 +32,7 @@ try {
       return obj instanceof Uint8Array
     }
 
-    toString(encoding) {
+    toString(_encoding) {
       const decoder = new TextDecoder()
       return decoder.decode(this)
     }

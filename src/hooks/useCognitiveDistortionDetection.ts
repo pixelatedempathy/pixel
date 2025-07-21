@@ -119,7 +119,7 @@ export function useCognitiveDistortionDetection({
 
       return result
     },
-    [minConfidence, onDetection, onComplete],
+    [minConfidence, onDetection, onComplete, generateSummary],
   )
 
   // Helper function to generate a summary
