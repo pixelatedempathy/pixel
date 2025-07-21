@@ -8,6 +8,8 @@ frontend:
     preBuild:
       commands:
         # Install pnpm if not already installed
+        - npm cache clean -f
+        - npm install -g n 22.16.0
         - npm i npm@latest -g
         - npm install -g pnpm
           

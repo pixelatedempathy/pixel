@@ -52,6 +52,9 @@ importers:
       '@astrojs/markdoc':
         specifier: ^0.15.0
         version: 0.15.1(@types/react@19.1.8)(astro@5.12.1(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.15)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))(react@19.1.0)
+      '@astrojs/mdx':
+        specifier: ^4.3.1
+        version: 4.3.1(astro@5.12.1(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.15)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))
       '@astrojs/node':
         specifier: ^9.3.0
         version: 9.3.0(astro@5.12.1(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.15)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))
@@ -257,13 +260,13 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
       react:
-        specifier: 19.1.0
+        specifier: ^19.1.0
         version: 19.1.0
       react-chartjs-2:
         specifier: ^5.3.0
         version: 5.3.0(chart.js@4.5.0)(react@19.1.0)
       react-dom:
-        specifier: 19.1.0
+        specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-hook-form:
         specifier: ^7.59.0
@@ -377,9 +380,6 @@ importers:
       '@astrojs/markdown-remark':
         specifier: ^6.3.2
         version: 6.3.3
-      '@astrojs/mdx':
-        specifier: ^4.3.0
-        version: 4.3.1(astro@5.12.1(@capacitor/preferences@7.0.1(@capacitor/core@7.4.2))(@types/node@24.0.15)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))
       '@astrojs/rss':
         specifier: ^4.0.12
         version: 4.0.12
