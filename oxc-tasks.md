@@ -40,11 +40,11 @@ This file contains a categorized and sorted list of errors from the OXC report. 
 - [x] `src/lib/fhe/dynamic-fhe.tsx:67:34`: Unexpected any. Specify a different type. (fixed)
 - [x] `src/load-tests/breach-notification.load.ts:160:40`: Unexpected any. Specify a different type. (fixed)
 - [x] `src/load-tests/breach-notification.load.ts:161:26`: Unexpected any. Specify a different type. (fixed)
-- [ ] `src/load-tests/breach-notification.load.ts:200:46`: Unexpected any. Specify a different type.
-- [ ] `src/load-tests/breach-notification.load.ts:201:42`: Unexpected any. Specify a different type.
-- [ ] `src/load-tests/breach-notification.load.ts:228:48`: Unexpected any. Specify a different type.
-- [ ] `src/load-tests/breach-notification.load.ts:234:32`: Unexpected any. Specify a different type.
-- [ ] `src/load-tests/breach-notification.load.ts:245:53`: Unexpected any. Specify a different type.
+- [x] `src/load-tests/breach-notification.load.ts:200:46`: Unexpected any. Specify a different type. (fixed)
+- [x] `src/load-tests/breach-notification.load.ts:201:42`: Unexpected any. Specify a different type. (fixed)
+- [x] `src/load-tests/breach-notification.load.ts:228:48`: Unexpected any. Specify a different type. (fixed)
+- [x] `src/load-tests/breach-notification.load.ts:234:32`: Unexpected any. Specify a different type. (fixed)
+- [x] `src/load-tests/breach-notification.load.ts:245:53`: Unexpected any. Specify a different type. (fixed)
 - [ ] `src/simulator/hooks/useRealTimeAnalysis.ts:12:60`: Unexpected any. Specify a different type.
 - [ ] `src/hooks/useMemory.ts:35:50`: Unexpected any. Specify a different type.
 - [ ] `src/hooks/useMemory.ts:45:35`: Unexpected any. Specify a different type.

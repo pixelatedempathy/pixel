@@ -232,7 +232,7 @@ export function setup() {
   return response.json()
 }
 
-export function teardown(data: any) {
+export function teardown(data: { testRunId: string }) {
   // Cleanup test environment
   const response = http.post(
     '/api/security/test/teardown',

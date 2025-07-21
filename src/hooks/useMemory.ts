@@ -32,7 +32,7 @@ interface UseMemoryReturn {
   refreshMemories: () => Promise<void>
 
   // Convenience methods
-  addUserPreference: (preference: string, value: any) => Promise<void>
+  addUserPreference: (preference: string, value: unknown) => Promise<void>
   addConversationContext: (context: string, sessionId?: string) => Promise<void>
   addProjectInfo: (projectInfo: string, projectId?: string) => Promise<void>
 
@@ -176,7 +176,7 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
   )
 
   const addUserPreference = useCallback(
-    async (preference: string, value: any): Promise<void> => {
+    async (preference: string, value: unknown): Promise<void> => {
       await memoryManager.addUserPreference(userId, preference, value)
       await refreshMemories()
     },

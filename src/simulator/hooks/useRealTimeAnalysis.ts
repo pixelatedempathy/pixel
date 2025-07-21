@@ -9,7 +9,8 @@ interface FeedbackServiceMethods {
   getDetectedTechniques(): DetectedTechnique[]
   stopProcessing(): void
   updateConsent(hasConsent: boolean): void
-  on(event: 'error' | 'connectionChange', callback: (data: any) => void): void
+  on(event: 'error', callback: (data: Error) => void): void
+  on(event: 'connectionChange', callback: (data: boolean) => void): void
 }
 
 // Ensure FeedbackService implements our interface

@@ -9,53 +9,49 @@ frontend:
         # Install pnpm and configure
         - npm i -g pnpm
         - pnpm config set store-dir .pnpm-store
-        - pnpm config set node-mirror https://nodejs.org/download/release/
-        - pnpm config set prefer-offline true
-        - pnpm config set frozen-lockfile true
-        - pnpm config set shamefully-hoist true
-        
-        # Install only production dependencies first (smaller memory footprint)
         - pnpm install --prod --frozen-lockfile --prefer-offline --shamefully-hoist
-        
         # Then install dev dependencies
         - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist --ignore-scripts
         
     build:
       commands:
         # Set environment variables
-        - env >> .env
+        - env | grep -v '^NODE_ENV=' | grep -v '^NODE_OPTIONS=' > .env
         
-        # Build with increased memory
-        - NODE_OPTIONS="--max-old-space-size=12288" pnpm run build
+        # Build with increased memory and production mode
+        - NODE_ENV=production NODE_OPTIONS="--max-old-space-size=12288" pnpm run build
         
         # Create output directory structure
         - mkdir -p .amplify-hosting/compute/default
         
-        # Copy only production node_modules (exclude devDependencies)
-        - pnpm prune --prod
-        - cp -r node_modules ./.amplify-hosting/compute/default/
+        # Copy only production dependencies (already installed in preBuild)
+        - cp -R node_modules .amplify-hosting/compute/default/
         
-        # Copy build output
-        - cp -r public ./.amplify-hosting/compute/default/  # Static assets
-        - cp -r .env ./.amplify-hosting/compute/default/
+        # Copy only necessary files
+        - cp -R public .amplify-hosting/compute/default/  # Static assets
+        - cp .env .amplify-hosting/compute/default/
         
-        # Clean up unnecessary files
-        - find ./.amplify-hosting -name "*.map" -delete
-        - find ./.amplify-hosting -name "*.ts" -delete
-        - find ./.amplify-hosting -name "*.tsx" -delete
-        - find ./.amplify-hosting -name "*.test.*" -delete
-        - find ./.amplify-hosting -name "*.spec.*" -delete
-        - rm -rf ./.amplify-hosting/**/node_modules/.cache
-        - rm -rf ./.amplify-hosting/**/node_modules/typescript
-        - rm -rf ./.amplify-hosting/**/node_modules/@types
+        # Remove development-only dependencies and files
+        - find .amplify-hosting -type d -name 'test' -o -name 'tests' -o -name '__tests__' | xargs rm -rf
+        - find .amplify-hosting -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete
+        - find .amplify-hosting -type f \( -name '*.md' -o -name '*.markdown' -o -name 'LICENSE*' -o -name 'CHANGELOG*' -o -name 'README*' \) -delete
+        - rm -rf .amplify-hosting/**/node_modules/{.bin,.cache,typescript,@types}
+        
+        # Remove any remaining source maps and development files
+        - find .amplify-hosting -type f -name '*.map' -delete
+        - find .amplify-hosting -type d -empty -delete
+        
   artifacts:
     baseDirectory: .amplify-hosting
     files:
       - '**/*'
+    discard-paths: no
+    
   cache:
     paths:
-      - .pnpm-store/**/*
-      - node_modules/**/*
+      - '.pnpm-store/**/*'
+      - 'node_modules/.pnpm/**/*'
+      - 'node_modules/.cache/**/*'
   customRules:
     - source: '/'
       target: '/index.html'
