@@ -235,21 +235,16 @@ test.describe('Psychology Pipeline Demo - Complete Workflow', () => {
         page.locator('text=Real-Time Balancing Active'),
       ).toBeVisible()
 
-      // Monitor real-time updates
-      const initialRatio = await page
-        .locator('[data-testid="anxiety-ratio"]')
-        .textContent()
-
       // Trigger changes
       await page.click('button:has-text("Simulate Influx")')
 
       // Wait for updates
       await page.waitForTimeout(3000)
 
-      // Verify ratios have updated
-      const updatedRatio = await page
-        .locator('[data-testid="anxiety-ratio"]')
-        .textContent()
+      // Verify element is still visible after updates
+      await expect(
+        page.locator('[data-testid="anxiety-ratio"]')
+      ).toBeVisible()
       // Note: In real scenario, ratios might change slightly
     })
 

@@ -1184,7 +1184,7 @@ interface DemographicGroups {
     userId?: string
     timestamp: Date
     aggregationPeriod?: 'hourly' | 'daily' | 'weekly' | 'monthly'
-    metadata?: any
+    metadata?: Record<string, unknown>
   }): Promise<string> {
     const { data, error } = await supabase
       .from('ai_bias_metrics')
@@ -1412,10 +1412,10 @@ interface DemographicGroups {
       resolved?: boolean
       resolvedBy?: string
       escalated?: boolean
-      actions?: any[]
+      actions?: AlertAction[]
     },
   ): Promise<boolean> {
-    const updateData: any = {}
+    const updateData: AlertUpdateData = {}
 
     if (updates.acknowledged !== undefined) {
       updateData.acknowledged = updates.acknowledged
@@ -1475,15 +1475,15 @@ interface DemographicGroups {
     format: 'json' | 'pdf' | 'html' | 'csv'
     overallFairnessScore?: number
     averageBiasScore?: number
-    alertDistribution?: any
-    aggregatedMetrics?: any
-    trendAnalysis?: any
-    customAnalysis?: any
-    recommendations?: any
+    alertDistribution?: BiasAlertDistribution
+    aggregatedMetrics?: BiasAggregatedMetrics
+    trendAnalysis?: BiasTrendAnalysis
+    customAnalysis?: BiasCustomAnalysis
+    recommendations?: BiasRecommendations
     executionTimeMs?: number
     filePath?: string
     expiresAt?: Date
-    metadata?: any
+    metadata?: Record<string, unknown>
   }): Promise<string> {
     const { data, error } = await supabase
       .from('ai_bias_reports')
@@ -1520,9 +1520,30 @@ interface DemographicGroups {
   }
 
   /**
+interface BiasReport {
+  id: string;
+  reportId: string;
+  userId?: string;
+  title: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  overallFairnessScore?: number;
+  averageBiasScore?: number;
+  alertDistribution?: BiasAlertDistribution;
+  aggregatedMetrics?: BiasAggregatedMetrics;
+  trendAnalysis?: BiasTrendAnalysis;
+  customAnalysis?: BiasCustomAnalysis;
+  recommendations?: BiasRecommendations;
+  executionTimeMs?: number;
+  filePath?: string;
+  expiresAt?: Date;
+  metadata?: Record<string, unknown>;
+}
+
    * Get bias report by report ID
    */
-  async getBiasReport(reportId: string): Promise<any | null> {
+  async getBiasReport(reportId: string): Promise<BiasReport | null> {
     const { data, error } = await supabase
       .from('ai_bias_reports')
       .select('*')
@@ -1577,7 +1598,7 @@ interface DemographicGroups {
       format?: string[]
       timeRange?: { start: Date; end: Date }
     },
-  ): Promise<any[]> {
+  ): Promise<BiasReport[]> {
     let query = supabase
       .from('ai_bias_reports')
       .select('*')
@@ -1690,8 +1711,15 @@ interface DemographicGroups {
     })
 
     // Group by date for trends
+interface DailyTrendData {
+  date: string;
+  count: number;
+  totalBias: number;
+  analyses: number;
+}
+
     const dailyTrends = Object.values(
-      summaryData?.reduce((acc: any, row) => {
+      summaryData?.reduce((acc: Record<string, DailyTrendData>, row) => {
         const date = row.analysis_date.split('T')[0]
         if (!acc[date]) {
           acc[date] = { date, count: 0, totalBias: 0, analyses: 0 }
@@ -1701,7 +1729,7 @@ interface DemographicGroups {
         acc[date].analyses += row.analysis_count
         return acc
       }, {}) || {},
-    ).map((item: any) => ({
+    ).map((item: DailyTrendData) => ({
       date: item.date,
       count: item.count,
       avgBias: item.analyses > 0 ? item.totalBias / item.analyses : 0,

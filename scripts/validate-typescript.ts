@@ -285,7 +285,7 @@ function validateESLintIntegration(): ValidationResult[] {
       message: 'ESLint is properly integrated with TypeScript',
       severity: 'info',
     })
-  } catch (error) {
+  } catch (_error) {
     results.push({
       passed: false,
       message: 'ESLint integration with TypeScript has issues',

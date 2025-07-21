@@ -41,7 +41,7 @@ export async function monitoringMiddleware(context: any, next: any) {
       const session = JSON.parse(decodeURIComponent(sessionCookie))
       userId = session.userId
     }
-  } catch (error) {
+  } catch (_error) {
     // Ignore session parsing errors
   }
 

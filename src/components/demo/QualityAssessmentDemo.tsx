@@ -175,7 +175,7 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
 
   const calculateTherapeuticAccuracy = (
     therapistTurns: ConversationTurn[],
-    approach: string,
+    _approach: string,
   ): number => {
     if (therapistTurns.length === 0) {
       return 0
@@ -355,8 +355,8 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
 
   const generateFeedback = (
     metrics: QualityMetrics,
-    conv: ConversationTurn[],
-    approach: string,
+    _conv: ConversationTurn[],
+    _approach: string,
   ) => {
     const strengths: string[] = []
     const improvements: string[] = []

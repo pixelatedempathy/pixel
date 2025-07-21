@@ -58,7 +58,7 @@ function useReducedMotion(): boolean {
 export function AnimationOrchestrator({
   children,
   sequence = 'fadeIn',
-  orchestrationType = 'page',
+  _orchestrationType = 'page',
   triggerOnMount = true,
   triggerOnViewport = false,
   viewportThreshold = 0.1,
@@ -70,7 +70,7 @@ export function AnimationOrchestrator({
   className = '',
   style = {},
   as = 'div',
-  viewport = true,
+  _viewport = true,
   once = true,
 }: AnimationOrchestratorProps) {
   const controls = useAnimation()

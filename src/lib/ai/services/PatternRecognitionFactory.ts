@@ -818,19 +818,19 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     sessionFeatures: any,
   ): Array<{ confidence: number; intensity: number }> {
     return sessionFeatures.emotionalStates.map(
-          (_: any, index: number) => ({
+          () => ({
             confidence: 0.7 + Math.random() * 0.3,
             intensity: 0.5 + Math.random() * 0.5,
           }),
         );
   }
 
-  private detectCommunicationAnomalies(sessionFeatures: any): any[] {
+  private detectCommunicationAnomalies(_sessionFeatures: any): any[] {
     // Placeholder implementation
     return []
   }
 
-  private analyzeEngagementPatterns(sessionFeatures: any): any[] {
+  private analyzeEngagementPatterns(_sessionFeatures: any): any[] {
     // Placeholder implementation
     return []
   }
@@ -951,7 +951,7 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     return values.filter((value) => Math.abs(value - mean) > threshold).length
   }
 
-  private calculateCorrelationStrength(transitions: any[]): number {
+  private calculateCorrelationStrength(_transitions: any[]): number {
     // Simplified correlation calculation
     return 0.7 + Math.random() * 0.3
   }
@@ -1403,7 +1403,7 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   }
 
   private async mineTemporalPatterns(
-    sessions: TherapySession[],
+    _sessions: TherapySession[],
   ): Promise<Array<{ pattern: string; support: number }>> {
     // Simplified temporal pattern mining
     return [

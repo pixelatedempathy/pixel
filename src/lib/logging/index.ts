@@ -370,12 +370,12 @@ export class Logger {
  */
 export function getLogger(options?: Partial<LoggerOptions>): Logger {
   // Use a function-scoped static variable to avoid TDZ/circular import issues
-  // @ts-expect-error
+  // @ts-expect-error - Using static property on function for singleton pattern
   if (!getLogger._instance || options) {
-    // @ts-expect-error
+    // @ts-expect-error - Using static property on function for singleton pattern
     getLogger._instance = new Logger(options || {})
   }
-  // @ts-expect-error
+  // @ts-expect-error - Using static property on function for singleton pattern
   return getLogger._instance
 }
 
@@ -398,7 +398,7 @@ export function clearCollectedLogs(): void {
  */
 export function configureLogging(options: Partial<LoggerOptions>): void {
   // Use the function-scoped singleton pattern
-  // @ts-expect-error
+  // @ts-expect-error - Using static property on function for singleton pattern
   getLogger._instance = new Logger(options)
 }
 

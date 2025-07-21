@@ -18,14 +18,14 @@ frontend:
         - pnpm config set auto-install-peers true
         - pnpm config set strict-peer-dependencies false
         
-        # Install only production dependencies with optimized flags
-        - pnpm install --prod --frozen-lockfile --prefer-offline --shamefully-hoist
+        # Install all dependencies with optimized flags
+        - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist
         
         # Install AWS SDK only if needed for CDN
         - |
-          if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
+          if [ -n "$CDN_BUCKET_NAME" ]; then
             echo "Installing AWS SDK for CDN..."
-            pnpm add --save-exact --no-optional @aws-sdk/client-s3 @aws-sdk/credential-provider-ini;
+            pnpm add --save-exact --no-optional @aws-sdk/client-s3;
           else
             echo "CDN not configured, skipping AWS SDK installation";
           fi
@@ -46,7 +46,7 @@ frontend:
         
         # Process assets for CDN if configured
         - |
-          if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
+          if [ -n "$CDN_BUCKET_NAME" ]; then
             echo "Processing assets for CDN..."
             # Create .amplify-hosting/static directory for optimized static assets
             mkdir -p .amplify-hosting/static

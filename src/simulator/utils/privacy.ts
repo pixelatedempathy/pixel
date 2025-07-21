@@ -186,7 +186,7 @@ export function checkBrowserCompatibility(): {
   }
 
   // Check for Web Audio API (for audio processing)
-  if (!window.AudioContext && !(window as any)['webkitAudioContext']) {
+  if (!window.AudioContext && !(window as { webkitAudioContext?: AudioContext })['webkitAudioContext']) {
     missingFeatures.push('Web Audio API')
   }
 

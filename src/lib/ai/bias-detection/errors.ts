@@ -562,128 +562,129 @@ export class BiasInitializationError extends BiasSystemError {
 }
 
 /**
+/**
  * Central error handling utility
  */
-export class BiasErrorHandler {
-  /**
-   * Extract error message from unknown error type
-   */
-  static getErrorMessage(error: unknown): string {
-    if (error instanceof Error) {
-      return error.message
-    }
-    if (typeof error === 'string') {
-      return error
-    }
-    if (error && typeof error === 'object' && 'message' in error) {
-      return String((error as { message: unknown }).message)
-    }
-    return 'Unknown error occurred'
+
+/**
+ * Extract error message from unknown error type
+ */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
+  if (typeof error === 'string') {
+    return error
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String((error as { message: unknown }).message)
+  }
+  return 'Unknown error occurred'
+}
+
+/**
+ * Create BiasDetectionError from unknown error
+ */
+export function createErrorFromUnknown(
+  error: unknown,
+  context: {
+    operation: string
+    category?:
+      | 'configuration'
+      | 'validation'
+      | 'service'
+      | 'data'
+      | 'security'
+      | 'performance'
+      | 'system'
+    severity?: 'low' | 'medium' | 'high' | 'critical'
+    additionalContext?: Record<string, unknown>
+  },
+): BiasDetectionError {
+  const message = getErrorMessage(error)
+
+  return new BiasSystemError(`Error in ${context.operation}: ${message}`, {
+    component: context.operation,
+    context: context.additionalContext,
+    userMessage: 'An unexpected error occurred during processing.',
+  })
+}
+
+/**
+ * Determine if error is retryable
+ */
+export function isRetryable(error: unknown): boolean {
+  if (error instanceof BiasDetectionError) {
+    return error.recoverable
+  }
+  if (error instanceof Error) {
+    // Network errors are typically retryable
+    return (
+      error.message.includes('fetch') ||
+      error.message.includes('timeout') ||
+      error.message.includes('network') ||
+      error.message.includes('ECONNRESET') ||
+      error.message.includes('ENOTFOUND')
+    )
+  }
+  return false
+}
+
+/**
+ * Get retry delay based on error type and attempt number
+ */
+export function getRetryDelay(error: unknown, attempt: number): number {
+  const baseDelay = 1000 // 1 second
+  const maxDelay = 30000 // 30 seconds
+
+  if (error instanceof BiasPythonServiceTimeoutError) {
+    // Exponential backoff for timeout errors
+    return Math.min(baseDelay * Math.pow(2, attempt), maxDelay)
   }
 
-  /**
-   * Create BiasDetectionError from unknown error
-   */
-  static createFromUnknown(
-    error: unknown,
-    context: {
-      operation: string
-      category?:
-        | 'configuration'
-        | 'validation'
-        | 'service'
-        | 'data'
-        | 'security'
-        | 'performance'
-        | 'system'
-      severity?: 'low' | 'medium' | 'high' | 'critical'
-      additionalContext?: Record<string, unknown>
-    },
-  ): BiasDetectionError {
-    const message = this.getErrorMessage(error)
-
-    return new BiasSystemError(`Error in ${context.operation}: ${message}`, {
-      component: context.operation,
-      context: context.additionalContext,
-      userMessage: 'An unexpected error occurred during processing.',
-    })
+  if (error instanceof BiasPythonServiceError) {
+    // Linear backoff for service errors
+    return Math.min(baseDelay * (attempt + 1), maxDelay)
   }
 
-  /**
-   * Determine if error is retryable
-   */
-  static isRetryable(error: unknown): boolean {
-    if (error instanceof BiasDetectionError) {
-      return error.recoverable
-    }
-    if (error instanceof Error) {
-      // Network errors are typically retryable
-      return (
-        error.message.includes('fetch') ||
-        error.message.includes('timeout') ||
-        error.message.includes('network') ||
-        error.message.includes('ECONNRESET') ||
-        error.message.includes('ENOTFOUND')
-      )
-    }
-    return false
+  // Default exponential backoff
+  return Math.min(baseDelay * Math.pow(1.5, attempt), maxDelay)
+}
+
+/**
+ * Should error be logged as critical alert
+ */
+export function shouldAlert(error: unknown): boolean {
+  if (error instanceof BiasDetectionError) {
+    return (
+      error.severity === 'critical' ||
+      (error.severity === 'high' && !error.recoverable)
+    )
   }
+  return false
+}
 
-  /**
-   * Get retry delay based on error type and attempt number
-   */
-  static getRetryDelay(error: unknown, attempt: number): number {
-    const baseDelay = 1000 // 1 second
-    const maxDelay = 30000 // 30 seconds
-
-    if (error instanceof BiasPythonServiceTimeoutError) {
-      // Exponential backoff for timeout errors
-      return Math.min(baseDelay * Math.pow(2, attempt), maxDelay)
-    }
-
-    if (error instanceof BiasPythonServiceError) {
-      // Linear backoff for service errors
-      return Math.min(baseDelay * (attempt + 1), maxDelay)
-    }
-
-    // Default exponential backoff
-    return Math.min(baseDelay * Math.pow(1.5, attempt), maxDelay)
-  }
-
-  /**
-   * Should error be logged as critical alert
-   */
-  static shouldAlert(error: unknown): boolean {
-    if (error instanceof BiasDetectionError) {
-      return (
-        error.severity === 'critical' ||
-        (error.severity === 'high' && !error.recoverable)
-      )
-    }
-    return false
-  }
-
-  /**
-   * Extract monitoring metrics from error
-   */
-  static getMetrics(error: unknown): Record<string, unknown> {
-    if (error instanceof BiasDetectionError) {
-      return {
-        errorCode: error.code,
-        errorCategory: error.category,
-        errorSeverity: error.severity,
-        errorRecoverable: error.recoverable,
-        errorTimestamp: error.timestamp.toISOString(),
-        ...error.context,
-      }
-    }
-
+/**
+ * Extract monitoring metrics from error
+ */
+export function getMetrics(error: unknown): Record<string, unknown> {
+  if (error instanceof BiasDetectionError) {
     return {
-      errorType: error instanceof Error ? error.constructor.name : typeof error,
-      errorMessage: this.getErrorMessage(error),
-      errorTimestamp: new Date().toISOString(),
+      errorCode: error.code,
+      errorCategory: error.category,
+      errorSeverity: error.severity,
+      errorRecoverable: error.recoverable,
+      errorTimestamp: error.timestamp.toISOString(),
+      ...error.context,
     }
   }
+
+  return {
+    errorType: error instanceof Error ? error.constructor.name : typeof error,
+    errorMessage: getErrorMessage(error),
+    errorTimestamp: new Date().toISOString(),
+  }
+}
 }
 
 /**

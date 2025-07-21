@@ -803,9 +803,10 @@ export class AIModelRegistry {
   isProviderAvailable(provider: string): boolean {
     // Lazy load config to avoid initialization order issues
     const getConfig = () => {
+import { config as envConfig } from '@/config/env.config'
+
       try {
-        const { config } = require('@/config/env.config')
-        return config
+        return envConfig
       } catch {
         return null
       }

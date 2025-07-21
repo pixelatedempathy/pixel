@@ -19,9 +19,9 @@ interface AdminLayoutAdapterProps {
  * 2. In React files: import AdminLayout from '@/components/layout/AdminLayout'
  */
 const AdminLayoutAdapter: React.FC<AdminLayoutAdapterProps> = ({
-  title,
-  description,
-  activeItem,
+  _title,
+  _description,
+  _activeItem,
   children,
 }) => {
   // This component simply passes props through to the relevant layout

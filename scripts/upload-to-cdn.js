@@ -3,16 +3,14 @@ const path = require('path');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
 
-// Configuration - Replace these with your actual values
-const BUCKET_NAME = process.env.CDN_BUCKET_NAME || 'your-cdn-bucket';
-const CDN_URL = process.env.CDN_URL || 'https://your-cdn-url.com';
+// Configuration - Using actual AWS values from CLI
+const BUCKET_NAME = process.env.CDN_BUCKET_NAME || 'pixel-assets-1753078684';
+const CDN_URL = process.env.CDN_URL || 'https://pixel-assets-1753078684.s3-website-us-east-1.amazonaws.com';
 const ASSETS_DIR = path.join(__dirname, '../public');
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION || 'us-east-1',
-  credentials: fromIni({
-    profile: process.env.AWS_PROFILE || 'default',
-  }),
+  // Use default credential chain (IAM role in Amplify)
 });
 
 async function uploadFile(filePath, key) {

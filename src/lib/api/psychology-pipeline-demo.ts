@@ -590,9 +590,41 @@ function generateKnowledgeBasedDialogue(
   return dialogue
 }
 
+interface KnowledgeBase {
+  dsm5?: string[];
+  techniques?: string[];
+  research?: string[];
+  guidelines?: string[];
+  contraindications?: string[];
+  [key: string]: unknown;
+}
+
+interface ClientProfile {
+  name?: string;
+  age?: number;
+  gender?: string;
+  background?: string;
+  presentingProblem?: string;
+  history?: string;
+  symptoms?: string[];
+  diagnosis?: string;
+  severity?: string;
+  [key: string]: unknown;
+}
+
+interface DialogueEntry {
+  role: 'therapist' | 'client';
+  content: string;
+  timestamp?: string;
+  emotions?: string[];
+  techniques?: string[];
+  [key: string]: unknown;
+}
+
 function generateKnowledgeBasedOpening(
   approach: string,
-  knowledgeBase: any,
+  // knowledgeBase parameter is not used in this function
+  _knowledgeBase: KnowledgeBase,
 ): string {
   const openings = {
     CBT: "I'd like to understand what's been challenging for you lately. Our work together will focus on examining the connections between your thoughts, feelings, and behaviors to help you develop more effective coping strategies.",
@@ -606,9 +638,9 @@ function generateKnowledgeBasedOpening(
   return openings[approach as keyof typeof openings] || openings['CBT']
 }
 
-function generateClientResponse(profile: any): string {
+function generateClientResponse(profile: ClientProfile): string {
   const responses = {
-    low: `I've been dealing with ${profile.presentingProblem.toLowerCase()}, and while it's manageable most days, I'd like to develop better ways to handle it.`,
+    low: `I've been dealing with ${profile.presentingProblem?.toLowerCase()}, and while it's manageable most days, I'd like to develop better ways to handle it.`,
     medium: `${profile.presentingProblem} has been really affecting my daily life. Some days are better than others, but I'm finding it harder to cope lately.`,
     high: `I'm really struggling with ${profile.presentingProblem.toLowerCase()}. It feels overwhelming most of the time, and I'm not sure how to manage it anymore.`,
   }
@@ -637,7 +669,7 @@ function generateKnowledgeBasedIntervention(
 }
 
 function generateClientProcessingResponse(
-  profile: any,
+  profile: ClientProfile,
   approach: string,
 ): string {
   const responses = {
@@ -654,8 +686,8 @@ function generateClientProcessingResponse(
 
 function generateKnowledgeBasedFollowUp(
   approach: string,
-  guidelines: string[],
-  severity: string,
+  _guidelines: string[],
+  _severity: string,
 ): string {
   const followUps = {
     CBT: "That's a great insight. Let's practice identifying these thought patterns together. I'll teach you some techniques for examining the evidence for your thoughts and developing more balanced alternatives.",
@@ -669,7 +701,15 @@ function generateKnowledgeBasedFollowUp(
   return followUps[approach as keyof typeof followUps] || followUps['CBT']
 }
 
-function calculateConversationQuality(dialogue: any[], request: any) {
+interface ConversationRequest {
+  clientProfile: ClientProfile;
+  therapeuticApproach: string;
+  knowledgeBase: KnowledgeBase;
+  sessionGoals?: string[];
+  [key: string]: unknown;
+}
+
+function calculateConversationQuality(dialogue: DialogueEntry[], request: ConversationRequest) {
   // Simulate quality calculation based on knowledge integration
   const baseScore = 80
   const knowledgeIntegration = Math.min(
@@ -699,7 +739,7 @@ function calculateConversationQuality(dialogue: any[], request: any) {
   }
 }
 
-function mapKnowledgeToDialogue(dialogue: any[], request: any) {
+function mapKnowledgeToDialogue(dialogue: DialogueEntry[], _request: ConversationRequest) {
   return dialogue.map((turn, index) => ({
     dialogueTurn: index + 1,
     appliedKnowledge: [

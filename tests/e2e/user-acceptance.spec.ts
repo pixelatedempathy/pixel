@@ -18,7 +18,7 @@ import {
 test.describe('User Acceptance Test (UAT) - Full User Journey', () => {
   test('should complete a full user journey and meet acceptance criteria', async ({
     page,
-    context,
+    _context,
   }) => {
     // 1. Onboarding: Registration
     const testEmail = generateTestEmail()

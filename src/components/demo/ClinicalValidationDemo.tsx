@@ -241,7 +241,9 @@ const ClinicalValidationDemo: React.FC<ClinicalValidationDemoProps> = ({
       let status: ValidationLayer['status'] = 'passed'
       if (failedCount > 0) {
         status = 'failed'
-      } else if (warningCount > 0) status = 'warning'
+      } else if (warningCount > 0) {
+               status = 'warning'
+             }
 
       // Update layer with results
       setValidationLayers((prev) =>

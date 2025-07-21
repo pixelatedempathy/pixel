@@ -527,10 +527,7 @@ export const ObjectiveBalancer = {
         return this.zScoreNormalize(scores)
 
       case NormalizationMethod.SIGMOID:
-        return this.sigmoidNormalize(scores)
-
-      default:
-        return scores
+        return this.sigmoidNormalize(scores);
     }
   }
 

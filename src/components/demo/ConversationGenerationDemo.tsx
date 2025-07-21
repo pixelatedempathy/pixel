@@ -140,7 +140,7 @@ const ConversationGenerationDemo: React.FC<ConversationGenerationDemoProps> = ({
 
       // Generate knowledge sources from API response
       const sources: KnowledgeSource[] =
-        conversionResponse.knowledgeMapping.map((mapping, index) => ({
+        conversionResponse.knowledgeMapping.map((mapping, _index) => ({
           type: mapping.appliedKnowledge[0]?.source.includes('dsm5')
             ? 'dsm5'
             : mapping.appliedKnowledge[0]?.source.includes('clinical')
@@ -263,7 +263,7 @@ const ConversationGenerationDemo: React.FC<ConversationGenerationDemoProps> = ({
   const generateDialogue = async (
     approach: string,
     caseData?: Partial<ClinicalCase>,
-    sources?: KnowledgeSource[],
+    _sources?: KnowledgeSource[],
   ): Promise<ConversationTurn[]> => {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 

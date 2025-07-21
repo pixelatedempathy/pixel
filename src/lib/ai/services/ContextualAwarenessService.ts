@@ -12,27 +12,25 @@ export interface ContextCollectionInput {
   mentalHealthAnalysis?: any
 }
 
-export class ContextualAwarenessService {
-  static collectContext(input: ContextCollectionInput): RecommendationContext {
-    logger.info('Collecting contextual data for recommendations')
+export function collectContext(input: ContextCollectionInput): RecommendationContext {
+  logger.info('Collecting contextual data for recommendations')
 
-    // Process and structure the context data
-    const context: RecommendationContext = {
-      session: {
-        id: input.session?.sessionId,
-        clientId: input.session?.clientId,
-        therapistId: input.session?.therapistId,
-        status: input.session?.status,
-        securityLevel: input.session?.securityLevel,
-        emotionAnalysisEnabled: input.session?.emotionAnalysisEnabled,
-      },
-      chatSession: input.chatSession || {},
-      recentEmotionState: input.recentEmotionState,
-      recentInterventions: input.recentInterventions || [],
-      userPreferences: input.userPreferences || {},
-      mentalHealthAnalysis: input.mentalHealthAnalysis || {},
-    }
-
-    return context
+  // Process and structure the context data
+  const context: RecommendationContext = {
+    session: {
+      id: input.session?.sessionId,
+      clientId: input.session?.clientId,
+      therapistId: input.session?.therapistId,
+      status: input.session?.status,
+      securityLevel: input.session?.securityLevel,
+      emotionAnalysisEnabled: input.session?.emotionAnalysisEnabled,
+    },
+    chatSession: input.chatSession || {},
+    recentEmotionState: input.recentEmotionState,
+    recentInterventions: input.recentInterventions || [],
+    userPreferences: input.userPreferences || {},
+    mentalHealthAnalysis: input.mentalHealthAnalysis || {},
   }
+
+  return context
 }

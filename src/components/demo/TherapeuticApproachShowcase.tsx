@@ -23,7 +23,7 @@ interface TherapeuticApproachShowcaseProps {
 
 const TherapeuticApproachShowcase: React.FC<
   TherapeuticApproachShowcaseProps
-> = ({ clinicalCase }) => {
+> = ({ _clinicalCase }) => {
   const [selectedScenario, setSelectedScenario] =
     useState<string>('anxiety-work')
   const [isGenerating, setIsGenerating] = useState(false)

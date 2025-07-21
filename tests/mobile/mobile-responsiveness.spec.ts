@@ -173,8 +173,7 @@ mobileDevices.forEach((device) => {
         )
 
         // Check mobile-optimized input attributes
-        const inputType = await textArea.getAttribute('type')
-        const autocomplete = await textArea.getAttribute('autocomplete')
+        // Only check spellcheck as it's the only one being used
         const spellcheck = await textArea.getAttribute('spellcheck')
 
         // Text areas should have appropriate mobile attributes

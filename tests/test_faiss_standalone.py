@@ -65,16 +65,15 @@ def test_faiss_index_structure():
             "def benchmark_search_performance",
         ]
 
-        missing_components = [
+        if missing_components := [
             component
             for component in required_components
             if component not in content
-        ]
-        if not missing_components:
-            print("✓ All required components found in implementation")
-        else:
+        ]:
             print(f"⚠ Missing components: {missing_components}")
 
+        else:
+            print("✓ All required components found in implementation")
         # Check for comprehensive functionality
         advanced_features = [
             "IndexType.IVF_FLAT",

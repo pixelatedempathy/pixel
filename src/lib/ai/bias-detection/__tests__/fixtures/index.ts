@@ -27,10 +27,10 @@ export {
 /**
  * Get all test scenarios organized by category
  */
-export const getAllTestScenarios = () => {
-  const { baselineScenarios } = require('./baseline-scenarios')
-  const { demographicBiasScenarios } = require('./demographic-bias-scenarios')
+import { baselineScenarios } from './baseline-scenarios'
+import { demographicBiasScenarios } from './demographic-bias-scenarios'
 
+export const getAllTestScenarios = () => {
   return {
     baseline: baselineScenarios,
     demographicBias: demographicBiasScenarios,
@@ -45,8 +45,13 @@ export const getAllTestScenarios = () => {
 export const getBiasTestScenarios = () => {
   const {
     ageBiasYoungPatient,
-    ageBiasElderlyPatient,
-  } = require('./demographic-bias-scenarios')
+import {
+  ageBiasYoungPatient,
+  genderBiasFemalePatient,
+  racialBiasMinorityPatient,
+  socioeconomicBiasLowIncomePatient,
+  ageBiasElderlyPatient,
+} from './demographic-bias-scenarios'
 
   return [
     ageBiasYoungPatient, // Favorable bias - still bias
@@ -64,7 +69,7 @@ export const getBaselineTestScenarios = () => {
     baselineAnxietyScenario,
     baselineDepressionScenario,
     baselinePainManagementScenario,
-  } = require('./baseline-scenarios')
+  } = baselineScenarios
 
   return [
     baselineAnxietyScenario,
@@ -83,7 +88,7 @@ export const getComparativeBiasScenarios = () => {
   const {
     ageBiasYoungPatient,
     ageBiasElderlyPatient,
-  } = require('./demographic-bias-scenarios')
+  } = demographicBiasScenarios
 
   return [
     [ageBiasYoungPatient, ageBiasElderlyPatient], // Age bias comparison

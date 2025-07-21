@@ -3,9 +3,5 @@ export {
   Accordion,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
-  type AccordionProps,
-  type AccordionItemProps,
-  type AccordionTriggerProps,
-  type AccordionContentProps,
+  AccordionContent
 } from './accordion'

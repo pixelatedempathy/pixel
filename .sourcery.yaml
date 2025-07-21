@@ -75,8 +75,3 @@ rule_settings:
 #   url:
 #   ssl_certs_file:
 #   no_ssl_verify: false
-
-# coding_assistant:
-#   project_description: ''
-#   enabled: true
-#   recipe_prompts: {}
