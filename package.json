@@ -150,6 +150,7 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@iconify-json/lucide": "^1.2.53",
+    "@iconify/utils": "^2.3.0",
     "@keystatic/astro": "^5.0.6",
     "@keystatic/core": "^0.5.47",
     "@libsql/client": "^0.15.9",
