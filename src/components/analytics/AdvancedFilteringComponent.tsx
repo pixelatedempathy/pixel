@@ -582,8 +582,8 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={1}
                   step={0.1}
-                  onValueChange={([value]: [number]) =>
-                    handleChange('patterns', 'minStrength', value)
+                  onValueChange={(value: number[]) =>
+                    handleChange('patterns', 'minStrength', value[0])
                   }
                 />
               </div>
@@ -602,9 +602,9 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={1}
                   step={0.1}
-                  onValueChange={([value]: [number]) =>
-                    handleChange('patterns', 'minConfidence', value)
-                  }
+                  onValueChange={(value: number[]) => {
+                    handleChange('patterns', 'minConfidence', value[0])
+                  }}
                 />
               </div>
             </div>
@@ -680,8 +680,8 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={10}
                   step={1}
-                  onValueChange={([value]: [number]) =>
-                    handleChange('visualization', 'smoothing', value)
+                  onValueChange={(value: number[]) =>
+                    handleChange('visualization', 'smoothing', value[0])
                   }
                 />
               </div>
