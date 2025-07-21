@@ -64,7 +64,7 @@ export const loadAllFHEModules = async () => {
  * ```
  */
 export const useFHE = () => {
-  const [fhe, setFHE] = useState<any>(null)
+  const [fhe, setFHE] = useState<null | typeof import('./index')>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 

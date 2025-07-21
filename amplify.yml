@@ -6,17 +6,34 @@ frontend:
   phases:
     preBuild:
       commands:
+        # Install pnpm and configure
         - npm i -g pnpm
         - pnpm config set store-dir .pnpm-store
         - pnpm config set node-mirror https://nodejs.org/download/release/
-        - pnpm i --frozen-lockfile --prefer-offline
+        - pnpm config set prefer-offline true
+        - pnpm config set frozen-lockfile true
+        - pnpm config set shamefully-hoist true
+        
+        # Install only production dependencies first (smaller memory footprint)
+        - pnpm install --prod --frozen-lockfile --prefer-offline --shamefully-hoist
+        
+        # Then install dev dependencies
+        - pnpm install --frozen-lockfile --prefer-offline --shamefully-hoist --ignore-scripts
+        
     build:
       commands:
+        # Set environment variables
         - env >> .env
-        - NODE_OPTIONS=--max-old-space-size=12288 pnpm run build --no-cache
-        - cp -r .pnpm-store ./.amplify-hosting/compute/default
-        - cp -r node_modules ./.amplify-hosting/compute/default
+        
+        # Build with increased memory
+        - NODE_OPTIONS="--max-old-space-size=12288" pnpm run build
+        
+        # Copy only necessary files to the output directory
+        - mkdir -p .amplify-hosting/compute/default
+        - cp -r .pnpm-store ./.amplify-hosting/compute/default/
+        - cp -r node_modules ./.amplify-hosting/compute/default/
         - cp .env ./.amplify-hosting/compute/default/.env
+        - find . -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.js.map" \) -delete
   artifacts:
     baseDirectory: .amplify-hosting
     files:
