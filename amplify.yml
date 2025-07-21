@@ -22,13 +22,7 @@ frontend:
         - pnpm install
         
         # Install AWS SDK only if needed for CDN
-        - |
-          if [ -n "$CDN_BUCKET_NAME" ]; then
-            echo "Installing AWS SDK for CDN..."
-            pnpm add --save-exact --no-optional @aws-sdk/client-s3;
-          else
-            echo "CDN not configured, skipping AWS SDK installation";
-          fi
+        - pnpm add --save-exact --no-optional @aws-sdk/client-s3;
         
         # Clean up unnecessary files
         - find node_modules -type d \( -name 'test' -o -name 'tests' -o -name '__tests__' -o -name 'examples' \) -exec rm -rf {} + || true
@@ -44,45 +38,37 @@ frontend:
         # Build with production optimizations
         - pnpm run build
         
-        # Process assets for CDN if configured
-        - |
-          if [ -n "$CDN_BUCKET_NAME" ]; then
-            echo "Processing assets for CDN..."
-            # Create .amplify-hosting/static directory for optimized static assets
-            mkdir -p .amplify-hosting/static
+        # Create .amplify-hosting/static directory for optimized static assets
+        - mkdir -p .amplify-hosting/static
             
-            # Move public assets to .amplify-hosting/static
-            if [ -d "public" ]; then
-              cp -r public/* .amplify-hosting/static/
-            fi
+        # Move public assets to .amplify-hosting/static
+        - cp -r public/* .amplify-hosting/static/
+
             
-            # Upload to CDN and update asset map
-            node scripts/upload-to-cdn.js
+        # Upload to CDN and update asset map
+        - node scripts/upload-to-cdn.js
             
-            # Clean up if upload was successful
-            if [ $? -eq 0 ]; then
-              echo "CDN upload successful"
-              # Keep only the asset map in dist
-              find dist \( -type f -not -name 'asset-manifest.json' \) -delete
-            else
-              echo "CDN upload failed, using local assets"
-            fi
-          fi
+        # Clean up if upload was successful
+        - find dist \( -type f -not -name 'asset-manifest.json' \) -delete
         
         # Create minimal output structure
         - mkdir -p .amplify-hosting/compute/default
         
+        # Copy the built application
+        - cp -R dist .amplify-hosting/compute/default/
+        
         # Copy only essential files (excluding public assets if using CDN)
-        - if [ -z "$CDN_BUCKET_NAME" ]; then
-            cp -R public .amplify-hosting/compute/default/;
-          else
-            mkdir -p .amplify-hosting/compute/default/public;
-            cp public/favicon.ico .amplify-hosting/compute/default/public/;
-          fi
-          
+        - cp -R public .amplify-hosting/compute/default/
+        - mkdir -p .amplify-hosting/compute/default/public
+        - cp public/favicon.ico .amplify-hosting/compute/default/public/
         - cp .env .amplify-hosting/compute/default/
+        - cp package.json .amplify-hosting/compute/default/
         
         # Copy only necessary node_modules
+        - pnpm store prune
+        - pnpm prune --production
+        - curl -sf https://gobinaries.com/tj/node-prune | sh
+        - node-prune
         - cp -R node_modules .amplify-hosting/compute/default/
         
         # Clean up development files

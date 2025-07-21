@@ -91,43 +91,43 @@
 - [x] `src/lib/ai/services/PatternRecognitionFactory.ts:1406:5`: Parameter 'sessions' is declared but never used.
 - [x] `src/middleware/monitoring.ts:44:12`: Catch parameter 'error' is caught but never used.
 - [x] `src/lib/auth/azure-supabase-integration.ts:198:21`: Variable 'session' is declared but never used.
-- [ ] `tests/security/ai-web-vulnerability-scanner.ts:514:16`: Catch parameter 'error' is caught but never used.
-- [ ] `scripts/validate-typescript.ts:288:12`: Catch parameter 'error' is caught but never used.
-- [ ] `tests/e2e/user-acceptance.spec.ts:21:5`: Parameter 'context' is declared but never used.
-- [ ] `tests/e2e/demo-workflow.spec.ts:239:13`: Variable 'initialRatio' is declared but never used.
-- [ ] `tests/e2e/demo-workflow.spec.ts:250:13`: Variable 'updatedRatio' is declared but never used.
-- [ ] `src/components/therapy/TreatmentPlanManager.tsx:58:12`: Catch parameter 'e' is caught but never used.
-- [ ] `src/lib/crypto/index.ts:626:18`: Catch parameter 'error' is caught but never used.
-- [ ] `src/lib/ai/bias-detection/serverless-handlers.ts:12:29`: Parameter 'context' is declared but never used.
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:26:8`: Parameter 'clinicalCase' is declared but never used.
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:178:5`: Parameter 'approach' is declared but never used.
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:358:5`: Parameter 'conv' is declared but never used.
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:359:5`: Parameter 'approach' is declared but never used.
-- [ ] `src/components/demo/ConversationGenerationDemo.tsx:143:59`: Parameter 'index' is declared but never used.
-- [ ] `src/components/demo/ConversationGenerationDemo.tsx:266:5`: Parameter 'sources' is declared but never used.
-- [ ] `src/components/transitions/AnimationOrchestrator.tsx:61:3`: Parameter 'orchestrationType' is declared but never used.
-- [ ] `src/components/transitions/AnimationOrchestrator.tsx:73:3`: Parameter 'viewport' is declared but never used.
-- [ ] `src/components/admin/AdminLayoutAdapter.tsx:22:3`: Parameter 'title' is declared but never used.
-- [ ] `src/components/admin/AdminLayoutAdapter.tsx:23:3`: Parameter 'description' is declared but never used.
-- [ ] `src/components/admin/AdminLayoutAdapter.tsx:24:3`: Parameter 'activeItem' is declared but never used.
-- [ ] `src/lib/ai/services/PatternRecognitionFactory.ts:821:20`: Parameter 'index' is declared but never used.
-- [ ] `src/lib/ai/services/PatternRecognitionFactory.ts:828:40`: Parameter 'sessionFeatures' is declared but never used.
-- [ ] `src/lib/ai/services/PatternRecognitionFactory.ts:833:37`: Parameter 'sessionFeatures' is declared but never used.
-- [ ] `src/lib/ai/services/PatternRecognitionFactory.ts:954:40`: Parameter 'transitions' is declared but never used.
-- [ ] `src/lib/ai/services/PatternRecognitionFactory.ts:1406:5`: Parameter 'sessions' is declared but never used.
-- [ ] `src/middleware/monitoring.ts:44:12`: Catch parameter 'error' is caught but never used.
-- [ ] `src/lib/auth/azure-supabase-integration.ts:198:21`: Variable 'session' is declared but never used.
+- [x] `tests/security/ai-web-vulnerability-scanner.ts:514:16`: Catch parameter 'error' is caught but never used.
+- [x] `scripts/validate-typescript.ts:288:12`: Catch parameter 'error' is caught but never used.
+- [x] `tests/e2e/user-acceptance.spec.ts:21:5`: Parameter 'context' is declared but never used.
+- [x] `tests/e2e/demo-workflow.spec.ts:239:13`: Variable 'initialRatio' is declared but never used.
+- [x] `tests/e2e/demo-workflow.spec.ts:250:13`: Variable 'updatedRatio' is declared but never used.
+- [x] `src/components/therapy/TreatmentPlanManager.tsx:58:12`: Catch parameter 'e' is caught but never used.
+- [x] `src/lib/crypto/index.ts:626:18`: Catch parameter 'error' is caught but never used.
+- [x] `src/lib/ai/bias-detection/serverless-handlers.ts:12:29`: Parameter 'context' is declared but never used.
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:26:8`: Parameter 'clinicalCase' is declared but never used.
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:178:5`: Parameter 'approach' is declared but never used.
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:358:5`: Parameter 'conv' is declared but never used.
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:359:5`: Parameter 'approach' is declared but never used.
+- [x] `src/components/demo/ConversationGenerationDemo.tsx:143:59`: Parameter 'index' is declared but never used.
+- [x] `src/components/demo/ConversationGenerationDemo.tsx:266:5`: Parameter 'sources' is declared but never used.
+- [x] `src/components/transitions/AnimationOrchestrator.tsx:61:3`: Parameter 'orchestrationType' is declared but never used.
+- [x] `src/components/transitions/AnimationOrchestrator.tsx:73:3`: Parameter 'viewport' is declared but never used.
+- [x] `src/components/admin/AdminLayoutAdapter.tsx:22:3`: Parameter 'title' is declared but never used.
+- [x] `src/components/admin/AdminLayoutAdapter.tsx:23:3`: Parameter 'description' is declared but never used.
+- [x] `src/components/admin/AdminLayoutAdapter.tsx:24:3`: Parameter 'activeItem' is declared but never used.
+- [x] `src/lib/ai/services/PatternRecognitionFactory.ts:821:20`: Parameter 'index' is declared but never used.
+- [x] `src/lib/ai/services/PatternRecognitionFactory.ts:828:40`: Parameter 'sessionFeatures' is declared but never used.
+- [x] `src/lib/ai/services/PatternRecognitionFactory.ts:833:37`: Parameter 'sessionFeatures' is declared but never used.
+- [x] `src/lib/ai/services/PatternRecognitionFactory.ts:954:40`: Parameter 'transitions' is declared but never used.
+- [x] `src/lib/ai/services/PatternRecognitionFactory.ts:1406:5`: Parameter 'sessions' is declared but never used.
+- [x] `src/middleware/monitoring.ts:44:12`: Catch parameter 'error' is caught but never used.
+- [x] `src/lib/auth/azure-supabase-integration.ts:198:21`: Variable 'session' is declared but never used.
 
 ### `exhaustive-deps`
 
-- [ ] `src/components/ai/PerformanceDashboardReact.tsx:56:6`: React Hook useEffect has a missing dependency: 'fetchCacheStats'
-- [ ] `src/components/ai/PerformanceDashboard.tsx:115:6`: React Hook useEffect has missing dependencies: 'mockResponseTimeData', and 'mockTokenUsageData'
-- [ ] `src/components/ui/MobileFormValidation.tsx:97:7`: React Hook useEffect has an unnecessary dependency: formRef.
-- [ ] `src/components/ui/MobileFormValidation.tsx:97:6`: React Hook useEffect has missing dependencies: 'handleBlur', and 'handleChange'
-- [ ] `src/simulator/components/VideoDisplay.tsx:265:6`: React Hook useEffect has missing dependencies: 'handleSignalingMessage', 'setupMediaStream', 'createAndSendOffer', and 'initializePeerConnection'
-- [ ] `src/components/admin/dlp/DLPRuleEditor.tsx:109:6`: React Hook useEffect has a dependency array that changes every render.
-- [ ] `src/components/feedback/SupervisorFeedback.tsx:83:6`: React Hook useEffect has missing dependencies: 'identifyMissedOpportunities', 'analyzeTechniques', and 'generateFeedbackSummary'
-- [ ] `src/components/analytics/PrivacyDashboard.tsx:39:6`: React Hook useEffect has a missing dependency: 'analytics'
+- [x] `src/components/ai/PerformanceDashboardReact.tsx:56:6`: React Hook useEffect has a missing dependency: 'fetchCacheStats'
+- [x] `src/components/ai/PerformanceDashboard.tsx:115:6`: React Hook useEffect has missing dependencies: 'mockResponseTimeData', and 'mockTokenUsageData'
+- [x] `src/components/ui/MobileFormValidation.tsx:97:7`: React Hook useEffect has an unnecessary dependency: formRef.
+- [x] `src/components/ui/MobileFormValidation.tsx:97:6`: React Hook useEffect has missing dependencies: 'handleBlur', and 'handleChange'
+- [x] `src/simulator/components/VideoDisplay.tsx:265:6`: React Hook useEffect has missing dependencies: 'handleSignalingMessage', 'setupMediaStream', 'createAndSendOffer', and 'initializePeerConnection'
+- [x] `src/components/admin/dlp/DLPRuleEditor.tsx:109:6`: React Hook useEffect has a dependency array that changes every render.
+- [x] `src/components/feedback/SupervisorFeedback.tsx:83:6`: React Hook useEffect has missing dependencies: 'identifyMissedOpportunities', 'analyzeTechniques', and 'generateFeedbackSummary'
+- [x] `src/components/analytics/PrivacyDashboard.tsx:39:6`: React Hook useEffect has a missing dependency: 'analytics'
 - [ ] `src/components/demo/ValidationDemo.tsx:109:6`: React Hook useEffect has a missing dependency: 'validateContent'
 - [ ] `src/components/demo/FormatStandardizationDemo.tsx:434:6`: React Hook useEffect has a missing dependency: 'convertToFormat'
 - [ ] `src/components/demo/DemographicBalancingDisplay.tsx:234:6`: React Hook useEffect has missing dependencies: 'currentStats.occupation', 'demographicTargets.gender', 'demographicTargets.occupation', 'currentStats.background', 'demographicTargets.background', 'currentStats', 'currentStats.age', 'currentStats.gender', and 'demographicTargets.age'

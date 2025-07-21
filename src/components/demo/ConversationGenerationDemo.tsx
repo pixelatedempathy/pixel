@@ -140,7 +140,7 @@ const ConversationGenerationDemo: React.FC<ConversationGenerationDemoProps> = ({
 
       // Generate knowledge sources from API response
       const sources: KnowledgeSource[] =
-        conversionResponse.knowledgeMapping.map((mapping, _index) => ({
+        conversionResponse.knowledgeMapping.map((mapping) => ({
           type: mapping.appliedKnowledge[0]?.source.includes('dsm5')
             ? 'dsm5'
             : mapping.appliedKnowledge[0]?.source.includes('clinical')

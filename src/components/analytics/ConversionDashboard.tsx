@@ -42,9 +42,9 @@ export function ConversionDashboard() {
   // Load conversion data
   useEffect(() => {
     loadConversionData()
-  }, [period, filter])
+  }, [period, filter, loadConversionData])
 
-  const loadConversionData = async () => {
+  const loadConversionData = useCallback(async () => {
     setIsLoading(true)
     try {
       // In a real implementation, this would fetch from an API
@@ -75,7 +75,7 @@ export function ConversionDashboard() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [analytics, filter])
 
   // Calculate summary metrics
   const summaryData = useMemo(() => {

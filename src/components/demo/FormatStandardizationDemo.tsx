@@ -230,7 +230,7 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
     },
   ]
 
-  const convertToFormat = async (format: string) => {
+  const convertToFormat = useCallback(async (format: string) => {
     setIsConverting(true)
 
     // Simulate conversion process
@@ -269,9 +269,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
 
     setStandardizedData(converted)
     setIsConverting(false)
-  }
+  }, [conversation, convertToHuggingFace, convertToOpenAI, convertToJSONL, convertToAlpaca, convertToClinical, convertToResearch])
 
-  const convertToHuggingFace = () => {
+  const convertToHuggingFace = useCallback(() => {
     const messages = [
       {
         role: 'system',
@@ -300,9 +300,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
         generated_at: new Date().toISOString(),
       },
     }
-  }
+  }, [conversation, therapeuticApproach, qualityScore])
 
-  const convertToOpenAI = () => {
+  const convertToOpenAI = useCallback(() => {
     const messages = [
       {
         role: 'system',
@@ -318,9 +318,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
     })
 
     return { messages }
-  }
+  }, [conversation, therapeuticApproach])
 
-  const convertToJSONL = () => {
+  const convertToJSONL = useCallback(() => {
     const jsonlData = []
 
     for (let i = 0; i < conversation.length - 1; i += 2) {
@@ -345,9 +345,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
     }
 
     return jsonlData
-  }
+  }, [conversation, therapeuticApproach, qualityScore])
 
-  const convertToAlpaca = () => {
+  const convertToAlpaca = useCallback(() => {
     const alpacaData = []
 
     for (let i = 0; i < conversation.length - 1; i += 2) {
@@ -367,9 +367,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
     }
 
     return alpacaData
-  }
+  }, [conversation, therapeuticApproach])
 
-  const convertToClinical = () => {
+  const convertToClinical = useCallback(() => {
     return {
       session_id: `session_${Date.now()}`,
       therapeutic_approach: therapeuticApproach,
@@ -396,9 +396,9 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
         supervision_notes: 'Automated assessment completed',
       },
     }
-  }
+  }, [conversation, therapeuticApproach, qualityScore])
 
-  const convertToResearch = () => {
+  const convertToResearch = useCallback(() => {
     return {
       study_id: `research_${Date.now()}`,
       participant_demographics: {
@@ -425,13 +425,13 @@ const FormatStandardizationDemo: React.FC<FormatStandardizationDemoProps> = ({
         ethical_review: 'approved',
       },
     }
-  }
+  }, [conversation, therapeuticApproach, qualityScore])
 
   useEffect(() => {
     if (conversation.length > 0) {
       convertToFormat(selectedFormat)
     }
-  }, [selectedFormat, conversation, therapeuticApproach, qualityScore])
+  }, [selectedFormat, conversation, therapeuticApproach, qualityScore, convertToFormat])
 
   const downloadData = (format: string) => {
     if (!standardizedData) {

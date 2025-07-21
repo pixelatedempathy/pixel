@@ -18,7 +18,6 @@ import {
   BiasSessionValidationError,
   BiasPythonServiceError,
   BiasInitializationError,
-  BiasErrorHandler,
 } from './errors'
 import { anonymizeSession } from './privacy'
 import type {

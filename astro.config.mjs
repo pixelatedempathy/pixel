@@ -10,6 +10,7 @@ import sentry from '@sentry/astro';
 import markdoc from '@astrojs/markdoc';
 import keystatic from '@keystatic/astro';
 import awsAmplify from 'astro-aws-amplify';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,6 +22,24 @@ export default defineConfig({
     format: 'directory',
   },
   vite: {
+    build: {
+      rollupOptions: {
+        external: [
+          '@google-cloud/storage',
+          '@aws-sdk/client-s3',
+          '@aws-sdk/client-dynamodb',
+          '@aws-sdk/client-kms',
+          'redis',
+          'ioredis',
+          'pg',
+          'mysql2',
+          'sqlite3',
+          'better-sqlite3',
+          'pdfkit'
+        ]
+      }
+    },
+    plugins: [visualizer()],
     resolve: {
       alias: {
         '~': path.resolve('./src'),
@@ -36,11 +55,6 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node', 'pdfkit'],
-    },
-    build: {
-      rollupOptions: {
-        external: ['pdfkit'],
-      },
     },
   },
   integrations: [

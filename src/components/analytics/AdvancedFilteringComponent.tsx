@@ -1,3 +1,9 @@
+/**
+ * NOTE: If you see a TypeScript error about 'react/jsx-runtime' missing a declaration file,
+ * this is a project-level configuration or dependency issue. Ensure your TypeScript version
+ * and @types/react are up to date and compatible with your React version.
+ */
+import * as React from 'react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox' // Fixed casing to match shadcn convention
+import { Checkbox } from '@/components/ui/checkbox'
 import { IconFilter, IconX } from '@/components/ui/icons'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -226,7 +232,7 @@ export function AdvancedFilteringComponent({
                         ? format(options.timeRange.startDate, 'yyyy-MM-dd')
                         : ''
                     }
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const date = e.target.value
                         ? new Date(e.target.value)
                         : undefined
@@ -245,7 +251,7 @@ export function AdvancedFilteringComponent({
                         ? format(options.timeRange.endDate, 'yyyy-MM-dd')
                         : ''
                     }
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const date = e.target.value
                         ? new Date(e.target.value)
                         : undefined
@@ -302,7 +308,7 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={1}
                   step={0.1}
-                  onValueChange={([min, max]) => {
+                  onValueChange={([min, max]: [number, number]) => {
                     handleChange('emotions', 'minIntensity', min)
                     handleChange('emotions', 'maxIntensity', max)
                   }}
@@ -333,7 +339,7 @@ export function AdvancedFilteringComponent({
                       min={-1}
                       max={1}
                       step={0.1}
-                      onValueChange={(value) =>
+                      onValueChange={(value: [number, number]) =>
                         handleNestedChange(
                           'emotions',
                           'dimensionalRanges',
@@ -362,7 +368,7 @@ export function AdvancedFilteringComponent({
                       min={-1}
                       max={1}
                       step={0.1}
-                      onValueChange={(value) =>
+                      onValueChange={(value: [number, number]) =>
                         handleNestedChange(
                           'emotions',
                           'dimensionalRanges',
@@ -395,7 +401,7 @@ export function AdvancedFilteringComponent({
                       min={-1}
                       max={1}
                       step={0.1}
-                      onValueChange={(value) =>
+                      onValueChange={(value: [number, number]) =>
                         handleNestedChange(
                           'emotions',
                           'dimensionalRanges',
@@ -451,7 +457,7 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={1}
                   step={0.1}
-                  onValueChange={([value]) =>
+                  onValueChange={([value]: [number]) =>
                     handleChange('patterns', 'minStrength', value)
                   }
                 />
@@ -471,7 +477,7 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={1}
                   step={0.1}
-                  onValueChange={([value]) =>
+                  onValueChange={([value]: [number]) =>
                     handleChange('patterns', 'minConfidence', value)
                   }
                 />
@@ -549,7 +555,7 @@ export function AdvancedFilteringComponent({
                   min={0}
                   max={10}
                   step={1}
-                  onValueChange={([value]) =>
+                  onValueChange={([value]: [number]) =>
                     handleChange('visualization', 'smoothing', value)
                   }
                 />
@@ -562,7 +568,7 @@ export function AdvancedFilteringComponent({
                 <Switch
                   id="showRawData"
                   checked={options.visualization?.showRawData || false}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     handleChange('visualization', 'showRawData', checked)
                   }
                 />
@@ -573,7 +579,7 @@ export function AdvancedFilteringComponent({
                 <Switch
                   id="showTrendlines"
                   checked={options.visualization?.showTrendlines || false}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     handleChange('visualization', 'showTrendlines', checked)
                   }
                 />
@@ -588,7 +594,7 @@ export function AdvancedFilteringComponent({
                   checked={
                     options.visualization?.showConfidenceIntervals || false
                   }
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     handleChange(
                       'visualization',
                       'showConfidenceIntervals',
@@ -603,7 +609,7 @@ export function AdvancedFilteringComponent({
                 <Switch
                   id="showAnnotations"
                   checked={options.visualization?.showAnnotations || false}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     handleChange('visualization', 'showAnnotations', checked)
                   }
                 />
@@ -622,7 +628,7 @@ export function AdvancedFilteringComponent({
     return (
       <div className={cn('advanced-filtering-compact', className)}>
         <Popover>
-          <PopoverTrigger asChild>
+          <PopoverTrigger>
             <Button
               variant="outline"
               size="sm"
@@ -632,46 +638,48 @@ export function AdvancedFilteringComponent({
               Advanced Filter
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 sm:w-96 p-4" align="end">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-sm font-medium">Advanced Filters</h4>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={resetFilters}
-                className="h-8 w-8 p-0"
-              >
-                <IconX className="h-4 w-4" />
-              </Button>
-            </div>
+          <PopoverContent>
+            <div className="w-80 sm:w-96 p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-sm font-medium">Advanced Filters</h4>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={resetFilters}
+                  className="h-8 w-8 p-0"
+                >
+                  <IconX className="h-4 w-4" />
+                </Button>
+              </div>
 
-            <div className="flex border-b mb-4">
-              {(['time', 'emotions', 'patterns', 'visualization'] as const).map(
-                (tab) => (
-                  <button
-                    key={tab}
-                    className={cn(
-                      'py-2 px-3 text-sm capitalize',
-                      activeTab === tab
-                        ? 'border-b-2 border-primary font-medium'
-                        : 'text-gray-500 hover:text-gray-700',
-                    )}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                ),
-              )}
-            </div>
+              <div className="flex border-b mb-4">
+                {(['time', 'emotions', 'patterns', 'visualization'] as const).map(
+                  (tab) => (
+                    <button
+                      key={tab}
+                      className={cn(
+                        'py-2 px-3 text-sm capitalize',
+                        activeTab === tab
+                          ? 'border-b-2 border-primary font-medium'
+                          : 'text-gray-500 hover:text-gray-700',
+                      )}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {tab}
+                    </button>
+                  ),
+                )}
+              </div>
 
-            <div className="max-h-96 overflow-y-auto">
-              {renderFilterSection()}
-            </div>
+              <div className="max-h-96 overflow-y-auto">
+                {renderFilterSection()}
+              </div>
 
-            <div className="mt-4 flex justify-end">
-              <Button size="sm" onClick={applyFilters}>
-                Apply Filters
-              </Button>
+              <div className="mt-4 flex justify-end">
+                <Button size="sm" onClick={applyFilters}>
+                  Apply Filters
+                </Button>
+              </div>
             </div>
           </PopoverContent>
         </Popover>

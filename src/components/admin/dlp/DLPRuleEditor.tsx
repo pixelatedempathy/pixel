@@ -63,21 +63,21 @@ import {
   SelectValue,
 } from '@/components/ui/select-radix'
 
+// Default empty rule
+const defaultRule = {
+  id: '',
+  name: '',
+  description: '',
+  action: DLPAction.REDACT,
+  isActive: true,
+}
+
 /**
  * DLP Rule Editor Component
  *
  * Handles creating new rules and editing existing ones
  */
 export default function DLPRuleEditor() {
-  // Default empty rule
-  const defaultRule = {
-    id: '',
-    name: '',
-    description: '',
-    action: DLPAction.REDACT,
-    isActive: true,
-  }
-
   // State for the rule being edited
   const [currentRule, setCurrentRule] = useState<Partial<DLPRule>>(defaultRule)
   const [isEditing, setIsEditing] = useState(false)
@@ -106,7 +106,7 @@ export default function DLPRuleEditor() {
       )
       document.removeEventListener('dlp:new-rule', handleNewRule)
     }
-  }, [defaultRule])
+  }, [])
 
   // Handle input changes
   const handleChange = (field: string, value: string | boolean) => {

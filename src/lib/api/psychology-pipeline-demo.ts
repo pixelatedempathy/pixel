@@ -456,16 +456,10 @@ export const convertKnowledgeToConversation = async (
   const generatedDialogue = generateKnowledgeBasedDialogue(validatedRequest)
 
   // Calculate quality metrics
-  const qualityMetrics = calculateConversationQuality(
-    generatedDialogue,
-    validatedRequest,
-  )
+  const qualityMetrics = calculateConversationQuality(validatedRequest)
 
   // Map knowledge sources to dialogue turns
-  const knowledgeMapping = mapKnowledgeToDialogue(
-    generatedDialogue,
-    validatedRequest,
-  )
+  const knowledgeMapping = mapKnowledgeToDialogue(generatedDialogue)
 
   const response: z.infer<typeof ConversationConverterResponseSchema> = {
     conversationId: `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -501,8 +495,7 @@ function generateKnowledgeBasedDialogue(
   dialogue.push({
     speaker: 'therapist' as const,
     content: generateKnowledgeBasedOpening(
-      conversationParameters.therapeuticApproach,
-      knowledgeBase,
+      conversationParameters.therapeuticApproach
     ),
     timestamp: new Date().toISOString(),
     techniques: ['rapport_building', 'assessment'],
@@ -573,9 +566,7 @@ function generateKnowledgeBasedDialogue(
   dialogue.push({
     speaker: 'therapist' as const,
     content: generateKnowledgeBasedFollowUp(
-      conversationParameters.therapeuticApproach,
-      knowledgeBase.clinicalGuidelines,
-      clientProfile.severity,
+      conversationParameters.therapeuticApproach
     ),
     timestamp: new Date().toISOString(),
     techniques: conversationParameters.targetTechniques.slice(2, 4),
@@ -621,11 +612,7 @@ interface DialogueEntry {
   [key: string]: unknown;
 }
 
-function generateKnowledgeBasedOpening(
-  approach: string,
-  // knowledgeBase parameter is not used in this function
-  _knowledgeBase: KnowledgeBase,
-): string {
+function generateKnowledgeBasedOpening(approach: string): string {
   const openings = {
     CBT: "I'd like to understand what's been challenging for you lately. Our work together will focus on examining the connections between your thoughts, feelings, and behaviors to help you develop more effective coping strategies.",
     DBT: "Thank you for being here. I want to create a space where you can share what's been difficult while we work on building skills to help you manage intense emotions and improve your relationships.",
@@ -684,11 +671,7 @@ function generateClientProcessingResponse(
   return responses[approach as keyof typeof responses] || responses['CBT']
 }
 
-function generateKnowledgeBasedFollowUp(
-  approach: string,
-  _guidelines: string[],
-  _severity: string,
-): string {
+function generateKnowledgeBasedFollowUp(approach: string): string {
   const followUps = {
     CBT: "That's a great insight. Let's practice identifying these thought patterns together. I'll teach you some techniques for examining the evidence for your thoughts and developing more balanced alternatives.",
     DBT: "I'm glad that resonates with you. Let's start with a specific skill you can use right away. When you notice intense emotions building, try the TIPP technique to help regulate your nervous system.",
@@ -709,7 +692,7 @@ interface ConversationRequest {
   [key: string]: unknown;
 }
 
-function calculateConversationQuality(dialogue: DialogueEntry[], request: ConversationRequest) {
+function calculateConversationQuality(request: ConversationRequest) {
   // Simulate quality calculation based on knowledge integration
   const baseScore = 80
   const knowledgeIntegration = Math.min(
@@ -739,7 +722,7 @@ function calculateConversationQuality(dialogue: DialogueEntry[], request: Conver
   }
 }
 
-function mapKnowledgeToDialogue(dialogue: DialogueEntry[], _request: ConversationRequest) {
+function mapKnowledgeToDialogue(dialogue: DialogueEntry[]) {
   return dialogue.map((turn, index) => ({
     dialogueTurn: index + 1,
     appliedKnowledge: [

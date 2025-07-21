@@ -231,7 +231,7 @@ const DemographicBalancingDisplay: React.FC<
 
     setOverallBalance(balanceScore)
     onBalanceUpdate?.(balanceScore)
-  }, [currentProfile, onBalanceUpdate])
+  }, [currentProfile, onBalanceUpdate, currentStats, demographicTargets])
 
   const getBalanceColor = (percentage: number) => {
     if (percentage >= 90 && percentage <= 110) {

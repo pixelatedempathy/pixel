@@ -80,10 +80,16 @@ export function SupervisorFeedback({
       identifyMissedOpportunities()
       generateFeedbackSummary()
     }
-  }, [therapistResponses, sessionTranscript])
+  }, [
+    therapistResponses,
+    sessionTranscript,
+    analyzeTechniques,
+    identifyMissedOpportunities,
+    generateFeedbackSummary,
+  ])
 
   // Analyze therapeutic techniques used by the therapist
-  const analyzeTechniques = () => {
+  const analyzeTechniques = useCallback(() => {
     setIsGenerating(true)
 
     // Process each therapist response
@@ -130,10 +136,10 @@ export function SupervisorFeedback({
 
     setDetectedTechniques(techniquesArray)
     setIsGenerating(false)
-  }
+  }, [therapistResponses])
 
   // Identify missed therapeutic opportunities
-  const identifyMissedOpportunities = () => {
+  const identifyMissedOpportunities = useCallback(() => {
     // This would ideally use an AI model to identify missed opportunities
     // For now, implementing a simpler heuristic approach
     const opportunities: MissedOpportunity[] = []
@@ -202,10 +208,10 @@ export function SupervisorFeedback({
     })
 
     setMissedOpportunities(opportunities)
-  }
+  }, [sessionTranscript, therapistResponses])
 
   // Generate overall feedback summary
-  const generateFeedbackSummary = () => {
+  const generateFeedbackSummary = useCallback(() => {
     // This would ideally integrate with AI services
     // For now, implementing a simplified approach
 
@@ -266,7 +272,7 @@ export function SupervisorFeedback({
       keyStrengths,
       growthAreas,
     })
-  }
+  }, [detectedTechniques, missedOpportunities])
 
   // Regenerate all feedback
   const regenerateFeedback = () => {

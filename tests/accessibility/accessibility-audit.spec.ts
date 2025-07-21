@@ -210,7 +210,6 @@ test.describe('Accessibility Audit and Compliance', () => {
           if (await element.isVisible()) {
             const ariaLabel = await element.getAttribute('aria-label')
             const ariaLabelledby = await element.getAttribute('aria-labelledby')
-            // Not using aria-describedby in this check, so we don't need to fetch it
             const title = await element.getAttribute('title')
             const textContent = await element.textContent()
 

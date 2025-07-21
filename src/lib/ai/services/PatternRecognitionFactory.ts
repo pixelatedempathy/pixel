@@ -817,20 +817,18 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
   private analyzeEmotionalTransitions(
     sessionFeatures: any,
   ): Array<{ confidence: number; intensity: number }> {
-    return sessionFeatures.emotionalStates.map(
-          () => ({
-            confidence: 0.7 + Math.random() * 0.3,
-            intensity: 0.5 + Math.random() * 0.5,
-          }),
-        );
+    return sessionFeatures.emotionalStates.map(() => ({
+      confidence: 0.7 + Math.random() * 0.3,
+      intensity: 0.5 + Math.random() * 0.5,
+    }));
   }
 
-  private detectCommunicationAnomalies(_sessionFeatures: any): any[] {
+  private detectCommunicationAnomalies(): any[] {
     // Placeholder implementation
     return []
   }
 
-  private analyzeEngagementPatterns(_sessionFeatures: any): any[] {
+  private analyzeEngagementPatterns(): any[] {
     // Placeholder implementation
     return []
   }
@@ -951,7 +949,7 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     return values.filter((value) => Math.abs(value - mean) > threshold).length
   }
 
-  private calculateCorrelationStrength(_transitions: any[]): number {
+  private calculateCorrelationStrength(): number {
     // Simplified correlation calculation
     return 0.7 + Math.random() * 0.3
   }
@@ -1402,9 +1400,7 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
     return { centrality, communities }
   }
 
-  private async mineTemporalPatterns(
-    _sessions: TherapySession[],
-  ): Promise<Array<{ pattern: string; support: number }>> {
+  private async mineTemporalPatterns(): Promise<Array<{ pattern: string; support: number }>> {
     // Simplified temporal pattern mining
     return [
       { pattern: 'emotional_regulation_improvement', support: 0.8 },

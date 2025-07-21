@@ -643,7 +643,7 @@ test.describe('Mobile Edge Cases and Error Handling', () => {
       'Voice input test for mobile psychology validation',
     )
 
-    // Test autocorrect/predictive text
+    // Test autocorrect/predictive text simulation
     await page.keyboard.type(' with autocorrect')
 
     await expect(textArea).toHaveValue(/Voice input test/)

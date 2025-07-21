@@ -70,10 +70,7 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
     const authenticity = calculateAuthenticity(therapistTurns, approach)
 
     // Therapeutic accuracy based on technique application
-    const therapeuticAccuracy = calculateTherapeuticAccuracy(
-      therapistTurns,
-      approach,
-    )
+    const therapeuticAccuracy = calculateTherapeuticAccuracy(therapistTurns)
 
     // Clinical safety assessment
     const clinicalSafety = calculateClinicalSafety(conv)
@@ -175,7 +172,6 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
 
   const calculateTherapeuticAccuracy = (
     therapistTurns: ConversationTurn[],
-    _approach: string,
   ): number => {
     if (therapistTurns.length === 0) {
       return 0
@@ -342,7 +338,7 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
 
     const assessment: QualityAssessment = {
       metrics,
-      feedback: generateFeedback(metrics, conversation, therapeuticApproach),
+      feedback: generateFeedback(metrics),
       recommendations: generateRecommendations(metrics, therapeuticApproach),
       timestamp: new Date().toISOString(),
     }
@@ -353,11 +349,7 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
     setIsAssessing(false)
   }
 
-  const generateFeedback = (
-    metrics: QualityMetrics,
-    _conv: ConversationTurn[],
-    _approach: string,
-  ) => {
+  const generateFeedback = (metrics: QualityMetrics) => {
     const strengths: string[] = []
     const improvements: string[] = []
     const risks: string[] = []

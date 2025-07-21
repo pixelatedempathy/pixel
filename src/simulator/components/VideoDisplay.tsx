@@ -55,7 +55,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
   const [hasPermissionError, setHasPermissionError] = useState(false)
 
   // Initialize WebRTC peer connection
-  const initializePeerConnection = () => {
+  const initializePeerConnection = useCallback(() => {
     try {
       const peerConnection = new RTCPeerConnection({
         iceServers: ICE_SERVERS,
@@ -106,10 +106,10 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
       toast.error('Failed to establish video connection')
       return null
     }
-  }
+  }, [sessionId, userId, onConnectionStateChange, handleConnectionFailure])
 
   // Handle media stream setup
-  const setupMediaStream = async () => {
+  const setupMediaStream = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -141,10 +141,10 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
       setHasPermissionError(true)
       toast.error('Unable to access camera or microphone')
     }
-  }
+  }, [sessionId])
 
   // Handle connection failures and reconnection
-  const handleConnectionFailure = async () => {
+  const handleConnectionFailure = useCallback(async () => {
     logger.warn('Connection failed, attempting reconnection', { sessionId })
     setIsReconnecting(true)
 
@@ -166,10 +166,10 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
     } finally {
       setIsReconnecting(false)
     }
-  }
+  }, [sessionId, initializePeerConnection, setupMediaStream, createAndSendOffer])
 
   // Create and send an offer to the peer
-  const createAndSendOffer = async () => {
+  const createAndSendOffer = useCallback(async () => {
     const peerConnection = peerConnectionRef.current
     if (!peerConnection) {
       return
@@ -183,10 +183,10 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
       logger.error('Failed to create and send offer', { error, sessionId })
       toast.error('Failed to establish connection')
     }
-  }
+  }, [sessionId, userId])
 
   // Handle incoming signaling messages
-  const handleSignalingMessage = async (message: SignalingMessage) => {
+  const handleSignalingMessage = useCallback(async (message: SignalingMessage) => {
     const peerConnection = peerConnectionRef.current
     if (!peerConnection) {
       return
@@ -232,7 +232,7 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
         messageType: message.type,
       })
     }
-  }
+  }, [sessionId, userId])
 
   // Initialize connection when component mounts or when connection status changes
   useEffect(() => {
@@ -262,7 +262,15 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
         }
       }
     }
-  }, [isConnected, connectionStatus, sessionId])
+  }, [
+    isConnected,
+    connectionStatus,
+    sessionId,
+    handleSignalingMessage,
+    setupMediaStream,
+    createAndSendOffer,
+    initializePeerConnection,
+  ])
 
   // Status message based on connection state
   const getStatusMessage = () => {

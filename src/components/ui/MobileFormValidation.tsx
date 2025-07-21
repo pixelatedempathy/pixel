@@ -96,8 +96,9 @@ export function MobileFormValidation({
       const { value } = input
       const error = validateField(name, value)
 
+      let newErrors: Record<string, string> = {};
       setErrors((prev) => {
-        const newErrors = { ...prev }
+        newErrors = { ...prev }
         if (error) {
           newErrors[name] = error
         } else {
@@ -110,16 +111,10 @@ export function MobileFormValidation({
       input.setAttribute('aria-invalid', error ? 'true' : 'false')
 
       if (onValidationChange) {
-        const newErrors = { ...errors }
-        if (error) {
-          newErrors[name] = error
-        } else {
-          delete newErrors[name]
-        }
         onValidationChange(Object.keys(newErrors).length === 0, newErrors)
       }
     }
-  }, [validateOnChange, validateField, onValidationChange, errors])
+  }, [validateOnChange, validateField, onValidationChange])
 
   // Handle input blur
   const handleBlur = useCallback((e: Event) => {
@@ -155,11 +150,11 @@ export function MobileFormValidation({
 
   // Find and enhance all form inputs with validation attributes
   useEffect(() => {
-    if (!formRef.current) {
+    const form = formRef.current
+    if (!form) {
       return
     }
 
-    const form = formRef.current
     const inputs = form.querySelectorAll('input, textarea, select')
 
     inputs.forEach((input) => {
@@ -189,50 +184,9 @@ export function MobileFormValidation({
         input.removeEventListener('blur', handleBlur)
       })
     }
-  }, [formRef.current, validationRules, isMobile, handleChange, handleBlur])
-      const name = input.getAttribute('name')
-      if (!name || !validationRules[name]) {
-        return
-      }
+  }, [validationRules, isMobile, handleChange, handleBlur, formRef])
 
-      // Add event listeners for input validation
-      input.addEventListener('change', handleChange)
-      input.addEventListener('blur', handleBlur)
 
-      // Add ARIA attributes
-      input.setAttribute('aria-required', 'true')
-
-      // Enhanced feedback for mobile
-      if (isMobile) {
-        // Make touch targets easier
-        input.classList.add('mobile-input')
-      }
-    })
-
-    // Clean up event listeners
-    return () => {
-      inputs.forEach((input) => {
-        input.removeEventListener('change', handleChange)
-        input.removeEventListener('blur', handleBlur)
-      })
-    }
-  }, [formRef.current, validationRules, isMobile])
-
-  // Validate a specific field
-  const validateField = (name: string, value: string): string => {
-    const rules = validationRules[name]
-    if (!rules) {
-      return ''
-    }
-
-    for (const rule of rules) {
-      if (!rule.test(value)) {
-        return rule.message
-      }
-    }
-
-    return ''
-  }
 
   // Validate all fields in the form
   const validateForm = (): Record<string, string> => {
@@ -272,94 +226,7 @@ export function MobileFormValidation({
     return newErrors
   }
 
-  // Handle input changes
-  const handleChange = (e: Event) => {
-    const input = e.target as
-      | HTMLInputElement
-      | HTMLTextAreaElement
-      | HTMLSelectElement
-    const name = input.getAttribute('name')
-    if (!name) {
-      return
-    }
 
-    // Mark field as touched
-    setTouchedFields((prev) => {
-      const newSet = new Set(prev)
-      newSet.add(name)
-      return newSet
-    })
-
-    if (validateOnChange) {
-      const { value } = input
-      const error = validateField(name, value)
-
-      setErrors((prev) => {
-        const newErrors = { ...prev }
-        if (error) {
-          newErrors[name] = error
-        } else {
-          delete newErrors[name]
-        }
-        return newErrors
-      })
-
-      // Update ARIA attributes
-      input.setAttribute('aria-invalid', error ? 'true' : 'false')
-
-      if (onValidationChange) {
-        const newErrors = { ...errors }
-        if (error) {
-          newErrors[name] = error
-        } else {
-          delete newErrors[name]
-        }
-        onValidationChange(Object.keys(newErrors).length === 0, newErrors)
-      }
-    }
-  }
-
-  // Handle input blur
-  const handleBlur = (e: Event) => {
-    const input = e.target as
-      | HTMLInputElement
-      | HTMLTextAreaElement
-      | HTMLSelectElement
-    const name = input.getAttribute('name')
-    if (!name) {
-      return
-    }
-
-    // Mark field as touched
-    setTouchedFields((prev) => {
-      const newSet = new Set(prev)
-      newSet.add(name)
-      return newSet
-    })
-
-    if (validateOnBlur) {
-      const { value } = input
-      const error = validateField(name, value)
-
-      setErrors((prev) => {
-        const newErrors = { ...prev }
-        if (error) {
-          newErrors[name] = error
-        } else {
-          delete newErrors[name]
-        }
-        return newErrors
-      })
-
-      // Update ARIA attributes
-      input.setAttribute('aria-invalid', error ? 'true' : 'false')
-
-      // On mobile, show haptic feedback for validation errors
-      if (error && isMobile && 'vibrate' in navigator) {
-        navigator.vibrate(50) // Subtle vibration for validation failure
-      }
-    }
-  }
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -444,11 +311,11 @@ export function MobileFormValidation({
       >
       // Set up form props with the right type
       const formProps: React.FormHTMLAttributes<HTMLFormElement> & {
-        ref: React.RefObject<HTMLFormElement>
+        ref: React.RefObject<HTMLFormElement | null>
       } = {
         ...specificChild.props,
         ref: formRef,
-        onSubmit: (e: React.FormEvent) => {
+        onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
           handleSubmit(e)
           // Call the original onSubmit if it exists
           if (specificChild.props.onSubmit) {

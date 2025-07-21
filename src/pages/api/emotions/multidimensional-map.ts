@@ -4,7 +4,7 @@ import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 import { protectRoute } from '@/lib/auth/serverAuth'
 import { AIRepository } from '@/lib/db/ai/repository'
 import { MultidimensionalEmotionMapper } from '@/lib/ai/emotions/MultidimensionalEmotionMapper'
-import { TemporalAnalysisAlgorithm } from '@/lib/ai/temporal/TemporalAnalysisAlgorithm'
+import { analyzeMultidimensionalPatterns } from '@/lib/ai/temporal/TemporalAnalysisAlgorithm'
 import type { EmotionAnalysis as TypesEmotionAnalysis } from '@/lib/ai/emotions/types'
 import type { AuthAPIContext } from '@/lib/auth/apiRouteTypes'
 
@@ -64,20 +64,22 @@ export const GET = protectRoute()(async (context: AuthAPIContext) => {
     const startDate = new Date()
     startDate.setDate(endDate.getDate() - timeRange)
 
-    let sessions: Array<{ sessionId: string }> = []
+    let fetchedSessions: Array<{ sessionId?: string }> = []
 
     // Get sessions based on provided parameters
     if (sessionId) {
       // Fetch specific session
-      sessions = await repository.getSessionsByIds([sessionId])
+      fetchedSessions = await repository.getSessionsByIds([sessionId])
     } else if (clientId) {
       // Fetch client sessions within time range
-      sessions = await repository.getSessions({
+      fetchedSessions = await repository.getSessions({
         clientId,
         startDate,
         endDate,
       })
     }
+
+    const sessions = fetchedSessions.filter((s): s is { sessionId: string } => !!s.sessionId);
 
     if (sessions.length === 0) {
       return new Response(
@@ -102,7 +104,7 @@ export const GET = protectRoute()(async (context: AuthAPIContext) => {
         (e) =>
           ({
             ...e,
-            timestamp: e.timestamp.toISOString(),
+            timestamp: e.timestamp,
           }) as TypesEmotionAnalysis,
       )
       emotionData.push(...emotionsForDTO)
@@ -147,7 +149,7 @@ export const GET = protectRoute()(async (context: AuthAPIContext) => {
 
       // Analyze multidimensional patterns
       const patterns =
-        TemporalAnalysisAlgorithm.analyzeMultidimensionalPatterns(
+        analyzeMultidimensionalPatterns(
           limitedEmotionData as TypesEmotionAnalysis[],
           dimensionalMaps,
         )

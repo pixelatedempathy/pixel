@@ -36,7 +36,7 @@ export function PrivacyDashboard() {
     const events = analytics.getEvents()
     setEventCount(events.length)
     setLastSync(new Date())
-  }, [])
+  }, [analytics])
 
   const handleSettingChange = (
     key: keyof PrivacySettings,

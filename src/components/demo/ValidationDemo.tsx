@@ -106,9 +106,9 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
       setResults([])
       setOverallScore(0)
     }
-  }, [content])
+  }, [content, validateContent])
 
-  const validateContent = async () => {
+  const validateContent = useCallback(async () => {
     if (!content.trim()) {
       return
     }
@@ -161,7 +161,7 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
     if (onValidationComplete) {
       onValidationComplete(validationResults)
     }
-  }
+  }, [content, onValidationComplete])
 
   const calculateContentQualityScore = (text: string): number => {
     let score = 85

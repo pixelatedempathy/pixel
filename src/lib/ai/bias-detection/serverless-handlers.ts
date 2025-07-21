@@ -9,7 +9,7 @@
  * Creates a serverless-compatible handler wrapper
  */
 export function createServerlessHandler(handler: (req: any) => Promise<any>) {
-  return async (event: any, _context: any) => {
+  return async (event: any) => {
     try {
       // Transform serverless event to standard request format
       const req = {

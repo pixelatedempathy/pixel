@@ -192,7 +192,7 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
     }))
     setCategories(updatedCategories)
     calculateMetrics(updatedCategories)
-  }, [targetTotal])
+  }, [targetTotal, categories, calculateMetrics])
 
   // Cleanup real-time interval on unmount
   useEffect(() => {
@@ -273,6 +273,7 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
     isRealTimeMode,
     targetTotal,
     enableLiveIntegration,
+    pushBalanceUpdate,
   ])
 
   // Integration initialization and live data fetching
@@ -286,16 +287,16 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
 
       return () => clearInterval(liveDataInterval)
     }
-  }, [enableLiveIntegration])
+  }, [enableLiveIntegration, syncWithKnowledgeBalancer, fetchLiveData])
 
   // Update integration when categories change
   useEffect(() => {
     if (enableLiveIntegration && categories.length > 0) {
       pushBalanceUpdate(categories)
     }
-  }, [categories, enableLiveIntegration])
+  }, [categories, enableLiveIntegration, pushBalanceUpdate])
 
-  const calculateMetrics = (categoryData: CategoryData[]) => {
+  const calculateMetrics = useCallback((categoryData: CategoryData[]) => {
     const totalItems = categoryData.reduce(
       (sum, cat) => sum + cat.currentCount,
       0,
@@ -381,7 +382,7 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
     if (onBalanceUpdate) {
       onBalanceUpdate(categoryData, newMetrics)
     }
-  }
+  }, [onBalanceUpdate])
 
   const updateCategoryRatio = (categoryId: string, newRatio: number) => {
     const updatedCategories = categories.map((cat) => {
@@ -542,7 +543,7 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
     }
   }
 
-  const pushBalanceUpdate = async (updatedCategories: CategoryData[]) => {
+  const pushBalanceUpdate = useCallback(async (updatedCategories: CategoryData[]) => {
     if (!enableLiveIntegration) {
       return
     }
@@ -567,7 +568,7 @@ const CategoryBalancingDemo: React.FC<CategoryBalancingDemoProps> = ({
     } catch (error) {
       console.error('Failed to push balance update:', error)
     }
-  }
+  }, [enableLiveIntegration, knowledgeBalancerEndpoint])
 
   const fetchLiveData = async () => {
     if (!enableLiveIntegration) {

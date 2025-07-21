@@ -17,13 +17,11 @@ interface ApproachComparison {
   responses: TherapeuticResponse[]
 }
 
-interface TherapeuticApproachShowcaseProps {
-  clinicalCase?: Partial<ClinicalCase>
-}
+interface TherapeuticApproachShowcaseProps {}
 
 const TherapeuticApproachShowcase: React.FC<
   TherapeuticApproachShowcaseProps
-> = ({ _clinicalCase }) => {
+> = () => {
   const [selectedScenario, setSelectedScenario] =
     useState<string>('anxiety-work')
   const [isGenerating, setIsGenerating] = useState(false)

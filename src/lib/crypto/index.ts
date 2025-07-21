@@ -623,7 +623,7 @@ export function createCryptoSystem(options: CryptoSystemOptions = {}) {
           if (keyData) {
             return decrypt(encrypted, keyData.key)
           }
-        } catch (_error) {
+        } catch {
           // Try next key
           continue
         }

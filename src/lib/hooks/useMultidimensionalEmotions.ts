@@ -103,11 +103,7 @@ export function useMultidimensionalEmotions(
     }
   }
 
-  // Initial fetch
-  const fetchData = useCallback(async () => {
-    // Implementation of fetchData
-    // ...
-  }, [clientId, sessionId, timeRange, dataPoints]) // Add all dependencies here
+
 
   useEffect(() => {
     fetchData()

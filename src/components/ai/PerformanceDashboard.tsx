@@ -49,26 +49,26 @@ export interface PerformanceDashboardProps {
   refreshInterval?: number // in milliseconds
 }
 
-// Mock data (in a real app, this would come from a database)
-const mockResponseTimeData = {
-  average: 450,
-  min: 120,
-  max: 1200,
-  samples: 156,
-}
-
-const mockTokenUsageData = {
-  totalPromptTokens: 45600,
-  totalCompletionTokens: 32400,
-  totalTokens: 78000,
-  averagePerRequest: 500,
-  samples: 156,
-}
-
 export function PerformanceDashboardReact({
   aiService,
   refreshInterval = 10000,
 }: PerformanceDashboardProps) {
+  // Mock data (in a real app, this would come from a database)
+  const mockResponseTimeData = {
+    average: 450,
+    min: 120,
+    max: 1200,
+    samples: 156,
+  }
+
+  const mockTokenUsageData = {
+    totalPromptTokens: 45600,
+    totalCompletionTokens: 32400,
+    totalTokens: 78000,
+    averagePerRequest: 500,
+    samples: 156,
+  }
+
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -101,7 +101,7 @@ export function PerformanceDashboardReact({
     } finally {
       setLoading(false)
     }
-  }, [aiService])
+  }, [aiService, mockResponseTimeData, mockTokenUsageData])
 
   useEffect(() => {
     // Fetch metrics immediately

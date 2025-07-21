@@ -55,7 +55,7 @@ const formatDate = (dateString?: string | Date) => {
       return new Date(dateString + 'T00:00:00').toLocaleDateString()
     }
     return new Date(dateString).toLocaleDateString()
-  } catch (_e) {
+  } catch {
     return String(dateString)
   }
 }

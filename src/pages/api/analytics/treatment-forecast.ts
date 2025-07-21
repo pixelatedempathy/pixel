@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { OutcomeRecommendationEngine } from '@/lib/ai/services/OutcomeRecommendationEngine'
-import { ContextualAwarenessService } from '@/lib/ai/services/ContextualAwarenessService'
+import { recommend } from '@/lib/ai/services/OutcomeRecommendationEngine'
+import { collectContext } from '@/lib/ai/services/ContextualAwarenessService'
 
 // Input schema for validation
 const ForecastRequestSchema = z.object({
@@ -49,7 +49,7 @@ export const post = async ({ request }: { request: Request }) => {
     } = parsed.data
 
     // Construct context factors securely
-    const context = ContextualAwarenessService.collectContext({
+        const context = collectContext({
       session,
       chatSession,
       recentEmotionState,
@@ -59,7 +59,7 @@ export const post = async ({ request }: { request: Request }) => {
     })
 
     // Generate recommendations (forecasts)
-    const forecasts = OutcomeRecommendationEngine.recommend({
+        const forecasts = recommend({
       context,
       desiredOutcomes,
       maxResults: maxResults || 5,

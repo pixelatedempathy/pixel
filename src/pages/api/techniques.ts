@@ -1,14 +1,14 @@
 import { getCollection } from 'astro:content'
 import { techniqueSchema, type TechniqueSchema } from '@/content/schema'
-import { OutcomeRecommendationEngine } from '@/lib/ai/services/OutcomeRecommendationEngine'
+import { recommend } from '@/lib/ai/services/OutcomeRecommendationEngine'
 
 import type { CollectionEntry } from 'astro:content'
-import type { APIContext } from 'astro'
+// Removed: import type { APIContext } from 'astro/types'
 
 const ALLOWED_CATEGORIES = ['CBT', 'Mindfulness', 'DBT', 'ACT', 'EMDR', 'Other']
 const ALLOWED_EVIDENCE = ['Strong', 'Moderate', 'Preliminary', 'Anecdotal']
 
-export async function GET({ request }: APIContext) {
+export async function GET({ request }: any) {
   try {
     const url = new URL(request.url)
     const category = url.searchParams.get('category')
@@ -79,7 +79,7 @@ export async function GET({ request }: APIContext) {
   }
 }
 
-export async function POST({ request }: APIContext) {
+export async function POST({ request }: any) {
   try {
     if (request.headers.get('content-type') !== 'application/json') {
       return new Response(
@@ -121,7 +121,7 @@ export async function POST({ request }: APIContext) {
     // Generate recommendations
     let recommendations
     try {
-      recommendations = OutcomeRecommendationEngine.recommend({
+      recommendations = recommend({
         context,
         desiredOutcomes,
         maxResults: safeMaxResults,

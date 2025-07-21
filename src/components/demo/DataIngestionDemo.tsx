@@ -69,9 +69,9 @@ const DataIngestionDemo: React.FC<DataIngestionDemoProps> = ({
         processFile(file, fileData.id)
       }
     })
-  }, [])
+  }, [processFile])
 
-  const processFile = async (file: File, fileId: string) => {
+  const processFile = useCallback(async (file: File, fileId: string) => {
     try {
       const reader = new FileReader()
 
@@ -184,7 +184,7 @@ const DataIngestionDemo: React.FC<DataIngestionDemoProps> = ({
         ),
       )
     }
-  }
+  }, [onDataProcessed])
 
   const removeFile = (fileId: string) => {
     setFiles((prev) => prev.filter((f) => f.id !== fileId))
