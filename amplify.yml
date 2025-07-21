@@ -8,6 +8,7 @@ frontend:
     preBuild:
       commands:
         # Install pnpm if not already installed
+        - npm i npm@latest -g
         - npm install -g pnpm
           
         # Set Node.js memory limit
