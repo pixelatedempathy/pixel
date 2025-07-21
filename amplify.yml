@@ -28,12 +28,26 @@ frontend:
         # Build with increased memory
         - NODE_OPTIONS="--max-old-space-size=12288" pnpm run build
         
-        # Copy only necessary files to the output directory
+        # Create output directory structure
         - mkdir -p .amplify-hosting/compute/default
-        - cp -r .pnpm-store ./.amplify-hosting/compute/default/
+        
+        # Copy only production node_modules (exclude devDependencies)
+        - pnpm prune --prod
         - cp -r node_modules ./.amplify-hosting/compute/default/
-        - cp .env ./.amplify-hosting/compute/default/.env
-        - find . -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.js.map" \) -delete
+        
+        # Copy build output
+        - cp -r public ./.amplify-hosting/compute/default/  # Static assets
+        - cp -r .env ./.amplify-hosting/compute/default/
+        
+        # Clean up unnecessary files
+        - find ./.amplify-hosting -name "*.map" -delete
+        - find ./.amplify-hosting -name "*.ts" -delete
+        - find ./.amplify-hosting -name "*.tsx" -delete
+        - find ./.amplify-hosting -name "*.test.*" -delete
+        - find ./.amplify-hosting -name "*.spec.*" -delete
+        - rm -rf ./.amplify-hosting/**/node_modules/.cache
+        - rm -rf ./.amplify-hosting/**/node_modules/typescript
+        - rm -rf ./.amplify-hosting/**/node_modules/@types
   artifacts:
     baseDirectory: .amplify-hosting
     files:

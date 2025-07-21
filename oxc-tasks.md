@@ -37,9 +37,9 @@ This file contains a categorized and sorted list of errors from the OXC report. 
 - [x] `src/lib/scripts/blog-publisher.ts:160:37`: Unexpected any. Specify a different type.
 - [x] `src/lib/fhe/examples/parameter-optimization-example.ts:54:33`: Unexpected any. Specify a different type. (fixed)
 - [x] `src/lib/fhe/examples/parameter-optimization-example.ts:99:33`: Unexpected any. Specify a different type. (fixed)
-- [ ] `src/lib/fhe/dynamic-fhe.tsx:67:34`: Unexpected any. Specify a different type.
-- [ ] `src/load-tests/breach-notification.load.ts:160:40`: Unexpected any. Specify a different type.
-- [ ] `src/load-tests/breach-notification.load.ts:161:26`: Unexpected any. Specify a different type.
+- [x] `src/lib/fhe/dynamic-fhe.tsx:67:34`: Unexpected any. Specify a different type. (fixed)
+- [x] `src/load-tests/breach-notification.load.ts:160:40`: Unexpected any. Specify a different type. (fixed)
+- [x] `src/load-tests/breach-notification.load.ts:161:26`: Unexpected any. Specify a different type. (fixed)
 - [ ] `src/load-tests/breach-notification.load.ts:200:46`: Unexpected any. Specify a different type.
 - [ ] `src/load-tests/breach-notification.load.ts:201:42`: Unexpected any. Specify a different type.
 - [ ] `src/load-tests/breach-notification.load.ts:228:48`: Unexpected any. Specify a different type.

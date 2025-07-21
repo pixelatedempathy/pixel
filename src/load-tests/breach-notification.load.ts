@@ -4,6 +4,7 @@ import { check, sleep } from 'k6'
 import { randomString } from 'k6/data'
 import http from 'k6/http'
 import { Counter, Rate, Trend } from 'k6/metrics'
+import type { RefinedResponse } from 'k6/http'
 
 // Since k6 doesn't support Node.js modules, we simulate PHI audit logging
 // by sending an HTTP request to a logging endpoint
@@ -157,8 +158,8 @@ export default function () {
 
   // Check if breach creation was successful
   const success = check(createResponse, {
-    'breach created successfully': (r: any) => r.status === 200,
-    'has breach ID': (r: any) => r.json('id') !== undefined,
+    'breach created successfully': (r: RefinedResponse<any>) => r.status === 200,
+    'has breach ID': (r: RefinedResponse<any>) => r.json('id') !== undefined,
   })
 
   if (!success) {
@@ -197,8 +198,8 @@ export default function () {
     )
 
     check(notificationResponse, {
-      'notifications sent successfully': (r: any) => r.status === 200,
-      'all notifications delivered': (r: any) => {
+      'notifications sent successfully': (r: RefinedResponse<any>) => r.status === 200,
+      'all notifications delivered': (r: RefinedResponse<any>) => {
         const data = r.json()
         return (
           data.totalNotifications === breachDetails.affectedUsers.length &&
@@ -225,7 +226,7 @@ export function setup() {
   )
 
   check(response, {
-    'test environment setup successfully': (r: any) => r.status === 200,
+    'test environment setup successfully': (r: RefinedResponse<any>) => r.status === 200,
   })
 
   return response.json()
@@ -242,6 +243,6 @@ export function teardown(data: any) {
   )
 
   check(response, {
-    'test environment cleaned up successfully': (r: any) => r.status === 200,
+    'test environment cleaned up successfully': (r: RefinedResponse<any>) => r.status === 200,
   })
 }
