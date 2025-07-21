@@ -2,20 +2,21 @@ version: 1
 frontend:
   environment:
     _CUSTOM_IMAGE: amplify:al2023
-    NODE_OPTIONS: --max-old-space-size=8192
+    NODE_OPTIONS: --max-old-space-size=12288
   phases:
     preBuild:
       commands:
         - npm i -g pnpm
         - pnpm config set store-dir .pnpm-store
-        - pnpm i
+        - pnpm config set node-mirror https://nodejs.org/download/release/
+        - pnpm i --frozen-lockfile --prefer-offline
     build:
       commands:
         - env >> .env
-        - pnpm run build
-        - mv .pnpm-store ./.amplify-hosting/compute/default
-        - mv node_modules ./.amplify-hosting/compute/default
-        - mv .env ./.amplify-hosting/compute/default/.env
+        - NODE_OPTIONS=--max-old-space-size=12288 pnpm run build --no-cache
+        - cp -r .pnpm-store ./.amplify-hosting/compute/default
+        - cp -r node_modules ./.amplify-hosting/compute/default
+        - cp .env ./.amplify-hosting/compute/default/.env
   artifacts:
     baseDirectory: .amplify-hosting
     files:
