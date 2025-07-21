@@ -7,6 +7,12 @@ frontend:
   phases:
     preBuild:
       commands:
+        # Install pnpm if not already installed
+        - if ! command -v pnpm &> /dev/null; then
+            echo "Installing pnpm..."
+            npm install -g pnpm@8.15.0;
+          fi
+          
         # Set Node.js memory limit
         - export NODE_OPTIONS=--max-old-space-size=12288
         
@@ -21,7 +27,10 @@ frontend:
         # Install AWS SDK only if needed for CDN
         - |
           if [ -n "$CDN_BUCKET_NAME" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
-            pnpm add --save-exact --no-optional @aws-sdk/client-s3 @aws-sdk/credential-provider-ini
+            echo "Installing AWS SDK for CDN..."
+            pnpm add --save-exact --no-optional @aws-sdk/client-s3 @aws-sdk/credential-provider-ini;
+          else
+            echo "CDN not configured, skipping AWS SDK installation";
           fi
         
         # Clean up unnecessary files

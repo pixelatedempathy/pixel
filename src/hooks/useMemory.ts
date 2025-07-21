@@ -229,7 +229,7 @@ export function useMemory(options: UseMemoryOptions = {}): UseMemoryReturn {
     setError(null)
   }, [])
 
-  const getMemoryHistory = useCallback(async (): Promise<any[]> => {
+  const getMemoryHistory = useCallback(async (): Promise<unknown[]> => {
     try {
       return await memoryManager.getMemoryHistory(userId)
     } catch (err) {
@@ -318,7 +318,7 @@ export function useUserPreferences(userId: string) {
   })
 
   const setPreference = useCallback(
-    async (key: string, value: any) => {
+    async (key: string, value: unknown) => {
       const existingPref = memory.memories.find((m) =>
         m.content.includes(`User preference: ${key}`),
       )
@@ -336,7 +336,7 @@ export function useUserPreferences(userId: string) {
   )
 
   const getPreference = useCallback(
-    (key: string): any => {
+    (key: string): unknown => {
       const prefMemory = memory.memories.find((m) =>
         m.content.includes(`User preference: ${key}`),
       )
