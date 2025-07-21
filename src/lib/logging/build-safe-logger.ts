@@ -25,7 +25,7 @@ export interface BuildSafeLogger {
 // Environment-safe way to get log level
 function getLogLevel(): BuildSafeLogLevel {
   if (typeof process !== 'undefined' && process.env) {
-    const envLevel = process.env.NODE_ENV
+    const envLevel = process.env["NODE_ENV"]
     if (envLevel === 'production') {
       return BuildSafeLogLevel.ERROR
     }

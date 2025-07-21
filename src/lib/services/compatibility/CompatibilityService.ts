@@ -1,6 +1,18 @@
 import type { CompatibilityIssue } from '@/types/testing.ts'
 import { EmailService } from '../email/EmailService'
 
+/* Debug: Validate logger import */
+import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+
+const logger = createBuildSafeLogger('compatibility-service')
+if (!logger || typeof logger.info !== 'function') {
+  // This will show up in the build or runtime logs if the import fails
+  // eslint-disable-next-line no-console
+  console.error('[CompatibilityService] Logger import failed or is not a valid logger instance')
+} else {
+  // eslint-disable-next-line no-console
+  console.info('[CompatibilityService] Logger import succeeded')
+}
 
 export interface BrowserCompatibilityResult {
   browser: string
@@ -211,12 +223,12 @@ export class CompatibilityService {
     const templateData = {
       name: 'Team',
       issueCount: issues.length,
-      projectName: process.env.PROJECT_NAME || 'Pixelated Empathy',
-      branchName: process.env.BRANCH_NAME || 'main',
-      commitSha: process.env.COMMIT_SHA || '',
+      projectName: process.env['PROJECT_NAME'] || 'Pixelated Empathy',
+      branchName: process.env['BRANCH_NAME'] || 'main',
+      commitSha: process.env['COMMIT_SHA'] || '',
       detectionTime: new Date().toISOString(),
-      workflowUrl: process.env.WORKFLOW_URL || '',
-      dashboardUrl: process.env.DASHBOARD_URL || '',
+      workflowUrl: process.env['WORKFLOW_URL'] || '',
+      dashboardUrl: process.env['DASHBOARD_URL'] || '',
       browserIssues: Array.from(issuesByBrowser.entries()).map(
         ([browser, browserIssues]) => ({
           browser,
@@ -299,7 +311,7 @@ export class CompatibilityService {
     }
 
     // Add button to view more details
-    if (process.env.DASHBOARD_URL) {
+    if (process.env['DASHBOARD_URL']) {
       slackMessage.blocks.push({
         type: 'actions',
         elements: [
@@ -309,7 +321,7 @@ export class CompatibilityService {
               type: 'plain_text',
               text: 'View Dashboard',
             },
-            url: process.env.DASHBOARD_URL,
+            url: process.env['DASHBOARD_URL'],
           },
         ],
       })

@@ -1,6 +1,10 @@
-import { env } from '@/config/env.config'
+import { config as env } from '@/config/env.config'
 import { redis } from '@/lib/services/redis'
 
+import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger.ts'
+
+// Service-scoped logger
+const logger = createBuildSafeLogger('EmailService')
 
 import { Resend } from 'resend'
 import { z } from 'zod'
@@ -58,7 +62,11 @@ export class EmailService {
   private isShuttingDown = false
 
   constructor() {
-    this.resend = new Resend(env.RESEND_API_KEY)
+    const apiKey = env.email.resendApiKey()
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY is not configured in environment variables')
+    }
+    this.resend = new Resend(apiKey)
   }
 
   /**
@@ -105,9 +113,10 @@ export class EmailService {
       try {
         // Check if we should retry based on last attempt and delay
         if (queueItem.lastAttempt) {
-          const delay =
-            this.retryDelays[queueItem.attempts - 1] ||
-            this.retryDelays[this.retryDelays.length - 1]
+          const delay = this.retryDelays[queueItem.attempts - 1] ?? this.retryDelays[this.retryDelays.length - 1]
+          if (delay === undefined) {
+            throw new Error('Failed to determine retry delay')
+          }
           const nextAttempt = queueItem.lastAttempt + delay * 1000
           if (Date.now() < nextAttempt) {
             // Put back in queue and continue
@@ -135,20 +144,28 @@ export class EmailService {
           }
         }
 
-        // Send email using Resend
-        const { data, error } = await this.resend.emails.send({
+        // Prepare email options with proper typing for Resend API
+        const emailOptions = {
           from: template.from,
           to: queueItem.data.to,
           subject: template.subject,
           html,
-          text,
-          replyTo: template.replyTo,
-          attachments: queueItem.data.attachments?.map((att) => ({
-            filename: att.name,
-            content: att.content,
-            content_type: att.contentType,
-          })),
-        })
+          // Ensure text is either a string or omitted (not undefined)
+          ...(text && { text }),
+          // Only include replyTo if it exists
+          ...(template.replyTo && { replyTo: template.replyTo }),
+          // Add attachments if present
+          ...(queueItem.data.attachments?.length && {
+            attachments: queueItem.data.attachments.map((att) => ({
+              filename: att.name,
+              content: att.content,
+              content_type: att.contentType,
+            }))
+          })
+        }
+
+        // Send email using Resend
+        const { data, error } = await this.resend.emails.send(emailOptions)
 
         if (error) {
           throw error

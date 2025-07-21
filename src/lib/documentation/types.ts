@@ -81,23 +81,59 @@ export interface EHRExportOptions {
 }
 
 /**
+ * Represents a simplified FHIR DocumentReference resource.
+ * @see http://hl7.org/fhir/documentreference.html
+ */
+export interface FHIRDocumentReference {
+  resourceType: 'DocumentReference';
+  id?: string;
+  status: 'current' | 'superseded' | 'entered-in-error';
+  docStatus?: 'preliminary' | 'final' | 'amended' | 'entered-in-error';
+  type?: {
+    coding?: Array<{
+      system?: string;
+      code?: string;
+      display?: string;
+    }>;
+  };
+  subject?: {
+    reference: string; // e.g., Patient/123
+  };
+  date?: string; // ISO 8601
+  author?: Array<{
+    reference: string; // e.g., Practitioner/456
+  }>;
+  custodian?: {
+    reference: string; // e.g., Organization/1
+  };
+  content: Array<{
+    attachment: {
+      contentType: string;
+      data: string; // Base64 encoded
+      title?: string;
+      creation?: string; // ISO 8601
+    };
+  }>;
+}
+
+/**
  * Interface for EHR export result
  */
 export interface EHRExportResult {
   /**
    * Whether the export was successful
    */
-  success: boolean
+  success: boolean;
 
   /**
    * The exported data (format depends on the export format)
    */
-  data?: unknown
+  data?: FHIRDocumentReference | Record<string, unknown>;
 
   /**
    * Any errors that occurred during export
    */
-  errors?: string[]
+  errors?: string[];
 
   /**
    * The export format used

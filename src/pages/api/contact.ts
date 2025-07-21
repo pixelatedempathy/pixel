@@ -1,6 +1,8 @@
-import type { APIRoute } from 'astro'
 import { ContactService } from '@/lib/services/contact/ContactService'
+import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
+// Create a scoped logger for this endpoint
+const logger = createBuildSafeLogger('api/contact')
 
 // Initialize contact service
 const contactService = new ContactService()
@@ -10,24 +12,31 @@ function getClientIP(request: Request): string {
   // Check for forwarded headers (common in production with load balancers)
   const forwardedFor = request.headers.get('x-forwarded-for')
   if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim()
+    const ip = (typeof forwardedFor === 'string' ? forwardedFor : '').split(',')[0]?.trim?.() || '';
+    logger.debug('Extracted IP from x-forwarded-for', { forwardedFor, ip })
+    return ip
+  } else {
+    logger.debug('No x-forwarded-for header present', { forwardedFor })
   }
 
   const realIP = request.headers.get('x-real-ip')
   if (realIP) {
+    logger.debug('Extracted IP from x-real-ip', { realIP })
     return realIP
   }
 
   const remoteAddr = request.headers.get('x-remote-addr')
   if (remoteAddr) {
+    logger.debug('Extracted IP from x-remote-addr', { remoteAddr })
     return remoteAddr
   }
 
   // Fallback to localhost for development
+  logger.debug('Falling back to localhost IP', { fallback: '127.0.0.1' })
   return '127.0.0.1'
 }
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST = async ({ request }: { request: Request }) => {
   const startTime = Date.now()
 
   try {
@@ -61,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
       if (
         !formData[field] ||
         typeof formData[field] !== 'string' ||
-        !formData[field].toString().trim()
+        !(formData[field] as string).trim()
       ) {
         return new Response(
           JSON.stringify({
@@ -78,10 +87,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Prepare contact form data
     const contactFormData = {
-      name: formData.name as string,
-      email: formData.email as string,
-      subject: formData.subject as string,
-      message: formData.message as string,
+      name: formData['name'] as string,
+      email: formData['email'] as string,
+      subject: formData['subject'] as string,
+      message: formData['message'] as string,
     }
 
     // Prepare submission context
@@ -138,7 +147,7 @@ export const POST: APIRoute = async ({ request }) => {
 }
 
 // OPTIONS endpoint for CORS preflight
-export const OPTIONS: APIRoute = async () => {
+export const OPTIONS = async () => {
   return new Response(null, {
     status: 200,
     headers: {

@@ -41,7 +41,7 @@ export class RedisServiceError extends Error {
   constructor(
     public code: RedisErrorCode,
     message: string,
-    public cause?: unknown,
+    public override cause?: unknown,
   ) {
     super(message)
     this.name = 'RedisServiceError'
@@ -116,6 +116,16 @@ export interface IRedisService {
   zpopmin: (key: string) => Promise<any[]>
   /** Get sorted set cardinality */
   zcard: (key: string) => Promise<number>
+  
+  // List operations
+  /** Push to the head of a list */
+  lpush: (key: string, ...elements: string[]) => Promise<number>
+  /** Pop from the tail of a list and push to another list */
+  rpoplpush: (source: string, destination: string) => Promise<string | null>
+  /** Remove elements from a list */
+  lrem: (key: string, count: number, value: string) => Promise<number>
+  /** Get list length */
+  llen: (key: string) => Promise<number>
 }
 
 // Re-export the interface as a type

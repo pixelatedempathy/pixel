@@ -23,13 +23,6 @@ const getBreachDataService = () => {
 }
 
 /**
-  description: string
-  metadata?: Record<string, unknown>
-}
-
-
-
-/**
  * Risk assessment result
  */
 export interface RiskAssessment {

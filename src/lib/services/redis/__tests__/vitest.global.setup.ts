@@ -1,5 +1,8 @@
 
 
+import { createBuildSafeLogger } from '../../../logging/build-safe-logger'
+const logger = createBuildSafeLogger('vitest.global.setup')
+
 /**
  * Global setup function for Vitest - runs before any tests
  */

@@ -94,12 +94,12 @@ export interface SecurityBreach {
   /**
    * Source of the breach
    */
-  source: string
+  source?: string
 
   /**
    * Remediation steps for the breach
    */
-  remediation: string
+  remediation?: string
 
   /**
    * Attack vector used in the breach
@@ -112,17 +112,17 @@ export interface SecurityBreach {
   dataTypes?: string[]
 
   /**
-   * Time taken to detect the breach
+   * Time taken to detect the breach (in milliseconds)
    */
   detectionTime?: number
 
   /**
-   * Time taken to respond to the breach
+   * Time taken to respond to the breach (in milliseconds)
    */
   responseTime?: number
 
   /**
-   * Number of users affected by the breach
+   * Number of user accounts specifically affected by the breach (subset of affectedCount)
    */
   affectedUsers?: number
 

@@ -3,6 +3,7 @@
  * This module provides a consistent interface for Redis operations with proper error handling
  */
 
+import Redis from 'ioredis'
 
 
 // Lazy load config to avoid initialization order issues
@@ -54,14 +55,20 @@ function createMockRedisClient() {
   }
 }
 
-// Create Redis client with appropriate configuration (lazy)
+/**
+ * Create Redis client with appropriate configuration (lazy)
+ * Returns a real Redis client if credentials are present, otherwise a mock client.
+ */
 function createRedisClient() {
   const { restUrl, restToken } = getRedisConfig()
   const hasValidCredentials = Boolean(restUrl && restToken)
 
   if (hasValidCredentials) {
-    // Vercel KV is automatically configured with environment variables
-    return kv
+    // Initialize ioredis client with credentials
+    return new Redis(restUrl, {
+          password: restToken,
+          // Add any additional options here if needed
+        });
   } else {
     // Log appropriate warnings in production
     if (isProduction()) {
@@ -80,7 +87,16 @@ export const redis = createRedisClient()
  */
 export async function getFromCache<T>(key: string): Promise<T | null> {
   try {
-    return (await redis.get(key)) as T | null
+    const raw = await redis.get(key)
+    if (raw === null) {
+      return null
+    }
+    try {
+      return JSON.parse(raw) as T
+    } catch {
+      // If not JSON, return as-is
+      return raw as unknown as T
+    }
   } catch (error) {
     console.error(`Error getting key ${key} from Redis:`, error)
     return null
@@ -96,8 +112,12 @@ export async function setInCache(
   expirationSeconds?: number,
 ): Promise<boolean> {
   try {
-    const options = expirationSeconds ? { ex: expirationSeconds } : undefined
-    await redis.set(key, value, options)
+    const serialized = typeof value === 'string' ? value : JSON.stringify(value)
+    if (expirationSeconds) {
+      await redis.set(key, serialized, 'EX', expirationSeconds)
+    } else {
+      await redis.set(key, serialized)
+    }
     return true
   } catch (error) {
     console.error(`Error setting key ${key} in Redis:`, error)

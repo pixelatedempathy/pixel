@@ -1,8 +1,7 @@
 import { env } from '@/config/env.config'
 import { NotificationService } from '@/lib/services/notification/NotificationService'
 import { WebSocketServer } from '@/lib/services/notification/WebSocketServer'
-
-
+import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 // Extend the WebSocketServer interface for testing
 declare module '@/lib/services/notification/WebSocketServer' {
   interface WebSocketServer {
@@ -62,7 +61,7 @@ describe('notification-worker', () => {
       // Wait for initial setup
       await vi.runAllTimersAsync()
 
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').info).toHaveBeenCalledWith(
         expect.stringContaining('Starting notification worker'),
       )
 
@@ -85,7 +84,7 @@ describe('notification-worker', () => {
       // Import worker module
       await import('../notification-worker.js')
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').error).toHaveBeenCalledWith(
         expect.stringContaining('Error starting notification worker'),
         expect.any(Error),
       )
@@ -104,7 +103,7 @@ describe('notification-worker', () => {
       // Wait for error to be logged
       await vi.runAllTimersAsync()
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').error).toHaveBeenCalledWith(
         expect.stringContaining('Error processing notifications'),
         expect.any(Error),
       )
@@ -119,7 +118,7 @@ describe('notification-worker', () => {
       // Simulate SIGTERM signal
       process.emit('SIGTERM', 'SIGTERM')
 
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').info).toHaveBeenCalledWith(
         expect.stringContaining('Shutting down notification worker'),
       )
       expect(mockExit).toHaveBeenCalledWith(0)
@@ -132,7 +131,7 @@ describe('notification-worker', () => {
       // Simulate SIGINT signal
       process.emit('SIGINT', 'SIGINT')
 
-      expect(logger.info).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').info).toHaveBeenCalledWith(
         expect.stringContaining('Shutting down notification worker'),
       )
       expect(mockExit).toHaveBeenCalledWith(0)
@@ -191,7 +190,7 @@ describe('notification-worker', () => {
       await vi.runAllTimersAsync()
 
       expect(mockNotificationService.processQueue).toHaveBeenCalledTimes(2)
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').error).toHaveBeenCalledWith(
         expect.stringContaining('Error processing notifications'),
         expect.any(Error),
       )
@@ -205,7 +204,7 @@ describe('notification-worker', () => {
       // Import worker module
       await import('../notification-worker.js')
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(createBuildSafeLogger('notification-worker').error).toHaveBeenCalledWith(
         expect.stringContaining('WebSocket server error'),
         mockError,
       )

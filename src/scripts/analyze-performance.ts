@@ -1,7 +1,10 @@
+import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
+const logger = createBuildSafeLogger('analyze-performance') 
 
 // Note: PerformanceLogger import removed - may need to be replaced with alternative implementation
 
+// ... rest of the script ...
 interface PerformanceReport {
   totalRequests: number
   averageLatency: number

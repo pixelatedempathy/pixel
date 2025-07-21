@@ -229,8 +229,22 @@ export const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
             <CardTitle>Latest Test Result</CardTitle>
           </CardHeader>
           <CardContent>
-            <pre>{JSON.stringify(latestTestResult, null, 2)}</pre>
-          </CardContent>
+          <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-sm font-medium">Status:</span>
+                  <span className="ml-2">{renderStatusBadge(latestTestResult.status)}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Duration:</span>
+                  <span className="ml-2">{formatDuration(latestTestResult.timeTaken)}</span>
+                </div>
+              </div>
+              <div>
+                <span className="text-sm font-medium">Environment:</span>
+                <span className="ml-2">{latestTestResult.environment}</span>
+              </div>
+            </div>          </CardContent>
         </Card>
       )}
 

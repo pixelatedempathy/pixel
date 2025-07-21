@@ -308,10 +308,20 @@ export class RedisService extends EventEmitter implements IRedisService {
       zpopmin: async (key: string) => {
         const zset = zsetStore.get(key)
         if (!zset || zset.size === 0) {
+          logger.debug(`[RedisService Mock] zpopmin called on empty or missing zset for key: ${key}`)
           return []
         }
         const sorted = Array.from(zset.entries()).sort((a, b) => a[1] - b[1])
-        const [member, score] = sorted[0]
+        if (sorted.length === 0) {
+          logger.debug(`[RedisService Mock] zpopmin found no elements after sorting for key: ${key}`)
+          return []
+        }
+        const first = sorted[0]
+        if (!first) {
+          logger.debug(`[RedisService Mock] zpopmin: sorted[0] is undefined for key: ${key}`)
+          return []
+        }
+        const [member, score] = first
         zset.delete(member)
         return [{ value: member, score }]
       },
@@ -788,7 +798,11 @@ export class RedisService extends EventEmitter implements IRedisService {
         const result = await client.zrange(key, start, stop, 'WITHSCORES')
         const arr: { value: string; score: number }[] = []
         for (let i = 0; i < result.length; i += 2) {
-          arr.push({ value: result[i], score: Number(result[i + 1]) })
+          if (typeof result[i] === 'string' && typeof result[i + 1] !== 'undefined') {
+            arr.push({ value: result[i] as string, score: Number(result[i + 1]) })
+          } else {
+            logger.debug(`[RedisService] zrange WITHSCORES: Skipping invalid pair at index ${i}: value=${String(result[i])}, score=${String(result[i + 1])}`)
+          }
         }
         return arr
       }
@@ -807,8 +821,10 @@ export class RedisService extends EventEmitter implements IRedisService {
       const client = await this.ensureConnection()
       // ioredis returns [member, score] or [] if empty
       const result = await client.zpopmin(key)
-      if (Array.isArray(result) && result.length === 2) {
+      if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'string' && typeof result[1] !== 'undefined') {
         return [{ value: result[0], score: Number(result[1]) }]
+      } else {
+        logger.debug(`[RedisService] zpopmin: Unexpected result format for key ${key}:`, result)
       }
       return []
     } catch (error) {
@@ -828,6 +844,59 @@ export class RedisService extends EventEmitter implements IRedisService {
       throw new RedisServiceError(
         RedisErrorCode.OPERATION_FAILED,
         `Failed to get sorted set cardinality: ${key}`,
+        error,
+      )
+    }
+  }
+
+  // List operations
+  async lpush(key: string, ...elements: string[]): Promise<number> {
+    try {
+      const client = await this.ensureConnection()
+      return await client.lpush(key, ...elements)
+    } catch (error) {
+      throw new RedisServiceError(
+        RedisErrorCode.OPERATION_FAILED,
+        `Failed to push to list: ${key}`,
+        error,
+      )
+    }
+  }
+
+  async rpoplpush(source: string, destination: string): Promise<string | null> {
+    try {
+      const client = await this.ensureConnection()
+      return await client.rpoplpush(source, destination)
+    } catch (error) {
+      throw new RedisServiceError(
+        RedisErrorCode.OPERATION_FAILED,
+        `Failed to move element from ${source} to ${destination}`,
+        error,
+      )
+    }
+  }
+
+  async lrem(key: string, count: number, value: string): Promise<number> {
+    try {
+      const client = await this.ensureConnection()
+      return await client.lrem(key, count, value)
+    } catch (error) {
+      throw new RedisServiceError(
+        RedisErrorCode.OPERATION_FAILED,
+        `Failed to remove elements from list: ${key}`,
+        error,
+      )
+    }
+  }
+
+  async llen(key: string): Promise<number> {
+    try {
+      const client = await this.ensureConnection()
+      return await client.llen(key)
+    } catch (error) {
+      throw new RedisServiceError(
+        RedisErrorCode.OPERATION_FAILED,
+        `Failed to get list length: ${key}`,
         error,
       )
     }

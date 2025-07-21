@@ -1,4 +1,9 @@
-import type { SessionDocumentation, EHRExportOptions, EHRExportResult } from './types'
+import type {
+  SessionDocumentation,
+  EHRExportOptions,
+  EHRExportResult,
+  FHIRDocumentReference,
+} from './types'
 import { createBuildSafeLogger } from '../logging/build-safe-logger'
 
 const logger = createBuildSafeLogger('ehr-integration')
@@ -51,7 +56,7 @@ export class EHRIntegration {
         options,
       )
 
-      if (this.auditLog) {
+      if (this.auditLog && documentReference.id) {
         await this.createAuditLog({
           action: 'export',
           resourceType: 'DocumentReference',
@@ -279,11 +284,11 @@ export class EHRIntegration {
   private async createDocumentReference(
     formattedDocument: Record<string, unknown>,
     options: EHRExportOptions,
-  ): Promise<unknown> {
+  ): Promise<FHIRDocumentReference> {
     const now = new Date().toISOString()
 
     // Create the DocumentReference resource
-    const documentReference = {
+    const documentReference: FHIRDocumentReference = {
       resourceType: 'DocumentReference',
       status: 'current',
       docStatus: 'final',
@@ -331,7 +336,12 @@ export class EHRIntegration {
     ) {
       return await this.fhirClient.createResource(documentReference)
     }
-    return { id: 'mock-doc-id' }
+
+    // Return a mock object for environments where fhirClient is not available
+    return {
+      ...documentReference,
+      id: 'mock-doc-ref-id-12345',
+    }
   }
 
   /**
@@ -392,7 +402,34 @@ export class EHRIntegration {
         ],
       }
 
-      await this.fhirClient.createResource(auditEvent)
+      // Only attempt to create the audit event if the FHIR client is properly configured
+      if (
+        this.fhirClient &&
+        typeof this.fhirClient === 'object' &&
+        'createResource' in this.fhirClient &&
+        typeof this.fhirClient.createResource === 'function'
+      ) {
+        try {
+          await this.fhirClient.createResource(auditEvent)
+        } catch (error) {
+          logger.error('Failed to create audit event in FHIR server', { 
+            error, 
+            auditInfo,
+            auditEvent
+          })
+          // Fall through to the catch block below
+          throw error
+        }
+      } else {
+        // Log that we're in a non-FHIR environment
+        const fhirClient = this.fhirClient as Record<string, unknown> | null
+        logger.debug('Skipping audit event creation - FHIR client not properly configured', {
+          hasFhirClient: !!fhirClient,
+          isObject: fhirClient && typeof fhirClient === 'object',
+          hasCreateResource: fhirClient && 'createResource' in fhirClient,
+          isFunction: fhirClient && typeof fhirClient['createResource'] === 'function'
+        })
+      }
     } catch (error) {
       logger.error('Failed to create audit log', { error, auditInfo })
     }

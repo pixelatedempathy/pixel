@@ -238,11 +238,11 @@ export interface BrowserCompatibilityConfig {
   }
 }
 
-export interface TestSection {
+export interface TestSection<P = unknown> {
   title: string
-  component?: ComponentType<unknown>
+  component?: ComponentType<P>
   instructions?: string[]
-  props?: Record<string, unknown>
+  props?: P
 }
 
 export type TestSections = {
