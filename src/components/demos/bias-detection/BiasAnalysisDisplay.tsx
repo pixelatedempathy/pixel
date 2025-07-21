@@ -351,8 +351,8 @@ export const BiasAnalysisDisplay: React.FC<BiasAnalysisDisplayProps> = ({
             Recommendations
           </h3>
           <ul className="space-y-2">
-            {results.recommendations.map((recommendation, index) => (
-              <li key={index} className="flex items-start">
+            {results.recommendations.map((recommendation) => (
+              <li key={recommendation} className="flex items-start">
                 <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3" />
                 <span className="text-blue-800">{recommendation}</span>
               </li>

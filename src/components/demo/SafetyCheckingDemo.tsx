@@ -496,9 +496,9 @@ const SafetyCheckingDemo: React.FC<SafetyCheckingDemoProps> = ({
                         <div className="flex flex-wrap gap-1">
                           {risk.indicators
                             .slice(0, 3)
-                            .map((indicator, index) => (
+                            .map((indicator) => (
                               <Badge
-                                key={index}
+                                key={`${risk.id}-indicator-${indicator.slice(0, 20)}`}
                                 variant="outline"
                                 className="text-xs"
                               >
@@ -520,9 +520,9 @@ const SafetyCheckingDemo: React.FC<SafetyCheckingDemoProps> = ({
                         <ul className="text-xs text-gray-600 space-y-1">
                           {risk.interventions
                             .slice(0, 2)
-                            .map((intervention, index) => (
+                            .map((intervention) => (
                               <li
-                                key={index}
+                                key={`${risk.id}-intervention-${intervention.slice(0, 20)}`}
                                 className="flex items-start gap-1"
                               >
                                 <span className="text-blue-500">•</span>
@@ -580,9 +580,9 @@ const SafetyCheckingDemo: React.FC<SafetyCheckingDemoProps> = ({
                         Triggers:
                       </h5>
                       <div className="flex flex-wrap gap-1">
-                        {protocol.triggers.map((trigger, index) => (
+                        {protocol.triggers.map((trigger) => (
                           <Badge
-                            key={index}
+                            key={`${protocol.id}-trigger-${trigger.slice(0, 20)}`}
                             variant="outline"
                             className="text-xs opacity-75"
                           >
@@ -605,8 +605,11 @@ const SafetyCheckingDemo: React.FC<SafetyCheckingDemoProps> = ({
                           Active Actions:
                         </h5>
                         <ul className="text-xs opacity-75 space-y-1">
-                          {protocol.actions.slice(0, 3).map((action, index) => (
-                            <li key={index} className="flex items-start gap-1">
+                          {protocol.actions.slice(0, 3).map((action) => (
+                            <li
+                              key={`${protocol.id}-action-${action.slice(0, 20)}`}
+                              className="flex items-start gap-1"
+                            >
                               <span>•</span>
                               {action}
                             </li>

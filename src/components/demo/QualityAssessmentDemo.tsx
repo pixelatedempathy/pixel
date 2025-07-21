@@ -584,9 +584,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
                 Strengths
               </h6>
               <ul className="space-y-2">
-                {currentAssessment.feedback.strengths.map((strength, index) => (
+                {currentAssessment.feedback.strengths.map((strength) => (
                   <li
-                    key={index}
+                    key={strength}
                     className="text-sm text-green-700 flex items-start gap-2"
                   >
                     <span className="text-green-500 mt-1">•</span>
@@ -604,9 +604,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
               </h6>
               <ul className="space-y-2">
                 {currentAssessment.feedback.improvements.map(
-                  (improvement, index) => (
+                  (improvement) => (
                     <li
-                      key={index}
+                      key={improvement}
                       className="text-sm text-yellow-700 flex items-start gap-2"
                     >
                       <span className="text-yellow-500 mt-1">•</span>
@@ -625,9 +625,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
               </h6>
               <ul className="space-y-2">
                 {currentAssessment.feedback.risks.length > 0 ? (
-                  currentAssessment.feedback.risks.map((risk, index) => (
+                  currentAssessment.feedback.risks.map((risk) => (
                     <li
-                      key={index}
+                      key={risk}
                       className="text-sm text-red-700 flex items-start gap-2"
                     >
                       <span className="text-red-500 mt-1">•</span>
@@ -650,9 +650,9 @@ const QualityAssessmentDemo: React.FC<QualityAssessmentDemoProps> = ({
             </h6>
             <ul className="space-y-2">
               {currentAssessment.recommendations.map(
-                (recommendation, index) => (
+                (recommendation) => (
                   <li
-                    key={index}
+                    key={recommendation}
                     className="text-sm text-indigo-700 flex items-start gap-2"
                   >
                     <span className="text-indigo-500 mt-1">→</span>

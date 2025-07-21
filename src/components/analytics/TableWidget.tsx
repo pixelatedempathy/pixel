@@ -279,19 +279,25 @@ export function TableWidget({
           </TableHeader>
           <TableBody aria-live="polite">
             {paginatedData.length > 0 ? (
-              paginatedData.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {columns.map((column) => (
-                    <TableCell key={`${rowIndex}-${column.key}`}>
-                      {column.render
-                        ? column.render(row[column.key], row)
-                        : row[column.key] !== undefined
-                          ? String(row[column.key])
-                          : '—'}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              paginatedData.map((row) => {
+                // Create a unique key from the row's values
+                const rowKey = columns
+                  .map((col) => String(row[col.key] ?? ''))
+                  .join('-')
+                return (
+                  <TableRow key={rowKey}>
+                    {columns.map((column) => (
+                      <TableCell key={`${rowKey}-${column.key}`}>
+                        {column.render
+                          ? column.render(row[column.key], row)
+                          : row[column.key] !== undefined
+                            ? String(row[column.key])
+                            : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )
+              })
             ) : (
               <TableRow>
                 <TableCell

@@ -19,7 +19,8 @@ frontend:
         - pnpm config set strict-peer-dependencies false
         
         # Install all dependencies with simplified flags
-        - pnpm install
+        - pnpm install --frozen-lockfile
+        - pnpm rebuild
         
         # Install AWS SDK only if needed for CDN
         - pnpm add --save-exact --no-optional @aws-sdk/client-s3;

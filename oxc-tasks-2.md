@@ -158,27 +158,27 @@
 - [x] `src/components/feedback/SupervisorFeedback.tsx:405:28`: Usage of Array index in keys is not allowed
 - [x] `src/components/feedback/SupervisorFeedback.tsx:449:27`: Usage of Array index in keys is not allowed
 - [x] `src/components/feedback/SupervisorFeedback.tsx:466:27`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/EvidenceBasedVerificationDemo.tsx:516:27`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/EvidenceBasedVerificationDemo.tsx:532:27`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/SafetyCheckingDemo.tsx:501:33`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/SafetyCheckingDemo.tsx:525:33`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/SafetyCheckingDemo.tsx:585:29`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/SafetyCheckingDemo.tsx:609:33`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/PresentingProblemVisualization.tsx:79:22`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demos/bias-detection/BiasAnalysisDisplay.tsx:355:19`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:597:21`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:617:23`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:638:23`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/QualityAssessmentDemo.tsx:663:21`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:439:28`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:623:35`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:679:37`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:689:37`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:701:35`: Usage of Array index in keys is not allowed
-- [ ] `src/components/analytics/TableWidget.tsx:283:27`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:496:17`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:538:25`: Usage of Array index in keys is not allowed
-- [ ] `src/components/demo/ValidationDemo.tsx:411:25`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/EvidenceBasedVerificationDemo.tsx:516:27`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/EvidenceBasedVerificationDemo.tsx:532:27`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/SafetyCheckingDemo.tsx:501:33`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/SafetyCheckingDemo.tsx:525:33`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/SafetyCheckingDemo.tsx:585:29`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/SafetyCheckingDemo.tsx:609:33`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/PresentingProblemVisualization.tsx:79:22`: Usage of Array index in keys is not allowed
+- [x] `src/components/demos/bias-detection/BiasAnalysisDisplay.tsx:355:19`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:597:21`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:617:23`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:638:23`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/QualityAssessmentDemo.tsx:663:21`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:439:28`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:623:35`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:679:37`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:689:37`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:701:35`: Usage of Array index in keys is not allowed
+- [x] `src/components/analytics/TableWidget.tsx:283:27`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:496:17`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:538:25`: Usage of Array index in keys is not allowed
+- [x] `src/components/demo/ValidationDemo.tsx:411:25`: Usage of Array index in keys is not allowed
 
 ### `no-unescaped-entities`
 

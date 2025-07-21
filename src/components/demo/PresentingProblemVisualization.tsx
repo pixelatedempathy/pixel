@@ -76,7 +76,10 @@ const PresentingProblemVisualization: React.FC<
             {/* Timeline Events */}
             <div className="space-y-6">
               {sortedEvents.map((event, index) => (
-                <div key={index} className="relative flex items-start">
+                <div
+                  key={`${event.time}-${event.description.slice(0, 20)}`}
+                  className="relative flex items-start"
+                >
                   {/* Timeline Dot */}
                   <div
                     className={`

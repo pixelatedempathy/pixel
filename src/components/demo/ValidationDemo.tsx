@@ -407,8 +407,11 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
                   </div>
                 </div>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  {category.rules.map((rule, index) => (
-                    <li key={index} className="flex items-start gap-2">
+                  {category.rules.map((rule) => (
+                    <li
+                      key={`${category.id}-${rule.slice(0, 20)}`}
+                      className="flex items-start gap-2"
+                    >
                       <span className="text-blue-500 mt-1">•</span>
                       {rule}
                     </li>
@@ -490,8 +493,8 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
 
                 {/* Category Results */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {results.map((result, index) => (
-                    <div key={index} className="border rounded-lg p-4">
+                  {results.map((result) => (
+                    <div key={result.category} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-medium">{result.category}</h4>
                         <Badge className={getStatusColor(result.status)}>
@@ -507,8 +510,11 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
                             Issues Found
                           </h5>
                           <ul className="text-sm text-red-600 space-y-1">
-                            {result.issues.map((issue, i) => (
-                              <li key={i} className="flex items-start gap-1">
+                            {result.issues.map((issue) => (
+                              <li
+                                key={`${result.category}-issue-${issue.slice(0, 20)}`}
+                                className="flex items-start gap-1"
+                              >
                                 <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
                                 {issue}
                               </li>
@@ -522,8 +528,11 @@ const ValidationDemo: React.FC<ValidationDemoProps> = ({
                           Suggestions
                         </h5>
                         <ul className="text-sm text-blue-600 space-y-1">
-                          {result.suggestions.map((suggestion, i) => (
-                            <li key={i} className="flex items-start gap-1">
+                          {result.suggestions.map((suggestion) => (
+                            <li
+                              key={`${result.category}-suggestion-${suggestion.slice(0, 20)}`}
+                              className="flex items-start gap-1"
+                            >
                               <span className="text-blue-500 mt-0.5">•</span>
                               {suggestion}
                             </li>

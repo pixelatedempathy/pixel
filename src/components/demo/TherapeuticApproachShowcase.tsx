@@ -489,9 +489,9 @@ const TherapeuticApproachShowcase: React.FC<
 
           {/* Therapeutic Responses */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {comparison.responses.map((response, index) => (
+            {comparison.responses.map((response) => (
               <div
-                key={index}
+                key={response.approach}
                 className={`border rounded-lg p-5 bg-${response.color}-50 border-${response.color}-200`}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -531,9 +531,9 @@ const TherapeuticApproachShowcase: React.FC<
                     Key Techniques:
                   </h7>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {response.techniques.map((technique, techIndex) => (
+                    {response.techniques.map((technique) => (
                       <span
-                        key={techIndex}
+                        key={`${response.approach}-${technique}`}
                         className={`text-xs px-2 py-1 rounded-full bg-${response.color}-100 text-${response.color}-700`}
                       >
                         {technique}

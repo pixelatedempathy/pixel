@@ -436,7 +436,10 @@ const ScenarioGenerationDemo: React.FC = () => {
                 <div className="space-y-2">
                   {profileData.presentingProblemDevelopment.map(
                     (event, index) => (
-                      <div key={index} className="flex gap-2 items-start">
+                      <div
+                        key={`${event.time}-${event.description.slice(0, 20)}`}
+                        className="flex gap-2 items-start"
+                      >
                         <input
                           type="text"
                           placeholder="Timeline (e.g., 3 months ago)"
@@ -619,8 +622,8 @@ const ScenarioGenerationDemo: React.FC = () => {
                         <strong>Provisional Diagnoses:</strong>
                         <ul className="list-disc list-inside mt-1">
                           {generatedProfile.clinicalFormulation.provisionalDiagnosis.map(
-                            (diagnosis, i) => (
-                              <li key={i}>{diagnosis}</li>
+                            (diagnosis) => (
+                              <li key={diagnosis}>{diagnosis}</li>
                             ),
                           )}
                         </ul>
@@ -675,8 +678,8 @@ const ScenarioGenerationDemo: React.FC = () => {
                           </div>
                           <ul className="list-disc list-inside ml-4">
                             {generatedProfile.treatmentPlan.goals.shortTerm.map(
-                              (goal, i) => (
-                                <li key={i}>{goal}</li>
+                              (goal) => (
+                                <li key={goal}>{goal}</li>
                               ),
                             )}
                           </ul>
@@ -685,8 +688,8 @@ const ScenarioGenerationDemo: React.FC = () => {
                           </div>
                           <ul className="list-disc list-inside ml-4">
                             {generatedProfile.treatmentPlan.goals.longTerm.map(
-                              (goal, i) => (
-                                <li key={i}>{goal}</li>
+                              (goal) => (
+                                <li key={goal}>{goal}</li>
                               ),
                             )}
                           </ul>
@@ -697,8 +700,8 @@ const ScenarioGenerationDemo: React.FC = () => {
                         <strong>Interventions:</strong>
                         <ul className="list-disc list-inside mt-1">
                           {generatedProfile.treatmentPlan.interventions.map(
-                            (intervention, i) => (
-                              <li key={i}>{intervention}</li>
+                            (intervention) => (
+                              <li key={intervention}>{intervention}</li>
                             ),
                           )}
                         </ul>
