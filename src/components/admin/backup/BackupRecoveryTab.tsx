@@ -86,9 +86,9 @@ const renderStatusBadge = (status: RecoveryTestStatus) => {
   }
 };
 
-export const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
+const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
   backups,
-  recoveryHistory: initialRecoveryHistory,
+  recoveryHistory: initialRecoveryHistory
 }) => {
   const [selectedBackupId, setSelectedBackupId] = useState<string>('');
   const [isTesting, setIsTesting] = useState(false);
@@ -431,4 +431,6 @@ export const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
       </Card>
     </div>
   );
-}
+};
+
+export default BackupRecoveryTab;
