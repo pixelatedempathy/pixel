@@ -4,13 +4,13 @@ declare module 'buffer' {
     new (size: number): Buffer
     new (array: Uint8Array): Buffer
     new (arrayBuffer: ArrayBuffer): Buffer
-    new (array: any[]): Buffer
+    new (array: number[]): Buffer
     new (buffer: Buffer): Buffer
     from(str: string, encoding?: string): Buffer
     from(arrayBuffer: ArrayBuffer, byteOffset?: number, length?: number): Buffer
-    from(array: any[]): Buffer
+    from(array: number[]): Buffer
     from(buffer: Buffer): Buffer
-    from(obj: { [key: string]: any }): Buffer
+    from(obj: { [key: string]: number | string }): Buffer
     alloc(
       size: number,
       fill?: string | Buffer | number,
@@ -18,7 +18,7 @@ declare module 'buffer' {
     ): Buffer
     allocUnsafe(size: number): Buffer
     allocUnsafeSlow(size: number): Buffer
-    isBuffer(obj: any): boolean
+    isBuffer(obj: unknown): boolean
     compare(buf1: Buffer, buf2: Buffer): number
     concat(list: Buffer[], totalLength?: number): Buffer
     byteLength(
@@ -35,7 +35,7 @@ declare module 'buffer' {
       encoding?: string,
     ): number
     toString(encoding?: string, start?: number, end?: number): string
-    toJSON(): { type: 'Buffer'; data: any[] }
+    toJSON(): { type: 'Buffer'; data: number[] }
     equals(otherBuffer: Buffer): boolean
     compare(
       otherBuffer: Buffer,
@@ -110,7 +110,7 @@ declare module 'buffer' {
     writeFloatBE(value: number, offset: number, noAssert?: boolean): number
     writeDoubleLE(value: number, offset: number, noAssert?: boolean): number
     writeDoubleBE(value: number, offset: number, noAssert?: boolean): number
-    fill(value: any, offset?: number, end?: number): this
+    fill(value: string | number | Buffer, offset?: number, end?: number): this
     indexOf(
       value: string | number | Buffer,
       byteOffset?: number,

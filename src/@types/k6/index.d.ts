@@ -5,8 +5,8 @@
 
 declare module 'k6' {
   export function check(
-    obj: any,
-    checks: Record<string, (obj: any) => boolean>,
+    obj: unknown,
+    checks: Record<string, (obj: unknown) => boolean>,
   ): boolean
   export function sleep(duration: number): void
 }
@@ -19,11 +19,17 @@ declare module 'k6/http' {
   export interface Response {
     status: number
     body: string
-    json(selector?: string): any
+    json<T = unknown>(selector?: string): T
   }
 
-  export function get(url: string, params?: any): Response
-  export function post(url: string, body?: any, params?: any): Response
+  export interface HttpParams {
+    headers?: Record<string, string>
+    timeout?: number
+    tags?: Record<string, string>
+  }
+
+  export function get(url: string, params?: HttpParams): Response
+  export function post(url: string, body?: string | object, params?: HttpParams): Response
 
   const http: {
     get: typeof get

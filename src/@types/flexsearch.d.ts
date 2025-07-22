@@ -33,7 +33,7 @@ declare module 'flexsearch/dist/module/document' {
     constructor(options: DocumentOptions)
     add(doc: Record<string, unknown>): void
     remove(id: string | number): void
-    search(query: string, options?: any): any[]
+    search<T = unknown>(query: string, options?: SearchOptions): T[]
   }
 }
 
@@ -63,7 +63,7 @@ declare module 'flexsearch' {
   export class Index {
     constructor(options?: CreateOptions)
     add(id: string | number, content: string): void
-    search(query: string, options?: any): any[]
+    search<T = unknown>(query: string, options?: IndexSearchOptions): T[]
     remove(id: string | number): void
   }
 
@@ -99,10 +99,10 @@ declare module 'flexsearch' {
   }
 
   export class Document {
-    constructor(options: any)
-    add(doc: any): void
+    constructor(options: DocumentOptions)
+    add(doc: Record<string, unknown>): void
     remove(id: string | number): void
-    search(query: string, options?: any): any[]
+    search<T = unknown>(query: string, options?: SearchOptions): T[]
   }
 
   export default {
