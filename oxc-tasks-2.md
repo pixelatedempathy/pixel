@@ -212,46 +212,46 @@
 
 ### `no-await-in-loop`
 
-- [ ] `supabase/setup-storage.js:50:25`: Unexpected `await` inside a loop.
-- [ ] `supabase/setup-storage.js:62:42`: Unexpected `await` inside a loop.
-- [ ] `supabase/optimize-db.js:172:27`: Unexpected `await` inside a loop.
-- [ ] `supabase/migrate.js:53:25`: Unexpected `await` inside a loop.
-- [ ] `supabase/migrate.js:88:25`: Unexpected `await` inside a loop.
-- [ ] `supabase/migrate.js:143:25`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:153:20`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:184:7`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:188:7`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:191:25`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:198:7`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:199:7`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:211:9`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:214:9`: Unexpected `await` inside a loop.
-- [ ] `src/tests/responsive-navigation.test.js:225:9`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:186:20`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:191:9`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:196:25`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:199:9`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:212:9`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:220:30`: Unexpected `await` inside a loop.
-- [ ] `scripts/run_full_dialogue_pipeline.js:224:11`: Unexpected `await` inside a loop.
-- [ ] `scripts/download-fonts.mjs:100:7`: Unexpected `await` inside a loop.
+- [x] `supabase/setup-storage.js:50:25`: Unexpected `await` inside a loop.
+- [x] `supabase/setup-storage.js:62:42`: Unexpected `await` inside a loop.
+- [x] `supabase/optimize-db.js:172:27`: Unexpected `await` inside a loop.
+- [x] `supabase/migrate.js:53:25`: Unexpected `await` inside a loop. (Intentional - migrations must be sequential)
+- [x] `supabase/migrate.js:88:25`: Unexpected `await` inside a loop. (Intentional - migrations must be sequential)
+- [x] `supabase/migrate.js:143:25`: Unexpected `await` inside a loop. (Intentional - migrations must be sequential)
+- [x] `src/tests/responsive-navigation.test.js:153:20`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:184:7`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:188:7`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:191:25`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:198:7`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:199:7`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:211:9`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:214:9`: Unexpected `await` inside a loop.
+- [x] `src/tests/responsive-navigation.test.js:225:9`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:186:20`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:191:9`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:196:25`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:199:9`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:212:9`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:220:30`: Unexpected `await` inside a loop.
+- [x] `scripts/run_full_dialogue_pipeline.js:224:11`: Unexpected `await` inside a loop.
+- [x] `scripts/download-fonts.mjs:100:7`: Unexpected `await` inside a loop.
 
 ### `no-extend-native`
 
-- [ ] `tests/e2e/user-experience.spec.ts:30:7`: Element prototype is read-only, properties should not be added.
-- [ ] `src/components/demo/__tests__/setup.ts:34:1`: HTMLElement prototype is read-only, properties should not be added.
-- [ ] `src/components/demo/__tests__/setup.ts:35:1`: HTMLElement prototype is read-only, properties should not be added.
-- [ ] `src/components/demo/__tests__/setup.ts:36:1`: HTMLElement prototype is read-only, properties should not be added.
-- [ ] `src/components/admin/backup/BackupLocationTab.js:23:40`: 'ar' is used outside of binding context.
+- [x] `tests/e2e/user-experience.spec.ts:30:7`: Element prototype is read-only, properties should not be added.
+- [x] `src/components/demo/__tests__/setup.ts:34:1`: HTMLElement prototype is read-only, properties should not be added.
+- [x] `src/components/demo/__tests__/setup.ts:35:1`: HTMLElement prototype is read-only, properties should not be added.
+- [x] `src/components/demo/__tests__/setup.ts:36:1`: HTMLElement prototype is read-only, properties should not be added.
+- [x] `src/components/admin/backup/BackupLocationTab.js:23:40`: 'ar' is used outside of binding context.
 
 ### `react-in-jsx-scope`
 
-- [ ] `src/components/admin/backup/BackupLocationTab.js:210:6`: 'React' must be in scope when using JSX
-- [ ] `src/components/admin/backup/BackupLocationTab.js:211:8`: 'React' must be in scope when using JSX
-- [ ] `src/components/admin/backup/BackupLocationTab.js:212:10`: 'React' must be in scope when using JSX
-- [ ] `src/components/admin/backup/BackupLocationTab.js:213:12`: 'React' must be in scope when using JSX
-- [ ] `src/components/admin/backup/BackupLocationTab.js:214:14`: 'React' must be in scope when using JSX
-- [ ] `src/components/admin/backup/BackupLocationTab.js:215:14`: 'React' must be in scope when using JSX
+- [x] `src/components/admin/backup/BackupLocationTab.js:210:6`: 'React' must be in scope when using JSX
+- [x] `src/components/admin/backup/BackupLocationTab.js:211:8`: 'React' must be in scope when using JSX
+- [x] `src/components/admin/backup/BackupLocationTab.js:212:10`: 'React' must be in scope when using JSX
+- [x] `src/components/admin/backup/BackupLocationTab.js:213:12`: 'React' must be in scope when using JSX
+- [x] `src/components/admin/backup/BackupLocationTab.js:214:14`: 'React' must be in scope when using JSX
+- [x] `src/components/admin/backup/BackupLocationTab.js:215:14`: 'React' must be in scope when using JSX
 ## JSX Accessibility Errors
 
 ### `click-events-have-key-events`
@@ -303,20 +303,20 @@
 - [x] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:88:13`: A form label must be associated with a control.
 - [x] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:108:13`: A form label must be associated with a control.
 - [x] `src/components/demos/bias-detection/SessionInputForm.tsx:110:9`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:130:13`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:150:13`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:171:13`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:195:13`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:225:9`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:681:15`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:713:15`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:735:15`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:757:15`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:982:15`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:1036:25`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:1453:17`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:1473:17`: A form label must be associated with a control.
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:1493:17`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/SessionInputForm.tsx:130:13`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/SessionInputForm.tsx:150:13`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/SessionInputForm.tsx:171:13`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/SessionInputForm.tsx:195:13`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/SessionInputForm.tsx:225:9`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:681:15`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:713:15`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:735:15`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:757:15`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:982:15`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:1036:25`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:1453:17`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:1473:17`: A form label must be associated with a control.
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:1493:17`: A form label must be associated with a control.
 
 ## Other Errors
 

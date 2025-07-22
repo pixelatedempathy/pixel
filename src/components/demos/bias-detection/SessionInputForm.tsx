@@ -107,10 +107,11 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
     <form onSubmit={handleSubmit} className="session-input-form space-y-4">
       {/* Scenario Name (Optional) */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="scenario" className="block text-sm font-medium text-gray-700 mb-1">
           Scenario Name (Optional)
         </label>
         <input
+          id="scenario"
           type="text"
           value={formData.scenario}
           onChange={(e) => handleInputChange('scenario', e.target.value)}
@@ -127,10 +128,11 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Age Group */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="age-group" className="block text-sm font-medium text-gray-700 mb-1">
               Age Group
             </label>
             <select
+              id="age-group"
               value={formData.demographics.age}
               onChange={(e) => handleDemographicChange('age', e.target.value)}
               disabled={disabled}
@@ -147,10 +149,11 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
 
           {/* Gender */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
               Gender
             </label>
             <select
+              id="gender"
               value={formData.demographics.gender}
               onChange={(e) =>
                 handleDemographicChange('gender', e.target.value)
@@ -168,10 +171,11 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
 
           {/* Ethnicity */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="ethnicity" className="block text-sm font-medium text-gray-700 mb-1">
               Ethnicity
             </label>
             <select
+              id="ethnicity"
               value={formData.demographics.ethnicity}
               onChange={(e) =>
                 handleDemographicChange('ethnicity', e.target.value)
@@ -192,10 +196,11 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
 
           {/* Primary Language */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="primary-language" className="block text-sm font-medium text-gray-700 mb-1">
               Primary Language
             </label>
             <select
+              id="primary-language"
               value={formData.demographics.primaryLanguage}
               onChange={(e) =>
                 handleDemographicChange('primaryLanguage', e.target.value)
@@ -222,10 +227,11 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
 
       {/* Content */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="therapeutic-content" className="block text-sm font-medium text-gray-700 mb-1">
           Therapeutic Content <span className="text-red-500">*</span>
         </label>
         <textarea
+          id="therapeutic-content"
           value={formData.content}
           onChange={(e) => handleInputChange('content', e.target.value)}
           disabled={disabled}
@@ -279,6 +285,7 @@ export const SessionInputForm: React.FC<SessionInputFormProps> = ({
               className="h-5 w-5 text-yellow-400 mr-2"
               viewBox="0 0 20 20"
               fill="currentColor"
+              aria-hidden="true"
             >
               <path
                 fillRule="evenodd"

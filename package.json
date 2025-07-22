@@ -193,7 +193,7 @@
     "jotai": "^2.12.5",
     "katex": "^0.16.22",
     "lucide-react": "^0.514.0",
-    "mermaid": "^11.7.0",
+    "mermaid": "^11.9.0",
     "nanoid": "^5.1.5",
     "node-cron": "^4.1.1",
     "node-seal": "^5.1.6",
