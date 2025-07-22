@@ -12,11 +12,45 @@ export interface EmotionAnalysisOptions {
   }
 }
 
+interface EmotionTrendline {
+  emotion: string
+  values: number[]
+  timestamps: Date[]
+}
+
+interface EmotionPattern {
+  type: string
+  confidence: number
+  description: string
+  frequency?: number
+}
+
+interface EmotionData {
+  type: string
+  intensity: number
+  timestamp: Date
+  context?: string
+}
+
 export interface EmotionAnalysisResult {
-  trendlines?: any[]
+  trendlines?: EmotionTrendline[]
   volatility?: number
-  emotions?: any[]
-  patterns?: any[]
+  emotions?: EmotionData[]
+  patterns?: EmotionPattern[]
+}
+
+interface EmotionProgression {
+  progression: 'improving' | 'stable' | 'declining'
+  score: number
+  trends?: EmotionTrendline[]
+}
+
+interface EmotionCorrelation {
+  emotion1: string
+  emotion2: string
+  correlationStrength: number
+  confidence: number
+  description: string
 }
 
 export class EmotionTemporalAnalyzer {
@@ -40,7 +74,7 @@ export class EmotionTemporalAnalyzer {
   async getCriticalEmotionalMoments(
     clientId: string,
     options?: { emotionTypes?: string[] },
-  ): Promise<any[]> {
+  ): Promise<EmotionData[]> {
     logger.info('Getting critical emotional moments', { clientId, options })
     return []
   }
@@ -49,7 +83,7 @@ export class EmotionTemporalAnalyzer {
     clientId: string,
     startDate: Date,
     endDate: Date,
-  ): Promise<any> {
+  ): Promise<EmotionProgression> {
     logger.info('Calculating emotion progression', {
       clientId,
       startDate,
@@ -58,7 +92,7 @@ export class EmotionTemporalAnalyzer {
     return { progression: 'stable', score: 0.7 }
   }
 
-  async findEmotionCorrelations(clientId: string): Promise<any[]> {
+  async findEmotionCorrelations(clientId: string): Promise<EmotionCorrelation[]> {
     logger.info('Finding emotion correlations', { clientId })
     return []
   }

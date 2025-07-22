@@ -168,7 +168,7 @@ const criticalAlertData = {
 }
 
 // Visual test utilities
-const DashboardVisualTestUtils = {
+class DashboardVisualTestUtils {
   async setupMockData(page: Page, data: any) {
     // Mock the dashboard API endpoint with consistent data
     await page.route('/api/bias-detection/dashboard*', async (route) => {
@@ -178,9 +178,9 @@ const DashboardVisualTestUtils = {
         body: JSON.stringify(data),
       })
     })
-  },
+  }
 
-  static async waitForDashboardLoad(page: Page) {
+  async waitForDashboardLoad(page: Page) {
     // Wait for dashboard container to be visible
     await page.waitForSelector('[data-testid="bias-dashboard"]', {
       timeout: 10000,
@@ -200,7 +200,7 @@ const DashboardVisualTestUtils = {
     await page.waitForTimeout(1000)
   }
 
-  static async hideElementsWithRandomContent(page: Page) {
+  async hideElementsWithRandomContent(page: Page) {
     // Hide elements that contain timestamps or dynamic content
     await page.addStyleTag({
       content: `
@@ -221,7 +221,7 @@ const DashboardVisualTestUtils = {
     })
   }
 
-  static getViewportSizes() {
+  getViewportSizes() {
     return {
       mobile: { width: 375, height: 667 },
       tablet: { width: 768, height: 1024 },
@@ -229,7 +229,7 @@ const DashboardVisualTestUtils = {
     }
   }
 
-  static async mockAuthenticatedSession(page: Page) {
+  async mockAuthenticatedSession(page: Page) {
     // Mock admin authentication for protected route
     await page.addInitScript(() => {
       // Mock localStorage for session

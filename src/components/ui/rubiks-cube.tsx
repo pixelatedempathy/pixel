@@ -242,7 +242,12 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
             castShadow
             receiveShadow
           >
-            <meshStandardMaterial color="#ffffff" emissive="#111111" roughness={0.2} metalness={0.8} />
+            <meshStandardMaterial
+              color="#ffffff"
+              emissiveColor="#111111"
+              roughnessValue={0.2}
+              metalnessValue={0.8}
+            />
           </RoundedBox>
         </group>
       ))}

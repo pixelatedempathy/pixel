@@ -344,7 +344,7 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
 
         <div className="space-y-3">
           {/* Analysis Results */}
-          <label className="flex items-center" htmlFor="include-analysis">
+          <div className="flex items-center">
             <input
               id="include-analysis"
               type="checkbox"
@@ -356,19 +356,20 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 }))
               }
               className="mr-3"
+              aria-label="Include analysis results"
             />
-            <div className="flex-1">
+            <label htmlFor="include-analysis" className="flex-1">
               <span className="font-medium text-gray-900">
                 Analysis Results
               </span>
               <p className="text-sm text-gray-600">
                 Overall bias scores, layer analysis, and confidence metrics
               </p>
-            </div>
-          </label>
+            </label>
+          </div>
 
           {/* Counterfactual Scenarios */}
-          <label className="flex items-center" htmlFor="include-counterfactual">
+          <div className="flex items-center">
             <input
               id="include-counterfactual"
               type="checkbox"
@@ -380,19 +381,20 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 }))
               }
               className="mr-3"
+              aria-label="Include counterfactual scenarios"
             />
-            <div className="flex-1">
+            <label htmlFor="include-counterfactual" className="flex-1">
               <span className="font-medium text-gray-900">
                 Counterfactual Scenarios
               </span>
               <p className="text-sm text-gray-600">
                 Alternative scenarios and expected bias reduction estimates
               </p>
-            </div>
-          </label>
+            </label>
+          </div>
 
           {/* Historical Comparison */}
-          <label className="flex items-center" htmlFor="include-historical">
+          <div className="flex items-center">
             <input
               id="include-historical"
               type="checkbox"
@@ -405,8 +407,9 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
               }
               disabled={!historicalComparison}
               className="mr-3"
+              aria-label="Include historical comparison"
             />
-            <div className="flex-1">
+            <label htmlFor="include-historical" className="flex-1">
               <span
                 className={`font-medium ${historicalComparison ? 'text-gray-900' : 'text-gray-400'}`}
               >
@@ -417,11 +420,11 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
               >
                 Progress tracking and trend analysis data
               </p>
-            </div>
-          </label>
+            </label>
+          </div>
 
           {/* Recommendations */}
-          <label className="flex items-center" htmlFor="include-recommendations">
+          <div className="flex items-center">
             <input
               id="include-recommendations"
               type="checkbox"
@@ -433,17 +436,18 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 }))
               }
               className="mr-3"
+              aria-label="Include recommendations"
             />
-            <div className="flex-1">
+            <label htmlFor="include-recommendations" className="flex-1">
               <span className="font-medium text-gray-900">Recommendations</span>
               <p className="text-sm text-gray-600">
                 AI-generated suggestions for bias reduction
               </p>
-            </div>
-          </label>
+            </label>
+          </div>
 
           {/* Demographics */}
-          <label className="flex items-center" htmlFor="include-demographics">
+          <div className="flex items-center">
             <input
               id="include-demographics"
               type="checkbox"
@@ -455,16 +459,17 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 }))
               }
               className="mr-3"
+              aria-label="Include demographics context"
             />
-            <div className="flex-1">
+            <label htmlFor="include-demographics" className="flex-1">
               <span className="font-medium text-gray-900">
                 Demographics Context
               </span>
               <p className="text-sm text-gray-600">
                 Client demographic information for context
               </p>
-            </div>
-          </label>
+            </label>
+          </div>
         </div>
       </div>
 

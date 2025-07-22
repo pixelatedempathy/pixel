@@ -82,6 +82,14 @@ function AlertDialogOverlay({ className, ...props }: React.ComponentProps<'div'>
         className
       )}
       onClick={() => onOpenChange(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === 'Space') {
+          e.preventDefault();
+          onOpenChange(false);
+        }
+      }}
+      role="button"
+      tabIndex={0}
       {...props}
     />
   )
@@ -103,6 +111,14 @@ function AlertDialogContent({ className, children, ...props }: AlertDialogConten
           className
         )}
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === 'Space') {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+        role="alertdialog"
+        tabIndex={0}
         {...props}
       >
         {children}
@@ -135,12 +151,17 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<'div'>)
   )
 }
 
-function AlertDialogTitle({ className, ...props }: React.ComponentProps<'h2'>) {
+function AlertDialogTitle({ className, children, ...props }: React.ComponentProps<'h2'>) {
+  if (!children) {
+    return null; // Don't render empty headings
+  }
   return (
     <h2
       className={cn('text-lg font-semibold', className)}
       {...props}
-    />
+    >
+      {children}
+    </h2>
   )
 }
 

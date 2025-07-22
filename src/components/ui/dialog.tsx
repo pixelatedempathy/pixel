@@ -100,6 +100,14 @@ const DialogContent = React.forwardRef<HTMLDivElement, React.ComponentProps<'div
           className,
         )}
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === 'Space') {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+        role="dialog"
+        tabIndex={0}
         {...props}
       >
         {children}
@@ -144,16 +152,25 @@ const DialogFooter = ({
 )
 DialogFooter.displayName = 'DialogFooter'
 
-const DialogTitle = React.forwardRef<HTMLHeadingElement, React.ComponentProps<'h2'>>(({ className, ...props }, ref) => (
-  <h2
-    ref={ref}
-    className={cn(
-      'text-lg font-semibold leading-none tracking-tight',
-      className,
-    )}
-    {...props}
-  />
-))
+const DialogTitle = React.forwardRef<HTMLHeadingElement, React.ComponentProps<'h2'>>(
+  ({ className, children, ...props }, ref) => {
+    if (!children) {
+      return null; // Don't render empty headings
+    }
+    return (
+      <h2
+        ref={ref}
+        className={cn(
+          'text-lg font-semibold leading-none tracking-tight',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </h2>
+    );
+  }
+);
 DialogTitle.displayName = 'DialogTitle'
 
 const DialogDescription = React.forwardRef<HTMLParagraphElement, React.ComponentProps<'p'>>(({ className, ...props }, ref) => (

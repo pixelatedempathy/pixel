@@ -470,7 +470,7 @@ export function TherapeuticGoalsTracker({
           <h5 className="font-medium mb-2 text-sm">Progress Checkpoints</h5>
           <div className="space-y-3 mb-4">
             {activeGoal.checkpoints.map((checkpoint, index) => (
-              <div key={index} className="flex items-start">
+              <div key={`checkpoint-${checkpoint.id}`} className="flex items-start">
                 <div
                   className={`h-5 w-5 mt-0.5 rounded-full mr-3 flex items-center justify-center ${
                     checkpoint.isCompleted ? 'bg-green-500' : 'bg-gray-200'
@@ -551,7 +551,7 @@ export function TherapeuticGoalsTracker({
                 {getRelatedInterventions(activeGoal.id).length > 0 ? (
                   getRelatedInterventions(activeGoal.id).map(
                     (intervention, index) => (
-                      <div key={index} className="text-sm">
+                      <div key={`intervention-${intervention.type}-${intervention.timestamp.toISOString()}`} className="text-sm">
                         <div className="flex justify-between">
                           <span className="font-medium">
                             {intervention.type}

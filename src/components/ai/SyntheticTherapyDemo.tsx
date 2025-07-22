@@ -355,7 +355,7 @@ export default function SyntheticTherapyDemo() {
                         {selectedConversation.encodedSymptoms.map(
                           (symptom, index) => (
                             <div
-                              key={index}
+                              key={`${symptom.name}-${symptom.duration}`}
                               className="rounded-lg border p-4 space-y-2"
                             >
                               <div className="flex justify-between items-center">

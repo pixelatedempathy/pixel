@@ -19,12 +19,21 @@ interface AnalyticsEventData {
   user_agent: string
   viewport_width: number
   viewport_height: number
-  [key: string]: any
+  [key: string]: unknown
+}
+
+interface PageConfig {
+  abTestVariants: {
+    headline: Record<string, string>
+    cta: Record<string, string>
+    urgency: Record<string, string>
+  }
+  // Add other page config properties as needed
 }
 
 export class UniversalDemoAnalytics {
   private pageName: DemoPageName
-  private pageConfig: any
+  private pageConfig: PageConfig
   private sessionId: string
   private startTime: number
   private abTestVariant: string
@@ -457,6 +466,13 @@ export class UniversalDemoAnalytics {
   }
 }
 
+declare global {
+  interface Window {
+    demoAnalytics?: UniversalDemoAnalytics;
+    gtag?: (command: string, event: string, params: Record<string, unknown>) => void;
+  }
+}
+
 // Global initialization function
 export function initializeDemoAnalytics(
   pageName: DemoPageName,
@@ -470,7 +486,7 @@ export function initializeDemoAnalytics(
   }
 
   // Make available globally for debugging
-  ;(window as any).demoAnalytics = analytics
+  window.demoAnalytics = analytics
 
   return analytics
 }

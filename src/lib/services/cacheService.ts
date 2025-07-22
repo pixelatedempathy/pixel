@@ -62,7 +62,7 @@ export interface CacheClient extends CacheService {
  * Uses Vercel KV for distributed caching across instances
  */
 class VercelKVCacheService implements CacheService {
-  private redis: any = null
+  private redis: RedisClient | null = null
   public connected = true
   private readonly prefix = 'app:cache:'
 

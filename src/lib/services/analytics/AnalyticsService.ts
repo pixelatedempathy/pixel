@@ -96,30 +96,30 @@ export class AnalyticsService {
   async trackEvent(data: EventData): Promise<string> {
     try {
       // Validate event data
-      const validatedData = EventDataSchema.parse(data)
+      const validatedData = EventDataSchema.parse(data);
 
       // Generate event ID
-      const eventId = crypto.randomUUID()
+      const eventId = crypto.randomUUID();
 
       // Create event object
       const event: Event = {
         ...validatedData,
         id: eventId,
-      }
+      };
 
       // Queue event for processing
-      await this.redisClient.lpush('analytics:events:queue', JSON.stringify(event))
+      await this.redisClient.lpush('analytics:events:queue', JSON.stringify(event));
 
       // Store event in time series
-      await this.storeEventInTimeSeries(event)
+      await this.storeEventInTimeSeries(event);
 
       // Notify real-time subscribers
-      this.notifySubscribers(event)
+      this.notifySubscribers(event);
 
-      return eventId
+      return eventId;
     } catch (error) {
-      logger.error('Error tracking event:', error)
-      throw error
+      logger.error('Error tracking event:', error);
+      throw error;
     }
   }
 

@@ -5,25 +5,24 @@
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      [elemName: string]: any
+      [elemName: string]: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>
     }
 
-    interface HTMLAttributes {
+    interface HTMLAttributes extends React.HTMLAttributes<HTMLElement> {
       class?: string
-      [key: string]: any
     }
 
     // Add Element type for components that return JSX.Element
-    type Element = any
+    type Element = React.ReactElement
 
     // Add ElementClass for class components
-    interface ElementClass {
-      render: any
+    interface ElementClass extends React.Component<unknown> {
+      render(): React.ReactNode
     }
 
     // Add ElementAttributesProperty for props type inference
     interface ElementAttributesProperty {
-      props: {}
+      props: Record<string, unknown>
     }
   }
 }

@@ -18,9 +18,24 @@ declare global {
 
 // Extend Vi.Assertion interface
 declare module 'vitest' {
-  interface Assertion extends ViAssertion {}
-  // Ensure we're not accidentally using JestAssertion
-  type AsymmetricMatchersContaining = Assertion
+  interface Assertion extends Pick<ViAssertion, 
+    | 'toBeRedisError'
+    | 'toBeInRedis'
+    | 'toExistInRedis'
+    | 'toHaveTTL'
+  > {
+    // Add any additional assertion methods here
+  }
+
+  // Define proper asymmetric matchers
+  interface AsymmetricMatchersContaining extends Pick<ViAssertion,
+    | 'toBeRedisError'
+    | 'toBeInRedis'
+    | 'toExistInRedis'
+    | 'toHaveTTL'
+  > {
+    // Add any additional asymmetric matchers here
+  }
 }
 
 export {}

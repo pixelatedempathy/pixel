@@ -503,14 +503,14 @@ export const ObjectiveBalancer = {
   private static extractScores(
     evaluationResults: Record<string, ObjectiveEvaluationResult>,
   ): Record<string, number> {
-    const scores: Record<string, number> = {}
+    const scores: Record<string, number> = {};
 
     for (const [objectiveId, result] of Object.entries(evaluationResults)) {
-      scores[objectiveId] = result.score
+      scores[objectiveId] = result.score;
     }
 
-    return scores
-  }
+    return scores;
+  },
 
   private static normalizeScores(
     scores: Record<string, number>,

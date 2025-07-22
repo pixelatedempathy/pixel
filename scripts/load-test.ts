@@ -208,55 +208,55 @@ class LoadTestService {
   }
 
   private async generateReport(): Promise<void> {
-    console.log('\nLoad Test Report\n')
+    console.log('\nLoad Test Report\n');
 
     // Overall statistics
-    const totalRequests = this.metrics.length
-    const successfulRequests = this.metrics.filter((m) => m.success).length
-    const failedRequests = totalRequests - successfulRequests
-    const successRate = (successfulRequests / totalRequests) * 100
+    const totalRequests = this.metrics.length;
+    const successfulRequests = this.metrics.filter((m) => m.success).length;
+    const failedRequests = totalRequests - successfulRequests;
+    const successRate = (successfulRequests / totalRequests) * 100;
 
-    console.log('Overall Statistics:')
-    console.log(`Total Requests: ${totalRequests}`)
-    console.log(`Successful Requests: ${successfulRequests}`)
-    console.log(`Failed Requests: ${failedRequests}`)
-    console.log(`Success Rate: ${successRate.toFixed(2)}%`)
+    console.log('Overall Statistics:');
+    console.log(`Total Requests: ${totalRequests}`);
+    console.log(`Successful Requests: ${successfulRequests}`);
+    console.log(`Failed Requests: ${failedRequests}`);
+    console.log(`Success Rate: ${successRate.toFixed(2)}%`);
 
     // Latency statistics by scenario
-    console.log('\nLatency Statistics by Scenario:')
-    const scenarioStats = new Map<string, number[]>()
+    console.log('\nLatency Statistics by Scenario:');
+    const scenarioStats = new Map<string, number[]>();
     this.metrics.forEach((metric) => {
       if (!scenarioStats.has(metric.scenario)) {
-        scenarioStats.set(metric.scenario, [])
+        scenarioStats.set(metric.scenario, []);
       }
-      scenarioStats.get(metric.scenario)!.push(metric.latency)
-    })
+      scenarioStats.get(metric.scenario)!.push(metric.latency);
+    });
 
     scenarioStats.forEach((latencies, scenario) => {
-      const avg = latencies.reduce((a, b) => a + b, 0) / latencies.length
-      const sorted = [...latencies].sort((a, b) => a - b)
-      const p95 = sorted[Math.floor(sorted.length * 0.95)]
-      const p99 = sorted[Math.floor(sorted.length * 0.99)]
+      const avg = latencies.reduce((a, b) => a + b, 0) / latencies.length;
+      const sorted = [...latencies].sort((a, b) => a - b);
+      const p95 = sorted[Math.floor(sorted.length * 0.95)];
+      const p99 = sorted[Math.floor(sorted.length * 0.99)];
 
-      console.log(`\n${scenario}:`)
-      console.log(`  Average: ${avg.toFixed(2)}ms`)
-      console.log(`  95th percentile: ${p95.toFixed(2)}ms`)
-      console.log(`  99th percentile: ${p99.toFixed(2)}ms`)
-    })
+      console.log(`\n${scenario}:`);
+      console.log(`  Average: ${avg.toFixed(2)}ms`);
+      console.log(`  95th percentile: ${p95.toFixed(2)}ms`);
+      console.log(`  99th percentile: ${p99.toFixed(2)}ms`);
+    });
 
     // Error analysis
-    const errors = this.metrics.filter((m) => !m.success)
+    const errors = this.metrics.filter((m) => !m.success);
     if (errors.length > 0) {
-      console.log('\nError Analysis:')
-      const errorCounts = new Map<string, number>()
+      console.log('\nError Analysis:');
+      const errorCounts = new Map<string, number>();
       errors.forEach((error) => {
-        const count = errorCounts.get(error.error!) || 0
-        errorCounts.set(error.error!, count + 1)
-      })
+        const count = errorCounts.get(error.error!) || 0;
+        errorCounts.set(error.error!, count + 1);
+      });
 
       errorCounts.forEach((count, error) => {
-        console.log(`  ${error}: ${count} occurrences`)
-      })
+        console.log(`  ${error}: ${count} occurrences`);
+      });
     }
 
     // Save report to file
@@ -271,26 +271,26 @@ class LoadTestService {
         scenarioStats: Object.fromEntries(scenarioStats),
         errors: errors.map((e) => ({ scenario: e.scenario, error: e.error })),
       },
-    }
+    };
 
-    await this.saveReport(report)
+    await this.saveReport(report);
   }
 
-interface LoadTestReport {
-  timestamp: string;
-  config: LoadTestConfig;
-  statistics: {
-    totalRequests: number;
-    successfulRequests: number;
-    failedRequests: number;
-    successRate: number;
-    scenarioStats: Record<string, number[]>;
-    errors: Array<{
-      scenario: string;
-      error?: string;
-    }>;
-  };
-}
+  interface LoadTestReport {
+    timestamp: string;
+    config: LoadTestConfig;
+    statistics: {
+      totalRequests: number;
+      successfulRequests: number;
+      failedRequests: number;
+      successRate: number;
+      scenarioStats: Record<string, number[]>;
+      errors: Array<{
+        scenario: string;
+        error?: string;
+      }>;
+    };
+  }
 
   private async saveReport(report: LoadTestReport): Promise<void> {
     const reportDir = './reports'

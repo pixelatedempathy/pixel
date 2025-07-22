@@ -19,6 +19,9 @@ frontend:
         - nvm use v22.16.0
         - npm i npm@latest -g
         - npm install -g pnpm
+        - pnpm setup
+        - export PNPM_HOME="/root/.local/share/pnpm"
+        - export PATH="$PNPM_HOME:$PATH"
 
         # Set Node.js memory limit
         - export NODE_OPTIONS=--max-old-space-size=12288
