@@ -1,14 +1,13 @@
 ---
 import { getCollection, render } from 'astro:content'
 import type { CollectionEntry } from 'astro:content'
-import type { PostSchema } from '~/content/schema'
-import BaseLayout from '~/layouts/BaseLayout.astro'
-import StandardLayout from '~/layouts/StandardLayout.astro'
-import Toc from '~/components/toc/Toc.astro'
-import ShareLink from '~/components/widgets/ShareLink.astro'
-import Warning from '~/components/base/Warning.astro'
-import { formatDate } from '~/utils/datetime'
-import { FEATURES } from '~/config'
+import type { PostSchema } from '@/content/schema'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Toc from '@/components/toc/Toc.astro'
+import ShareLink from '@/components/widgets/ShareLink.astro'
+import Warning from '@/components/base/Warning.astro'
+import { formatDate } from '@/utils/datetime'
+import { FEATURES } from '@/config'
 
 // Set prerender to true to generate static pages at build time
 export const prerender = true
@@ -44,15 +43,13 @@ Please check back later.`
 <BaseLayout
   title={frontmatter.title}
   description={frontmatter.description}
-  ogImage={frontmatter.ogImage}
-  {pubDate}
-  lastModDate={updatedDate}
 >
-  <StandardLayout title={frontmatter.title}>
-    <div slot="head">
+  <article class="max-w-3xl mx-auto py-12 px-4 prose prose-invert">
+    <header class="not-prose mb-8">
+      <h1 class="text-4xl font-bold text-white mb-2">{frontmatter.title}</h1>
       {
         pubDate && (
-          <p class="mt--6! op-50">
+          <p class="text-slate-400 text-sm">
             <time datetime={pubDate}>{formatDate(pubDate)}</time>
             {updatedDate && (
               <time datetime={updatedDate}>
@@ -67,17 +64,17 @@ Please check back later.`
           <Warning rawHTMLString={UNPUBLISHED_WARNING} />
         )
       }
-    </div>
-    <div slot="article">
-      {Array.isArray(toc) && toc[0] && frontmatter.toc && <Toc {headings} />}
-      <Content />
-    </div>
-  </StandardLayout>
-  <div slot="share">
-    {
-      Array.isArray(share) && share[0] && frontmatter.share && (
-        <ShareLink config={share[1]} />
-      )
-    }
-  </div>
+    </header>
+
+    {Array.isArray(toc) && toc[0] && frontmatter.toc && <Toc {headings} />}
+    <Content />
+
+    <footer class="not-prose mt-12">
+      {
+        Array.isArray(share) && share[0] && frontmatter.share && (
+          <ShareLink config={share[1]} />
+        )
+      }
+    </footer>
+  </article>
 </BaseLayout>

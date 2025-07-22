@@ -1,8 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import StandardLayout from '@/layouts/StandardLayout.astro'
 import CardView from '@/components/views/CardView.astro'
-import type { BgType } from '@/types'
 
 const frontmatter = {
   title: 'Highlights',
@@ -17,14 +15,12 @@ const frontmatter = {
 <BaseLayout
   title={frontmatter.title}
   description={frontmatter.description}
-  bgType={frontmatter.bgType}
-  ogImage={frontmatter.ogImage}
 >
-  <StandardLayout
-    title={frontmatter.title}
-    subtitle={frontmatter.subtitle}
-    isCentered={true}
-  >
-    <CardView collectionType="highlights" />
-  </StandardLayout>
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h1 class="text-4xl font-bold text-white mb-4">{frontmatter.title}</h1>
+      <p class="text-lg text-slate-400 mb-12">{frontmatter.subtitle}</p>
+      <CardView collectionType="highlights" />
+    </div>
+  </section>
 </BaseLayout>

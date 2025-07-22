@@ -1,0 +1,394 @@
+import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
+import {
+  PerspectiveCamera,
+  SpotLight,
+  RoundedBox,
+  useDepthBuffer,
+  CameraControls,
+} from "@react-three/drei";
+import * as THREE from 'three';
+import React, { Suspense, useRef, useState, useEffect, forwardRef, useMemo, useCallback } from "react";
+import { Vector3, Matrix4 } from "three";
+
+// Extend THREE namespace to make CameraControls available declaratively
+extend({ CameraControls });
+
+function CameraController() {
+  const { camera, gl } = useThree();
+  const controlsRef = useRef<CameraControls>(null!);
+
+  useEffect(() => {
+    if (controlsRef.current) {
+      controlsRef.current.setLookAt(0, 0, 7, 0, 0, 0, true);
+    }
+  }, []);
+
+  useFrame((_state, delta) => {
+    controlsRef.current?.update(delta);
+  });
+
+  return <CameraControls ref={controlsRef} args={[camera, gl.domElement]} />;
+}
+
+function EnhancedSpotlight(props: EnhancedSpotlightProps) {
+  const light = useRef<SpotLightImpl>(null!);
+  const { scene } = useThree();
+
+  useMemo(() => {
+    if (light.current) {
+      light.current.target = new THREE.Object3D();
+      scene.add(light.current.target);
+    }
+  }, [scene]);
+
+  useFrame(() => {
+    if (light.current && light.current.target) {
+      light.current.target.position.set(0, 0, 0);
+      light.current.target.updateMatrixWorld();
+    }
+  }, []);
+
+  return (
+    <>
+      <SpotLight 
+        ref={light} 
+        {...props} 
+      />
+    </>
+  );
+}
+
+function SceneContent() {
+  const depthBuffer = useDepthBuffer({
+    size: 2048,
+    frames: 1,
+    disableRenderLoop: true
+  });
+
+  const [_time, setTime] = useState(0);
+  useFrame((state) => {
+    setTime(state.clock.getElapsedTime());
+  });
+
+  return (
+    <>
+      <EnhancedSpotlight 
+        depthBuffer={depthBuffer} 
+        color="#aaaace" 
+        position={[3, 3, 2]}
+        volumetric={true}
+        opacity={1}
+        penumbra={1}
+        distance={17}
+        angle={0.8}
+        attenuation={30}
+        anglePower={6}
+        intensity={1}
+        shadowMapSize={2048}
+        shadowBias={-0.0001}
+        shadowAutoUpdate={true}
+        castShadow={true}
+      />
+      
+      <PerspectiveCamera
+        makeDefault
+        fov={50}
+        position={[0, 0, 7]}
+        near={0.1}
+        far={1000}
+      />
+
+      <CameraController />
+
+      <Suspense fallback={null}>
+        <RubiksCubeModel position={[0, 0, 0]} scale={1} />
+      </Suspense>
+    </>
+  );
+}
+
+export function Scene() {
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    checkIsDesktop();
+
+    window.addEventListener("resize", checkIsDesktop);
+
+    return () => window.removeEventListener("resize", checkIsDesktop);
+  }, []);
+
+  return (
+    <div className="h-svh w-screen relative bg-black">
+      <Canvas
+        shadows
+        gl={{
+          antialias: isDesktop,
+          preserveDrawingBuffer: isDesktop,
+          powerPreference: isDesktop ? "high-performance" : "default",
+          alpha: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1,
+        }}
+      >
+        <SceneContent />
+        {/* <Perf /> */}
+      </Canvas>
+    </div>
+  );
+}
+
+// Type definitions
+interface Cube {
+  position: THREE.Vector3;
+  rotationMatrix: THREE.Matrix4;
+  id: string;
+  originalCoords: { x: number; y: number; z: number; };
+}
+
+interface DeviceSettings {
+  smoothness: number;
+  castShadow: boolean;
+  receiveShadow: boolean;
+}
+
+interface Move {
+  axis: 'x' | 'y' | 'z';
+  layer: number;
+  direction: number;
+  rotationAngle: number;
+}
+
+interface RubiksCubeModelProps {
+  position: [number, number, number];
+  scale: number;
+}
+
+interface EnhancedSpotlightProps {
+  depthBuffer: any; // Replace with actual type if available
+  color: string;
+  position: [number, number, number];
+  volumetric: boolean;
+  opacity: number;
+  penumbra: number;
+  distance: number;
+  angle: number;
+  attenuation: number;
+  anglePower: number;
+  intensity: number;
+  shadowMapSize: number;
+  shadowBias: number;
+  shadowAutoUpdate: boolean;
+  castShadow: boolean;
+}
+
+const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => {
+  const ANIMATION_DURATION = 1.2;
+  const RADIUS = 0.075;
+
+  const mainGroupRef = useRef<Group>(null!);
+  const isAnimatingRef = useRef(false);
+  const currentRotationRef = useRef(0);
+  const lastMoveAxisRef = useRef<string | null>(null);
+  const currentMoveRef = useRef<Move | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const isMountedRef = useRef(true);
+
+  const isResizingRef = useRef(false);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [size, _setSize] = useState(0.8);
+  const [cubes, setCubes] = useState<Cube[]>([]);
+  const [isVisible, setIsVisible] = useState(true);
+  const [deviceSettings, setDeviceSettings] = useState<DeviceSettings>(() => {
+    const isMobile = window.innerWidth < 768;
+    return {
+      smoothness: isMobile ? 2 : 4,
+      castShadow: !isMobile,
+      receiveShadow: !isMobile
+    };
+  });
+
+  const reusableMatrix4 = useMemo(() => new Matrix4(), []);
+
+  React.useImperativeHandle(ref, () => Object.assign(mainGroupRef.current, {
+    reset: resetCube,
+  }));
+
+  const initializeCubes = useCallback(() => {
+    const initial: Cube[] = [];
+    const positions = [-1, 0, 1];
+
+    for (let x of positions) {
+      for (let y of positions) {
+        for (let z of positions) {
+          initial.push({
+            position: new Vector3(x, y, z),
+            rotationMatrix: new Matrix4().identity(),
+            id: `cube-${x}-${y}-${z}`,
+            originalCoords: { x, y, z },
+          });
+        }
+      }
+    }
+    setCubes(initial);
+  }, []);
+
+  const resetCube = useCallback(() => {
+    if (isAnimatingRef.current) { return; }
+    if (mainGroupRef.current) {
+      mainGroupRef.current.rotation.set(0, 0, 0);
+    }
+    initializeCubes();
+  }, [initializeCubes]);
+
+  const handleResize = useCallback(() => {
+    isResizingRef.current = true;
+    if (resizeTimeoutRef.current) { clearTimeout(resizeTimeoutRef.current); }
+    resizeTimeoutRef.current = setTimeout(() => {
+      isResizingRef.current = false;
+      const isMobile = window.innerWidth < 768;
+      setDeviceSettings({
+        smoothness: isMobile ? 2 : 4,
+        castShadow: !isMobile,
+        receiveShadow: !isMobile,
+      });
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    initializeCubes();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      isMountedRef.current = false;
+      if (animationFrameRef.current) { cancelAnimationFrame(animationFrameRef.current); }
+      if (resizeTimeoutRef.current) { clearTimeout(resizeTimeoutRef.current); }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [initializeCubes, handleResize]);
+
+  const throttle = useCallback((func: (...args: any[]) => void, delay: number) => {
+    let throttleTimer: NodeJS.Timeout | null = null;
+    return function(...args: any[]) {
+      if (throttleTimer) { return; }
+      throttleTimer = setTimeout(() => {
+        func(...args);
+        throttleTimer = null;
+      }, delay);
+    };
+  }, []);
+
+  const throttledRandomMove = useCallback(throttle(() => {
+    if (!isMountedRef.current || isAnimatingRef.current) { return; }
+    const axes: ('x' | 'y' | 'z')[] = ['x', 'y', 'z'];
+    const layers = [-1, 0, 1];
+    const directions = [-1, 1];
+    const randomAxis = axes[Math.floor(Math.random() * axes.length)];
+    const randomLayer = layers[Math.floor(Math.random() * layers.length)];
+    const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+    startRotation(randomAxis, randomLayer, randomDirection);
+  }, 2000), [throttle]);
+
+  const getRotationMatrix = (axis: 'x' | 'y' | 'z', angle: number): THREE.Matrix4 => {
+    reusableMatrix4.identity();
+    if (axis === 'x') { reusableMatrix4.makeRotationX(angle); }
+    else if (axis === 'y') { reusableMatrix4.makeRotationY(angle); }
+    else if (axis === 'z') { reusableMatrix4.makeRotationZ(angle); }
+    return reusableMatrix4;
+  };
+
+  const startRotation = (axis: 'x' | 'y' | 'z', layer: number, direction: number) => {
+    if (isAnimatingRef.current) { return; }
+    isAnimatingRef.current = true;
+    currentMoveRef.current = { axis, layer, direction, rotationAngle: 0 };
+    lastMoveAxisRef.current = axis;
+    animateRotation();
+  };
+
+  const animateRotation = () => {
+    let startTime: number | null = null;
+    const performAnimation = (timestamp: number) => {
+      if (!startTime) { startTime = timestamp; }
+      const progress = Math.min((timestamp - startTime) / (ANIMATION_DURATION * 1000), 1);
+      if (currentMoveRef.current) {
+        const move = currentMoveRef.current;
+        const rotationAngle = (Math.PI / 2) * progress * move.direction;
+        const stepRotationMatrix = getRotationMatrix(move.axis, rotationAngle - currentRotationRef.current);
+        currentRotationRef.current = rotationAngle;
+        updateCubePositions(move, stepRotationMatrix);
+      }
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(performAnimation);
+      } else {
+        finalizeRotation();
+      }
+    };
+    animationFrameRef.current = requestAnimationFrame(performAnimation);
+  };
+
+  const updateCubePositions = (move: Move, stepRotationMatrix: THREE.Matrix4) => {
+    setCubes((prevCubes: Cube[]) => {
+      return prevCubes.map((cube: Cube) => {
+        if (Math.round(cube.position[move.axis]) === move.layer) {
+          const newRotationMatrix = reusableMatrix4.clone().multiplyMatrices(stepRotationMatrix, cube.rotationMatrix);
+          return { ...cube, rotationMatrix: newRotationMatrix };
+        }
+        return cube;
+      });
+    });
+  };
+
+  const finalizeRotation = () => {
+    if (!currentMoveRef.current) { return; }
+    const move = currentMoveRef.current;
+    const finalRotationMatrix = getRotationMatrix(move.axis, (Math.PI / 2) * move.direction);
+    setCubes((prevCubes: Cube[]) => {
+      const newCubes = prevCubes.map((cube: Cube) => {
+        if (Math.round(cube.position[move.axis]) === move.layer) {
+          const newPosition = cube.position.clone().applyMatrix4(finalRotationMatrix);
+          return { ...cube, position: newPosition, rotationMatrix: new Matrix4().identity() };
+        }
+        return cube;
+      });
+      return newCubes.map(c => ({ ...c, rotationMatrix: new Matrix4().identity() }));
+    });
+    currentRotationRef.current = 0;
+    isAnimatingRef.current = false;
+    currentMoveRef.current = null;
+  };
+
+  useFrame((_state, delta) => {
+    if (mainGroupRef.current) {
+      mainGroupRef.current.rotation.y += delta * 0.1;
+      mainGroupRef.current.rotation.x += delta * 0.05;
+    }
+    if (!isAnimatingRef.current) {
+      throttledRandomMove();
+    }
+  });
+
+  return (
+    <group ref={mainGroupRef} {...props} visible={isVisible}>
+      {cubes.map((cube: Cube) => (
+        <RoundedBox
+          key={cube.id}
+          args={[size, size, size]}
+          radius={RADIUS}
+          smoothness={deviceSettings.smoothness}
+          castShadow={deviceSettings.castShadow}
+          receiveShadow={deviceSettings.receiveShadow}
+          position={cube.position}
+          matrix={cube.rotationMatrix}
+          matrixAutoUpdate={false}
+        >
+          <meshStandardMaterial color="#ffffff" emissive="#111111" roughness={0.2} metalness={0.8} />
+        </RoundedBox>
+      ))}
+    </group>
+  );
+});

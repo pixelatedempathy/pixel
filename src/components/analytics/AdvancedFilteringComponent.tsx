@@ -66,7 +66,7 @@ export interface AdvancedFilterOptions {
   }
 
   // Additional metadata filters
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 
   // Custom logic filter
   customLogic?: string
@@ -118,12 +118,12 @@ export function AdvancedFilteringComponent({
   const handleChange = <K extends keyof AdvancedFilterOptions>(
     category: K,
     key: string,
-    value: any,
+    value: unknown,
   ) => {
     onChange({
       ...options,
       [category]: {
-        ...((options[category] as any) || {}),
+        ...(options[category] as Record<string, unknown> || {}),
         [key]: value,
       },
     })
@@ -134,14 +134,14 @@ export function AdvancedFilteringComponent({
     category: K,
     parentKey: string,
     key: string,
-    value: any,
+    value: unknown,
   ) => {
     onChange({
       ...options,
       [category]: {
-        ...((options[category] as any) || {}),
+        ...(options[category] as Record<string, unknown> || {}),
         [parentKey]: {
-          ...((options[category] as any)?.[parentKey] || {}),
+          ...((options[category] as Record<string, unknown>)?.[parentKey] as Record<string, unknown> || {}),
           [key]: value,
         },
       },
@@ -154,7 +154,7 @@ export function AdvancedFilteringComponent({
     key: string,
     value: string,
   ) => {
-    const currentArray = ((options[category] as any)?.[key] as string[]) || []
+    const currentArray = ((options[category] as Record<string, unknown>)?.[key] as string[]) || []
     const newArray = currentArray.includes(value)
       ? currentArray.filter((item) => item !== value)
       : [...currentArray, value]

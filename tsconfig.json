@@ -48,8 +48,7 @@
       "@lib/*": ["./src/lib/*"],
       "@types/*": ["src/types/*"],
       "@testing/*": ["./tests/*"],
-      "three": ["./node_modules/three"],
-      "three/*": ["./node_modules/three/*"],
+
       "@/types": ["src/types"]
     },
     "skipLibCheck": true,

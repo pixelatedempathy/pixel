@@ -148,11 +148,17 @@ test.describe('Responsive Design and Navigation Tests', () => {
     expect(linkCount).toBeGreaterThan(0)
 
     // Check that links have proper href attributes
+    // Get all links first, then check them in parallel
+    const linkPromises = [];
     for (let i = 0; i < Math.min(linkCount, 5); i++) {
-      const link = navLinks.nth(i)
-      const href = await link.getAttribute('href')
-      expect(href).toBeTruthy()
+      const link = navLinks.nth(i);
+      linkPromises.push(link.getAttribute('href').then(href => {
+        expect(href).toBeTruthy();
+      }));
     }
+    
+    // Wait for all link checks to complete
+    await Promise.all(linkPromises);
   })
 
   test('should have accessible navigation', async ({ page }) => {
@@ -180,7 +186,8 @@ test.describe('Responsive Design and Navigation Tests', () => {
       { width: 1920, height: 1080 }, // Large desktop
     ]
 
-    for (const viewport of breakpoints) {
+    // Create promises for each breakpoint check
+    const breakpointPromises = breakpoints.map(async (viewport) => {
       await page.setViewportSize(viewport)
 
       // Check that main content is visible
@@ -197,7 +204,10 @@ test.describe('Responsive Design and Navigation Tests', () => {
       const footer = page.locator('footer')
       await expect(header).toBeVisible()
       await expect(footer).toBeVisible()
-    }
+    });
+
+    // Wait for all breakpoint checks to complete
+    await Promise.all(breakpointPromises);
   })
 
   test('should have proper button and link interactions', async ({ page }) => {
@@ -206,13 +216,16 @@ test.describe('Responsive Design and Navigation Tests', () => {
     const buttonCount = await ctaButtons.count()
 
     if (buttonCount > 0) {
+      // Create promises for each button check
+      const buttonPromises = [];
       for (let i = 0; i < buttonCount; i++) {
-        const button = ctaButtons.nth(i)
-        await expect(button).toBeVisible()
-
-        // Check button has proper styling and is clickable
-        await expect(button).toHaveAttribute('href')
+        const button = ctaButtons.nth(i);
+        buttonPromises.push(expect(button).toBeVisible());
+        buttonPromises.push(expect(button).toHaveAttribute('href'));
       }
+      
+      // Wait for all button checks to complete
+      await Promise.all(buttonPromises);
     }
 
     // Test footer links
@@ -220,10 +233,15 @@ test.describe('Responsive Design and Navigation Tests', () => {
     const footerLinkCount = await footerLinks.count()
 
     if (footerLinkCount > 0) {
+      // Create promises for each footer link check
+      const footerLinkPromises = [];
       for (let i = 0; i < Math.min(footerLinkCount, 3); i++) {
-        const link = footerLinks.nth(i)
-        await expect(link).toBeVisible()
+        const link = footerLinks.nth(i);
+        footerLinkPromises.push(expect(link).toBeVisible());
       }
+      
+      // Wait for all footer link checks to complete
+      await Promise.all(footerLinkPromises);
     }
   })
 

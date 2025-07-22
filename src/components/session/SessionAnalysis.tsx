@@ -123,7 +123,7 @@ export default function SessionAnalysis({
           />
 
           <p className="mt-4 text-sm text-gray-500">
-            This chart shows the client's emotional dimensions throughout the
+            This chart shows the client&apos;s emotional dimensions throughout the
             session, helping identify patterns and significant shifts.
           </p>
         </div>

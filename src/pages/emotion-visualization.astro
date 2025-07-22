@@ -1,8 +1,8 @@
 ---
 import EmotionVisualizationPage from '../components/pages/EmotionVisualizationPage'
-import MainLayout from '../layouts/MainLayout.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
 ---
 
-<MainLayout title="3D Emotion Visualization">
+<BaseLayout title="3D Emotion Visualization">
   <EmotionVisualizationPage client:load />
-</MainLayout>
+</BaseLayout>

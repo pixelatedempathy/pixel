@@ -30,10 +30,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-// Mock HTMLElement methods
-HTMLElement.prototype.scrollIntoView = vi.fn()
-HTMLElement.prototype.hasPointerCapture = vi.fn()
-HTMLElement.prototype.releasePointerCapture = vi.fn()
+// Mock HTMLElement methods using spies instead of modifying the prototype
+// Create mock functions that can be used in tests
+const mockScrollIntoView = vi.fn()
+const mockHasPointerCapture = vi.fn()
+const mockReleasePointerCapture = vi.fn()
+
+// Use vi.spyOn instead of directly modifying the prototype
+vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(mockScrollIntoView)
+vi.spyOn(HTMLElement.prototype, 'hasPointerCapture').mockImplementation(mockHasPointerCapture)
+vi.spyOn(HTMLElement.prototype, 'releasePointerCapture').mockImplementation(mockReleasePointerCapture)
 
 // Mock document methods
 document.createRange = vi.fn(() => ({

@@ -141,6 +141,16 @@ export const PresetScenarioSelector: React.FC<PresetScenarioSelectorProps> = ({
                 : 'border-gray-200 hover:border-gray-300'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !disabled && onScenarioSelect(scenario)}
+            onKeyDown={(e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+                e.preventDefault();
+                onScenarioSelect(scenario);
+              }
+            }}
+            tabIndex={disabled ? -1 : 0}
+            role="button"
+            aria-label={`Select scenario: ${scenario.title}`}
+            aria-disabled={disabled}
             onMouseEnter={() => setPreviewScenario(scenario)}
             onMouseLeave={() => setPreviewScenario(null)}
           >

@@ -81,7 +81,7 @@ const formattedDate = pubDate?.toLocaleDateString('en-us', {
           {
             tags.length > 0 && (
               <div class="flex gap-2 mt-4">
-                {tags.map((tag) => (
+                {tags.map((tag: unknown) => (
                   <a
                     href={`/blog/tags/${tag}`}
                     class="text-sm px-3 py-1 bg-muted rounded-full hover:bg-muted/80 transition-colors"

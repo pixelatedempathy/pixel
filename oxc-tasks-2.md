@@ -128,17 +128,17 @@
 - [x] `src/components/admin/dlp/DLPRuleEditor.tsx:109:6`: React Hook useEffect has a dependency array that changes every render.
 - [x] `src/components/feedback/SupervisorFeedback.tsx:83:6`: React Hook useEffect has missing dependencies: 'identifyMissedOpportunities', 'analyzeTechniques', and 'generateFeedbackSummary'
 - [x] `src/components/analytics/PrivacyDashboard.tsx:39:6`: React Hook useEffect has a missing dependency: 'analytics'
-- [ ] `src/components/demo/ValidationDemo.tsx:109:6`: React Hook useEffect has a missing dependency: 'validateContent'
-- [ ] `src/components/demo/FormatStandardizationDemo.tsx:434:6`: React Hook useEffect has a missing dependency: 'convertToFormat'
-- [ ] `src/components/demo/DemographicBalancingDisplay.tsx:234:6`: React Hook useEffect has missing dependencies: 'currentStats.occupation', 'demographicTargets.gender', 'demographicTargets.occupation', 'currentStats.background', 'demographicTargets.background', 'currentStats', 'currentStats.age', 'currentStats.gender', and 'demographicTargets.age'
-- [ ] `src/components/analytics/ConversionDashboard.tsx:45:6`: React Hook useEffect has a missing dependency: 'loadConversionData'
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:185:6`: React Hook useEffect has a missing dependency: 'calculateMetrics'
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:195:6`: React Hook useEffect has missing dependencies: 'categories', and 'calculateMetrics'
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:243:6`: React Hook useEffect has missing dependencies: 'realTimeInterval', and 'calculateMetrics'
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:270:6`: React Hook useEffect has a missing dependency: 'pushBalanceUpdate'
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:289:6`: React Hook useEffect has missing dependencies: 'syncWithKnowledgeBalancer', and 'fetchLiveData'
-- [ ] `src/components/demo/CategoryBalancingDemo.tsx:296:6`: React Hook useEffect has a missing dependency: 'pushBalanceUpdate'
-- [ ] `src/components/demo/DataIngestionDemo.tsx:72:6`: React Hook useCallback has a missing dependency: 'processFile'
+- [x] `src/components/demo/ValidationDemo.tsx:109:6`: React Hook useEffect has a missing dependency: 'validateContent'
+- [x] `src/components/demo/FormatStandardizationDemo.tsx:434:6`: React Hook useEffect has a missing dependency: 'convertToFormat'
+- [x] `src/components/demo/DemographicBalancingDisplay.tsx:234:6`: React Hook useEffect has missing dependencies: 'currentStats.occupation', 'demographicTargets.gender', 'demographicTargets.occupation', 'currentStats.background', 'demographicTargets.background', 'currentStats', 'currentStats.age', 'currentStats.gender', and 'demographicTargets.age'
+- [x] `src/components/analytics/ConversionDashboard.tsx:45:6`: React Hook useEffect has a missing dependency: 'loadConversionData'
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:185:6`: React Hook useEffect has a missing dependency: 'calculateMetrics'
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:195:6`: React Hook useEffect has missing dependencies: 'categories', and 'calculateMetrics'
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:243:6`: React Hook useEffect has missing dependencies: 'realTimeInterval', and 'calculateMetrics'
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:270:6`: React Hook useEffect has a missing dependency: 'pushBalanceUpdate'
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:289:6`: React Hook useEffect has missing dependencies: 'syncWithKnowledgeBalancer', and 'fetchLiveData'
+- [x] `src/components/demo/CategoryBalancingDemo.tsx:296:6`: React Hook useEffect has a missing dependency: 'pushBalanceUpdate'
+- [x] `src/components/demo/DataIngestionDemo.tsx:72:6`: React Hook useCallback has a missing dependency: 'processFile'
 
 ### `no-array-index-key`
 
@@ -182,33 +182,33 @@
 
 ### `no-unescaped-entities`
 
-- [ ] `src/components/dashboard/SimulatorDashboardReact.tsx:154:72`: `"` can be escaped with &quot;
-- [ ] `src/components/dashboard/SimulatorDashboardReact.tsx:155:20`: `"` can be escaped with &quot;
-- [ ] `src/simulator/components/FeedbackPanel.tsx:138:17`: `"` can be escaped with &quot;
-- [ ] `src/simulator/components/FeedbackPanel.tsx:138:36`: `"` can be escaped with &quot;
-- [ ] `src/components/ui/OfflineIndicator.tsx:79:16`: `'` can be escaped with &apos;
-- [ ] `src/components/admin/backup/BackupScheduleTab.tsx:68:75`: `'` can be escaped with &apos;
-- [ ] `src/components/admin/backup/BackupScheduleTab.tsx:179:65`: `'` can be escaped with &apos;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:488:15`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:488:44`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:524:21`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:524:41`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:582:65`: `'` can be escaped with &apos;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:619:70`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/TherapeuticApproachShowcase.tsx:620:23`: `"` can be escaped with &quot;
-- [ ] `src/components/session/SessionAnalysis.tsx:126:40`: `'` can be escaped with &apos;
-- [ ] `src/components/therapy/TreatmentPlanManager.tsx:830:37`: `"` can be escaped with &quot;
-- [ ] `src/components/therapy/TreatmentPlanManager.tsx:830:76`: `"` can be escaped with &quot;
-- [ ] `src/components/therapy/TreatmentPlanManager.tsx:887:38`: `"` can be escaped with &quot;
-- [ ] `src/components/therapy/TreatmentPlanManager.tsx:887:62`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:573:58`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:574:26`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ClientFacingDemo.tsx:400:23`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ClientFacingDemo.tsx:403:39`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ConversationGenerationDemo.tsx:658:55`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ConversationGenerationDemo.tsx:658:77`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ClinicalFormulationDemo.tsx:571:19`: `"` can be escaped with &quot;
-- [ ] `src/components/demo/ClinicalFormulationDemo.tsx:571:40`: `"` can be escaped with &quot;
+- [x] `src/components/dashboard/SimulatorDashboardReact.tsx:154:72`: `"` can be escaped with &quot;
+- [x] `src/components/dashboard/SimulatorDashboardReact.tsx:155:20`: `"` can be escaped with &quot;
+- [x] `src/simulator/components/FeedbackPanel.tsx:138:17`: `"` can be escaped with &quot;
+- [x] `src/simulator/components/FeedbackPanel.tsx:138:36`: `"` can be escaped with &quot;
+- [x] `src/components/ui/OfflineIndicator.tsx:79:16`: `'` can be escaped with &apos;
+- [x] `src/components/admin/backup/BackupScheduleTab.tsx:68:75`: `'` can be escaped with &apos;
+- [x] `src/components/admin/backup/BackupScheduleTab.tsx:179:65`: `'` can be escaped with &apos;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:488:15`: `"` can be escaped with &quot;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:488:44`: `"` can be escaped with &quot;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:524:21`: `"` can be escaped with &quot;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:524:41`: `"` can be escaped with &quot;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:582:65`: `'` can be escaped with &apos;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:619:70`: `"` can be escaped with &quot;
+- [x] `src/components/demo/TherapeuticApproachShowcase.tsx:620:23`: `"` can be escaped with &quot;
+- [x] `src/components/session/SessionAnalysis.tsx:126:40`: `'` can be escaped with &apos;
+- [x] `src/components/therapy/TreatmentPlanManager.tsx:830:37`: `"` can be escaped with &quot;
+- [x] `src/components/therapy/TreatmentPlanManager.tsx:830:76`: `"` can be escaped with &quot;
+- [x] `src/components/therapy/TreatmentPlanManager.tsx:887:38`: `"` can be escaped with &quot;
+- [x] `src/components/therapy/TreatmentPlanManager.tsx:887:62`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:573:58`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:574:26`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ClientFacingDemo.tsx:400:23`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ClientFacingDemo.tsx:403:39`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ConversationGenerationDemo.tsx:658:55`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ConversationGenerationDemo.tsx:658:77`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ClinicalFormulationDemo.tsx:571:19`: `"` can be escaped with &quot;
+- [x] `src/components/demo/ClinicalFormulationDemo.tsx:571:40`: `"` can be escaped with &quot;
 
 ### `no-await-in-loop`
 
@@ -256,48 +256,53 @@
 
 ### `click-events-have-key-events`
 
-- [ ] `src/components/ai/RecommendationDisplay.tsx:20:9`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/ui/MobileDrawer.tsx:35:7`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/ui/table.tsx:149:5`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demo/PipelineOverview.tsx:59:13`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:231:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:257:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:283:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:136:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demo/ApprovalProcessWorkflowDemo.tsx:399:17`: Enforce a clickable non-interactive element has at least one keyboard event listener.
-- [ ] `src/components/demo/ResultsExportDemo.tsx:1297:15`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/ai/RecommendationDisplay.tsx:20:9`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/ui/MobileDrawer.tsx:35:7`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/ui/table.tsx:149:5`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demo/PipelineOverview.tsx:59:13`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:231:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:257:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:283:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:136:11`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demo/ApprovalProcessWorkflowDemo.tsx:399:17`: Enforce a clickable non-interactive element has at least one keyboard event listener.
+- [x] `src/components/demo/ResultsExportDemo.tsx:1297:15`: Enforce a clickable non-interactive element has at least one keyboard event listener.
 
 ### `prefer-tag-over-role`
 
-- [ ] `src/simulator/components/RealTimePrompts.tsx:92:13`: Prefer `button` over `role` attribute `button`.
-- [ ] `src/simulator/components/RealTimeFeedbackPanel.tsx:333:21`: Prefer `button` over `role` attribute `button`.
+- [x] `src/simulator/components/RealTimePrompts.tsx:92:13`: Prefer `button` over `role` attribute `button`.
+- [x] `src/simulator/components/RealTimeFeedbackPanel.tsx:333:21`: Prefer `button` over `role` attribute `button`.
+
+### `no-static-element-interactions`
+
+- [x] `src/components/ui/MobileDrawer.tsx:35:7`: Static HTML elements with event handlers require a role.
+- [x] `src/components/ui/table.tsx:149:5`: Static HTML elements with event handlers require a role.
 
 ### `role-supports-aria-props`
 
-- [ ] `src/components/ui/Radio.tsx:84:13`: The attribute aria-invalid is not supported by the role radio.
-- [ ] `src/components/ui/SearchBox.tsx:154:11`: The attribute aria-expanded is not supported by the role textbox.
+- [x] `src/components/ui/Radio.tsx:84:13`: The attribute aria-invalid is not supported by the role radio.
+- [x] `src/components/ui/SearchBox.tsx:154:11`: The attribute aria-expanded is not supported by the role textbox.
 
 ### `media-has-caption`
 
-- [ ] `src/simulator/components/VideoDisplay.tsx:295:7`: Missing <track> element with captions inside <audio> or <video> element.
-- [ ] `src/simulator/components/VideoDisplay.tsx:295:7`: Missing <track> element with captions inside <audio> or <video> element.
+- [x] `src/simulator/components/VideoDisplay.tsx:295:7`: Missing <track> element with captions inside <audio> or <video> element.
+- [x] `src/simulator/components/VideoDisplay.tsx:295:7`: Missing <track> element with captions inside <audio> or <video> element.
 
 ### `label-has-associated-control`
 
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:341:19`: A form label must be associated with a control.
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:357:19`: A form label must be associated with a control.
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:377:17`: A form label must be associated with a control.
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:391:17`: A form label must be associated with a control.
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:410:17`: A form label must be associated with a control.
-- [ ] `src/components/demo/ScenarioGenerationDemo.tsx:425:19`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:316:11`: A form label must have accessible text.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:339:11`: A form label must have accessible text.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:362:11`: A form label must have accessible text.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:390:11`: A form label must have accessible text.
-- [ ] `src/components/demos/bias-detection/ExportControls.tsx:411:11`: A form label must have accessible text.
-- [ ] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:88:13`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:108:13`: A form label must be associated with a control.
-- [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:110:9`: A form label must be associated with a control.
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:341:19`: A form label must be associated with a control.
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:357:19`: A form label must be associated with a control.
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:377:17`: A form label must be associated with a control.
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:391:17`: A form label must be associated with a control.
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:410:17`: A form label must be associated with a control.
+- [x] `src/components/demo/ScenarioGenerationDemo.tsx:425:19`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:316:11`: A form label must have accessible text.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:339:11`: A form label must have accessible text.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:362:11`: A form label must have accessible text.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:390:11`: A form label must have accessible text.
+- [x] `src/components/demos/bias-detection/ExportControls.tsx:411:11`: A form label must have accessible text.
+- [x] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:88:13`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/PresetScenarioSelector.tsx:108:13`: A form label must be associated with a control.
+- [x] `src/components/demos/bias-detection/SessionInputForm.tsx:110:9`: A form label must be associated with a control.
 - [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:130:13`: A form label must be associated with a control.
 - [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:150:13`: A form label must be associated with a control.
 - [ ] `src/components/demos/bias-detection/SessionInputForm.tsx:171:13`: A form label must be associated with a control.

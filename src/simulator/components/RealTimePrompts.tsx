@@ -89,11 +89,11 @@ export default function RealTimePrompts({
               }
             }}
             tabIndex={0}
-            role="button"
             aria-pressed={selectedPrompt === index}
+            className="px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer mb-2 text-left"
           >
             {prompt}
-          </div>
+          </button>
         ))}
       </div>
     </div>

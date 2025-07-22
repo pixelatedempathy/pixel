@@ -45,6 +45,7 @@ async function runMigrations() {
     console.log(`Found ${migrationFiles.length} migration files`)
 
     // Execute each migration file
+    // Note: We're intentionally using await in a loop here because migrations must be applied sequentially
     for (const file of migrationFiles) {
       console.log(`Running migration: ${file}`)
       const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8')
@@ -81,7 +82,7 @@ async function setupStorageBuckets() {
     ]
 
     // Create each bucket
-    for (const bucket of buckets) {
+    const bucketPromises = buckets.map(async (bucket) => {
       console.log(`Creating bucket: ${bucket.name}`)
 
       // Create the bucket
@@ -92,10 +93,15 @@ async function setupStorageBuckets() {
 
       if (error && error.message !== 'Bucket already exists') {
         console.error(`Error creating bucket ${bucket.name}:`, error)
+        return { success: false, bucket, error }
       } else {
         console.log(`Successfully created bucket: ${bucket.name}`)
+        return { success: true, bucket }
       }
-    }
+    })
+    
+    // Wait for all bucket operations to complete
+    await Promise.all(bucketPromises)
 
     console.log('Storage bucket setup completed')
   } catch (error) {
@@ -137,15 +143,20 @@ async function optimizeDatabase() {
     ]
 
     // Execute optimization queries
-    for (const query of optimizationQueries) {
+    const queryPromises = optimizationQueries.map(async (query) => {
       console.log(`Running optimization query: ${query.substring(0, 60)}...`)
 
       const { error } = await supabase.rpc('exec_sql', { sql_query: query })
 
       if (error) {
         console.warn(`Warning in optimization query:`, error)
+        return { success: false, error, query }
       }
-    }
+      return { success: true, query }
+    })
+    
+    // Wait for all queries to complete
+    await Promise.all(queryPromises)
 
     console.log('Database optimization completed')
   } catch (error) {

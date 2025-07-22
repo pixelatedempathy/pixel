@@ -23,20 +23,25 @@ test.describe('User Experience Features', () => {
     // Intercept navigation events
     let hasTransition = false
 
-    // Listen for transition classes being added to the DOM
+    // Listen for transition classes being added to the DOM using a proxy instead of extending Element.prototype
     await page.addInitScript(() => {
+      // Store the original appendChild method
       const originalAppendChild = Element.prototype.appendChild
-
-      Element.prototype.appendChild = function (...args) {
-        const result = originalAppendChild.apply(this, args)
-
+      
+      // Create a proxy function that doesn't modify the prototype directly
+      window._checkTransition = function(element) {
         if (
-          args[0]?.classList?.contains('astro-transition') ||
-          args[0]?.hasAttribute?.('transition:animate')
+          element?.classList?.contains('astro-transition') ||
+          element?.hasAttribute?.('transition:animate')
         ) {
           window._hasTransition = true
         }
-
+      }
+      
+      // Override appendChild with a function that calls the original and then checks for transitions
+      Element.prototype.appendChild = function(element) {
+        const result = originalAppendChild.call(this, element)
+        window._checkTransition(element)
         return result
       }
     })

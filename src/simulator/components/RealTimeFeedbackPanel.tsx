@@ -309,9 +309,9 @@ export default function RealTimeFeedbackPanel({
                 .slice()
                 .reverse()
                 .map((item, index) => (
-                  <div
+                  <button
                     key={`${item.timestamp}-${index}`}
-                    className={`rounded-lg border text-sm p-2 cursor-pointer transition-colors ${getPriorityColorClass(item.priority)}`}
+                    className={`rounded-lg border text-sm p-2 cursor-pointer transition-colors w-full text-left ${getPriorityColorClass(item.priority)}`}
                     onClick={() =>
                       setExpandedFeedback(
                         expandedFeedback === `${item.timestamp}-${index}`
@@ -330,10 +330,10 @@ export default function RealTimeFeedbackPanel({
                       }
                     }}
                     tabIndex={0}
-                    role="button"
                     aria-expanded={
                       expandedFeedback === `${item.timestamp}-${index}`
                     }
+                    className="w-full text-left"
                   >
                     <div className="flex justify-between items-start gap-2">
                       <div className="flex items-start gap-2">
@@ -366,7 +366,7 @@ export default function RealTimeFeedbackPanel({
                         </p>
                       </div>
                     )}
-                  </div>
+                  </button>
                 ))}
             </div>
           ) : (

@@ -235,6 +235,16 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 : 'border-gray-200 hover:border-gray-300'
             }`}
             onClick={() => setExportFormat('json')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setExportFormat('json');
+              }
+            }}
+            tabIndex={0}
+            role="radio"
+            aria-checked={exportFormat === 'json'}
+            aria-label="JSON export format"
           >
             <div className="flex items-center mb-2">
               <input
@@ -261,6 +271,16 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 : 'border-gray-200 hover:border-gray-300'
             }`}
             onClick={() => setExportFormat('csv')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setExportFormat('csv');
+              }
+            }}
+            tabIndex={0}
+            role="radio"
+            aria-checked={exportFormat === 'csv'}
+            aria-label="CSV export format"
           >
             <div className="flex items-center mb-2">
               <input
@@ -287,15 +307,26 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
                 : 'border-gray-200 hover:border-gray-300'
             }`}
             onClick={() => setExportFormat('pdf')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setExportFormat('pdf');
+              }
+            }}
+            tabIndex={0}
+            role="radio"
+            aria-checked={exportFormat === 'pdf'}
+            aria-label="PDF export format"
           >
             <div className="flex items-center mb-2">
               <input
+                id="pdf-format"
                 type="radio"
                 checked={exportFormat === 'pdf'}
                 onChange={() => setExportFormat('pdf')}
                 className="mr-2"
               />
-              <span className="font-medium text-gray-900">PDF Report</span>
+              <label htmlFor="pdf-format" className="font-medium text-gray-900">PDF Report</label>
             </div>
             <p className="text-sm text-gray-600">
               Formatted report for documentation and sharing

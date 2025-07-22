@@ -164,6 +164,71 @@ async function getBatchOptions() {
   }
 }
 
+// Handle individual dialogue generation
+async function handleGenerateDialogue() {
+  return runScript(GENERATE_SCRIPT)
+}
+
+// Handle batch dialogue generation
+async function handleBatchGenerate() {
+  const options = await getBatchOptions()
+
+  // Pass options as command line arguments
+  return runScript(BATCH_GENERATE_SCRIPT, [
+    '--concurrency',
+    options.concurrency,
+    '--startFrom',
+    options.startFrom,
+    '--maxPrompts',
+    options.maxPrompts,
+  ])
+}
+
+// Handle dialogue validation
+async function handleValidate() {
+  return runScript(VALIDATE_SCRIPT)
+}
+
+// Handle full pipeline
+async function handleFullPipeline() {
+  console.log('\n=== Step 1: Batch Generate Dialogues ===\n')
+
+  // Run batch generation with default options
+  const batchSuccess = await runScript(BATCH_GENERATE_SCRIPT)
+
+  if (batchSuccess) {
+    console.log('\n=== Step 2: Validate Dialogues ===\n')
+    return runScript(VALIDATE_SCRIPT)
+  }
+  
+  return false
+}
+
+// Process a single menu choice
+async function processMenuChoice(choice) {
+  switch (choice) {
+    case '1':
+      // Generate individual dialogue (interactive)
+      return handleGenerateDialogue()
+    case '2':
+      // Batch generate dialogues
+      return handleBatchGenerate()
+    case '3':
+      // Validate generated dialogues
+      return handleValidate()
+    case '4':
+      // Run full pipeline (batch generate + validate)
+      return handleFullPipeline()
+    case '5':
+      // Exit
+      console.log('Exiting...')
+      return null
+    default:
+      console.log('Invalid option. Please try again.')
+      return true
+  }
+}
+
 // Main function to run the pipeline
 async function main() {
   console.log('Edge Case Dialogue Pipeline')
@@ -181,60 +246,20 @@ async function main() {
     console.log(`Created output directory: ${OUTPUT_DIR}`)
   }
 
-  // Main menu loop
-  while (true) {
+  // Main menu loop - using recursion instead of a while loop to avoid await in loop
+  async function runMenuLoop() {
     const choice = await showMainMenu()
-
-    switch (choice) {
-      case '1':
-        // Generate individual dialogue (interactive)
-        await runScript(GENERATE_SCRIPT)
-        break
-
-      case '2': {
-        // Batch generate dialogues
-        const options = await getBatchOptions()
-
-        // Pass options as command line arguments
-        await runScript(BATCH_GENERATE_SCRIPT, [
-          '--concurrency',
-          options.concurrency,
-          '--startFrom',
-          options.startFrom,
-          '--maxPrompts',
-          options.maxPrompts,
-        ])
-        break
-      }
-
-      case '3':
-        // Validate generated dialogues
-        await runScript(VALIDATE_SCRIPT)
-        break
-
-      case '4': {
-        // Run full pipeline (batch generate + validate)
-        console.log('\n=== Step 1: Batch Generate Dialogues ===\n')
-
-        // Run batch generation with default options
-        const batchSuccess = await runScript(BATCH_GENERATE_SCRIPT)
-
-        if (batchSuccess) {
-          console.log('\n=== Step 2: Validate Dialogues ===\n')
-          await runScript(VALIDATE_SCRIPT)
-        }
-        break
-      }
-
-      case '5':
-        // Exit
-        console.log('Exiting...')
-        return
-
-      default:
-        console.log('Invalid option. Please try again.')
+    const result = await processMenuChoice(choice)
+    
+    // If result is null, exit the loop
+    if (result !== null) {
+      // Schedule the next iteration asynchronously
+      return runMenuLoop()
     }
   }
+  
+  // Start the menu loop
+  await runMenuLoop()
 }
 
 // Run the main function

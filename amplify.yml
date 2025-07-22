@@ -5,14 +5,21 @@ frontend:
     NODE_OPTIONS: --max-old-space-size=12288
 
   phases:
+    install:
+      commands:
+        - echo Installing nvm...
+        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+        - export NVM_DIR="$HOME/.nvm"
+        - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+        - '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'
+
     preBuild:
       commands:
-        # Install pnpm if not already installed
-        - npm cache clean -f
-        - npm install -g n 22.16.0
+        - . "$NVM_DIR/nvm.sh" && nvm install v22.16.0 && echo "node installed by arun"
+        - nvm use v22.16.0
         - npm i npm@latest -g
         - npm install -g pnpm
-          
+
         # Set Node.js memory limit
         - export NODE_OPTIONS=--max-old-space-size=12288
         

@@ -43,7 +43,7 @@ async function setupStorageBuckets() {
     ]
 
     // Create each bucket
-    for (const bucket of buckets) {
+    const bucketPromises = buckets.map(async (bucket) => {
       console.log(`Creating bucket: ${bucket.name}`)
 
       // Create the bucket
@@ -78,7 +78,10 @@ async function setupStorageBuckets() {
           }
         }
       }
-    }
+    })
+    
+    // Wait for all bucket operations to complete
+    await Promise.all(bucketPromises)
 
     console.log('Storage bucket setup completed')
   } catch (error) {

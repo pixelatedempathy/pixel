@@ -164,7 +164,7 @@ async function optimizeDatabase() {
     ]
 
     // Execute optimization queries
-    for (const query of optimizationQueries) {
+    const queryPromises = optimizationQueries.map(async (query) => {
       try {
         console.log(`Running optimization query: ${query.substring(0, 60)}...`)
 
@@ -173,11 +173,17 @@ async function optimizeDatabase() {
 
         if (error) {
           console.warn(`Warning in optimization query: ${error.message}`)
+          return { success: false, error, query }
         }
+        return { success: true, query }
       } catch (error) {
         console.warn(`Failed to execute query: ${error.message}`)
+        return { success: false, error, query }
       }
-    }
+    })
+    
+    // Wait for all queries to complete
+    await Promise.all(queryPromises)
 
     console.log('\nDatabase optimization script completed.')
     console.log(

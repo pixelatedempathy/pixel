@@ -81,7 +81,6 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
             className={radioClasses}
             disabled={isDisabled}
             required={isRequired}
-            aria-invalid={error ? 'true' : 'false'}
             aria-describedby={
               error
                 ? `${props.id}-error`

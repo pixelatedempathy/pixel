@@ -1,5 +1,5 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
 import MentalHealthChatDemo from '../components/MentalHealthChatDemo.astro'
 
 const title = 'Mental Health Analysis Demo'
@@ -7,7 +7,7 @@ const description =
   'Experience our advanced mental health analysis tools in action. This demo showcases real-time analysis of text for mental health indicators.'
 ---
 
-<MainLayout {title} {description}>
+<BaseLayout {title} {description}>
   <section class="container mx-auto py-8 px-4">
     <div class="max-w-5xl mx-auto">
       <h1 class="text-3xl md:text-4xl font-bold mb-6 text-center">{title}</h1>
@@ -72,4 +72,4 @@ const description =
       </div>
     </div>
   </section>
-</MainLayout>
+</BaseLayout>

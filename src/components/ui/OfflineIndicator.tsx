@@ -76,7 +76,7 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
         </div>
         <div>
           <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            You're Offline
+            You&apos;re Offline
           </h3>
           <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {connectionInfo.type && (

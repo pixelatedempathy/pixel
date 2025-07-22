@@ -397,10 +397,10 @@ const ClientFacingDemo: React.FC = () => {
                       Input Content
                     </h5>
                     <div className="bg-slate-900 rounded p-3 text-sm text-gray-300">
-                      "Client presents with persistent worry, restlessness, and
+                      "                      &quot;Client presents with persistent worry, restlessness, and
                       difficulty concentrating for the past 6 months. Symptoms
                       interfere with work performance and social
-                      relationships..."
+                      relationships...&quot;"
                     </div>
                   </div>
 

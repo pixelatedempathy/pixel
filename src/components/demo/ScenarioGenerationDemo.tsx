@@ -338,10 +338,11 @@ const ScenarioGenerationDemo: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="patient-age" className="block text-sm font-medium text-gray-700 mb-1">
                     Age
                   </label>
                   <input
+                    id="patient-age"
                     type="number"
                     value={profileData.patientInfo.age}
                     onChange={(e) =>
@@ -354,10 +355,11 @@ const ScenarioGenerationDemo: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="patient-gender" className="block text-sm font-medium text-gray-700 mb-1">
                     Gender
                   </label>
                   <select
+                    id="patient-gender"
                     value={profileData.patientInfo.gender}
                     onChange={(e) =>
                       handlePatientInfoChange('gender', e.target.value)
@@ -374,10 +376,11 @@ const ScenarioGenerationDemo: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="patient-occupation" className="block text-sm font-medium text-gray-700 mb-1">
                   Occupation
                 </label>
                 <input
+                  id="patient-occupation"
                   type="text"
                   value={profileData.patientInfo.occupation}
                   onChange={(e) =>
@@ -388,10 +391,11 @@ const ScenarioGenerationDemo: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="patient-background" className="block text-sm font-medium text-gray-700 mb-1">
                   Background
                 </label>
                 <textarea
+                  id="patient-background"
                   value={profileData.patientInfo.background}
                   onChange={(e) =>
                     handlePatientInfoChange('background', e.target.value)
@@ -407,10 +411,11 @@ const ScenarioGenerationDemo: React.FC = () => {
               <h4 className="font-medium text-gray-700">Presenting Problem</h4>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="primary-concern" className="block text-sm font-medium text-gray-700 mb-1">
                   Primary Concern
                 </label>
                 <textarea
+                  id="primary-concern"
                   value={profileData.presentingProblem}
                   onChange={(e) =>
                     handlePresentingProblemChange(e.target.value)
@@ -422,7 +427,7 @@ const ScenarioGenerationDemo: React.FC = () => {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="problem-timeline" className="block text-sm font-medium text-gray-700">
                     Problem Development Timeline
                   </label>
                   <button
@@ -573,8 +578,8 @@ const ScenarioGenerationDemo: React.FC = () => {
             {!generatedProfile ? (
               <div className="text-center py-8 text-gray-500">
                 <p>
-                  Configure the client profile and click "Generate Comprehensive
-                  Profile" to see the AI-generated clinical case.
+                  Configure the client profile and click &quot;Generate Comprehensive
+                  Profile&quot; to see the AI-generated clinical case.
                 </p>
               </div>
             ) : (

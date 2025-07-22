@@ -15,7 +15,7 @@ This documentation provides an overview of our Astro component library, includin
 ## Table of Contents
 
 - [Layout Components](#layout-components)
-  - [MainLayout](#mainlayout)
+  - [BaseLayout](#baselayout)
   - [DashboardLayout](#dashboardlayout)
   - [BlogLayout](#bloglayout)
   - [AdminLayout](#adminlayout)
@@ -43,11 +43,11 @@ This documentation provides an overview of our Astro component library, includin
 
 Layout components provide the structure for pages and handle common elements like headers, footers, and navigation.
 
-### MainLayout
+### BaseLayout
 
-The primary layout for public-facing pages.
+The standard layout for all pages in the application.
 
-**File:** `src/layouts/MainLayout.astro`
+**File:** `src/layouts/BaseLayout.astro`
 
 **Props:**
 
@@ -55,8 +55,6 @@ The primary layout for public-facing pages.
 interface Props {
   title: string;
   description?: string;
-  image?: string;
-  canonicalURL?: string;
 }
 ```
 
@@ -64,27 +62,26 @@ interface Props {
 
 ```astro
 ---
-import MainLayout from '@/layouts/MainLayout.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
-<MainLayout
-  title="Home Page"
-  description="Welcome to our application"
+<BaseLayout
+  title="Page Title"
+  description="A brief description of the page."
 >
-  <div>
-    <h1>Welcome</h1>
-    <p>This is the home page content.</p>
-  </div>
-</MainLayout>
+  <!-- Page content goes here -->
+  <h1>Hello, world!</h1>
+</BaseLayout>
 ```
 
 **Features:**
 
-- Includes Header and Footer components
-- Handles meta tags for SEO
-- Integrates ViewTransitions for smooth page transitions
-- Manages theme handling with CSS variables
-- Sets up responsive viewports
+- Provides a consistent HTML document structure (`<html>`, `<head>`, `<body>`).
+- Sets up the dark theme by default.
+- Includes the site-wide `Header` component.
+- Defines global styles, including the `Geist Sans` font.
+- Handles essential meta tags for SEO (`title`, `description`, `viewport`, etc.).
+- Contains a `<slot />` for page-specific content.
 
 ### DashboardLayout
 

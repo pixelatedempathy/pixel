@@ -827,7 +827,7 @@ const TreatmentPlanManager: React.FC = () => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              treatment plan titled "<strong>{planToDelete?.title}</strong>" and
+              treatment plan titled &quot;<strong>{planToDelete?.title}</strong>&quot; and
               all its associated goals and objectives.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -884,7 +884,7 @@ const TreatmentPlanManager: React.FC = () => {
         {editingPlanData && (
           <form id={`edit-plan-form-${formId}`} onSubmit={handleUpdatePlan}>
             <p className="text-sm text-muted-foreground mb-4">
-              Update the details for "{editingPlanData.title}".
+              Update the details for &quot;{editingPlanData.title}&quot;.
             </p>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">

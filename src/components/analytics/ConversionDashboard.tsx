@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { AnalyticsService } from '@/lib/analytics'
 import {
   Card,
@@ -39,11 +39,7 @@ export function ConversionDashboard() {
 
   const analytics = AnalyticsService.getInstance()
 
-  // Load conversion data
-  useEffect(() => {
-    loadConversionData()
-  }, [period, filter, loadConversionData])
-
+  // Define loadConversionData function
   const loadConversionData = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -76,6 +72,11 @@ export function ConversionDashboard() {
       setIsLoading(false)
     }
   }, [analytics, filter])
+
+  // Load conversion data
+  useEffect(() => {
+    loadConversionData()
+  }, [period, filter, loadConversionData])
 
   // Calculate summary metrics
   const summaryData = useMemo(() => {

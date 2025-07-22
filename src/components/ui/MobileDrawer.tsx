@@ -32,9 +32,15 @@ export function MobileDrawer({ isOpen, onClose, children }: MobileDrawerProps) {
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden"
+      <button
+        className="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden border-0"
         onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            onClose();
+          }
+        }}
+        aria-label="Close menu"
       />
 
       {/* Drawer */}

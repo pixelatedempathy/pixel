@@ -1,6 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import StandardLayout from '../layouts/StandardLayout.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
 import Button from '../components/ui/Button.astro'
 ---
 
@@ -8,11 +7,15 @@ import Button from '../components/ui/Button.astro'
   title="Contact Us | Pixelated Empathy"
   description="Get in touch with the Pixelated Empathy team for inquiries, partnerships, or support."
 >
-  <StandardLayout title="Contact Us" subtitle="We'd love to hear from you">
-    <div slot="article" class="max-w-2xl mx-auto w-full">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+  <div class="max-w-4xl mx-auto py-12 px-4">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-white">Contact Us</h1>
+      <p class="text-lg text-slate-400 mt-2">We'd love to hear from you</p>
+    </div>
+    <div class="max-w-2xl mx-auto w-full">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 text-slate-300">
         <div>
-          <h2 class="text-xl font-semibold mb-4">Get in Touch</h2>
+          <h2 class="text-2xl font-semibold mb-4 text-white">Get in Touch</h2>
           <p class="mb-4">
             Have questions about our technology, interested in partnerships, or
             just want to say hello? We'd love to hear from you.
@@ -22,7 +25,7 @@ import Button from '../components/ui/Button.astro'
               <strong>Email:</strong>
               <a
                 href="mailto:info@pixelatedempathy.com"
-                class="text-gray-600 hover:underline"
+                class="text-green-400 hover:underline"
                 >info@pixelatedempathy.com</a
               >
             </p>
@@ -30,7 +33,7 @@ import Button from '../components/ui/Button.astro'
           </div>
         </div>
         <div>
-          <h2 class="text-xl font-semibold mb-4">Connect With Us</h2>
+          <h2 class="text-2xl font-semibold mb-4 text-white">Connect With Us</h2>
           <p class="mb-4">
             Follow us on social media to stay updated with our latest
             developments, research insights, and community events.
@@ -38,15 +41,15 @@ import Button from '../components/ui/Button.astro'
           <div class="flex space-x-4">
             <a
               href="https://twitter.com/pixelatedempathy"
-              class="text-gray-600 hover:text-gray-800">Twitter</a
+              class="text-slate-300 hover:text-green-400 transition-colors">Twitter</a
             >
             <a
               href="https://www.linkedin.com/company/pixelated-empathy"
-              class="text-gray-600 hover:text-gray-800">LinkedIn</a
+              class="text-slate-300 hover:text-green-400 transition-colors">LinkedIn</a
             >
             <a
               href="https://github.com/nochadisfaction/pixelated"
-              class="text-gray-600 hover:text-gray-800">GitHub</a
+              class="text-slate-300 hover:text-green-400 transition-colors">GitHub</a
             >
           </div>
         </div>

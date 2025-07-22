@@ -1,69 +1,36 @@
 ---
-import { getCollection } from 'astro:content'
-import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/blog/PostCard.astro';
+import Pagination from '@/components/blog/Pagination.astro';
 
-const allPosts = await getCollection('blog', ({ data }) => import.meta.env.PROD ? !data.draft : true)
-  .then(posts => posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()))
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection('blog', ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  });
+
+  const sortedPosts = allPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  return paginate(sortedPosts, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+const { data: posts, currentPage, totalPages, url } = page;
 ---
 
-<BaseLayout title="Blog">
-  <main class="relative max-w-5xl mx-auto px-4 py-20">
-    <!-- MODERN HERO SECTION -->
-    <section class="relative mb-16 flex flex-col items-center justify-center text-center min-h-[340px]">
-      <!-- Background illustration (abstract/tech, subtle) -->
-      <div aria-hidden="true" class="absolute inset-0 z-0 pointer-events-none">
-        <img src="/assets/hero-bg.svg" alt="" class="w-full h-full object-cover opacity-20 blur-sm scale-105" loading="eager" />
-        <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950/95" />
-      </div>
-      <div class="relative z-10 w-full flex flex-col items-center">
-        <h1 class="text-4xl lg:text-6xl font-extrabold tracking-tight text-slate-100 mb-3 animate-fade-in">
-          Inside the Therapy Training
-          <span class="block text-blue-400 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent animate-shimmer">Revolution</span>
-        </h1>
-        <p class="text-lg text-slate-300 max-w-2xl mx-auto mb-6 animate-fade-in delay-100">
-          Real stories from universities transforming therapy education.<br />Breakthrough research, student success stories, and the technology making it all possible.
-        </p>
-      </div>
-    </section>
+<BaseLayout title="Blog" description="Thoughts, stories, and ideas from the Pixelated Empathy team.">
+  <div class="container mx-auto px-4 py-16">
+    <header class="text-center mb-12">
+      <h1 class="text-5xl font-bold tracking-tight">Pixelated Empathy Blog</h1>
+      <p class="mt-4 text-lg text-muted-foreground">Thoughts, stories, and ideas from our team.</p>
+    </header>
 
-    <!-- MODERN BLOG POSTS LIST -->
-    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-      {allPosts.map(post => (
-        <li>
-          <a href={"/blog/" + post.slug} class="group block rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-blue-400/60 shadow-lg hover:shadow-xl transition-all overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-400">
-            {post.data.image?.url && (
-              <img src={post.data.image.url} alt={post.data.image.alt ?? post.data.title} class="w-full h-44 object-cover object-center opacity-90 group-hover:opacity-100 transition-opacity" loading="lazy" />
-            )}
-            <div class="p-5">
-              <h2 class="text-xl font-semibold text-slate-100 group-hover:text-blue-400 mb-1 transition-colors line-clamp-2">{post.data.title}</h2>
-              <time class="text-xs text-slate-400 mr-3">{new Date(post.data.pubDate).toLocaleDateString()}</time>
-              {post.data.category && <span class="text-xs text-blue-300 bg-blue-900/30 px-2 py-0.5 rounded ml-1">{post.data.category}</span>}
-              <p class="text-sm text-slate-300 mt-2 line-clamp-3">{post.data.description}</p>
-            </div>
-          </a>
-        </li>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {posts.map((post: CollectionEntry<'blog'>) => (
+        <PostCard post={post} />
       ))}
-    </ul>
-  </main>
+    </div>
 
-  <style>
-    @keyframes shimmer {
-      0% { background-position: -400px 0; }
-      100% { background-position: 400px 0; }
-    }
-    .animate-shimmer {
-      background-size: 200% 100%;
-      animation: shimmer 2.5s linear infinite;
-    }
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: none; }
-    }
-    .animate-fade-in {
-      animation: fade-in 1s cubic-bezier(.4,0,.2,1) both;
-    }
-    .delay-100 {
-      animation-delay: 0.1s;
-    }
-  </style>
+    <Pagination currentPage={currentPage} totalPages={totalPages} url={url} />
+  </div>
 </BaseLayout>

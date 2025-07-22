@@ -154,6 +154,15 @@ function TableHead({
         className,
       )}
       onClick={sortable ? onSort : undefined}
+      onKeyDown={sortable ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSort && onSort();
+        }
+      } : undefined}
+      tabIndex={sortable ? 0 : undefined}
+      role={sortable ? "button" : undefined}
+      aria-label={sortable ? `Sort by ${children}` : undefined}
       {...props}
     >
       {sortable ? (

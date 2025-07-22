@@ -307,7 +307,9 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
         }`}
         autoPlay
         playsInline
-      />
+      >
+        <track kind="captions" src="" label="English captions" />
+      </video>
 
       {/* Connection error or permission denied state */}
       {(hasPermissionError || !isConnected) && (
@@ -386,7 +388,9 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
           autoPlay
           playsInline
           muted
-        />
+        >
+          <track kind="captions" src="" label="English captions" />
+        </video>
       </div>
 
       {/* Privacy indicator */}

@@ -135,7 +135,7 @@ const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ className = '' }) => {
 
             {feedback.context && (
               <div className="text-xs text-gray-500 italic mb-1">
-                "{feedback.context}"
+                "                &quot;{feedback.context}&quot;"
               </div>
             )}
 
