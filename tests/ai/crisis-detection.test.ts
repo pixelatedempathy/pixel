@@ -1,4 +1,4 @@
-import { AIService } from '../../lib/ai/AIService.js';
+
 import type {
   CrisisDetectionOptions,
   CrisisDetectionResult,
@@ -39,7 +39,7 @@ describe('crisisDetectionService', () => {
     crisisService = new serviceModule.CrisisDetectionService({
       aiService: mockAIService,
     });
-// LOG: Updated dynamic imports to use relative paths
+    // LOG: Updated dynamic imports to use relative paths
 
     // Clear mocks before each test run
     vi.clearAllMocks();
@@ -214,17 +214,9 @@ describe('crisisDetectionService', () => {
       expect(results[0].isCrisis).toBe(true);
       expect(results[1].isCrisis).toBe(false);
       expect(results[2].isCrisis).toBe(true);
+      
+      // AI service should be called for each text
+      expect(mockAIService.createChatCompletion).toHaveBeenCalledTimes(3);
     });
   });
 });
-      if (results[1]) {
-        expect(results[1].isCrisis).toBe(false)
-      }
-
-      // AI service should be called only for the first text
-      expect(mockAIService.createChatCompletion).toHaveBeenCalledTimes(1)
-    })
-  })
-})
-
-// LOG: Fixed block closure at end of test file

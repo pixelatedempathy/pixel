@@ -149,11 +149,13 @@ program
           )
         }
 
+type BreachSeverity = 'low' | 'medium' | 'high' | 'critical';
+
         console.log(chalk.blue('\nBreak details:'))
         console.log(chalk.blue('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'))
         console.log(`- Type: ${chalk.yellow(options.type)}`)
         console.log(
-          `- Severity: ${getSeverityColor(options.severity as any)(options.severity)}`,
+          `- Severity: ${getSeverityColor(options.severity as BreachSeverity)(options.severity)}`,
         )
         console.log(`- Affected Users: ${chalk.yellow(userCount.toString())}`)
         console.log(`- Description: ${chalk.gray(options.description)}`)

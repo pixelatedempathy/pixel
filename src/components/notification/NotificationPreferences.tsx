@@ -16,6 +16,8 @@ import { NotificationChannel } from '@/lib/services/notification/NotificationSer
 import { cn } from '@/lib/utils'
 import React from 'react'
 
+type NotificationFrequency = 'immediate' | 'batched' | 'daily' | 'weekly'
+
 interface NotificationPreferencesProps {
   className?: string
 }
@@ -125,7 +127,7 @@ export function NotificationPreferences({
 
           <Select
             value={preferences.frequency}
-            onValueChange={(value) => updateFrequency(value as any)}
+            onValueChange={(value: NotificationFrequency) => updateFrequency(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select frequency" />

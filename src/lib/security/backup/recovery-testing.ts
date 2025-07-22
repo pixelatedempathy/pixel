@@ -141,19 +141,32 @@ export class RecoveryTestingManager {
   /**
    * Internal initialization method
    */
+interface TestCaseConfig {
+  name: string;
+  description: string;
+  backupType: string;
+  dataVerification: Array<{
+    type: VerificationMethod;
+    target: string;
+    expected?: string | number | boolean;
+    query?: string;
+    threshold?: number;
+  }>;
+}
+
   private initialize(): void {
     if (!this.config.testCases || this.config.testCases.length === 0) {
       this.loadDefaultTestCases()
     } else {
-      this.config.testCases.forEach((tc: any) => {
+      this.config.testCases.forEach((tc: TestCaseConfig) => {
         const testCase: TestCase = {
           id: generateUUID(),
           name: tc.name,
           description: tc.description,
           backupType: tc.backupType,
-          verificationSteps: tc.dataVerification.map((dv: any) => ({
+          verificationSteps: tc.dataVerification.map((dv) => ({
             id: generateUUID(),
-            type: dv.type as VerificationMethod,
+            type: dv.type,
             target: dv.target,
             expected: dv.expected,
           })),
@@ -190,15 +203,15 @@ export class RecoveryTestingManager {
         this.testCases.clear()
 
         // Load provided test cases
-        config.testCases.forEach((tc: any) => {
+        config.testCases.forEach((tc: TestCaseConfig) => {
           const testCase: TestCase = {
             id: generateUUID(),
             name: tc.name,
             description: tc.description,
             backupType: tc.backupType,
-            verificationSteps: tc.dataVerification.map((dv: any) => ({
+            verificationSteps: tc.dataVerification.map((dv) => ({
               id: generateUUID(),
-              type: dv.type as VerificationMethod,
+              type: dv.type,
               target: dv.target,
               expected: dv.expected,
             })),
@@ -699,9 +712,7 @@ interface TestEnvironment {
 class DockerTestEnvironment implements TestEnvironment {
   // private config: Record<string, unknown>
 
-  constructor(/* config: Record<string, unknown> */) {
-    // this.config = config
-  }
+  
 
   async initialize(): Promise<void> {
     logger.info('Initializing Docker test environment')
@@ -745,9 +756,7 @@ class DockerTestEnvironment implements TestEnvironment {
 class KubernetesTestEnvironment implements TestEnvironment {
   // private config: Record<string, unknown>
 
-  constructor(/* config: Record<string, unknown> */) {
-    // this.config = config
-  }
+  
 
   async initialize(): Promise<void> {
     logger.info('Initializing Kubernetes test environment')
@@ -791,9 +800,7 @@ class KubernetesTestEnvironment implements TestEnvironment {
 class VMTestEnvironment implements TestEnvironment {
   // private config: Record<string, unknown>
 
-  constructor(/* config: Record<string, unknown> */) {
-    // this.config = config
-  }
+  
 
   async initialize(): Promise<void> {
     logger.info('Initializing VM test environment')
@@ -838,9 +845,7 @@ class SandboxTestEnvironment implements TestEnvironment {
   // private config: Record<string, unknown>
   private restoredData: Map<string, Uint8Array> = new Map()
 
-  constructor(/* config: Record<string, unknown> */) {
-    // this.config = config
-  }
+  
 
   async initialize(): Promise<void> {
     logger.info('Initializing sandbox test environment')
@@ -913,7 +918,13 @@ class SandboxTestEnvironment implements TestEnvironment {
             result = 'query result'
           }
 
-          const ret: any = {
+          const ret: {
+            step: string;
+            passed: boolean;
+            actual: number | string | boolean;
+            expected?: string | number | boolean;
+            details: { query: string };
+          } = {
             step: step.id,
             passed: !step.expected || result === step.expected,
             actual: result,

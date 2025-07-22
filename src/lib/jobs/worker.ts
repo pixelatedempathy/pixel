@@ -82,48 +82,57 @@ const jobsWorker = {
         startedAt: new Date().toISOString(),
       })
 
+      // Declare variables outside of case blocks to avoid no-case-declarations issues
+      let sessions: any[];
+      let user: any;
+      let request: any;
+      let timeRange: any;
+      let options: any;
+      let results: any;
+      let report: any;
+
       switch (job.type) {
         case 'bias-analysis-batch':
           // Assuming payload contains { sessions: TherapeuticSession[], user: any, request: any }
-          const { sessions, user, request } = job.payload as {
+          ({ sessions, user, request } = job.payload as {
             sessions: any[]
             user: any
             request: any
-          }
-          const results = await biasDetectionEngine.analyzeSessionsBatch(
+          });
+          results = await biasDetectionEngine.analyzeSessionsBatch(
             sessions,
             user,
             request,
-          )
+          );
           await jobQueue.updateJobStatus(job.id, JobStatus.COMPLETED, {
             result: results,
             completedAt: new Date().toISOString(),
-          })
-          break
+          });
+          break;
         case 'report-generation':
           // Assuming payload contains { sessions: TherapeuticSession[], timeRange: any, options: any }
-          const {
-            sessions: reportSessions,
-            timeRange,
-            options,
-          } = job.payload as { sessions: any[]; timeRange: any; options: any }
-          const report = await (
+          ({ sessions: sessions, timeRange, options } = job.payload as { 
+            sessions: any[]; 
+            timeRange: any; 
+            options: any 
+          });
+          report = await (
             biasDetectionEngine as any
-          )._generateBiasReportInternal(reportSessions, timeRange, options)
+          )._generateBiasReportInternal(sessions, timeRange, options);
           await jobQueue.updateJobStatus(job.id, JobStatus.COMPLETED, {
             result: report,
             completedAt: new Date().toISOString(),
-          })
-          break
+          });
+          break;
         // TODO: Add other job types as needed (e.g., data-cleanup, metric-aggregation)
         default:
-          throw new Error(`Unknown job type: ${job.type}`)
+          throw new Error(`Unknown job type: ${job.type}`);
       }
     } catch (error) {
       await jobQueue.updateJobStatus(job.id, JobStatus.FAILED, {
         error: error instanceof Error ? error.message : String(error),
         completedAt: new Date().toISOString(),
-      })
+      });
     }
   },
 }

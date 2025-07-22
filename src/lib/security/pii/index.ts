@@ -354,6 +354,30 @@ class PIIDetectionService {
     }
   }
 
+interface FHEService {
+  isInitialized(): boolean;
+  processEncrypted(
+    text: string,
+    operation: FHEOperation,
+    options: {
+      operation: string;
+      threshold: number;
+      patterns: string[];
+    }
+  ): Promise<{
+    data: {
+      hasPII: string;
+      confidence: string;
+      types: string;
+      redacted?: string;
+    };
+    metadata: {
+      operation: FHEOperation;
+      timestamp: number;
+    };
+  }>;
+}
+
   /**
    * Detect PII in encrypted text using FHE
    */
@@ -362,12 +386,13 @@ class PIIDetectionService {
   ): Promise<PIIDetectionResult> {
     try {
       // Ensure FHE service is available
-      if (!(fheService as any).isInitialized?.()) {
-        throw new Error('FHE service not initialized')
+      const fheServiceTyped = fheService as FHEService;
+      if (!fheServiceTyped.isInitialized()) {
+        throw new Error('FHE service not initialized');
       }
 
       // Process encrypted data using FHE operations
-      const result = (await (fheService as any).processEncrypted?.(
+      const result = await fheServiceTyped.processEncrypted(
         encryptedText,
         FHEOperation.ANALYZE,
         {
@@ -377,7 +402,7 @@ class PIIDetectionService {
             .flat()
             .map((p) => p.source),
         },
-      )) || {
+      ); {
         data: { hasPII: 'false', confidence: '0', types: '' },
         metadata: { operation: FHEOperation.ANALYZE, timestamp: Date.now() },
       }

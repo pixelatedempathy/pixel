@@ -188,8 +188,9 @@ describe('DLP Service', () => {
     it('should generate alerts for BLOCK_AND_ALERT actions', () => {
       // Add a spy to check if the alert method is called
       type DlpServiceType = typeof dlpService
+      type GenerateSecurityAlertFn = (userId: string, action: string, content: string, ruleName: string) => void;
       const alertSpy = vi.spyOn(
-        dlpService as DlpServiceType & { generateSecurityAlert: Function },
+        dlpService as DlpServiceType & { generateSecurityAlert: GenerateSecurityAlertFn },
         'generateSecurityAlert',
       )
 
@@ -308,8 +309,9 @@ describe('DLP Service', () => {
   describe('Audit Logging', () => {
     it('should log allowed events with DLP_ALLOWED type', () => {
       type DlpServiceType = typeof dlpService
+      type LogDLPEventFn = (event: { userId: string; action: string; allowed: boolean; [key: string]: any }) => void;
       const logSpy = vi.spyOn(
-        dlpService as DlpServiceType & { logDLPEvent: Function },
+        dlpService as DlpServiceType & { logDLPEvent: LogDLPEventFn },
         'logDLPEvent',
       )
 
@@ -329,8 +331,9 @@ describe('DLP Service', () => {
 
     it('should log blocked events with DLP_BLOCKED type', () => {
       type DlpServiceType = typeof dlpService
+      type LogDLPEventFn = (event: { userId: string; action: string; allowed: boolean; [key: string]: any }) => void;
       const logSpy = vi.spyOn(
-        dlpService as DlpServiceType & { logDLPEvent: Function },
+        dlpService as DlpServiceType & { logDLPEvent: LogDLPEventFn },
         'logDLPEvent',
       )
 

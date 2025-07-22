@@ -22,9 +22,6 @@ import remarkGenerateOgImage from './remark-generate-og-image'
 import remarkImageContainer from './remark-image-container'
 import remarkReadingTime from './remark-reading-time'
 
-type RemarkPlugins = unknown[]
-type RehypePlugins = unknown[]
-
 export const remarkPlugins: RemarkPlugins = [
   // https://github.com/remarkjs/remark-directive
   remarkDirective,

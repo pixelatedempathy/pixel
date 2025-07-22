@@ -44,12 +44,12 @@ if (SKIP_FHE_TESTS) {
 }
 
 // Mock implementations for testing
-class Encryption {
-  static encrypt(data: string, key: string, version = 1): string {
+const Encryption = {
+  encrypt(data: string, key: string, version = 1): string {
     return `v${version}:${key}:${data}`
-  }
+  },
 
-  static decrypt(encrypted: string, key: string): string {
+  decrypt(encrypted: string, key: string): string {
     const parts = encrypted.split(':')
     if (parts.length < 3 || parts[1] !== key) {
       throw new Error('Failed to decrypt data')
@@ -306,9 +306,7 @@ interface ExtendedFHESystem {
 // Function to obfuscate test keys to avoid gitleaks detection
 // while still having usable test values
 function getTestKey(id = '') {
-  return (
-    `test-${id}-` + `mock-key-${new Date().getTime().toString().substring(5)}`
-  )
+  return `test-${id}-mock-key-${new Date().getTime().toString().substring(5)}`
 }
 
 // Near the top of the file, add this type definition

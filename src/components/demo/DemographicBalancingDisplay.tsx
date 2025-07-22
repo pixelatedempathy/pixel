@@ -241,7 +241,7 @@ const DemographicBalancingDisplay: React.FC<
     demographicTargets.age, 
     demographicTargets.gender, 
     demographicTargets.background, 
-    demographicTargets.occupation
+    demographicTargets.occupation, currentStats
   ])
 
   const getBalanceColor = (percentage: number) => {

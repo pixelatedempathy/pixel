@@ -333,7 +333,6 @@ export default function RealTimeFeedbackPanel({
                     aria-expanded={
                       expandedFeedback === `${item.timestamp}-${index}`
                     }
-                    className="w-full text-left"
                   >
                     <div className="flex justify-between items-start gap-2">
                       <div className="flex items-start gap-2">

@@ -20,12 +20,21 @@ import {
 
 // Types
 interface ConversionEvent {
-  conversionId: string
-  value?: number
-  timestamp: number
-  path?: string
-  source?: string
-  [key: string]: any
+  conversionId: string;
+  value?: number;
+  timestamp: number;
+  path?: string;
+  source?: string;
+  // Additional optional properties for conversion events
+  category?: string;
+  userId?: string;
+  metadata?: Record<string, string | number | boolean>;
+  tags?: string[];
+  deviceInfo?: {
+    type: string;
+    browser: string;
+    os: string;
+  };
 }
 
 export function ConversionDashboard() {
@@ -421,7 +430,7 @@ export function ConversionDashboard() {
                               <div className="flex items-end space-x-1 h-8">
                                 {summary.trend.map((value, i) => (
                                   <div
-                                    key={i}
+                                    key={`trend-${summary.name}-${i}-${value}`}
                                     className="bg-primary rounded-sm w-full"
                                     style={{
                                       height: `${Math.max(20, (value / Math.max(...summary.trend)) * 100)}%`,
@@ -643,9 +652,9 @@ export function ConversionDashboard() {
                             </tr>
                           </thead>
                           <tbody>
-                            {conversionEvents.map((event, index) => (
+                            {conversionEvents.map((event) => (
                               <tr
-                                key={index}
+                                key={`event-${event.conversionId}-${event.timestamp}`}
                                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                               >
                                 <td className="px-6 py-4">

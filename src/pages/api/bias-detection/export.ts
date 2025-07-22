@@ -271,9 +271,16 @@ function exportAsPDF(data: unknown): Response {
     data && typeof data === 'object' && 'alerts' in data
       ? (data.alerts as CsvAlert[])
       : []
+  interface DemographicsData {
+    breakdown: DemographicGroup[];
+    totalParticipants?: number;
+    timeRange?: string;
+    lastUpdated?: string;
+  }
+
   const demographics =
     data && typeof data === 'object' && 'demographics' in data
-      ? (data.demographics as Record<string, any>)
+      ? (data.demographics as DemographicsData)
       : { breakdown: [] }
 
   const htmlContent = `

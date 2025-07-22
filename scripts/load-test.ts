@@ -276,7 +276,23 @@ class LoadTestService {
     await this.saveReport(report)
   }
 
-  private async saveReport(report: any): Promise<void> {
+interface LoadTestReport {
+  timestamp: string;
+  config: LoadTestConfig;
+  statistics: {
+    totalRequests: number;
+    successfulRequests: number;
+    failedRequests: number;
+    successRate: number;
+    scenarioStats: Record<string, number[]>;
+    errors: Array<{
+      scenario: string;
+      error?: string;
+    }>;
+  };
+}
+
+  private async saveReport(report: LoadTestReport): Promise<void> {
     const reportDir = './reports'
     const reportPath = `${reportDir}/load-test-${Date.now()}.json`
 

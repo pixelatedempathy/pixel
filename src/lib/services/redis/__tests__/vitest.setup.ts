@@ -19,11 +19,8 @@ declare global {
 // Extend Vi.Assertion interface
 declare module 'vitest' {
   interface Assertion extends ViAssertion {}
-}
-    }
-    // Ensure we're not accidentally using JestAssertion
-    type AsymmetricMatchersContaining = Assertion
-  }
+  // Ensure we're not accidentally using JestAssertion
+  type AsymmetricMatchersContaining = Assertion
 }
 
 export {}

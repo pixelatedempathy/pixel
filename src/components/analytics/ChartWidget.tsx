@@ -102,10 +102,9 @@ export function ChartWidget({
           const config = createChartConfig(chartType, labels, series)
 
           // Create and store the chart with proper type casting
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const newChart = new ChartJS.Chart(
             ctx,
-            config as any,
+            config as ChartJS.ChartConfiguration,
           ) as ChartInstance
           setChart(newChart)
         }

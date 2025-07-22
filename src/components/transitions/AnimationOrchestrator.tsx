@@ -101,7 +101,7 @@ export function AnimationOrchestrator({
         animate: {
           ...baseVariants.animate,
           transition: {
-            ...((baseVariants.animate as any).transition || {}),
+            ...((baseVariants.animate as Record<string, unknown>).transition || {}),
             staggerChildren: staggerDelay,
           },
         },
@@ -139,7 +139,9 @@ export function AnimationOrchestrator({
     onAnimationComplete?.()
   }, [onAnimationComplete])
 
-  const Component = motion[as] as any
+  const Component = motion[as] as React.ComponentType<
+    React.ComponentProps<typeof motion.div>
+  >
 
   return (
     <Component

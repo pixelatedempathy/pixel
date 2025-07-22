@@ -111,9 +111,9 @@ export interface IRedisService {
     start: number,
     stop: number,
     withScores?: string,
-  ) => Promise<any[]>
+  ) => Promise<string[] | Array<{score: string, member: string}>>
   /** Pop minimum scoring member from sorted set */
-  zpopmin: (key: string) => Promise<any[]>
+  zpopmin: (key: string) => Promise<Array<{score: string, member: string}>>
   /** Get sorted set cardinality */
   zcard: (key: string) => Promise<number>
   

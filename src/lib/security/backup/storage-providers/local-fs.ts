@@ -6,6 +6,22 @@
  */
 
 import type { StorageProviderConfig } from '../backup-types'
+import type { Dirent } from 'fs'
+
+interface FileSystem {
+  mkdir: (path: string, options?: { recursive?: boolean }) => Promise<void>;
+  readdir: (path: string, options: { withFileTypes: true }) => Promise<Dirent[]>;
+  writeFile: (path: string, data: Uint8Array) => Promise<void>;
+  readFile: (path: string) => Promise<Buffer>;
+  access: (path: string) => Promise<void>;
+  unlink: (path: string) => Promise<void>;
+}
+
+interface PathModule {
+  join: (...paths: string[]) => string;
+  dirname: (path: string) => string;
+  relative: (from: string, to: string) => string;
+}
 
 export interface StorageProvider {
   initialize(): Promise<void>
@@ -13,39 +29,54 @@ export interface StorageProvider {
 }
 
 export class LocalFileSystemProvider implements StorageProvider {
-  private basePath: string
-  private fs: any
-  private path: any
-  private initialized = false
+  private basePath: string;
+  private fs: FileSystem | null = null;
+  private path: PathModule | null = null;
+  private initialized = false;
 
   constructor(private config: StorageProviderConfig) {
-    this.basePath = (config.path as string) || ''
+    this.basePath = (config.path as string) || '';
     if (!this.basePath) {
-      throw new Error('Path is required for local filesystem storage provider')
+      throw new Error('Path is required for local filesystem storage provider');
     }
   }
 
   async initialize(): Promise<void> {
     try {
       // Dynamically import Node.js modules to prevent bundling with client code
-      this.fs = await import('fs/promises')
-      this.path = await import('path')
+      const fsModule = await import('fs/promises');
+      const pathModule = await import('path');
+
+      this.fs = {
+        mkdir: fsModule.mkdir,
+        readdir: fsModule.readdir,
+        writeFile: fsModule.writeFile,
+        readFile: fsModule.readFile,
+        access: fsModule.access,
+        unlink: fsModule.unlink,
+      };
+
+      this.path = {
+        join: pathModule.join,
+        dirname: pathModule.dirname,
+        relative: pathModule.relative,
+      };
 
       // Create base directory if it doesn't exist
-      await this.fs.mkdir(this.basePath, { recursive: true })
+      await this.fs.mkdir(this.basePath, { recursive: true });
 
-      this.initialized = true
+      this.initialized = true;
       console.info(
         `Local filesystem storage provider initialized with base path: ${this.basePath}`,
-      )
+      );
     } catch (error) {
       console.error(
         'Failed to initialize local filesystem storage provider:',
         error,
-      )
+      );
       throw new Error(
         `Local filesystem initialization failed: ${error instanceof Error ? error.message : String(error)}`,
-      )
+      );
     }
   }
 
@@ -160,17 +191,17 @@ export class LocalFileSystemProvider implements StorageProvider {
 
   // Helper method to list files recursively
   private async listFilesRecursively(dir: string): Promise<string[]> {
-    const entries = await this.fs.readdir(dir, { withFileTypes: true })
+    const entries = await this.fs!.readdir(dir, { withFileTypes: true });
 
     const files = await Promise.all(
-      entries.map(async (entry: any) => {
-        const fullPath = this.path.join(dir, entry.name)
+      entries.map(async (entry: Dirent) => {
+        const fullPath = this.path!.join(dir, entry.name);
         return entry.isDirectory()
           ? await this.listFilesRecursively(fullPath)
-          : fullPath
+          : fullPath;
       }),
-    )
+    );
 
-    return files.flat()
+    return files.flat();
   }
 }

@@ -17,6 +17,15 @@ interface PerformanceReport {
   modelDistribution: Record<string, number>
 }
 
+interface PerformanceMetric {
+  success: boolean;
+  cached: boolean;
+  latency: number;
+  errorCode?: string;
+  model: string;
+  totalTokens?: number;
+}
+
 async function generateReport(days = 7): Promise<PerformanceReport> {
   // TODO: Replace with proper performance metrics implementation
   // const performanceLogger = PerformanceLogger.getInstance()
@@ -29,7 +38,7 @@ async function generateReport(days = 7): Promise<PerformanceReport> {
   //   start: startDate,
   //   end: endDate,
   // })
-  const metrics: any[] = [] // Temporary empty array
+  const metrics: PerformanceMetric[] = [] // Temporary empty array
 
   // Calculate metrics
   const totalRequests = metrics.length

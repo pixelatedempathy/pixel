@@ -68,7 +68,7 @@ export const SimulationControls: React.FC<SimulationControlsProps> = ({
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .simulation-controls {
           background-color: rgba(0, 0, 0, 0.05);
           border-radius: 8px;

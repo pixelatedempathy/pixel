@@ -178,7 +178,7 @@ const DashboardVisualTestUtils = {
         body: JSON.stringify(data),
       })
     })
-  }
+  },
 
   static async waitForDashboardLoad(page: Page) {
     // Wait for dashboard container to be visible

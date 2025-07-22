@@ -1,4 +1,4 @@
-import Scene from "@/components/ui/rubik-s-cube";
+import Scene from "@/components/ui/rubiks-cube";
 
 const DemoOne = () => {
   return (

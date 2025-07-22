@@ -76,7 +76,7 @@ export default function RealTimePrompts({
           <div
             key={prompt}
             className={cn(
-              'p-3 rounded-md border text-sm cursor-pointer transition-colors',
+              'px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer mb-2 text-left',
               selectedPrompt === index
                 ? 'bg-blue-50 border-blue-200 text-blue-700'
                 : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50',
@@ -90,10 +90,9 @@ export default function RealTimePrompts({
             }}
             tabIndex={0}
             aria-pressed={selectedPrompt === index}
-            className="px-3 py-2 text-sm bg-white border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer mb-2 text-left"
           >
             {prompt}
-          </button>
+          </div>
         ))}
       </div>
     </div>

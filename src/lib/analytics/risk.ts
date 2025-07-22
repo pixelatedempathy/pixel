@@ -39,9 +39,6 @@ export interface RiskAssessment {
 }
 
 /**
- * Interface for breach data
- */
-/**
  * Risk factor interface with dynamic scoring
  */
 export interface RiskFactor {
@@ -418,11 +415,3 @@ function calculateVariance(numbers: number[]): number {
     }, 0) / numbers.length
   )
 }
-
-// Example PHI audit logging - uncomment and customize as needed
-// logger.info('Accessing PHI data', {
-//   userId: 'user-id-here',
-//   action: 'read',
-//   dataType: 'patient-record',
-//   recordId: 'record-id-here'
-// })

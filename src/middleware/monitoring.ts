@@ -14,11 +14,18 @@ export interface RequestMetrics {
   userId?: string
 }
 
+interface MiddlewareContext {
+  url: URL;
+  request: Request;
+}
+
+type NextFunction = () => Promise<Response>;
+
 /**
  * Monitoring middleware for Astro
  * Tracks requests, performance, and errors
  */
-export async function monitoringMiddleware(context: any, next: any) {
+export async function monitoringMiddleware(context: MiddlewareContext, next: NextFunction) {
   const startTime = Date.now()
   const {url} = context
   const {method} = context.request

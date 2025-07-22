@@ -12,7 +12,7 @@ import { Anonymizer as PHIAnonymizer } from './phiDetection'
 import { createPrivacyHash } from '../../simulator/utils/privacy'
 
 // Types
-export interface AnonymizationResult<T = any> {
+export interface AnonymizationResult<T = Record<string, unknown> | string> {
   anonymized: T
   summary: {
     redactedFields: string[]
@@ -40,10 +40,10 @@ function isRecord(obj: unknown): obj is Record<string, unknown> {
  * @param input - Text or object to anonymize
  * @param options - Anonymization options
  */
-export async function anonymizeData<T = any>(
-  input: string | T,
+export async function anonymizeData<T extends Record<string, unknown> | string>(
+  input: T,
   options: AnonymizationOptions = {},
-): Promise<AnonymizationResult<T | string>> {
+): Promise<AnonymizationResult<T>> {
   const timestamp = Date.now()
   const auditId = createPrivacyHash(`${timestamp}_${Math.random()}`)
   let summary: AnonymizationResult['summary'] = {

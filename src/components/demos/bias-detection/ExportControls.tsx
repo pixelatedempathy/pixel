@@ -344,8 +344,9 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
 
         <div className="space-y-3">
           {/* Analysis Results */}
-          <label className="flex items-center">
+          <label className="flex items-center" htmlFor="include-analysis">
             <input
+              id="include-analysis"
               type="checkbox"
               checked={includeComponents.analysis}
               onChange={(e) =>
@@ -367,8 +368,9 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
           </label>
 
           {/* Counterfactual Scenarios */}
-          <label className="flex items-center">
+          <label className="flex items-center" htmlFor="include-counterfactual">
             <input
+              id="include-counterfactual"
               type="checkbox"
               checked={includeComponents.counterfactual}
               onChange={(e) =>
@@ -390,8 +392,9 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
           </label>
 
           {/* Historical Comparison */}
-          <label className="flex items-center">
+          <label className="flex items-center" htmlFor="include-historical">
             <input
+              id="include-historical"
               type="checkbox"
               checked={includeComponents.historical}
               onChange={(e) =>
@@ -418,8 +421,9 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
           </label>
 
           {/* Recommendations */}
-          <label className="flex items-center">
+          <label className="flex items-center" htmlFor="include-recommendations">
             <input
+              id="include-recommendations"
               type="checkbox"
               checked={includeComponents.recommendations}
               onChange={(e) =>
@@ -439,8 +443,9 @@ export const ExportControls: React.FC<ExportControlsProps> = ({
           </label>
 
           {/* Demographics */}
-          <label className="flex items-center">
+          <label className="flex items-center" htmlFor="include-demographics">
             <input
+              id="include-demographics"
               type="checkbox"
               checked={includeComponents.demographics}
               onChange={(e) =>

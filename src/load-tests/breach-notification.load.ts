@@ -6,6 +6,20 @@ import http from 'k6/http'
 import { Counter, Rate, Trend } from 'k6/metrics'
 import type { RefinedResponse } from 'k6/http'
 
+// Define response types for better type safety
+interface BreachResponse {
+  id: string;
+  status: string;
+  notificationStatus: string;
+  [key: string]: unknown;
+}
+
+interface NotificationResponse {
+  totalNotifications: number;
+  deliveredNotifications: number;
+  [key: string]: unknown;
+}
+
 // Since k6 doesn't support Node.js modules, we simulate PHI audit logging
 // by sending an HTTP request to a logging endpoint
 function simulatePHIAuditLog() {
@@ -158,8 +172,8 @@ export default function () {
 
   // Check if breach creation was successful
   const success = check(createResponse, {
-    'breach created successfully': (r: RefinedResponse<any>) => r.status === 200,
-    'has breach ID': (r: RefinedResponse<any>) => r.json('id') !== undefined,
+    'breach created successfully': (r: RefinedResponse<unknown>) => r.status === 200,
+    'has breach ID': (r: RefinedResponse<unknown>) => r.json('id') !== undefined,
   })
 
   if (!success) {
@@ -198,9 +212,9 @@ export default function () {
     )
 
     check(notificationResponse, {
-      'notifications sent successfully': (r: RefinedResponse<any>) => r.status === 200,
-      'all notifications delivered': (r: RefinedResponse<any>) => {
-        const data = r.json()
+      'notifications sent successfully': (r: RefinedResponse<unknown>) => r.status === 200,
+      'all notifications delivered': (r: RefinedResponse<unknown>) => {
+        const data = r.json() as NotificationResponse
         return (
           data.totalNotifications === breachDetails.affectedUsers.length &&
           data.deliveredNotifications === breachDetails.affectedUsers.length
@@ -226,7 +240,7 @@ export function setup() {
   )
 
   check(response, {
-    'test environment setup successfully': (r: RefinedResponse<any>) => r.status === 200,
+    'test environment setup successfully': (r: RefinedResponse<unknown>) => r.status === 200,
   })
 
   return response.json()
@@ -243,6 +257,6 @@ export function teardown(data: { testRunId: string }) {
   )
 
   check(response, {
-    'test environment cleaned up successfully': (r: RefinedResponse<any>) => r.status === 200,
+    'test environment cleaned up successfully': (r: RefinedResponse<unknown>) => r.status === 200,
   })
 }

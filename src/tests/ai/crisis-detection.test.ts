@@ -188,15 +188,10 @@ describe('crisisDetectionService', () => {
           expect.objectContaining({
             role: 'user',
             content: expect.stringContaining(
-              "I can't take it anymore. I'm thinking of ending it all tonight.",
+              "I can't take it anymore. I'm thinking of ending it all tonight."
             ),
-        { sensitivityLevel: 'high' }
-                    {
-            role: 'user',
-            content: expect.stringContaining('high sensitivity'),
             sensitivityLevel: 'high'
-          }
-          }),
+          })
         ]),
         expect.objectContaining({ model: 'test-model' }),
       )

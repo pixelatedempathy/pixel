@@ -85,10 +85,11 @@ export const PresetScenarioSelector: React.FC<PresetScenarioSelectorProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Category Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-1">
               Category
             </label>
             <select
+              id="category-filter"
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
               disabled={disabled}
@@ -105,10 +106,11 @@ export const PresetScenarioSelector: React.FC<PresetScenarioSelectorProps> = ({
 
           {/* Risk Level Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="risk-level-filter" className="block text-sm font-medium text-gray-700 mb-1">
               Risk Level
             </label>
             <select
+              id="risk-level-filter"
               value={filterRiskLevel}
               onChange={(e) => setFilterRiskLevel(e.target.value)}
               disabled={disabled}
@@ -133,9 +135,9 @@ export const PresetScenarioSelector: React.FC<PresetScenarioSelectorProps> = ({
       {/* Scenario List */}
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {filteredScenarios.map((scenario) => (
-          <div
+          <button
             key={scenario.id}
-            className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+            className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md w-full text-left ${
               selectedScenario?.id === scenario.id
                 ? 'border-blue-500 bg-blue-50'
                 : 'border-gray-200 hover:border-gray-300'
@@ -148,7 +150,6 @@ export const PresetScenarioSelector: React.FC<PresetScenarioSelectorProps> = ({
               }
             }}
             tabIndex={disabled ? -1 : 0}
-            role="button"
             aria-label={`Select scenario: ${scenario.title}`}
             aria-disabled={disabled}
             onMouseEnter={() => setPreviewScenario(scenario)}

@@ -67,7 +67,7 @@ interface Breach {
 }
 
 const ANALYTICS_KEY_PREFIX = 'analytics:breach:'
-const PREDICTION_WINDOW = 7 * 24 * 60 * 60 * 1000 // 7 days
+ // 7 days
 const TREND_INTERVAL = 24 * 60 * 60 * 1000 // 1 day
 
 function getAnalyticsKey(metric: string, timestamp: number): string {

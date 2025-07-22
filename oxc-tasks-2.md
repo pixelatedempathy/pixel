@@ -322,30 +322,30 @@
 
 ### `no-useless-concat`
 
-- [ ] `src/tests/crypto.test.ts:310:5`: Unexpected string concatenation of literals.
+- [x] `src/tests/crypto.test.ts:310:5`: Unexpected string concatenation of literals.
 
 ### `no-unsafe-function-type`
 
-- [ ] `src/lib/security/__tests__/dlp.test.ts:192:65`: The `Function` type accepts any function-like value.
-- [ ] `src/lib/security/__tests__/dlp.test.ts:312:55`: The `Function` type accepts any function-like value.
-- [ ] `src/lib/security/__tests__/dlp.test.ts:333:55`: The `Function` type accepts any function-like value.
+- [x] `src/lib/security/__tests__/dlp.test.ts:192:65`: The `Function` type accepts any function-like value.
+- [x] `src/lib/security/__tests__/dlp.test.ts:312:55`: The `Function` type accepts any function-like value.
+- [x] `src/lib/security/__tests__/dlp.test.ts:333:55`: The `Function` type accepts any function-like value.
 
 ### `no-case-declarations`
 
-- [ ] `src/lib/jobs/worker.ts:88:11`: Unexpected lexical declaration in case block.
-- [ ] `src/lib/jobs/worker.ts:93:11`: Unexpected lexical declaration in case block.
-- [ ] `src/lib/jobs/worker.ts:105:11`: Unexpected lexical declaration in case block.
-- [ ] `src/lib/jobs/worker.ts:110:11`: Unexpected lexical declaration in case block.
+- [x] `src/lib/jobs/worker.ts:88:11`: Unexpected lexical declaration in case block.
+- [x] `src/lib/jobs/worker.ts:93:11`: Unexpected lexical declaration in case block.
+- [x] `src/lib/jobs/worker.ts:105:11`: Unexpected lexical declaration in case block.
+- [x] `src/lib/jobs/worker.ts:110:11`: Unexpected lexical declaration in case block.
 
 ### Syntax Errors
 
-- [ ] `tests/ai/crisis-detection.test.ts:226:5`: Unexpected token
-- [ ] `src/tests/ai/crisis-detection.test.ts:193:9`: Unexpected token
-- [ ] `src/components/admin/backup/BackupRecoveryTab.tsx:206:16`: Unterminated regular expression
-- [ ] `src/components/admin/backup/BackupRecoveryTab.tsx:124:6`: Expected corresponding JSX closing tag for 'div'.
-- [ ] `plugins/index.ts:4:6`: Identifier `RemarkPlugins` has already been declared
-- [ ] `plugins/index.ts:5:6`: Identifier `RehypePlugins` has already been declared
-- [ ] `src/lib/analytics/risk.ts:26:1`: Unexpected token
+- [x] `tests/ai/crisis-detection.test.ts:226:5`: Unexpected token
+- [x] `src/tests/ai/crisis-detection.test.ts:193:9`: Unexpected token
+- [x] `src/components/admin/backup/BackupRecoveryTab.tsx:206:16`: Unterminated regular expression
+- [x] `src/components/admin/backup/BackupRecoveryTab.tsx:124:6`: Expected corresponding JSX closing tag for 'div'.
+- [x] `plugins/index.ts:4:6`: Identifier `RemarkPlugins` has already been declared
+- [x] `plugins/index.ts:5:6`: Identifier `RehypePlugins` has already been declared
+- [x] `src/lib/analytics/risk.ts:26:1`: Unexpected token
 
 ## Plan of Action
 
