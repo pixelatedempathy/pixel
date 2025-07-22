@@ -1,93 +1,44 @@
 import type { WebSocket } from 'ws'
 import { redis } from '@/lib/redis'
-
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+import {
+  type Event,
+  type EventData,
+  type Metric,
+  type RedisClient,
+  type AnalyticsServiceOptions,
+  type EventQueryOptions,
+  type MetricQueryOptions,
+  type AnalyticsWebSocketMessage,
+  EventType,
+  EventDataSchema,
+  EventSchema,
+  MetricSchema,
+  isEvent,
+  isMetric,
+  isValidEventJson,
+  isValidMetricJson,
+  ValidationError,
+  ProcessingError,
+} from './analytics-types'
 
 // Use a meaningful component name so log lines are attributable
 const logger = createBuildSafeLogger('analytics')
-import { z } from 'zod'
-
-// Event type definitions
-export enum EventType {
-  PAGE_VIEW = 'page_view',
-  USER_ACTION = 'user_action',
-  THERAPY_SESSION = 'therapy_session',
-  NOTIFICATION = 'notification',
-  ERROR = 'error',
-  SECURITY = 'security',
-  PERFORMANCE = 'performance',
-  CUSTOM = 'custom',
-}
-
-export enum EventPriority {
-  LOW = 'low',
-  NORMAL = 'normal',
-  HIGH = 'high',
-  CRITICAL = 'critical',
-}
-
-// Schema definitions
-const EventDataSchema = z.object({
-  type: z.nativeEnum(EventType),
-  priority: z.nativeEnum(EventPriority).default(EventPriority.NORMAL),
-  userId: z.string().optional(),
-  sessionId: z.string().optional(),
-  timestamp: z.number().default(() => Date.now()),
-  properties: z.record(z.unknown()).default({}),
-  metadata: z.record(z.unknown()).default({}),
-})
-
-export type EventData = z.infer<typeof EventDataSchema>
-
-const _EventSchema = EventDataSchema.extend({
-  id: z.string(),
-  processedAt: z.number().optional(),
-  error: z.string().optional(),
-})
-
-export type Event = z.infer<typeof _EventSchema>
-
-const MetricSchema = z.object({
-  name: z.string(),
-  value: z.number(),
-  timestamp: z.number().default(() => Date.now()),
-  tags: z.record(z.string()).default({}),
-})
-
-export type Metric = z.infer<typeof MetricSchema>
-
-interface RedisClient {
-  lpush(key: string, value: string): Promise<void>;
-  lrange(key: string, start: number, stop: number): Promise<string[]>;
-  lrem(key: string, count: number, value: string): Promise<void>;
-  zadd(key: string, score: number, member: string): Promise<void>;
-  zrangebyscore(key: string, min: number | string, max: number | string, ...args: string[]): Promise<string[]>;
-  zremrangebyscore(key: string, min: number, max: number): Promise<void>;
-  hset(key: string, field: string, value: string): Promise<void>;
-  keys(pattern: string): Promise<string[]>;
-}
 
 /**
  * Analytics service for tracking events and metrics with HIPAA compliance
  */
 export class AnalyticsService {
-  private readonly wsClients: Map<string, WebSocket>;
-  private readonly retentionDays: number;
-  private readonly batchSize: number;
-  private readonly redisClient: RedisClient;
+  private readonly wsClients: Map<string, WebSocket>
+  private readonly retentionDays: number
+  private readonly batchSize: number
+  private readonly redisClient: RedisClient
 
-  constructor(
-    options: {
-      retentionDays?: number;
-      batchSize?: number;
-      processingInterval?: number;
-    } = {},
-  ) {
-    this.wsClients = new Map();
-    this.retentionDays = options.retentionDays || 90; // Default 90 days retention
-    this.batchSize = options.batchSize || 100;
-    this.redisClient = redis as unknown as RedisClient;
-  }
+  constructor(options: AnalyticsServiceOptions = {}) {
+    this.wsClients = new Map()
+    this.retentionDays = options.retentionDays || 90 // Default 90 days retention
+    this.batchSize = options.batchSize || 100
+    this.redisClient = redis as RedisClient // Safe because we control the Redis client implementation
   }
 
   /**
@@ -96,30 +47,30 @@ export class AnalyticsService {
   async trackEvent(data: EventData): Promise<string> {
     try {
       // Validate event data
-      const validatedData = EventDataSchema.parse(data);
+      const validatedData = EventDataSchema.parse(data)
 
       // Generate event ID
-      const eventId = crypto.randomUUID();
+      const eventId = crypto.randomUUID()
 
       // Create event object
-      const event: Event = {
+      const event = EventSchema.parse({
         ...validatedData,
         id: eventId,
-      };
+      })
 
       // Queue event for processing
-      await this.redisClient.lpush('analytics:events:queue', JSON.stringify(event));
+      await this.redisClient.lpush('analytics:events:queue', JSON.stringify(event))
 
       // Store event in time series
-      await this.storeEventInTimeSeries(event);
+      await this.storeEventInTimeSeries(event)
 
       // Notify real-time subscribers
-      this.notifySubscribers(event);
+      this.notifySubscribers(event)
 
-      return eventId;
+      return eventId
     } catch (error) {
-      logger.error('Error tracking event:', error);
-      throw error;
+      logger.error('Error tracking event:', error)
+      throw new ValidationError('Invalid event data', error)
     }
   }
 
@@ -148,7 +99,7 @@ export class AnalyticsService {
       }
     } catch (error) {
       logger.error('Error tracking metric:', error)
-      throw error
+      throw new ValidationError('Invalid metric data', error)
     }
   }
 
@@ -171,40 +122,43 @@ export class AnalyticsService {
       // Process each event
       for (const eventJson of events) {
         try {
+          if (!isValidEventJson(eventJson)) {
+            logger.error('Invalid event JSON:', eventJson)
+            continue
+          }
+
           const event = JSON.parse(eventJson) as Event
 
           // Mark event as processed
-          event.processedAt = Date.now()
+          const processedEvent = EventSchema.parse({
+            ...event,
+            processedAt: Date.now(),
+          })
 
           // Store processed event
           await this.redisClient.hset(
-            `analytics:events:processed:${event.type}`,
-            event.id,
-            JSON.stringify(event),
+            `analytics:events:processed:${processedEvent.type}`,
+            processedEvent.id,
+            JSON.stringify(processedEvent),
           )
 
           // Remove from queue
           await this.redisClient.lrem('analytics:events:queue', 1, eventJson)
         } catch (error) {
           logger.error('Error processing event:', error)
+          throw new ProcessingError('Failed to process event', error)
         }
       }
     } catch (error) {
       logger.error('Error in event processing:', error)
-      throw error
+      throw new ProcessingError('Event processing failed', error)
     }
   }
 
   /**
    * Get events by type and time range
    */
-  async getEvents(options: {
-    type: EventType
-    startTime?: number
-    endTime?: number
-    limit?: number
-    offset?: number
-  }): Promise<Event[]> {
+  async getEvents(options: EventQueryOptions): Promise<Event[]> {
     const {
       type,
       limit = 100,
@@ -223,22 +177,30 @@ export class AnalyticsService {
         limit.toString(),
       )
 
-      return eventJsons.map((json: string) => JSON.parse(json) as Event)
+      return eventJsons
+        .map((json) => {
+          try {
+            if (!isValidEventJson(json)) {
+              logger.warn('Invalid event JSON in storage:', json)
+              return null
+            }
+            return JSON.parse(json) as Event
+          } catch (error) {
+            logger.error('Error parsing event JSON:', error)
+            return null
+          }
+        })
+        .filter((event): event is Event => event !== null)
     } catch (error) {
       logger.error('Error getting events:', error)
-      throw error
+      throw new ProcessingError('Failed to retrieve events', error)
     }
   }
 
   /**
    * Get metric values by name and time range
    */
-  async getMetrics(options: {
-    name: string
-    startTime?: number
-    endTime?: number
-    tags?: Record<string, string>
-  }): Promise<Metric[]> {
+  async getMetrics(options: MetricQueryOptions): Promise<Metric[]> {
     const {
       name,
       tags,
@@ -253,11 +215,24 @@ export class AnalyticsService {
         'WITHSCORES',
       )
 
-      let metrics = metricJsons.map((json: string) => JSON.parse(json) as Metric)
+      const metrics = metricJsons
+        .map((json) => {
+          try {
+            if (!isValidMetricJson(json)) {
+              logger.warn('Invalid metric JSON in storage:', json)
+              return null
+            }
+            return JSON.parse(json) as Metric
+          } catch (error) {
+            logger.error('Error parsing metric JSON:', error)
+            return null
+          }
+        })
+        .filter((metric): metric is Metric => metric !== null)
 
       // Filter by tags if provided
       if (tags) {
-        metrics = metrics.filter((metric: Metric) => {
+        return metrics.filter((metric) => {
           return Object.entries(tags).every(
             ([key, value]) => metric.tags[key] === value,
           )
@@ -267,7 +242,7 @@ export class AnalyticsService {
       return metrics
     } catch (error) {
       logger.error('Error getting metrics:', error)
-      throw error
+      throw new ProcessingError('Failed to retrieve metrics', error)
     }
   }
 
@@ -298,7 +273,11 @@ export class AnalyticsService {
 
       // Clean up events
       for (const type of Object.values(EventType)) {
-        await this.redisClient.zremrangebyscore(`analytics:events:time:${type}`, 0, cutoff)
+        await this.redisClient.zremrangebyscore(
+          `analytics:events:time:${type}`,
+          0,
+          cutoff,
+        )
       }
 
       // Clean up metrics
@@ -312,7 +291,7 @@ export class AnalyticsService {
       logger.info('Analytics cleanup completed')
     } catch (error) {
       logger.error('Error in analytics cleanup:', error)
-      throw error
+      throw new ProcessingError('Cleanup operation failed', error)
     }
   }
 
@@ -334,12 +313,11 @@ export class AnalyticsService {
     if (event.userId) {
       const ws = this.wsClients.get(event.userId)
       if (ws) {
-        ws.send(
-          JSON.stringify({
-            type: 'analytics_event',
-            event,
-          }),
-        )
+        const message: AnalyticsWebSocketMessage = {
+          type: 'analytics_event',
+          event,
+        }
+        ws.send(JSON.stringify(message))
       }
     }
   }

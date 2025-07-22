@@ -1,39 +1,48 @@
 import type { APIRoute } from 'astro'
-
-interface DemoAnalyticsEvent {
-  event: string
-  timestamp: number
-  session_id: string
-  ab_variant: string
-  page: string
-  url: string
-  referrer: string
-  user_agent: string
-  [key: string]: unknown
-}
+import type {
+  DemoAnalyticsEvent,
+  EnrichedAnalyticsEvent,
+  DemoAnalyticsSuccessResponse,
+  DemoAnalyticsGetResponse,
+  AnalyticsSummary,
+  AnalyticsError,
+  GA4Event,
+  MixpanelEvent,
+} from './types'
 
 // In-memory storage for demo (replace with database in production)
-const analyticsData: DemoAnalyticsEvent[] = []
+const analyticsData: EnrichedAnalyticsEvent[] = []
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const eventData: DemoAnalyticsEvent = await request.json()
+    const eventData = await request.json() as DemoAnalyticsEvent
 
     // Validate required fields
-    if (!eventData.event || !eventData.session_id || !eventData.ab_variant) {
-      return new Response(
-        JSON.stringify({
-          error: 'Missing required fields: event, session_id, ab_variant',
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
+    const validationErrors: AnalyticsError['details'] = []
+    if (!eventData.event) {
+      validationErrors.push({ field: 'event', message: 'Event name is required' })
+    }
+    if (!eventData.session_id) {
+      validationErrors.push({ field: 'session_id', message: 'Session ID is required' })
+    }
+    if (!eventData.ab_variant) {
+      validationErrors.push({ field: 'ab_variant', message: 'A/B variant is required' })
+    }
+
+    if (validationErrors.length > 0) {
+      const error: AnalyticsError = {
+        code: 'VALIDATION_ERROR',
+        message: 'Invalid analytics event data',
+        details: validationErrors,
+      }
+      return new Response(JSON.stringify(error), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     // Add server-side timestamp and IP
-    const enrichedEvent = {
+    const enrichedEvent: EnrichedAnalyticsEvent = {
       ...eventData,
       server_timestamp: Date.now(),
       ip_address:
@@ -61,69 +70,89 @@ export const POST: APIRoute = async ({ request }) => {
       sendToCustomAnalytics(enrichedEvent),
     ])
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        event_id: enrichedEvent.session_id + '_' + enrichedEvent.timestamp,
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
+    const response: DemoAnalyticsSuccessResponse = {
+      success: true,
+      event_id: enrichedEvent.session_id + '_' + enrichedEvent.timestamp,
+    }
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
   } catch (error) {
     console.error('Demo analytics error:', error)
 
-    return new Response(
-      JSON.stringify({
-        error: 'Failed to process analytics event',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
+    const apiError: AnalyticsError = {
+      code: 'PROCESSING_ERROR',
+      message: 'Failed to process analytics event',
+      details: {
+        source: 'demo-tracking',
+        message: error instanceof Error ? error.message : String(error),
       },
-    )
+    }
+
+    return new Response(JSON.stringify(apiError), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 }
 
 export const GET: APIRoute = async ({ url }) => {
-  const {searchParams} = new URL(url)
-  const sessionId = searchParams.get('session_id')
-  const abVariant = searchParams.get('ab_variant')
-  const event = searchParams.get('event')
+  try {
+    const {searchParams} = new URL(url)
+    const sessionId = searchParams.get('session_id')
+    const abVariant = searchParams.get('ab_variant')
+    const event = searchParams.get('event')
 
-  // Filter analytics data based on query parameters
-  let filteredData = analyticsData
+    // Filter analytics data based on query parameters
+    let filteredData = analyticsData
 
-  if (sessionId) {
-    filteredData = filteredData.filter((item) => item.session_id === sessionId)
-  }
+    if (sessionId) {
+      filteredData = filteredData.filter((item) => item.session_id === sessionId)
+    }
 
-  if (abVariant) {
-    filteredData = filteredData.filter((item) => item.ab_variant === abVariant)
-  }
+    if (abVariant) {
+      filteredData = filteredData.filter((item) => item.ab_variant === abVariant)
+    }
 
-  if (event) {
-    filteredData = filteredData.filter((item) => item.event === event)
-  }
+    if (event) {
+      filteredData = filteredData.filter((item) => item.event === event)
+    }
 
-  // Generate analytics summary
-  const summary = generateAnalyticsSummary(filteredData)
+    // Generate analytics summary
+    const summary = generateAnalyticsSummary(filteredData)
 
-  return new Response(
-    JSON.stringify({
+    const response: DemoAnalyticsGetResponse = {
       total_events: filteredData.length,
       events: filteredData.slice(-100), // Return last 100 events
       summary,
-    }),
-    {
+    }
+
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
-    },
-  )
+    })
+  } catch (error) {
+    console.error('Demo analytics query error:', error)
+
+    const apiError: AnalyticsError = {
+      code: 'PROCESSING_ERROR',
+      message: 'Failed to retrieve analytics data',
+      details: {
+        source: 'demo-tracking',
+        message: error instanceof Error ? error.message : String(error),
+      },
+    }
+
+    return new Response(JSON.stringify(apiError), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 }
 
-async function sendToGoogleAnalytics(event: DemoAnalyticsEvent) {
+async function sendToGoogleAnalytics(event: EnrichedAnalyticsEvent): Promise<void> {
   // Google Analytics 4 Measurement Protocol
   const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID
   const {GA_API_SECRET} = import.meta.env
@@ -134,6 +163,29 @@ async function sendToGoogleAnalytics(event: DemoAnalyticsEvent) {
   }
 
   try {
+    const gaEvent: GA4Event = {
+      name: event.event,
+      parameters: {
+        ab_variant: event.ab_variant,
+        page_title: 'ClinicalVault Trainer Demo',
+        page_location: event.url,
+        custom_parameter_1: event.session_id,
+        custom_parameter_2: event.ab_variant,
+        ...Object.fromEntries(
+          Object.entries(event).filter(
+            ([key]) =>
+              ![
+                'event',
+                'timestamp',
+                'session_id',
+                'ab_variant',
+                'url',
+              ].includes(key),
+          ),
+        ),
+      },
+    }
+
     const response = await fetch(
       `https://www.google-analytics.com/mp/collect?measurement_id=${GA_MEASUREMENT_ID}&api_secret=${GA_API_SECRET}`,
       {
@@ -143,30 +195,7 @@ async function sendToGoogleAnalytics(event: DemoAnalyticsEvent) {
         },
         body: JSON.stringify({
           client_id: event.session_id,
-          events: [
-            {
-              name: event.event,
-              parameters: {
-                ab_variant: event.ab_variant,
-                page_title: 'ClinicalVault Trainer Demo',
-                page_location: event.url,
-                custom_parameter_1: event.session_id,
-                custom_parameter_2: event.ab_variant,
-                ...Object.fromEntries(
-                  Object.entries(event).filter(
-                    ([key]) =>
-                      ![
-                        'event',
-                        'timestamp',
-                        'session_id',
-                        'ab_variant',
-                        'url',
-                      ].includes(key),
-                  ),
-                ),
-              },
-            },
-          ],
+          events: [gaEvent],
         }),
       },
     )
@@ -179,7 +208,7 @@ async function sendToGoogleAnalytics(event: DemoAnalyticsEvent) {
   }
 }
 
-async function sendToMixpanel(event: DemoAnalyticsEvent) {
+async function sendToMixpanel(event: EnrichedAnalyticsEvent): Promise<void> {
   const {MIXPANEL_TOKEN} = import.meta.env
 
   if (!MIXPANEL_TOKEN) {
@@ -188,7 +217,7 @@ async function sendToMixpanel(event: DemoAnalyticsEvent) {
   }
 
   try {
-    const mixpanelEvent = {
+    const mixpanelEvent: MixpanelEvent = {
       event: event.event,
       properties: {
         token: MIXPANEL_TOKEN,
@@ -200,46 +229,54 @@ async function sendToMixpanel(event: DemoAnalyticsEvent) {
       },
     }
 
-    await fetch('https://api.mixpanel.com/track', {
+    const response = await fetch('https://api.mixpanel.com/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify([mixpanelEvent]),
     })
+
+    if (!response.ok) {
+      throw new Error(`Mixpanel API error: ${response.status}`)
+    }
   } catch (error) {
     console.error('Failed to send to Mixpanel:', error)
   }
 }
 
-async function sendToCustomAnalytics(event: DemoAnalyticsEvent) {
+async function sendToCustomAnalytics(event: EnrichedAnalyticsEvent): Promise<void> {
   // Send to your custom analytics service
-  const {CUSTOM_ANALYTICS_ENDPOINT} = import.meta.env
+  const {CUSTOM_ANALYTICS_ENDPOINT, CUSTOM_ANALYTICS_TOKEN} = import.meta.env
 
-  if (!CUSTOM_ANALYTICS_ENDPOINT) {
+  if (!CUSTOM_ANALYTICS_ENDPOINT || !CUSTOM_ANALYTICS_TOKEN) {
     return
   }
 
   try {
-    await fetch(CUSTOM_ANALYTICS_ENDPOINT, {
+    const response = await fetch(CUSTOM_ANALYTICS_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.CUSTOM_ANALYTICS_TOKEN}`,
+        'Authorization': `Bearer ${CUSTOM_ANALYTICS_TOKEN}`,
       },
       body: JSON.stringify(event),
     })
+
+    if (!response.ok) {
+      throw new Error(`Custom analytics API error: ${response.status}`)
+    }
   } catch (error) {
     console.error('Failed to send to custom analytics:', error)
   }
 }
 
-function generateAnalyticsSummary(events: DemoAnalyticsEvent[]) {
-  const summary = {
+function generateAnalyticsSummary(events: EnrichedAnalyticsEvent[]): AnalyticsSummary {
+  const summary: AnalyticsSummary = {
     total_events: events.length,
     unique_sessions: new Set(events.map((e) => e.session_id)).size,
-    ab_variants: {} as Record<string, number>,
-    event_types: {} as Record<string, number>,
+    ab_variants: {},
+    event_types: {},
     conversion_funnel: {
       page_views: 0,
       demo_interactions: 0,
