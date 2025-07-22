@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-
+import { cva } from 'class-variance-authority'
 import { cn } from '~/lib/utils'
+import type { ButtonProps } from './button-types'
+import { getAriaProps, getButtonClassName, isLinkButton } from './button-types'
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
@@ -34,19 +35,88 @@ const buttonVariants = cva(
   },
 )
 
-function Button({
-  className,
-  variant,
-  size,
-  ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants>) {
-  return (
-    <button
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
-}
+const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
+  ({
+    className,
+    variant,
+    size,
+    loading = false,
+    loadingText,
+    showSpinner = true,
+    disabled = false,
+    fullWidth = false,
+    leftIcon,
+    rightIcon,
+    children,
+    href,
+    target,
+    rel,
+    ...props
+  }, ref) => {
+    // Determine if this should be a link
+    const isLink = isLinkButton({ href })
 
-export { Button, buttonVariants }
+    // Handle loading state text
+    const content = loading && loadingText ? loadingText : children
+
+    // Common props for both button and anchor
+    const commonProps = {
+      className: cn(
+        buttonVariants({ variant, size, className }),
+        getButtonClassName({ loading, disabled, fullWidth }),
+      ),
+      disabled: disabled || loading,
+      ...getAriaProps({ loading, disabled, ...props }),
+      ...props,
+    }
+
+    // Render spinner if loading
+    const loadingSpinner = loading && showSpinner ? (
+      <span
+        className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+        role="status"
+        aria-label="Loading"
+      />
+    ) : null
+
+    // Content wrapper
+    const contentWrapper = (
+      <>
+        {loadingSpinner}
+        {!loading && leftIcon}
+        {content}
+        {!loading && rightIcon}
+      </>
+    )
+
+    // Render as link if href is provided
+    if (isLink) {
+      return (
+        <a
+          ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+          href={href}
+          target={target}
+          rel={target === '_blank' ? 'noopener noreferrer' : rel}
+          {...commonProps}
+        >
+          {contentWrapper}
+        </a>
+      )
+    }
+
+    // Render as button
+    return (
+      <button
+        ref={ref as React.ForwardedRef<HTMLButtonElement>}
+        type="button"
+        {...commonProps}
+      >
+        {contentWrapper}
+      </button>
+    )
+  },
+)
+
+Button.displayName = 'Button'
+
+export { Button, type ButtonProps }

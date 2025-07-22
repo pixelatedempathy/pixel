@@ -1,4 +1,5 @@
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+import { getEnv } from '@/lib/utils/env'
 
 const logger = createBuildSafeLogger('ollama-checkin')
 
@@ -47,7 +48,7 @@ export class OllamaCheckInService {
   constructor(baseUrl?: string, defaultModel?: string) {
     this.baseUrl =
       baseUrl ||
-      process.env.OLLAMA_BASE_URL ||
+      getEnv('OLLAMA_BASE_URL') ||
       'https://api.pixelatedempathy.com'
     this.defaultModel = defaultModel || 'granite3.3'
   }

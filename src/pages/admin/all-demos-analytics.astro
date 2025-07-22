@@ -1,7 +1,11 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import Card from '@/components/ui/Card.astro';
+import CardContent from '@/components/ui/CardContent.astro';
+import CardDescription from '@/components/ui/CardDescription.astro';
+import CardHeader from '@/components/ui/CardHeader.astro';
+import CardTitle from '@/components/ui/CardTitle.astro';
+import Badge from '@/components/ui/Badge.astro'
 import { Button } from '@/components/ui/button'
 
 export const prerender = false // Enable SSR for real-time data
@@ -74,7 +78,7 @@ const demoPages = [
 
       <!-- Overall Performance Summary -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <Card className="border border-purple-600/30 bg-purple-900/20">
+        <Card class="border border-purple-600/30 bg-purple-900/20">
           <CardHeader className="pb-2">
             <CardTitle className="text-purple-300 text-lg">Total Sessions</CardTitle>
           </CardHeader>
@@ -84,7 +88,7 @@ const demoPages = [
           </CardContent>
         </Card>
 
-        <Card className="border border-green-600/30 bg-green-900/20">
+        <Card class="border border-green-600/30 bg-green-900/20">
           <CardHeader className="pb-2">
             <CardTitle className="text-green-300 text-lg">Overall Conversion</CardTitle>
           </CardHeader>
@@ -94,7 +98,7 @@ const demoPages = [
           </CardContent>
         </Card>
 
-        <Card className="border border-blue-600/30 bg-blue-900/20">
+        <Card class="border border-blue-600/30 bg-blue-900/20">
           <CardHeader className="pb-2">
             <CardTitle className="text-blue-300 text-lg">Best Performing Demo</CardTitle>
           </CardHeader>
@@ -104,7 +108,7 @@ const demoPages = [
           </CardContent>
         </Card>
 
-        <Card className="border border-yellow-600/30 bg-yellow-900/20">
+        <Card class="border border-yellow-600/30 bg-yellow-900/20">
           <CardHeader className="pb-2">
             <CardTitle className="text-yellow-300 text-lg">A/B Test Winners</CardTitle>
           </CardHeader>
@@ -118,7 +122,7 @@ const demoPages = [
       <!-- Individual Demo Performance -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {demoPages.map((demo) => (
-          <Card className={`border border-${demo.color}-600/30 bg-slate-900/50`}>
+          <Card class={`border border-${demo.color}-600/30 bg-slate-900/50`}>
             <CardHeader>
               <div class="flex justify-between items-start">
                 <div>
@@ -206,7 +210,7 @@ const demoPages = [
       <!-- Comparative Analysis -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <!-- Conversion Funnel Comparison -->
-        <Card className="border border-indigo-600/30 bg-slate-900/50">
+        <Card class="border border-indigo-600/30 bg-slate-900/50">
           <CardHeader>
             <CardTitle className="text-indigo-100">Conversion Funnel Comparison</CardTitle>
             <CardDescription className="text-indigo-200/80">
@@ -252,7 +256,7 @@ const demoPages = [
         </Card>
 
         <!-- A/B Test Summary -->
-        <Card className="border border-orange-600/30 bg-slate-900/50">
+        <Card class="border border-orange-600/30 bg-slate-900/50">
           <CardHeader>
             <CardTitle className="text-orange-100">A/B Test Summary</CardTitle>
             <CardDescription className="text-orange-200/80">
@@ -299,7 +303,7 @@ const demoPages = [
       </div>
 
       <!-- Live Event Stream -->
-      <Card className="border border-gray-600/30 bg-slate-900/50 mb-12">
+      <Card class="border border-gray-600/30 bg-slate-900/50 mb-12">
         <CardHeader>
           <CardTitle className="text-gray-100">Live Event Stream</CardTitle>
           <CardDescription className="text-gray-200/80">

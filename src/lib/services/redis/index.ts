@@ -5,6 +5,7 @@ import type {
   RedisErrorCode,
   RedisServiceError,
 } from './types'
+import { getEnv } from '@/lib/utils/env'
 
 // Export the main service class and types
 export { RedisService }
@@ -15,12 +16,12 @@ export type {
   RedisServiceError,
 }
 
-// Environment variable resolution logic (can be improved)
+// Environment variable resolution logic using utility function
 const redisUrl =
-  process.env.UPSTASH_REDIS_REST_URL ||
-  process.env.REDIS_URL ||
+  getEnv('UPSTASH_REDIS_REST_URL') ||
+  getEnv('REDIS_URL') ||
   'redis://localhost:6379'
-const redisPrefix = process.env.REDIS_PREFIX || ''
+const redisPrefix = getEnv('REDIS_PREFIX') || ''
 
 const config: RedisServiceConfig = {
   url: redisUrl,

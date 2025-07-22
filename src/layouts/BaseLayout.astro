@@ -1,14 +1,16 @@
 ---
 import Header from '@/components/layout/Header.astro';
+import Plum from '@/components/backgrounds/Plum.astro';
 import { KonamiTrigger } from '@/components/ui/KonamiTrigger';
 // A simple footer component could be added here as well.
 
 export interface Props {
   title: string;
   description?: string;
+  bgType?: 'plum';
 }
 
-const { title, description } = Astro.props;
+const { title, description, bgType } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -25,6 +27,7 @@ const { title, description } = Astro.props;
     <link href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@400;700&display=swap" rel="stylesheet">
   </head>
   <body class="bg-slate-900 text-slate-100 font-geist">
+    {bgType === 'plum' && <Plum />}
     <Header />
     <main>
       <slot />

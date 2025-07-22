@@ -2,7 +2,7 @@
 export const prerender = false
 
 import DashboardLayout from '@/layouts/DashboardLayout.astro'
-import { Card } from '@/components/ui/card'
+import Card from '@/components/ui/Card.astro'
 import { requireAuth } from '@/lib/auth'
 import { ProfileComponent } from '@/components/profile/ProfileComponent'
 import type { User } from '@/types/user'
@@ -51,7 +51,7 @@ const { user } = Astro.props as { user: User }
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Profile Information Card -->
-        <Card className="lg:col-span-2">
+        <Card class="lg:col-span-2">
           <div class="p-6">
             <ProfileComponent client:load {user} />
           </div>

@@ -10,8 +10,7 @@ import CardHeader from '@/components/ui/CardHeader.astro';
 import CardTitle from '@/components/ui/CardTitle.astro';
 import { Switch } from '@/components/ui/switch'
 import Button from '@/components/ui/Button.astro'
-import { DLPAction, type DLPRule } from '../../../lib/security/dlp'
-import { dlpService } from '../../../lib/security/dlp'
+import type { DLPRule, DLPAction } from '../../../lib/security/dlp'
 
 interface Props {
   rules: DLPRule[]
