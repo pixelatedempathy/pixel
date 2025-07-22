@@ -1,7 +1,22 @@
 import React from 'react'
 import { cn } from '../../lib/utils'
+import type {
+  TableColumn,
+  TableRowData,
+  TableDataSource,
+  TableState,
+  SortDirection,
+} from './table-types'
 
-export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
+export interface TableProps<T extends TableRowData> extends React.HTMLAttributes<HTMLTableElement> {
+  /** Column definitions */
+  columns: TableColumn<T>[]
+  /** Data source */
+  dataSource: TableDataSource<T>
+  /** Table state */
+  tableState: TableState
+  /** Function to update table state */
+  onStateChange: (newState: Partial<TableState>) => void
   /** Whether the table should have a border */
   bordered?: boolean
   /** Whether the table should have striped rows */
@@ -18,7 +33,11 @@ export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   className?: string
 }
 
-function Table({
+function Table<T extends TableRowData>({
+  columns,
+  dataSource,
+  tableState,
+  onStateChange,
   bordered = false,
   striped = false,
   hoverable = false,
@@ -26,9 +45,25 @@ function Table({
   stickyHeader = false,
   fullWidth = true,
   className,
-  children,
   ...props
-}: TableProps) {
+}: TableProps<T>) {
+  const handleSort = (columnId: string) => {
+    const currentSort = tableState.sort
+    let direction: SortDirection = 'asc'
+
+    if (currentSort?.sortBy === columnId) {
+      if (currentSort.direction === 'asc') {
+        direction = 'desc'
+      } else if (currentSort.direction === 'desc') {
+        direction = null
+      }
+    }
+
+    onStateChange({
+      sort: direction ? { sortBy: columnId, direction } : undefined,
+    })
+  }
+
   return (
     <div
       className={cn('relative w-full overflow-auto', {
@@ -53,8 +88,88 @@ function Table({
         )}
         {...props}
       >
-        {children}
+        <TableHeader>
+          <TableRow>
+            {columns.map((column) => (
+              <TableHead
+                key={column.id}
+                sortable={column.sortable}
+                sortAsc={tableState.sort?.sortBy === column.id && tableState.sort.direction === 'asc'}
+                sortDesc={tableState.sort?.sortBy === column.id && tableState.sort.direction === 'desc'}
+                onSort={() => column.sortable && handleSort(column.id)}
+                style={{ width: column.width }}
+                className={cn({
+                  'text-right': column.align === 'right',
+                  'text-center': column.align === 'center',
+                  'hidden md:table-cell': column.hideMobile,
+                })}
+              >
+                {column.Header || column.header}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {dataSource.loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center py-8">
+                Loading...
+              </TableCell>
+            </TableRow>
+          ) : dataSource.error ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center py-8 text-red-500">
+                {dataSource.error}
+              </TableCell>
+            </TableRow>
+          ) : dataSource.data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center py-8">
+                No data available
+              </TableCell>
+            </TableRow>
+          ) : (
+            dataSource.data.map((row) => (
+              <TableRow
+                key={row.id}
+                selected={tableState.selectedRows?.has(row.id)}
+                className={cn(row.className, {
+                  'opacity-50': row.disabled,
+                })}
+              >
+                {columns.map((column) => (
+                  <TableCell
+                    key={`${row.id}-${column.id}`}
+                    className={cn({
+                      'text-right': column.align === 'right',
+                      'text-center': column.align === 'center',
+                      'hidden md:table-cell': column.hideMobile,
+                    })}
+                  >
+                    {column.Cell ? (
+                      <column.Cell value={column.accessor(row)} row={row} />
+                    ) : (
+                      column.accessor(row)
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
+        </TableBody>
       </table>
+
+      {dataSource.totalCount > tableState.pageSize && (
+        <TablePagination
+          currentPage={tableState.currentPage}
+          totalPages={Math.ceil(dataSource.totalCount / tableState.pageSize)}
+          onPageChange={(page) => onStateChange({ currentPage: page })}
+          showPageSize
+          pageSize={tableState.pageSize}
+          onPageSizeChange={(size) => onStateChange({ pageSize: size, currentPage: 1 })}
+        />
+      )}
     </div>
   )
 }
@@ -101,30 +216,30 @@ function TableFooter({ className, ...props }: TableFooterProps) {
   )
 }
 
-export interface TableRowProps
-  extends React.HTMLAttributes<HTMLTableRowElement> {
-  selected?: boolean
+export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement>, Pick<TableRowData, 'selected' | 'disabled'> {
   className?: string
 }
 
-function TableRow({ selected = false, className, ...props }: TableRowProps) {
+function TableRow({ selected = false, disabled = false, className, ...props }: TableRowProps) {
   return (
     <tr
       className={cn(
         'transition-colors',
         {
-          'hover:bg-gray-100 dark:hover:bg-gray-800/50': true,
+          'hover:bg-gray-100 dark:hover:bg-gray-800/50': !disabled,
           'bg-blue-50 dark:bg-blue-900/20': selected,
+          'opacity-50 cursor-not-allowed': disabled,
         },
         className,
       )}
+      aria-selected={selected}
+      aria-disabled={disabled}
       {...props}
     />
   )
 }
 
-export interface TableHeadProps
-  extends React.ThHTMLAttributes<HTMLTableCellElement> {
+export interface TableHeadProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
   /** Whether the column is sortable */
   sortable?: boolean
   /** Whether the column is currently sorted ascending */
@@ -133,6 +248,12 @@ export interface TableHeadProps
   sortDesc?: boolean
   /** Function to call when sort direction is changed */
   onSort?: () => void
+  /** Column alignment */
+  align?: 'left' | 'center' | 'right'
+  /** Whether to hide on mobile */
+  hideMobile?: boolean
+  /** Column width */
+  width?: string
   className?: string
 }
 
@@ -141,8 +262,12 @@ function TableHead({
   sortAsc = false,
   sortDesc = false,
   onSort,
+  align = 'left',
+  hideMobile = false,
+  width,
   className,
   children,
+  style,
   ...props
 }: TableHeadProps) {
   return (
@@ -150,7 +275,12 @@ function TableHead({
       className={cn(
         'h-12 px-4 text-left align-middle font-medium text-gray-500 dark:text-gray-400',
         'border-b border-gray-200 dark:border-gray-700',
-        { 'cursor-pointer select-none': sortable },
+        {
+          'cursor-pointer select-none': sortable,
+          'text-right': align === 'right',
+          'text-center': align === 'center',
+          'hidden md:table-cell': hideMobile,
+        },
         className,
       )}
       onClick={sortable ? onSort : undefined}
@@ -160,9 +290,10 @@ function TableHead({
           onSort && onSort();
         }
       } : undefined}
+      style={{ ...style, width }}
       tabIndex={sortable ? 0 : undefined}
       role={sortable ? "button" : undefined}
-      aria-label={sortable ? `Sort by ${children}` : undefined}
+      aria-sort={sortable ? (sortAsc ? 'ascending' : sortDesc ? 'descending' : 'none') : undefined}
       {...props}
     >
       {sortable ? (
@@ -178,6 +309,7 @@ function TableHead({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -195,6 +327,7 @@ function TableHead({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -212,13 +345,29 @@ function TableHead({
   )
 }
 
-export interface TableCellProps
-  extends React.TdHTMLAttributes<HTMLTableCellElement> {
+export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+  /** Cell alignment */
+  align?: 'left' | 'center' | 'right'
+  /** Whether to hide on mobile */
+  hideMobile?: boolean
   className?: string
 }
 
-function TableCell({ className, ...props }: TableCellProps) {
-  return <td className={cn('p-4 align-middle', className)} {...props} />
+function TableCell({ align = 'left', hideMobile = false, className, ...props }: TableCellProps) {
+  return (
+    <td
+      className={cn(
+        'p-4 align-middle',
+        {
+          'text-right': align === 'right',
+          'text-center': align === 'center',
+          'hidden md:table-cell': hideMobile,
+        },
+        className,
+      )}
+      {...props}
+    />
+  )
 }
 
 export interface TablePaginationProps

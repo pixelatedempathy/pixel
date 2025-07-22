@@ -1,4 +1,5 @@
 import type { RedisOptions } from 'ioredis'
+import type { RedisZSetMember } from './redis-operation-types'
 
 /**
  * Configuration options for the Redis service
@@ -111,9 +112,9 @@ export interface IRedisService {
     start: number,
     stop: number,
     withScores?: string,
-  ) => Promise<string[] | Array<{score: string, member: string}>>
+  ) => Promise<string[] | RedisZSetMember[]>
   /** Pop minimum scoring member from sorted set */
-  zpopmin: (key: string) => Promise<Array<{score: string, member: string}>>
+  zpopmin: (key: string) => Promise<RedisZSetMember[]>
   /** Get sorted set cardinality */
   zcard: (key: string) => Promise<number>
   

@@ -19,6 +19,7 @@ frontend:
         - nvm use v22.16.0
         - npm i npm@latest -g
         - npm install -g pnpm
+        - export SHELL=bash
         - pnpm setup
         - export PNPM_HOME="/root/.local/share/pnpm"
         - export PATH="$PNPM_HOME:$PATH"

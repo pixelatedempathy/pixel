@@ -1,4 +1,5 @@
 import type { RedisServiceConfig, IRedisService } from './types.js'
+import type { RedisMockClient, RedisZSetMember, RedisPipeline } from './redis-operation-types'
 import { EventEmitter } from 'events'
 import { getHipaaCompliantLogger } from '@/lib/logging/standardized-logger'
 import { Redis } from 'ioredis'
@@ -192,8 +193,8 @@ export class RedisService extends EventEmitter implements IRedisService {
     const hashStore = new Map<string, Map<string, string>>()
     const zsetStore = new Map<string, Map<string, number>>()
 
-    // We need to cast this to Redis because we're creating a partial implementation
-    return {
+    // Create a mock client implementing RedisMockClient interface
+    const mockClient: RedisMockClient = {
       get: async (key: string) => store.get(key) || null,
       set: async (key: string, value: string) => {
         store.set(key, value)
@@ -358,11 +359,11 @@ export class RedisService extends EventEmitter implements IRedisService {
         return this as unknown as Redis
       }, // Basic event handling for mock
       pipeline: () => {
-        const commands: { cmd: string; args: unknown[] }[] = []
-        return {
+        const commands: RedisPipelineOperation[] = []
+        const pipeline: RedisPipeline = {
           del: (key: string) => {
             commands.push({ cmd: 'del', args: [key] })
-            return this
+            return mockClient as unknown as Redis
           },
           exec: async () => {
             return commands.map((cmd) => {
@@ -374,12 +375,14 @@ export class RedisService extends EventEmitter implements IRedisService {
             })
           },
         }
+        return pipeline
       },
     } as unknown as Redis
   }
 
   private createClient(): Redis {
-    const redisOptions: Record<string, unknown> = {
+    const redisOptions: RedisServiceConfig = {
+      url: this.config.url,
       maxRetriesPerRequest: this.config.maxRetries,
       retryStrategy: (times: number) => {
         if (times > (this.config.maxRetries || 3)) {
@@ -387,14 +390,8 @@ export class RedisService extends EventEmitter implements IRedisService {
         }
         return this.config.retryDelay || 100
       },
-    }
-
-    if (this.config.keyPrefix) {
-      redisOptions['keyPrefix'] = this.config.keyPrefix
-    }
-
-    if (this.config.connectTimeout) {
-      redisOptions['connectTimeout'] = this.config.connectTimeout
+      keyPrefix: this.config.keyPrefix,
+      connectTimeout: this.config.connectTimeout
     }
 
     return new Redis(this.config.url, redisOptions)
@@ -790,13 +787,13 @@ export class RedisService extends EventEmitter implements IRedisService {
     start: number,
     stop: number,
     withScores?: string,
-  ): Promise<(string | { value: string; score: number })[]> {
+  ): Promise<string[] | RedisZSetMember[]> {
     try {
       const client = await this.ensureConnection()
       if (withScores === 'WITHSCORES') {
         // ioredis returns [member1, score1, member2, score2, ...]
         const result = await client.zrange(key, start, stop, 'WITHSCORES')
-        const arr: { value: string; score: number }[] = []
+        const arr: RedisZSetMember[] = []
         for (let i = 0; i < result.length; i += 2) {
           if (typeof result[i] === 'string' && typeof result[i + 1] !== 'undefined') {
             arr.push({ value: result[i] as string, score: Number(result[i + 1]) })
@@ -816,7 +813,7 @@ export class RedisService extends EventEmitter implements IRedisService {
     }
   }
 
-  async zpopmin(key: string): Promise<{ value: string; score: number }[]> {
+  async zpopmin(key: string): Promise<RedisZSetMember[]> {
     try {
       const client = await this.ensureConnection()
       // ioredis returns [member, score] or [] if empty

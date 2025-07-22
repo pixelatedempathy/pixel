@@ -2,28 +2,61 @@ import { createBuildSafeLogger } from '../../logging/build-safe-logger'
 
 const logger = createBuildSafeLogger('default')
 
+interface TherapySession {
+  id: string;
+  clientId: string;
+  therapistId: string;
+  status: 'active' | 'completed' | 'scheduled' | 'cancelled';
+  securityLevel: 'standard' | 'enhanced' | 'maximum';
+  emotionAnalysisEnabled: boolean;
+}
+
+interface ChatSession {
+  messages: Array<{
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp: Date;
+  }>;
+  metadata?: Record<string, unknown>;
+}
+
+interface EmotionState {
+  currentEmotion: string;
+  intensity: number;
+  timestamp: Date;
+  confidence: number;
+  relatedFactors?: string[];
+}
+
+interface MentalHealthAnalysis {
+  primaryConcerns: string[];
+  riskLevel: 'low' | 'moderate' | 'high';
+  recommendedApproaches?: string[];
+  notes?: string;
+}
+
 export interface RecommendationContext {
-  session: any
-  chatSession: any
-  recentEmotionState: any
-  recentInterventions: string[]
-  userPreferences?: Record<string, unknown>
-  mentalHealthAnalysis?: any
+  session: TherapySession;
+  chatSession: ChatSession;
+  recentEmotionState: EmotionState;
+  recentInterventions: string[];
+  userPreferences?: Record<string, unknown>;
+  mentalHealthAnalysis?: MentalHealthAnalysis;
 }
 
 export interface RecommendationRequest {
-  context: RecommendationContext
-  desiredOutcomes: string[]
-  maxResults: number
+  context: RecommendationContext;
+  desiredOutcomes: string[];
+  maxResults: number;
 }
 
 export interface TreatmentForecast {
-  outcomeId: string
-  description: string
-  confidence: number
-  timeEstimate: string
-  interventions: string[]
-  risk: 'low' | 'medium' | 'high'
+  outcomeId: string;
+  description: string;
+  confidence: number;
+  timeEstimate: string;
+  interventions: string[];
+  risk: 'low' | 'medium' | 'high';
 }
 
 export function recommend(request: RecommendationRequest): TreatmentForecast[] {
