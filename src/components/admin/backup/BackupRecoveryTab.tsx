@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 import { RecoveryTestStatus } from '../../../lib/security/backup/backup-types'
 import type { BackupType, BackupStatus } from '../../../lib/security/backup'
 import { toast } from '@/components/ui/toast'
@@ -142,9 +142,17 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
       setLatestTestResult(data)
       setRecoveryHistory([data, ...recoveryHistory])
       toast.success('Recovery test completed successfully!')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Recovery test failed:', error)
-      toast.error(error.message || 'An unexpected error occurred.')
+      
+      // Type guard to safely access error.message
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : typeof error === 'object' && error !== null && 'message' in error 
+          ? String((error as { message: unknown }).message) 
+          : 'An unexpected error occurred.'
+          
+      toast.error(errorMessage)
     } finally {
       setIsTesting(false)
     }
@@ -183,9 +191,10 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
               <Select
                 value={selectedBackupId}
                 onValueChange={setSelectedBackupId}
+                placeholder="Choose a backup..."
               >
-                <SelectTrigger id="backup-select">
-                  <SelectValue placeholder="Choose a backup..." />
+                <SelectTrigger>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {availableBackups.map((backup) => (
@@ -210,7 +219,7 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
                   setTestEnvironment(value as TestEnvironmentType)
                 }
               >
-                <SelectTrigger id="test-environment">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 import {
   BackupType,
   BackupStatus,
@@ -120,9 +120,13 @@ const BackupReportTab: React.FC<BackupReportTabProps> = ({
         <h2 className="text-xl font-semibold">Backup Reports & Compliance</h2>
         <div className="flex items-center gap-4">
           <div>
-            <Select value={reportPeriod} onValueChange={setReportPeriod}>
+            <Select 
+              value={reportPeriod} 
+              onValueChange={setReportPeriod}
+              placeholder="Select period"
+            >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select period" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="last7days">Last 7 Days</SelectItem>

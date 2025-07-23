@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { isFormField } from './form-validation-types'
 import type {
   FormValues,
   ValidationRule,
-  ValidationConfig,
   FormErrors,
   MobileFormValidationProps,
   FormState,
   ValidationResult,
   FormFieldValidationProps,
-  isFormField,
-} from './form-validation-types'
+} from './form-validation-types';
 
 /**
  * Enhanced form validation component optimized for mobile devices
@@ -75,11 +74,16 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
 
   // Handle input changes with proper type inference
   const handleChange = useCallback((e: Event) => {
-    const input = e.target
-    if (!isFormField(input)) return
+    const { target } = e
+    if (!target || !isFormField(target as Element)) {
+      return
+    }
 
+    const input = target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     const name = input.getAttribute('name')
-    if (!name) return
+    if (!name) {
+      return
+    }
 
     const value = input.value as T[keyof T]
 
@@ -94,7 +98,7 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
       const error = validateField(name as keyof T, value)
 
       setFormState((prev) => {
-        const newErrors = { ...prev.errors }
+        const newErrors = { ...prev.errors } as Record<string, string>
         if (error) {
           newErrors[name] = error
         } else {
@@ -105,7 +109,7 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
 
         return {
           ...prev,
-          errors: newErrors,
+          errors: newErrors as FormErrors<T>,
           isValid,
         }
       })
@@ -124,13 +128,20 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
 
   // Handle input blur with proper type inference
   const handleBlur = useCallback((e: Event) => {
-    if (!validateOnBlur) return
+    if (!validateOnBlur) {
+      return
+    }
 
-    const input = e.target
-    if (!isFormField(input)) return
+    const {target} = e
+    if (!target || !isFormField(target as Element)) {
+      return
+    }
 
+    const input = target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     const name = input.getAttribute('name')
-    if (!name) return
+    if (!name) {
+      return
+    }
 
     const value = input.value as T[keyof T]
 
@@ -143,7 +154,7 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
     const error = validateField(name as keyof T, value)
 
     setFormState((prev) => {
-      const newErrors = { ...prev.errors }
+      const newErrors = { ...prev.errors } as Record<string, string>
       if (error) {
         newErrors[name] = error
       } else {
@@ -152,7 +163,7 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
 
       return {
         ...prev,
-        errors: newErrors,
+        errors: newErrors as FormErrors<T>,
         isValid: Object.keys(newErrors).length === 0,
       }
     })
@@ -174,10 +185,14 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
     const inputs = form.querySelectorAll('input, textarea, select')
 
     inputs.forEach((input) => {
-      if (!isFormField(input)) return
+      if (!isFormField(input)) {
+        return
+      }
 
       const name = input.getAttribute('name')
-      if (!name || !validationRules[name as keyof T]) return
+      if (!name || !validationRules[name as keyof T]) {
+        return
+      }
 
       const value = input.value as T[keyof T]
       const error = validateField(name as keyof T, value)
@@ -201,7 +216,9 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
 
   // Handle form submission with proper type inference
   const handleSubmit = useCallback((e: React.FormEvent) => {
-    if (!validateOnSubmit) return
+    if (!validateOnSubmit) {
+      return
+    }
 
     setFormState((prev) => ({
       ...prev,
@@ -276,20 +293,26 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
   // Set up form with validation attributes and event handlers
   useEffect(() => {
     const form = formRef.current
-    if (!form) return
+    if (!form) {
+      return
+    }
 
     const inputs = form.querySelectorAll('input, textarea, select')
 
     inputs.forEach((input) => {
-      if (!isFormField(input)) return
+      if (!isFormField(input)) {
+        return
+      }
 
       const name = input.getAttribute('name')
-      if (!name || !validationRules[name as keyof T]) return
+      if (!name || !validationRules[name as keyof T]) {
+        return
+      }
 
       // Add validation attributes
       const validationProps: FormFieldValidationProps = {
         name,
-        'aria-required': 'true',
+        'aria-required': true,
         onChange: handleChange as unknown as React.ChangeEventHandler,
         onBlur: handleBlur as unknown as React.FocusEventHandler,
       }
@@ -309,7 +332,9 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
     // Clean up
     return () => {
       inputs.forEach((input) => {
-        if (!isFormField(input)) return
+        if (!isFormField(input)) {
+          return
+        }
         input.removeEventListener('change', handleChange)
         input.removeEventListener('blur', handleBlur)
       })
@@ -319,20 +344,21 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
   // Clone and enhance form element
   const enhancedForm = React.Children.map(children, (child) => {
     if (React.isValidElement(child) && child.type === 'form') {
+      const formChild = child as React.ReactElement<React.FormHTMLAttributes<HTMLFormElement>>
       return React.cloneElement(
-        child,
+        formChild,
         {
+          ...formChild.props,
           ref: formRef,
           onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
             handleSubmit(e)
             // Call original onSubmit if it exists
-            if (child.props.onSubmit) {
-              child.props.onSubmit(e)
+            if (formChild.props.onSubmit) {
+              formChild.props.onSubmit(e)
             }
           },
           noValidate: true,
-        },
-        child.props.children,
+        } as React.FormHTMLAttributes<HTMLFormElement> & { ref: React.RefObject<HTMLFormElement> }
       )
     }
     return child
@@ -381,15 +407,29 @@ export function MobileFormValidation<T extends FormValues = FormValues>({
   )
 }
 
-// Export validation rules with proper typing
-export const ValidationRules = {
-  required: <T extends unknown>(message = 'This field is required'): ValidationRule<T> => ({
+// Helper functions for generic validation rules
+function createRequiredRule<T>(message = 'This field is required'): ValidationRule<T> {
+  return {
     test: (value: T) => {
-      if (typeof value === 'string') return value.trim() !== ''
+      if (typeof value === 'string') {
+        return value.trim() !== ''
+      }
       return value !== undefined && value !== null
     },
     message,
-  }),
+  }
+}
+
+function createCustomRule<T>(test: (value: T) => boolean, message: string): ValidationRule<T> {
+  return {
+    test,
+    message,
+  }
+}
+
+// Export validation rules with proper typing
+export const ValidationRules = {
+  required: createRequiredRule,
   email: (message = 'Please enter a valid email address'): ValidationRule<string> => ({
     test: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
     message,
@@ -415,8 +455,5 @@ export const ValidationRules = {
     },
     message,
   }),
-  custom: <T>(test: (value: T) => boolean, message: string): ValidationRule<T> => ({
-    test,
-    message,
-  }),
+  custom: createCustomRule,
 }

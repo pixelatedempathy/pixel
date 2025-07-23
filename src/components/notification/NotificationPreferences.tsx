@@ -8,13 +8,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
 import { useNotificationPreferences } from '@/hooks/useNotificationPreferences'
 import { NotificationChannel } from '@/lib/services/notification/NotificationService'
 import { cn } from '@/lib/utils'
-import React from 'react'
 
 type NotificationFrequency = 'immediate' | 'batched' | 'daily' | 'weekly'
 
@@ -55,7 +54,7 @@ export function NotificationPreferences({
 
   if (error) {
     return (
-      <Alert variant="destructive" className={className}>
+      <Alert variant="error" className={className}>
         Failed to load notification preferences: {error.message}
       </Alert>
     )
@@ -127,10 +126,11 @@ export function NotificationPreferences({
 
           <Select
             value={preferences.frequency}
-            onValueChange={(value: NotificationFrequency) => updateFrequency(value)}
+            onValueChange={(value) => updateFrequency(value as NotificationFrequency)}
+            placeholder="Select frequency"
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select frequency" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="immediate">Immediate</SelectItem>

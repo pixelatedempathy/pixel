@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { useEffect, useRef } from 'react'
 import { IconSend } from './icons'
 
-interface ChatInputProps {
+export interface ChatInputProps {
   value: string
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   onSubmit: (e: React.FormEvent) => void

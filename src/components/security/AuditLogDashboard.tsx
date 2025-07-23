@@ -13,10 +13,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select-radix'
+} from '../ui/select'
 import { Button } from '../ui/button'
 import {
-  Table,
+  Table as UITable,
   TableBody,
   TableCell,
   TableHead,
@@ -39,6 +39,20 @@ import {
   getActionAuditLogs,
   type AuditLogEntry,
 } from '../../lib/audit/log'
+
+// Simple Table wrapper that doesn't require the complex props
+const Table: React.FC<React.PropsWithChildren> = ({ children }) => {
+  return (
+    <UITable
+      columns={[]}
+      dataSource={{ data: [], totalCount: 0 }}
+      tableState={{ currentPage: 1, pageSize: 10 }}
+      onStateChange={() => {}}
+    >
+      {children}
+    </UITable>
+  );
+};
 
 interface AuditLogFilters {
   eventType: string
@@ -78,10 +92,6 @@ export function AuditLogDashboard() {
     'dlp_blocked',
     'security_alert',
   ]
-
-  useEffect(() => {
-    fetchLogs()
-  }, [filters, fetchLogs])
 
   const fetchLogs = React.useCallback(async () => {
     try {
@@ -134,6 +144,10 @@ export function AuditLogDashboard() {
       setLoading(false)
     }
   }, [filters])
+
+  useEffect(() => {
+    fetchLogs()
+  }, [fetchLogs])
 
   const getEventTypeStats = () => {
     const stats = logs.reduce(
@@ -198,7 +212,7 @@ export function AuditLogDashboard() {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select event type" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">All Events</SelectItem>

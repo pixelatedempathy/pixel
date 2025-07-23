@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 
 // Types
 interface ConversionEvent {
@@ -333,7 +333,7 @@ export function ConversionDashboard() {
               </div>
               <Select value={filter} onValueChange={setFilter}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select conversion type" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Conversions</SelectItem>
@@ -430,7 +430,7 @@ export function ConversionDashboard() {
                               <div className="flex items-end space-x-1 h-8">
                                 {summary.trend.map((value, i) => (
                                   <div
-                                    key={`trend-${summary.name}-${i}-${value}`}
+                                    key={`trend-${summary.id}-${i}-${value}`}
                                     className="bg-primary rounded-sm w-full"
                                     style={{
                                       height: `${Math.max(20, (value / Math.max(...summary.trend)) * 100)}%`,

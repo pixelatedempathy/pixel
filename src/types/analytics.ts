@@ -50,3 +50,59 @@ export interface ComparativeProgressParams {
     endDate: string // ISO 8601 date string
   }
 }
+
+// Additional types for production-grade analytics charts
+
+export interface SessionData {
+  date: string
+  sessions: number
+  newUsers?: number
+  returningUsers?: number
+  averageDuration?: number
+}
+
+export interface SkillProgressData {
+  skill: string
+  score: number
+  previousScore?: number
+  trend: 'up' | 'down' | 'stable'
+  category: 'therapeutic' | 'technical' | 'interpersonal'
+}
+
+export interface MetricSummary {
+  value: number
+  label: string
+  trend?: {
+    value: number
+    direction: 'up' | 'down' | 'stable'
+    period: string
+  }
+  color?: 'blue' | 'green' | 'purple' | 'orange' | 'red'
+}
+
+export interface AnalyticsChartData {
+  sessionMetrics: SessionData[]
+  skillProgress: SkillProgressData[]
+  summaryStats: MetricSummary[]
+}
+
+export interface AnalyticsError {
+  code: string
+  message: string
+  details?: unknown
+}
+
+export interface AnalyticsServiceConfig {
+  apiBaseUrl: string
+  refreshInterval: number
+  retryAttempts: number
+  timeoutMs: number
+}
+
+export type TimeRange = '7d' | '30d' | '90d' | '1y'
+
+export interface AnalyticsFilters {
+  timeRange: TimeRange
+  userSegment?: 'all' | 'new' | 'returning'
+  skillCategory?: 'all' | 'therapeutic' | 'technical' | 'interpersonal'
+}

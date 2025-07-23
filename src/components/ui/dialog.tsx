@@ -12,6 +12,7 @@ import type {
   ConfirmDialogHookResult,
   DialogMaxWidth,
   } from './dialog-types'
+import { maxWidthClasses } from './dialog-types'
 
 // Custom Dialog Context
 const DialogContext = React.createContext<DialogContextType>({
@@ -42,18 +43,21 @@ const Dialog = ({ open = false, onOpenChange, children }: DialogRootProps) => {
   )
 }
 
-const DialogTrigger = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ children, ...props }, ref) => {
-  const { onOpenChange } = React.useContext(DialogContext)
+interface DialogTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode
+}
 
-  return (
-    <button ref={ref} onClick={() => onOpenChange(true)} {...props}>
-      {children}
-    </button>
-  )
-})
+const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
+  ({ children, ...props }, ref) => {
+    const { onOpenChange } = React.useContext(DialogContext)
+
+    return (
+      <button ref={ref} onClick={() => onOpenChange(true)} {...props}>
+        {children}
+      </button>
+    )
+  },
+)
 DialogTrigger.displayName = 'DialogTrigger'
 
 const DialogPortal = ({ children }: { children: React.ReactNode }) => {
@@ -66,46 +70,50 @@ const DialogPortal = ({ children }: { children: React.ReactNode }) => {
   return <div className="fixed inset-0 z-50">{children}</div>
 }
 
-const DialogOverlay = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const { onOpenChange } = React.useContext(DialogContext)
+interface DialogOverlayProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string
+}
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onOpenChange(false)
+const DialogOverlay = React.forwardRef<HTMLButtonElement, DialogOverlayProps>(
+  ({ className, ...props }, ref) => {
+    const { onOpenChange } = React.useContext(DialogContext)
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onOpenChange(false)
+      }
     }
-  }
 
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm animate-in fade-in-0',
-        className,
-      )}
-      onClick={() => onOpenChange(false)}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      role="button"
-      aria-label="Close dialog"
-      {...props}
-    />
-  )
-})
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm animate-in fade-in-0 border-0 p-0',
+          className,
+        )}
+        onClick={() => onOpenChange(false)}
+        onKeyDown={handleKeyDown}
+        aria-label="Close dialog"
+        {...props}
+      />
+    )
+  },
+)
 DialogOverlay.displayName = 'DialogOverlay'
 
-const DialogContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
-  const { open, onOpenChange } = React.useContext(DialogContext)
+interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string
+  children: React.ReactNode
+}
 
-  if (!open) {
-    return null
-  }
+const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
+  ({ className, children, ...props }, ref) => {
+    const { open, onOpenChange } = React.useContext(DialogContext)
+
+    if (!open) {
+      return null
+    }
 
   return (
     <DialogPortal>
@@ -143,68 +151,81 @@ const DialogContent = React.forwardRef<
 })
 DialogContent.displayName = 'DialogContent'
 
-const DialogHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
-      className,
-    )}
-    {...props}
-  />
-))
-DialogHeader.displayName = 'DialogHeader'
+interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string
+}
 
-const DialogFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-      className,
-    )}
-    {...props}
-  />
-))
-DialogFooter.displayName = 'DialogFooter'
-
-const DialogTitle = React.forwardRef<
-  HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, children, ...props }, ref) => {
-  if (!children) {
-    return null
-  }
-  return (
-    <h2
+const DialogHeader = React.forwardRef<HTMLDivElement, DialogHeaderProps>(
+  ({ className, ...props }, ref) => (
+    <div
       ref={ref}
       className={cn(
-        'text-lg font-semibold leading-none tracking-tight',
+        'flex flex-col space-y-1.5 text-center sm:text-left',
         className,
       )}
       {...props}
-    >
-      {children}
-    </h2>
-  )
-})
+    />
+  ),
+)
+DialogHeader.displayName = 'DialogHeader'
+
+interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string
+}
+
+const DialogFooter = React.forwardRef<HTMLDivElement, DialogFooterProps>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+        className,
+      )}
+      {...props}
+    />
+  ),
+)
+DialogFooter.displayName = 'DialogFooter'
+
+interface DialogTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  className?: string
+  children?: React.ReactNode
+}
+
+const DialogTitle = React.forwardRef<HTMLHeadingElement, DialogTitleProps>(
+  ({ className, children, ...props }, ref) => {
+    if (!children) {
+      return null
+    }
+    return (
+      <h2
+        ref={ref}
+        className={cn(
+          'text-lg font-semibold leading-none tracking-tight',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </h2>
+    )
+  },
+)
 DialogTitle.displayName = 'DialogTitle'
 
-const DialogDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
-    {...props}
-  />
-))
+interface DialogDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  className?: string
+}
+
+const DialogDescription = React.forwardRef<HTMLParagraphElement, DialogDescriptionProps>(
+  ({ className, ...props }, ref) => (
+    <p
+      ref={ref}
+      className={cn('text-sm text-muted-foreground', className)}
+      {...props}
+    />
+  ),
+)
 DialogDescription.displayName = 'DialogDescription'
 
 function DialogModal<TData>({
@@ -388,15 +409,14 @@ function ConfirmDialog<TData>({
         backdropClassName,
       )}
       onClick={
-        closeOnOutsideClick && !isLoading
-          ? onClose
-          : (e) => e.stopPropagation()
+        !closeOnOutsideClick || isLoading
+          ? (e) => e.stopPropagation()
+          : onClose
       }
       onKeyDown={(e) => {
         if (
           (e.key === 'Enter' || e.key === ' ') &&
-          closeOnOutsideClick &&
-          !isLoading
+          !(!closeOnOutsideClick || isLoading)
         ) {
           e.preventDefault()
           onClose()

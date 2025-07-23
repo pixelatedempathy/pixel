@@ -6,7 +6,7 @@ import { ChatInput } from './ChatInput'
 import { ChatMessage } from './ChatMessage'
 import { IconBrain, IconChevronDown } from './icons'
 
-interface ChatContainerProps {
+export interface ChatContainerProps {
   messages: Message[]
   onSendMessage: (message: string) => void
   isLoading?: boolean

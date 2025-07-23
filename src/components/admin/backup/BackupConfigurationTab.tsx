@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import type { BackupType } from '../../../lib/security/backup/types'
 import { StorageLocation } from '../../../lib/security/backup/backup-types'
@@ -237,8 +237,8 @@ const BackupConfigurationTab: React.FC<BackupConfigurationTabProps> = ({
                   Backup Frequency
                 </label>
                 <Select value={frequency} onValueChange={setFrequency}>
-                  <SelectTrigger id="backup-frequency">
-                    <SelectValue placeholder="Select frequency" />
+                  <SelectTrigger>
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="hourly">Hourly</SelectItem>
@@ -257,8 +257,8 @@ const BackupConfigurationTab: React.FC<BackupConfigurationTabProps> = ({
                   Retention Period (Days)
                 </label>
                 <Select value={retention} onValueChange={setRetention}>
-                  <SelectTrigger id="retention-period">
-                    <SelectValue placeholder="Select retention period" />
+                  <SelectTrigger>
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="7">7 days</SelectItem>
@@ -302,8 +302,8 @@ const BackupConfigurationTab: React.FC<BackupConfigurationTabProps> = ({
                       )
                     }
                   >
-                    <SelectTrigger id="primary-provider">
-                      <SelectValue placeholder="Select provider" />
+                    <SelectTrigger>
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="aws-s3">AWS S3</SelectItem>
@@ -378,8 +378,8 @@ const BackupConfigurationTab: React.FC<BackupConfigurationTabProps> = ({
                       )
                     }
                   >
-                    <SelectTrigger id="secondary-provider">
-                      <SelectValue placeholder="Select provider" />
+                    <SelectTrigger>
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="aws-s3">AWS S3</SelectItem>
@@ -456,8 +456,8 @@ const BackupConfigurationTab: React.FC<BackupConfigurationTabProps> = ({
                   handleChange('encryption', '', 'algorithm', value)
                 }
               >
-                <SelectTrigger id="encryption-algorithm">
-                  <SelectValue placeholder="Select algorithm" />
+                <SelectTrigger>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="AES-256-GCM">

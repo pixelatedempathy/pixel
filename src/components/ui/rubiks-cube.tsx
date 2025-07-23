@@ -1,14 +1,11 @@
-import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
-
-import {
-  CameraControls,
-  RoundedBox,
-  PerspectiveCamera,
-  SpotLight,
-} from "@react-three/drei";
-import type { SpotLightProps } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
+import { RoundedBox } from "@react-three/drei";
+import { SpotLight } from "@react-three/drei";
+import { PerspectiveCamera } from "@react-three/drei";
 import { Suspense, useRef, useState, useEffect, forwardRef, useCallback } from "react";
-import { Vector3, Matrix4, Group, Object3D, SpotLight as SpotLightImpl } from "three";
+import { Vector3, Matrix4, Object3D } from "three";
 
 // Type Definitions
 interface Cube {
@@ -28,10 +25,19 @@ interface RubiksCubeModelProps {
   scale: number;
 }
 
-// Extend THREE namespace to make CameraControls available declaratively
-// Note: CameraControls is already a part of @react-three/drei, so manual extension is not always necessary
-// depending on the version, but it's safe to keep for compatibility.
-extend({ CameraControls });
+// Define missing types
+interface SpotLightProps {
+  color?: string;
+  position?: [number, number, number];
+  penumbra?: number;
+  distance?: number;
+  angle?: number;
+  attenuation?: number;
+  anglePower?: number;
+  intensity?: number;
+  castShadow?: boolean;
+  [key: string]: unknown; // Using unknown instead of any
+}
 
 // Constants
 const CUBE_SIZE = 1;
@@ -78,22 +84,18 @@ const getRotationMatrix = (axis: 'x' | 'y' | 'z', angle: number): Matrix4 => {
 
 // Components
 function CameraController() {
-  const { camera, gl } = useThree();
-  const controlsRef = useRef<CameraControls | null>(null);
-
-  useEffect(() => {
-    controlsRef.current?.setLookAt(0, 0, 7, 0, 0, 0, true);
-  }, []);
-
-  useFrame((_state, delta) => {
-    controlsRef.current?.update(delta);
-  });
-
-  return <CameraControls ref={controlsRef} args={[camera, gl.domElement]} />;
+  return (
+    <OrbitControls 
+      enableZoom={true}
+      enablePan={true}
+      enableRotate={true}
+      target={[0, 0, 0]}
+    />
+  );
 }
 
 function EnhancedSpotlight(props: SpotLightProps) {
-  const light = useRef<SpotLightImpl>(null!);
+  const light = useRef<THREE.SpotLight>(null!);
   const { scene } = useThree();
 
   useEffect(() => {
@@ -105,6 +107,7 @@ function EnhancedSpotlight(props: SpotLightProps) {
         scene.remove(target);
       };
     }
+    return undefined;
   }, [scene]);
 
   useFrame(() => {
@@ -139,32 +142,15 @@ function SceneContent() {
   );
 }
 
-const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => {
+const RubiksCubeModel = forwardRef<THREE.Group, RubiksCubeModelProps>((props, ref) => {
   const [cubes, setCubes] = useState<Cube[]>(createInitialCubes);
   const isAnimatingRef = useRef(false);
   const animationQueueRef = useRef<Move[]>([]);
 
-  const finalizeRotation = useCallback((move: Move) => {
-    const finalRotationMatrix = getRotationMatrix(move.axis, (Math.PI / 2) * move.direction);
-    setCubes(prevCubes => {
-      const newCubes = prevCubes.map(cube => {
-        if (Math.round(cube.position[move.axis as keyof Vector3]) === move.layer) {
-          const newPosition = cube.position.clone().applyMatrix4(finalRotationMatrix);
-          return { ...cube, position: newPosition, rotationMatrix: new Matrix4().identity() };
-        }
-        return cube;
-      });
-      return newCubes.map(c => ({ ...c, rotationMatrix: new Matrix4().identity() }));
-    });
-
-    isAnimatingRef.current = false;
-    const nextMove = animationQueueRef.current.shift();
-    if (nextMove) {
-      startRotation(nextMove);
-    }
-  }, [startRotation]);
-
-  const startRotation = useCallback((move: Move) => {
+  // Break the circular reference by defining the functions separately
+  const finalizeRotationRef = useRef<(move: Move) => void>(() => {});
+  
+  const startRotation = useCallback((move: Move): void => {
     if (isAnimatingRef.current) {
       animationQueueRef.current.push(move);
       return;
@@ -183,7 +169,17 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
 
       setCubes(prevCubes =>
         prevCubes.map(cube => {
-          if (Math.round(cube.position[move.axis as keyof Vector3]) === move.layer) {
+          // Get the specific x, y, or z property based on the axis
+          let posValue: number;
+          if (move.axis === 'x') {
+            posValue = cube.position.x;
+          } else if (move.axis === 'y') {
+                   posValue = cube.position.y;
+                 } else {
+                   posValue = cube.position.z;
+                 }
+          
+          if (Math.round(posValue) === move.layer) {
             const newRotationMatrix = reusableMatrix4.clone().multiplyMatrices(stepRotationMatrix, cube.rotationMatrix);
             return { ...cube, rotationMatrix: newRotationMatrix };
           }
@@ -191,15 +187,48 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
         })
       );
 
-      if (isFinished) {
-        finalizeRotation(move);
-      } else {
+      if (isFinished && finalizeRotationRef.current) {
+        finalizeRotationRef.current(move);
+      } else if (!isFinished) {
         requestAnimationFrame(animate);
       }
     };
 
     requestAnimationFrame(animate);
-  }, [finalizeRotation]);
+  }, []);
+
+  // Set up the finalizeRotation function
+  useEffect(() => {
+    finalizeRotationRef.current = (move: Move): void => {
+      const finalRotationMatrix = getRotationMatrix(move.axis, (Math.PI / 2) * move.direction);
+      setCubes(prevCubes => {
+        const newCubes = prevCubes.map(cube => {
+          // Get the specific x, y, or z property based on the axis
+          let posValue: number;
+          if (move.axis === 'x') {
+            posValue = cube.position.x;
+          } else if (move.axis === 'y') {
+                   posValue = cube.position.y;
+                 } else {
+                   posValue = cube.position.z;
+                 }
+          
+          if (Math.round(posValue) === move.layer) {
+            const newPosition = cube.position.clone().applyMatrix4(finalRotationMatrix);
+            return { ...cube, position: newPosition, rotationMatrix: new Matrix4().identity() };
+          }
+          return cube;
+        });
+        return newCubes.map(c => ({ ...c, rotationMatrix: new Matrix4().identity() }));
+      });
+
+      isAnimatingRef.current = false;
+      const nextMove = animationQueueRef.current.shift();
+      if (nextMove) {
+        startRotation(nextMove);
+      }
+    };
+  }, [startRotation]);
 
   const randomMove = useCallback(() => {
     if (isAnimatingRef.current) {
@@ -211,7 +240,9 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
       { axis: 'z', layer: -1, direction: 1 }, { axis: 'z', layer: 0, direction: 1 }, { axis: 'z', layer: 1, direction: 1 },
     ];
     const randomMove = moves[Math.floor(Math.random() * moves.length)];
-    startRotation(randomMove);
+    if (randomMove) {
+      startRotation(randomMove);
+    }
   }, [startRotation]);
 
   useEffect(() => {
@@ -231,8 +262,9 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
       {cubes.map((cube: Cube) => (
         <group
           key={cube.id}
-          position={cube.position}
-          matrix={cube.rotationMatrix}
+          // eslint-disable-next-line react/no-unknown-property
+          position={[cube.position.x, cube.position.y, cube.position.z]}
+          // eslint-disable-next-line react/no-unknown-property
           matrixAutoUpdate={false}
         >
           <RoundedBox
@@ -242,10 +274,14 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
             castShadow
             receiveShadow
           >
+            {/* eslint-disable-next-line react/no-unknown-property */}
             <meshStandardMaterial
               color="#ffffff"
+              // eslint-disable-next-line react/no-unknown-property
               emissive="#111111"
+              // eslint-disable-next-line react/no-unknown-property
               roughness={0.2}
+              // eslint-disable-next-line react/no-unknown-property
               metalness={0.8}
             />
           </RoundedBox>
@@ -254,6 +290,8 @@ const RubiksCubeModel = forwardRef<Group, RubiksCubeModelProps>((props, ref) => 
     </group>
   );
 });
+
+RubiksCubeModel.displayName = 'RubiksCubeModel';
 
 function Scene() {
   const [isClient, setIsClient] = useState(false);

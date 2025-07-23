@@ -5,7 +5,7 @@ import CardContent from '@/components/ui/CardContent.astro';
 import CardDescription from '@/components/ui/CardDescription.astro';
 import CardHeader from '@/components/ui/CardHeader.astro';
 import CardTitle from '@/components/ui/CardTitle.astro';
-import { Button } from '@/components/ui/button'
+import Button from '@/components/ui/Button.astro'
 import Badge from '@/components/ui/Badge.astro'
 
 export const prerender = false // Enable SSR for real-time functionality
@@ -22,7 +22,7 @@ export const prerender = false // Enable SSR for real-time functionality
       <div class="text-center mb-12">
         <div class="mb-6">
           <Badge
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 rounded-full"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 rounded-full"
           >
             <span class="relative flex h-3 w-3">
               <span
@@ -50,18 +50,18 @@ export const prerender = false // Enable SSR for real-time functionality
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <!-- Input Panel -->
         <Card
-          className="border border-emerald-600/30 bg-gray-900/50 backdrop-blur"
+          class="border border-emerald-600/30 bg-gray-900/50 backdrop-blur"
         >
           <CardHeader>
-            <CardTitle className="text-emerald-100 flex items-center gap-2">
+            <CardTitle class="text-emerald-100 flex items-center gap-2">
               🎭 Scenario Input
             </CardTitle>
-            <CardDescription className="text-emerald-200/80">
+            <CardDescription class="text-emerald-200/80">
               Enter a therapeutic training scenario to analyze for potential
               bias
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent class="space-y-6">
             <!-- Session Details -->
             <div class="space-y-4">
               <div>
@@ -179,7 +179,7 @@ export const prerender = false // Enable SSR for real-time functionality
                 </button>
                 <button
                   id="preset-gender"
-                  class="p-2 bg-purple-500/20 border border-purple-400/30 rounded text-purple-200 text-xs hover:bg-purple-500/30"
+                  class="p-2 bg-orange-500/20 border border-orange-400/30 rounded text-orange-200 text-xs hover:bg-orange-500/30"
                 >
                   ⚧ Gender Test
                 </button>
@@ -190,20 +190,20 @@ export const prerender = false // Enable SSR for real-time functionality
             <div class="flex gap-3">
               <Button
                 id="analyze-btn"
-                className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-semibold py-3"
+                class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-semibold py-3"
               >
                 🔍 Analyze for Bias
               </Button>
               <Button
                 id="export-btn"
-                className="px-6 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-3 hidden"
+                class="px-6 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-3 hidden"
               >
                 📥 Export Results
               </Button>
               <Button
                 id="clear-btn"
                 variant="outline"
-                className="px-6 border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10"
+                class="px-6 border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10"
               >
                 Clear
               </Button>
@@ -213,13 +213,13 @@ export const prerender = false // Enable SSR for real-time functionality
 
         <!-- Results Panel -->
         <Card
-          className="border border-blue-600/30 bg-gray-900/50 backdrop-blur"
+          class="border border-blue-600/30 bg-gray-900/50 backdrop-blur"
         >
           <CardHeader>
-            <CardTitle className="text-blue-100 flex items-center gap-2">
+            <CardTitle class="text-blue-100 flex items-center gap-2">
               📊 Analysis Results
             </CardTitle>
-            <CardDescription className="text-blue-200/80">
+            <CardDescription class="text-blue-200/80">
               Real-time bias detection results across multiple analysis layers
             </CardDescription>
           </CardHeader>
@@ -248,13 +248,13 @@ export const prerender = false // Enable SSR for real-time functionality
 
       <!-- Real-time Dashboard -->
       <Card
-        className="border border-purple-600/30 bg-gray-900/50 backdrop-blur mb-12"
+        class="border border-cyan-600/30 bg-gray-900/50 backdrop-blur mb-12"
       >
         <CardHeader>
-          <CardTitle className="text-purple-100 flex items-center gap-2">
+          <CardTitle class="text-cyan-100 flex items-center gap-2">
             📈 Real-time Dashboard
           </CardTitle>
-          <CardDescription className="text-purple-200/80">
+          <CardDescription class="text-cyan-200/80">
             Live system metrics and analysis trends
           </CardDescription>
         </CardHeader>
@@ -262,15 +262,15 @@ export const prerender = false // Enable SSR for real-time functionality
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Metrics Cards -->
             <div
-              class="bg-purple-500/10 border border-purple-400/30 rounded-lg p-4 text-center"
+              class="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-4 text-center"
             >
               <div
-                class="text-2xl font-bold text-purple-300"
+                class="text-2xl font-bold text-cyan-300"
                 id="total-analyses"
               >
                 0
               </div>
-              <div class="text-sm text-purple-200/80">Total Analyses</div>
+              <div class="text-sm text-cyan-200/80">Total Analyses</div>
             </div>
             <div
               class="bg-green-500/10 border border-green-400/30 rounded-lg p-4 text-center"
@@ -309,16 +309,16 @@ export const prerender = false // Enable SSR for real-time functionality
       <!-- Feature Showcase -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <Card
-          className="border border-green-600/30 hover:border-green-400/60 transition-all duration-300"
+          class="border border-green-600/30 hover:border-green-400/60 transition-all duration-300"
         >
           <CardHeader>
             <div class="text-4xl mb-3">🔍</div>
-            <CardTitle className="text-green-100"
+            <CardTitle class="text-green-100"
               >Multi-Layer Analysis</CardTitle
             >
           </CardHeader>
           <CardContent>
-            <CardDescription className="text-green-200/80">
+            <CardDescription class="text-green-200/80">
               Four-layer deep analysis: preprocessing, model-level, interactive
               behavior, and evaluation metrics.
             </CardDescription>
@@ -340,15 +340,15 @@ export const prerender = false // Enable SSR for real-time functionality
         </Card>
 
         <Card
-          className="border border-blue-600/30 hover:border-blue-400/60 transition-all duration-300"
+          class="border border-blue-600/30 hover:border-blue-400/60 transition-all duration-300"
         >
           <CardHeader>
             <div class="text-4xl mb-3">⚡</div>
-            <CardTitle className="text-blue-100">Real-time Monitoring</CardTitle
+            <CardTitle class="text-blue-100">Real-time Monitoring</CardTitle
             >
           </CardHeader>
           <CardContent>
-            <CardDescription className="text-blue-200/80">
+            <CardDescription class="text-blue-200/80">
               Continuous monitoring with instant alerts and adaptive thresholds
               for bias detection.
             </CardDescription>
@@ -370,28 +370,28 @@ export const prerender = false // Enable SSR for real-time functionality
         </Card>
 
         <Card
-          className="border border-purple-600/30 hover:border-purple-400/60 transition-all duration-300"
+          class="border border-orange-600/30 hover:border-orange-400/60 transition-all duration-300"
         >
           <CardHeader>
             <div class="text-4xl mb-3">🛡️</div>
-            <CardTitle className="text-purple-100">HIPAA Compliant</CardTitle>
+            <CardTitle class="text-orange-100">HIPAA Compliant</CardTitle>
           </CardHeader>
           <CardContent>
-            <CardDescription className="text-purple-200/80">
+            <CardDescription class="text-orange-200/80">
               Military-grade security with comprehensive audit logging and
               zero-knowledge architecture.
             </CardDescription>
             <div class="mt-4 space-y-2">
               <div class="flex items-center gap-2 text-sm">
-                <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                <span class="w-2 h-2 bg-orange-400 rounded-full"></span>
                 <span>Encrypted analysis</span>
               </div>
               <div class="flex items-center gap-2 text-sm">
-                <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                <span class="w-2 h-2 bg-orange-400 rounded-full"></span>
                 <span>Audit trails</span>
               </div>
               <div class="flex items-center gap-2 text-sm">
-                <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                <span class="w-2 h-2 bg-orange-400 rounded-full"></span>
                 <span>Zero data retention</span>
               </div>
             </div>

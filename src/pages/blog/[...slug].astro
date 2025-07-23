@@ -21,10 +21,6 @@ export async function getStaticPaths() {
     }))
 }
 
-interface Props {
-  entry: CollectionEntry<'blog'>
-}
-
 const { entry } = Astro.props
 const { Content } = await render(entry)
 
@@ -45,7 +41,7 @@ const relatedPosts = allPosts
   .slice(0, 3) // Get up to 3 related posts
 
 // Category color mapping
-const categoryColors = {
+const categoryColors: Record<string, string> = {
   'AI Training': 'cyan',
   'Clinical Practice': 'green',
   'Student Success': 'blue',
@@ -54,7 +50,7 @@ const categoryColors = {
   'University Spotlight': 'red',
 }
 
-const categoryColor = categoryColors[entry.data.category] || 'gray'
+const categoryColor = categoryColors[entry.data.category as keyof typeof categoryColors] || 'gray'
 
 // Reading time calculation (rough estimate)
 const wordsPerMinute = 200
@@ -101,16 +97,16 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
               {
                 entry.data.category && (
                   <Badge
-                    className={`bg-${categoryColor}-500/20 text-${categoryColor}-300`}
+                    class={`bg-${categoryColor}-500/20 text-${categoryColor}-300`}
                   >
                     {entry.data.category}
                   </Badge>
                 )
               }
-              <Badge className="bg-gray-500/20 text-gray-300">
+              <Badge class="bg-gray-500/20 text-gray-300">
                 {readingTime} min read
               </Badge>
-              <Badge className="bg-gray-500/20 text-gray-300">
+              <Badge class="bg-gray-500/20 text-gray-300">
                 {new Date(entry.data.pubDate).toLocaleDateString()}
               </Badge>
             </div>
@@ -152,8 +148,8 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
             {
               entry.data.tags && entry.data.tags.length > 0 && (
                 <div class="flex flex-wrap items-center justify-center gap-2 mb-8">
-                  {entry.data.tags.map((tag) => (
-                    <Badge className="bg-slate-700/50 text-slate-300 text-xs">
+                  {entry.data.tags.map((tag: string) => (
+                    <Badge class="bg-slate-700/50 text-slate-300 text-xs">
                       #{tag}
                     </Badge>
                   ))}
@@ -166,9 +162,9 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
         <!-- Article Content -->
         <div class="max-w-4xl mx-auto">
           <Card
-            className={`border border-${categoryColor}-600/30 bg-slate-900/50 rounded-2xl overflow-hidden mb-12`}
+            class={`border border-${categoryColor}-600/30 bg-slate-900/50 rounded-2xl overflow-hidden mb-12`}
           >
-            <CardContent className="p-8 lg:p-12">
+            <CardContent class="p-8 lg:p-12">
               <div class="prose prose-lg prose-invert max-w-none">
                 <Content />
               </div>
@@ -179,9 +175,9 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
         <!-- Article Actions -->
         <div class="max-w-4xl mx-auto mb-16">
           <Card
-            className="border border-green-600/30 bg-green-900/20 rounded-2xl overflow-hidden"
+            class="border border-green-600/30 bg-green-900/20 rounded-2xl overflow-hidden"
           >
-            <CardContent className="p-6 lg:p-8 text-center">
+            <CardContent class="p-6 lg:p-8 text-center">
               <div class="text-4xl mb-4 text-green-400">💡</div>
               <h3 class="text-xl font-bold text-green-100 mb-4">
                 Found This Helpful?
@@ -228,14 +224,11 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {relatedPosts.map((post) => {
-                  const postCategoryColor =
-                    categoryColors[post.data.category] || 'gray'
-                  return (
+                {relatedPosts.map((post: CollectionEntry<'blog'>) => (
                     <Card
-                      className={`border border-${postCategoryColor}-600/30 hover:border-${postCategoryColor}-400/60 rounded-2xl overflow-hidden group transition-all duration-700 organic-card bg-slate-900/50`}
+                      class="border border-slate-600/30 hover:border-slate-400/60 rounded-2xl overflow-hidden group transition-all duration-700 organic-card bg-slate-900/50"
                     >
-                      <CardHeader className="pb-4">
+                      <CardHeader class="pb-4">
                         {post.data.image && (
                           <div class="w-full h-40 bg-gradient-to-br from-orange-400/20 to-red-500/20 rounded-lg mb-4 overflow-hidden">
                             <img
@@ -248,14 +241,14 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
 
                         {post.data.category && (
                           <Badge
-                            className={`bg-${postCategoryColor}-500/20 text-${postCategoryColor}-300 text-xs mb-3`}
+                            class="bg-slate-500/20 text-slate-300 text-xs mb-3"
                           >
                             {post.data.category}
                           </Badge>
                         )}
 
                         <CardTitle
-                          className={`text-base font-bold text-${postCategoryColor}-100 tracking-wide mb-3 group-hover:text-${postCategoryColor}-50 transition-colors`}
+                          class="text-base font-bold text-slate-100 tracking-wide mb-3 group-hover:text-slate-50 transition-colors"
                         >
                           <a
                             href={`/blog/${post.data.slug || post.slug}`}
@@ -266,13 +259,13 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
                         </CardTitle>
 
                         <CardDescription
-                          className={`text-sm text-${postCategoryColor}-200/80 leading-relaxed mb-4`}
+                          class="text-sm text-slate-200/80 leading-relaxed mb-4"
                         >
                           {post.data.description}
                         </CardDescription>
 
                         <div
-                          class={`flex items-center justify-between text-xs text-${postCategoryColor}-300/70`}
+                          class="flex items-center justify-between text-xs text-slate-300/70"
                         >
                           <span>
                             {new Date(post.data.pubDate).toLocaleDateString()}
@@ -280,8 +273,7 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
                         </div>
                       </CardHeader>
                     </Card>
-                  )
-                })}
+                ))}
               </div>
             </div>
           )
@@ -290,9 +282,9 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
         <!-- Newsletter Signup -->
         <div class="max-w-4xl mx-auto">
           <Card
-            className="border border-blue-500/40 bg-slate-900/50 rounded-3xl overflow-hidden"
+            class="border border-blue-500/40 bg-slate-900/50 rounded-3xl overflow-hidden"
           >
-            <CardContent className="p-8 lg:p-12 text-center">
+            <CardContent class="p-8 lg:p-12 text-center">
               <div class="text-6xl text-blue-400 mb-6">📬</div>
 
               <h2 class="text-2xl lg:text-3xl font-bold text-blue-100 mb-6">
@@ -546,7 +538,8 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
 
     document.querySelectorAll('[data-demo-link]').forEach((button) => {
       button.addEventListener('click', (e) => {
-        const link = e.target.dataset.demoLink
+        const target = e.target as HTMLElement
+        const link = target?.dataset['demoLink']
         if (link) {
           window.location.href = link
         }
@@ -555,7 +548,8 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
 
     document.querySelectorAll('[data-blog-link]').forEach((button) => {
       button.addEventListener('click', (e) => {
-        const link = e.target.dataset.blogLink
+        const target = e.target as HTMLElement
+        const link = target?.dataset['blogLink']
         if (link) {
           window.location.href = link
         }
@@ -563,8 +557,8 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
     })
 
     // Track page view
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'page_view', {
+    if (typeof (window as any).gtag !== 'undefined') {
+      (window as any).gtag('event', 'page_view', {
         page_title: document.title,
         page_location: window.location.href,
         content_type: 'blog_post',
@@ -581,8 +575,8 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
       if (scrollPercent > maxScroll) {
         maxScroll = scrollPercent
 
-        if (maxScroll % 25 === 0 && typeof gtag !== 'undefined') {
-          gtag('event', 'blog_reading_progress', {
+        if (maxScroll % 25 === 0 && typeof (window as any).gtag !== 'undefined') {
+          (window as any).gtag('event', 'blog_reading_progress', {
             article_title: document.title,
             scroll_depth: maxScroll,
           })
@@ -593,10 +587,11 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
     // Track CTA clicks
     document.querySelectorAll('button').forEach((button) => {
       button.addEventListener('click', (e) => {
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'blog_cta_click', {
+        const target = e.target as HTMLElement
+        if (typeof (window as any).gtag !== 'undefined') {
+          (window as any).gtag('event', 'blog_cta_click', {
             article_title: document.title,
-            cta_text: e.target.textContent,
+            cta_text: target?.textContent || '',
           })
         }
       })
@@ -605,10 +600,11 @@ const readingTime = Math.ceil(wordCount / wordsPerMinute)
     // Track related post clicks
     document.querySelectorAll('a[href*="/blog/"]').forEach((link) => {
       link.addEventListener('click', (e) => {
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'related_post_click', {
+        const target = e.target as HTMLElement
+        if (typeof (window as any).gtag !== 'undefined') {
+          (window as any).gtag('event', 'related_post_click', {
             current_article: document.title,
-            clicked_article: e.target.textContent,
+            clicked_article: target?.textContent || '',
           })
         }
       })

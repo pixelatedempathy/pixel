@@ -4,12 +4,15 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PostCard from '@/components/blog/PostCard.astro';
 import Pagination from '@/components/blog/Pagination.astro';
 
-export async function getStaticPaths({ paginate }) {
-  const allPosts = await getCollection('blog', ({ data }) => {
+// This page uses dynamic routing with pagination, so it's intentionally not prerendered
+export async function getStaticPaths({ paginate }: any) {
+  const allPosts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
 
-  const sortedPosts = allPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+  const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => 
+    new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+  );
 
   return paginate(sortedPosts, { pageSize: 10 });
 }

@@ -1,9 +1,13 @@
-export { ChatContainer, type ChatContainerProps } from './ChatContainer'
-export { ChatInput, type ChatInputProps } from './ChatInput'
-// Export components
-export { ChatMessage, type ChatMessageProps } from './ChatMessage'
+// === CORE COMPONENTS ===
+export { ChatContainer, type ChatContainerProps } from '../../chat/ChatContainer'
+export { ChatInput, type ChatInputProps } from '../../chat/ChatInput'
+export { ChatMessage, type ChatMessageProps } from '../../chat/ChatMessage'
 
-// Export hooks
+// === EXAMPLE COMPONENTS ===
+export { default as ChatCompletionExample } from './ChatCompletionExample'
+export { default as ResponseGenerationExample } from './ResponseGenerationExample'
+
+// === HOOKS ===
 export { useChatCompletion } from './useChatCompletion'
 export { useCrisisDetection } from './useCrisisDetection'
 export { useResponseGeneration } from './useResponseGeneration'

@@ -7,7 +7,6 @@
  */
 
 import type { EncryptionMode } from './fhe/types'
-import process from 'node:process'
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
 // Initialize logger
@@ -18,7 +17,7 @@ const isServer = typeof window === 'undefined'
 
 // Helper function to get environment variables safely
 function getEnvVar(key: string): string | undefined {
-  if (isServer) {
+  if (isServer && typeof process !== 'undefined') {
     return process.env[key]
   }
   // In browser, environment variables should be accessed through import.meta.env

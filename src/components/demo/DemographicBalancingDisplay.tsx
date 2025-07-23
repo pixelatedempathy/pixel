@@ -78,6 +78,13 @@ const currentStats = {
   },
 }
 
+const DemographicBalancingDisplay: React.FC<DemographicBalancingDisplayProps> = ({
+  currentProfile,
+  onBalanceUpdate,
+}) => {
+  const [demographicStats, setDemographicStats] = useState<DemographicData[]>([])
+  const [overallBalance, setOverallBalance] = useState<number>(0)
+
   const getAgeCategory = (age: number): string => {
     if (age <= 25) {
       return '18-25'
@@ -225,13 +232,7 @@ const currentStats = {
     onBalanceUpdate?.(balanceScore)
   }, [
     currentProfile, 
-    onBalanceUpdate, 
-    // Remove currentStats from dependencies since it's now defined outside the component
-    // and won't change between renders
-    demographicTargets.age, 
-    demographicTargets.gender, 
-    demographicTargets.background, 
-    demographicTargets.occupation
+    onBalanceUpdate
   ])
 
   const getBalanceColor = (percentage: number) => {

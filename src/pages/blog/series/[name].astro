@@ -5,12 +5,14 @@ import PostCard from '@/components/blog/PostCard.astro';
 
 export const prerender = true;
 
+type BlogPost = CollectionEntry<'blog'>;
+
 export async function getStaticPaths() {
-  const allBlogPosts = await getCollection('blog', ({ data }) => 
+  const allBlogPosts = await getCollection('blog', ({ data }: BlogPost) => 
     import.meta.env.PROD ? !data.draft : true
   );
 
-  const allSeries = [...new Set(allBlogPosts.flatMap(post => post.data.tags || []))];
+  const allSeries = [...new Set(allBlogPosts.flatMap((post: BlogPost) => post.data.tags || []))];
 
   return allSeries.map((name) => ({
     params: { name },
@@ -20,13 +22,13 @@ export async function getStaticPaths() {
 
 const { name } = Astro.props;
 
-const allPosts = await getCollection('blog', ({ data }) => 
+const allPosts = await getCollection('blog', ({ data }: BlogPost) => 
   import.meta.env.PROD ? !data.draft : true
 );
 
 const postsInSeries = allPosts
-  .filter(post => post.data.tags && post.data.tags.includes(name))
-  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+  .filter((post: BlogPost) => post.data.tags && post.data.tags.includes(name))
+  .sort((a: BlogPost, b: BlogPost) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
 
 const title = `Series: ${name}`;
 const description = `All posts in the '${name}' series.`;
@@ -39,37 +41,9 @@ const description = `All posts in the '${name}' series.`;
       <p class="text-lg text-slate-400 mt-2">{postsInSeries.length} post{postsInSeries.length !== 1 ? 's' : ''} in this series</p>
     </div>
     <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {postsInSeries.map(post => (
+      {postsInSeries.map((post: BlogPost) => (
         <PostCard post={post} />
       ))}
     </ul>
   </div>
-</BaseLayout>
-                    </h3>
-                  </a>
-                  <p class="mt-3 text-gray-600 dark:text-gray-400">
-                    {post.data.description}
-                  </p>
-                  <div class="mt-4 flex items-center justify-between">
-                    <span class="text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(post.data.pubDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ),
-          )
-        }
-      </div>
-
-      <div class="mt-12 text-center">
-        <a
-          href="/blog"
-          class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          Back to All Articles
-        </a>
-      </div>
-    </div>
-  </StandardLayout>
 </BaseLayout>

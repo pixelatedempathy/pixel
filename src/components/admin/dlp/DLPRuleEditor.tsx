@@ -61,7 +61,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 
 // Default empty rule
 const defaultRule = {
@@ -255,8 +255,8 @@ export default function DLPRuleEditor() {
                 value={currentRule.action as string}
                 onValueChange={(value: string) => handleChange('action', value)}
               >
-                <SelectTrigger id="rule-action">
-                  <SelectValue placeholder="Select action" />
+                <SelectTrigger>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={DLPAction.ALLOW}>Allow</SelectItem>

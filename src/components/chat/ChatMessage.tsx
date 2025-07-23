@@ -1,19 +1,24 @@
-import type { MentalHealthAnalysis } from '@/lib/chat/mentalHealthChat'
 import type { Message } from '@/types/chat'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { markdownToHtml } from '@/lib/markdown'
 import { formatTimestamp } from '@/lib/dates'
 
+// Define the MentalHealthAnalysis interface with the properties we need
+interface MentalHealthAnalysis {
+  category: string;
+  hasMentalHealthIssue: boolean;
+  [key: string]: unknown;
+}
+
 interface ExtendedMessage extends Message {
   mentalHealthAnalysis?: MentalHealthAnalysis
 }
 
-interface ChatMessageProps {
+export interface ChatMessageProps {
   message: ExtendedMessage
   timestamp?: string
   className?: string
-  _isLatest?: boolean
   isTyping?: boolean
 }
 
@@ -21,7 +26,6 @@ export function ChatMessage({
   message,
   timestamp,
   className,
-  _isLatest = false,
   isTyping = false,
 }: ChatMessageProps) {
   const isUser = message.role === 'user'

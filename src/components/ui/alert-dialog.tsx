@@ -72,11 +72,12 @@ function AlertDialogPortal({ children }: { children: React.ReactNode }) {
   )
 }
 
-function AlertDialogOverlay({ className, ...props }: React.ComponentProps<'div'>) {
+function AlertDialogOverlay({ className, ...props }: React.ComponentProps<'button'>) {
   const { onOpenChange } = React.useContext(AlertDialogContext)
   
   return (
-    <div
+    <button
+      type="button"
       className={cn(
         'fixed inset-0 z-50 bg-black/50 animate-in fade-in-0',
         className
@@ -88,8 +89,6 @@ function AlertDialogOverlay({ className, ...props }: React.ComponentProps<'div'>
           onOpenChange(false);
         }
       }}
-      role="button"
-      tabIndex={0}
       {...props}
     />
   )

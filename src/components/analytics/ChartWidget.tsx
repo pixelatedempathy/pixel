@@ -8,7 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix'
+} from '@/components/ui/select'
 
 // Optional: Import type definitions for better TypeScript support
 type ChartType = 'line' | 'bar' | 'pie' | 'doughnut'
@@ -101,11 +101,8 @@ export function ChartWidget({
           // Create configuration based on chart type
           const config = createChartConfig(chartType, labels, series)
 
-          // Create and store the chart with proper type casting
-          const newChart = new ChartJS.Chart(
-            ctx,
-            config as ChartJS.ChartConfiguration,
-          ) as ChartInstance
+          // Create and store the chart
+          const newChart = new ChartJS.Chart(ctx, config) as ChartInstance
           setChart(newChart)
         }
       })
@@ -206,7 +203,7 @@ export function ChartWidget({
             display: multiSeries.length > 1,
           },
           tooltip: {
-            mode: 'index',
+            mode: 'index' as const,
             intersect: false,
           },
         },
@@ -268,9 +265,12 @@ export function ChartWidget({
 
   // Custom actions for the widget
   const rangeSelector = allowRangeSelection ? (
-    <Select value={range} onValueChange={(value: TimeRange) => setRange(value)}>
+    <Select
+      value={range}
+      onValueChange={(value: string) => setRange(value as TimeRange)}
+    >
       <SelectTrigger className="w-[100px] h-8 text-xs">
-        <SelectValue placeholder="Time range" />
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="day">Day</SelectItem>

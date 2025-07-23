@@ -11,6 +11,18 @@ import type { EmotionAnalysis } from '../../ai/emotions/types'
 import { supabase } from '../../supabase'
 // TODO: Create these service interfaces when services are implemented
 interface EfficacyFeedback {
+  recommendationId: string
+  clientId: string
+  techniqueId: string
+  efficacyRating: number
+  timestamp: string | Date
+  feedback: string
+  sessionId: string
+  therapistId: string
+  context: Record<string, unknown>
+}
+
+interface EfficacyFeedbackRecord {
   recommendation_id: string
   client_id: string
   technique_id: string
@@ -31,10 +43,206 @@ interface Technique {
 }
 
 interface ClientProfile {
+  preferences?: Record<string, unknown>
+  characteristics?: Record<string, unknown>
+  demographic?: Record<string, unknown>
+  history?: {
+    pastTechniques: PastTechnique[]
+  }
+}
+
+interface PastTechnique {
+  techniqueId: string
+  techniqueName: string
+  lastUsed: Date
+  efficacy: number
+  usageCount: number
+}
+
+interface ClientTechniqueHistoryItem {
+  technique_id: string
+  technique_name: string
+  last_used_at: string
+  efficacy_rating: number
+  usage_count: number
+}
+
+interface TherapySessionRecord {
   id: string
-  preferences: Record<string, unknown>
-  personalityTraits: Record<string, unknown>
-  riskFactors: string[]
+  client_id: string
+  therapist_id: string
+  start_time: string
+  end_time?: string
+  status: string
+  security_level: string
+  emotion_analysis_enabled: boolean
+  metadata: Record<string, unknown>
+}
+
+interface EmotionAnalysisRecord {
+  id: string
+  timestamp: string
+  emotions: unknown
+  dominant_emotion: string
+  risk_factors?: unknown
+  requires_attention: boolean
+  text: string
+  client_id: string
+}
+
+interface Emotion {
+  type: string
+  intensity: number
+  timestamp: Date
+  confidence: number
+}
+
+interface RiskFactor {
+  type: string
+  severity: 'low' | 'medium' | 'high'
+  description: string
+  confidence: number
+}
+
+interface BiasAnalysisResult {
+  id: string
+  sessionId: string
+  userId: string
+  createdAt: Date
+  updatedAt: Date
+  overallBiasScore: number
+  alertLevel: string
+  confidenceScore: number
+  layerResults: Record<string, unknown>
+  demographics: Record<string, unknown>
+  demographicGroups: Record<string, unknown>
+  recommendations: string[]
+  explanation: string
+  latencyMs: number
+  modelId: string
+  modelProvider: string
+  metadata: Record<string, unknown>
+}
+
+interface BiasMetric {
+  id: string
+  metricType: string
+  metricName: string
+  metricValue: number
+  sessionId?: string
+  userId?: string
+  timestamp: Date
+  aggregationPeriod: string
+  metadata: Record<string, unknown>
+  createdAt: Date
+}
+
+interface BiasAlert {
+  id: string
+  alertId: string
+  sessionId?: string
+  userId?: string
+  createdAt: Date
+  updatedAt: Date
+  alertType: string
+  alertLevel: string
+  message: string
+  details: Record<string, unknown>
+  acknowledged: boolean
+  acknowledgedBy?: string
+  acknowledgedAt?: Date | null
+  resolved: boolean
+  resolvedBy?: string
+  resolvedAt?: Date | null
+  actions: unknown[]
+  notificationChannels: string[]
+  escalated: boolean
+  escalatedAt?: Date | null
+}
+
+interface AlertAction {
+  type: string
+  timestamp: Date
+  userId: string
+  description: string
+  metadata?: Record<string, unknown>
+}
+
+interface AlertUpdateData {
+  acknowledged?: boolean
+  acknowledged_at?: string | null
+  acknowledged_by?: string
+  resolved?: boolean
+  resolved_at?: string | null
+  resolved_by?: string
+  escalated?: boolean
+  escalated_at?: string | null
+  actions?: AlertAction[]
+}
+
+interface BiasAlertDistribution {
+  low: number
+  medium: number
+  high: number
+  critical: number
+}
+
+interface BiasAggregatedMetrics {
+  totalAnalyses: number
+  averageBiasScore: number
+  alertCounts: BiasAlertDistribution
+  demographics: Record<string, unknown>
+}
+
+interface BiasTrendAnalysis {
+  periodType: 'daily' | 'weekly' | 'monthly'
+  trends: Array<{
+    period: string
+    biasScore: number
+    alertCount: number
+    sessionCount: number
+  }>
+}
+
+interface BiasCustomAnalysis {
+  analysisType: string
+  parameters: Record<string, unknown>
+  results: Record<string, unknown>
+}
+
+interface BiasRecommendations {
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  recommendations: Array<{
+    type: string
+    description: string
+    actionItems: string[]
+    timeline: string
+  }>
+}
+
+interface BiasReport {
+  id: string
+  reportId: string
+  userId?: string
+  title: string
+  description?: string
+  createdAt: Date
+  updatedAt: Date
+  timeRangeStart: Date
+  timeRangeEnd: Date
+  sessionCount: number
+  format: 'json' | 'pdf' | 'html' | 'csv'
+  overallFairnessScore?: number
+  averageBiasScore?: number
+  alertDistribution?: BiasAlertDistribution
+  aggregatedMetrics?: BiasAggregatedMetrics
+  trendAnalysis?: BiasTrendAnalysis
+  customAnalysis?: BiasCustomAnalysis
+  recommendations?: BiasRecommendations
+  executionTimeMs?: number
+  filePath?: string
+  expiresAt?: Date | null
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -566,10 +774,8 @@ export class AIRepository {
       clientId: session.client_id,
       therapistId: session.therapist_id,
       startTime: new Date(session.start_time),
-      endTime: session.end_time ? new Date(session.end_time) : undefined,
-      status: session.status,
-      securityLevel: session.security_level,
-      emotionAnalysisEnabled: session.emotion_analysis_enabled,
+      endTime: session.end_time ? new Date(session.end_time) : new Date(), // Provide default if undefined
+      status: session.status as 'scheduled' | 'active' | 'completed' | 'cancelled',
       metadata: session.metadata,
     }))
   }
@@ -601,10 +807,8 @@ export class AIRepository {
       clientId: session.client_id,
       therapistId: session.therapist_id,
       startTime: new Date(session.start_time),
-      endTime: session.end_time ? new Date(session.end_time) : undefined,
-      status: session.status,
-      securityLevel: session.security_level,
-      emotionAnalysisEnabled: session.emotion_analysis_enabled,
+      endTime: session.end_time ? new Date(session.end_time) : new Date(), // Provide default if undefined
+      status: session.status as 'scheduled' | 'active' | 'completed' | 'cancelled',
       metadata: session.metadata,
     }))
   }
@@ -655,11 +859,11 @@ export class AIRepository {
         }
       }
 
-      let parsedRiskFactors: RiskFactor[] | undefined = undefined
+      let _parsedRiskFactors: RiskFactor[] | undefined = undefined
       if (analysis.risk_factors) {
         if (typeof analysis.risk_factors === 'string') {
           try {
-            parsedRiskFactors = JSON.parse(
+            _parsedRiskFactors = JSON.parse(
               analysis.risk_factors,
             ) as RiskFactor[]
           } catch (e) {
@@ -670,19 +874,44 @@ export class AIRepository {
             )
           }
         } else if (Array.isArray(analysis.risk_factors)) {
-          parsedRiskFactors = analysis.risk_factors as RiskFactor[] // Assuming it's already correctly typed
+          _parsedRiskFactors = analysis.risk_factors as RiskFactor[] // Assuming it's already correctly typed
         }
       }
 
       return {
         id: analysis.id,
-        timestamp: new Date(analysis.timestamp),
-        emotions: parsedEmotions,
-        overallSentiment: analysis.dominant_emotion,
-        riskFactors: parsedRiskFactors,
-        requiresAttention: analysis.requires_attention,
-        input: analysis.text,
-        userId: analysis.client_id,
+        sessionId: sessionId, // Use the sessionId parameter
+        timestamp: analysis.timestamp,
+        emotions: parsedEmotions.reduce((acc, emotion) => {
+          acc[emotion.type as keyof typeof acc] = emotion.intensity;
+          return acc;
+        }, {
+          joy: 0, sadness: 0, anger: 0, fear: 0,
+          surprise: 0, disgust: 0, trust: 0, anticipation: 0
+        }),
+        dimensions: {
+          valence: 0, // Default values, should be calculated from emotions
+          arousal: 0,
+          dominance: 0
+        },
+        confidence: parsedEmotions.length > 0 ? 
+          parsedEmotions.reduce((sum, e) => sum + e.confidence, 0) / parsedEmotions.length : 0,
+        metadata: {
+          source: 'text' as const,
+          processingTime: 0,
+          modelVersion: 'v1',
+          confidence: {
+            overall: parsedEmotions.length > 0 ? 
+              parsedEmotions.reduce((sum, e) => sum + e.confidence, 0) / parsedEmotions.length : 0,
+            perEmotion: parsedEmotions.reduce((acc, emotion) => {
+              acc[emotion.type as keyof typeof acc] = emotion.confidence;
+              return acc;
+            }, {
+              joy: 0, sadness: 0, anger: 0, fear: 0,
+              surprise: 0, disgust: 0, trust: 0, anticipation: 0
+            })
+          }
+        }
       } as EmotionAnalysis
     })
   }
@@ -966,71 +1195,6 @@ export class AIRepository {
     }
 
     return data?.id
-  }
-
-  /**
-   * Bias analysis result interface
-   */
-  interface BiasAnalysisResult {
-    id: string;
-    sessionId: string;
-    userId: string;
-    createdAt: Date;
-    updatedAt: Date;
-    overallBiasScore: number;
-    alertLevel: string;
-    confidenceScore: number;
-    layerResults: Record<string, unknown>;
-    demographics: Record<string, unknown>;
-    demographicGroups: Record<string, unknown>;
-    recommendations: string[];
-    explanation: string;
-    latencyMs: number;
-    modelId: string;
-    modelProvider: string;
-    metadata: Record<string, unknown>;
-  }
-
-  /**
-   * Bias metric interface
-   */
-  interface BiasMetric {
-    id: string;
-    metricType: string;
-    metricName: string;
-    metricValue: number;
-    sessionId?: string;
-    userId?: string;
-    timestamp: Date;
-    aggregationPeriod: string;
-    metadata: Record<string, unknown>;
-    createdAt: Date;
-  }
-
-  /**
-   * Bias alert interface
-   */
-  interface BiasAlert {
-    id: string;
-    alertId: string;
-    sessionId?: string;
-    userId?: string;
-    createdAt: Date;
-    updatedAt: Date;
-    alertType: string;
-    alertLevel: string;
-    message: string;
-    details: Record<string, unknown>;
-    acknowledged: boolean;
-    acknowledgedBy?: string;
-    acknowledgedAt?: Date | null;
-    resolved: boolean;
-    resolvedBy?: string;
-    resolvedAt?: Date | null;
-    actions: unknown[];
-    notificationChannels: string[];
-    escalated: boolean;
-    escalatedAt?: Date | null;
   }
 
   /**
@@ -1499,27 +1663,6 @@ export class AIRepository {
   }
 
   /**
-interface BiasReport {
-  id: string;
-  reportId: string;
-  userId?: string;
-  title: string;
-  description?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  overallFairnessScore?: number;
-  averageBiasScore?: number;
-  alertDistribution?: BiasAlertDistribution;
-  aggregatedMetrics?: BiasAggregatedMetrics;
-  trendAnalysis?: BiasTrendAnalysis;
-  customAnalysis?: BiasCustomAnalysis;
-  recommendations?: BiasRecommendations;
-  executionTimeMs?: number;
-  filePath?: string;
-  expiresAt?: Date;
-  metadata?: Record<string, unknown>;
-}
-
    * Get bias report by report ID
    */
   async getBiasReport(reportId: string): Promise<BiasReport | null> {
