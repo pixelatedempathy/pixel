@@ -11,8 +11,7 @@ import type {
   DialogHookResult,
   ConfirmDialogHookResult,
   DialogMaxWidth,
-  maxWidthClasses,
-} from './dialog-types'
+  } from './dialog-types'
 
 // Custom Dialog Context
 const DialogContext = React.createContext<DialogContextType>({

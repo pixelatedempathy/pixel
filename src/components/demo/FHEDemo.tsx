@@ -58,7 +58,7 @@ export function FHEDemo({
         try {
           // Use optional chaining and type checking
           if ('getEncryptionMode' in fheService) {
-            const mode = (fheService as any).getEncryptionMode()
+            const mode = (fheService as { getEncryptionMode(): EncryptionMode }).getEncryptionMode()
             setEncryptionMode(mode)
           } else {
             setEncryptionMode('initialized')
@@ -72,7 +72,7 @@ export function FHEDemo({
         try {
           // Use optional chaining and type checking
           if ('rotateKeys' in fheService) {
-            const keyRotationInfo = await (fheService as any).rotateKeys()
+            const keyRotationInfo = await (fheService as { rotateKeys(): Promise<string> }).rotateKeys()
             setKeyId(keyRotationInfo)
           } else {
             setKeyId('default-key')
@@ -162,7 +162,13 @@ export function FHEDemo({
         console.warn('API processing failed, trying client-side:', apiError)
 
         if ('processEncrypted' in fheService) {
-          result = await (fheService as any).processEncrypted(
+          result = await (fheService as {
+            processEncrypted(
+              encryptedData: string,
+              operation: FHEOperation | string,
+              params?: Record<string, unknown>
+            ): Promise<unknown>
+          }).processEncrypted(
             encryptedMessage,
             operation as FHEOperation,
           )
@@ -207,7 +213,7 @@ export function FHEDemo({
         console.warn('API key rotation failed, trying client-side:', apiError)
 
         if ('rotateKeys' in fheService) {
-          newKeyId = await (fheService as any).rotateKeys()
+          newKeyId = await (fheService as { rotateKeys(): Promise<string> }).rotateKeys()
         } else {
           throw new Error('No key rotation method available')
         }

@@ -16,63 +16,18 @@ interface ConsentType {
   is_active: boolean
 }
 
-interface ConsentVersion {
+// Base types for database tables
+interface ConsentType {
   id: string
-  version: string
-  consent_type_id: string
-  consent_types: { name: string } // Simplified, assuming only name is used directly
-  is_current: boolean
-  effective_date: string
-  [key: string]: any // Add index signature to allow dynamic property access
-}
-
-interface UserConsent {
-  id: string
-  consent_version_id: string
-  consent_versions: {
-    consent_type_id: string
-    consent_types: { name: string }
-  }
+  name: string
+  scope: string
   is_active: boolean
-  withdrawal_date?: string | null
-  withdrawal_reason?: string | null
   created_at?: string
   updated_at?: string
-  user_id?: string
-  [key: string]: any // Add index signature to allow dynamic property access
 }
 
 // Fetch consent statistics
-const { data: activeConsents, error: activeConsentsError } = await supabase
-  .from('user_consents')
-  .select(
-    'id, consent_version_id, consent_versions(consent_type_id, consent_types(name))',
-  )
-  .eq('is_active', true)
-
-const { data: withdrawnConsents, error: withdrawnConsentsError } =
-  await supabase
-    .from('user_consents')
-    .select(
-      'id, withdrawal_date, withdrawal_reason, consent_version_id, consent_versions(consent_type_id, consent_types(name))',
-    )
-    .eq('is_active', false)
-    .not('withdrawal_date', 'is', null)
-
-const { data: consentTypes, error: consentTypesError } = await supabase
-  .from('consent_types')
-  .select('id, name, scope, is_active')
-
-const { data: consentVersions, error: consentVersionsError } = await supabase
-  .from('consent_versions')
-  .select(
-    'id, version, consent_type_id, consent_types(name), is_current, effective_date',
-  )
-  .order('consent_type_id', { ascending: true })
-  .order('effective_date', { ascending: false })
-
-// Helper type for consent with nested types
-type ConsentWithNestedTypes = {
+interface ActiveConsentResponse {
   id: string
   consent_version_id: string
   consent_versions: {
@@ -81,39 +36,111 @@ type ConsentWithNestedTypes = {
       name: string
     }
   }
+}
+
+interface WithdrawnConsentResponse {
+  id: string
+  withdrawal_date: string
+  withdrawal_reason: string | null
+  consent_version_id: string
+  consent_versions: {
+    consent_type_id: string
+    consent_types: {
+      name: string
+    }
+  }
+}
+
+interface ConsentVersionResponse {
+  id: string
+  version: string
+  consent_type_id: string
+  consent_types: {
+    name: string
+  }
+  is_current: boolean
+  effective_date: string
+}
+
+// Fetch data with proper typing
+const { data: activeConsents, error: activeConsentsError } = await supabase
+  .from('user_consents')
+  .select('id, consent_version_id, consent_versions(consent_type_id, consent_types(name))')
+  .eq('is_active', true) as { data: ActiveConsentResponse[] | null, error: any }
+
+const { data: withdrawnConsents, error: withdrawnConsentsError } = await supabase
+  .from('user_consents')
+  .select('id, withdrawal_date, withdrawal_reason, consent_version_id, consent_versions(consent_type_id, consent_types(name))')
+  .eq('is_active', false)
+  .not('withdrawal_date', 'is', null) as { data: WithdrawnConsentResponse[] | null, error: any }
+
+const { data: consentTypes, error: consentTypesError } = await supabase
+  .from('consent_types')
+  .select('id, name, scope, is_active') as { data: ConsentType[] | null, error: any }
+
+const { data: consentVersions, error: consentVersionsError } = await supabase
+  .from('consent_versions')
+  .select('id, version, consent_type_id, consent_types(name), is_current, effective_date')
+  .order('consent_type_id', { ascending: true })
+  .order('effective_date', { ascending: false }) as { data: ConsentVersionResponse[] | null, error: any }
+
+// Type for consent version with joined data from consent_types
+interface ConsentVersionWithTypeName {
+  id: string
+  version: string
+  consent_type_id: string
+  is_current: boolean
+  effective_date: string
+  consent_types: {
+    name: string
+    id: string
+  }
+}
+
+// Type for user consent with joined version and type data
+interface UserConsentWithDetails {
+  id: string
+  consent_version_id: string
   is_active: boolean
-  withdrawal_date?: string | null
-  withdrawal_reason?: string | null
-  [key: string]: any // Allow additional properties
+  withdrawal_date: string | null
+  withdrawal_reason: string | null
+  consent_versions: {
+    consent_type_id: string
+    consent_types: {
+      name: string
+      id: string
+    }
+  }
 }
 
-// Group consents by type
-const consentsByType: Record<string, number> = {}
-if (activeConsents) {
-  activeConsents.forEach((consent: any) => {
-    const typeName = consent.consent_versions?.consent_types?.name;
-    if (typeName) {
-      consentsByType[typeName] = (consentsByType[typeName] || 0) + 1;
-    }
-  });
-}
-
-// Group withdrawals by type
-const withdrawalsByType: Record<string, number> = {}
-if (withdrawnConsents) {
-  withdrawnConsents.forEach((consent: any) => {
-    const typeName = consent.consent_versions?.consent_types?.name;
-    if (typeName) {
-      withdrawalsByType[typeName] = (withdrawalsByType[typeName] || 0) + 1;
-    }
-  });
-}
+// Type assertions for the data
+const typedConsentVersions = consentVersions as unknown as ConsentVersionWithTypeName[] | null;
+const typedActiveConsents = activeConsents as unknown as UserConsentWithDetails[] | [];
+const typedWithdrawnConsents = withdrawnConsents as unknown as UserConsentWithDetails[] | [];
 
 // Calculate overall stats
-const totalActiveConsents = activeConsents?.length || 0
-const totalWithdrawnConsents = withdrawnConsents?.length || 0
-const totalConsentTypes = consentTypes?.length || 0
-const totalConsentVersions = consentVersions?.length || 0
+const totalActiveConsents = typedActiveConsents?.length || 0;
+const totalWithdrawnConsents = typedWithdrawnConsents?.length || 0;
+const totalConsentTypes = consentTypes?.length || 0;
+const totalConsentVersions = typedConsentVersions?.length || 0;
+
+// Group consents by type
+const consentsByType: Record<string, number> = {};
+typedActiveConsents?.forEach((consent) => {
+  const typeName = consent.consent_versions?.consent_types?.name;
+  if (typeName) {
+    consentsByType[typeName] = (consentsByType[typeName] || 0) + 1;
+  }
+});
+
+// Group withdrawals by type
+const withdrawalsByType: Record<string, number> = {};
+typedWithdrawnConsents?.forEach((consent) => {
+  const typeName = consent.consent_versions?.consent_types?.name;
+  if (typeName) {
+    withdrawalsByType[typeName] = (withdrawalsByType[typeName] || 0) + 1;
+  }
+});
 
 // Format date helper
 const formatDate = (dateString: string) => {
@@ -126,11 +153,12 @@ const formatDate = (dateString: string) => {
 }
 
 // Handle errors
-const hasErrors =
+const hasErrors = Boolean(
   activeConsentsError ||
   withdrawnConsentsError ||
   consentTypesError ||
   consentVersionsError
+)
 ---
 
 <div class="space-y-6">
@@ -277,9 +305,11 @@ const hasErrors =
       <CardContent>
         <div class="space-y-4">
           {
-            consentVersions &&
-              (consentVersions as Array<ConsentVersion & { consent_types?: { name: string } }>)
-                .filter((v) => v.is_current && v.consent_types?.name)
+            typedConsentVersions &&
+              typedConsentVersions
+                .filter((v): v is ConsentVersionWithTypeName => 
+                  v.is_current && !!v.consent_types?.name
+                )
                 .map((version) => (
                   <div class="flex items-center justify-between border-b pb-2">
                     <div>
@@ -295,14 +325,13 @@ const hasErrors =
           }
 
           {
-            (!consentVersions ||
-              (consentVersions as ConsentVersion[]).filter(v => v.is_current).length === 0) && (
+            (!typedConsentVersions ||
+              typedConsentVersions.filter(v => v.is_current).length === 0) && (
               <p class="text-center text-muted-foreground py-4">
                 No current versions found
               </p>
             )
           }
-        </div>
       </CardContent>
     </Card>
   </div>
@@ -376,35 +405,34 @@ const hasErrors =
   </Card>
 
   <!-- Recent Withdrawals -->
-  {withdrawnConsents?.length ? (
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Consent Withdrawals</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div class="space-y-4">
-            {withdrawnConsents.slice(0, 5).map((consent: any) => (
-                <div class="border-b pb-4">
-                  <div class="flex items-center justify-between mb-2">
-                    <div>
-                      <Badge variant="outline">
-                        {consent.consent_versions?.consent_types?.name || 'Unknown'}
-                      </Badge>
-                      <span class="text-xs text-muted-foreground ml-2">
-                        Withdrawn on {formatDate(consent.withdrawal_date!)}
-                      </span>
-                    </div>
+  {typedWithdrawnConsents && typedWithdrawnConsents.length > 0 && (
+    <Card>
+      <CardHeader>
+        <CardTitle>Recent Consent Withdrawals</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-4">
+          {typedWithdrawnConsents.slice(0, 5).map((consent) => (
+            <div key={consent.id} class="border-b pb-4">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <Badge variant="outline">
+                    {consent.consent_versions?.consent_types?.name || 'Unknown'}
+                  </Badge>
+                  <span class="text-xs text-muted-foreground ml-2">
+                    Withdrawn on {formatDate(consent.withdrawal_date!)}
+                  </span>
                 </div>
-                {consent.withdrawal_reason && (
-                  <p class="text-sm border-l-2 border-red-200 pl-3 text-gray-600 italic">
-                    "{consent.withdrawal_reason}"
-                  </p>
-                )}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+              {consent.withdrawal_reason && (
+                <p class="text-sm border-l-2 border-red-200 pl-3 text-gray-600 italic">
+                  "{consent.withdrawal_reason}"
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )}
 </div>

@@ -23,9 +23,16 @@ declare global {
       path: string
       isMobile: boolean
     }
-    webkitSpeechRecognition: any
-    SpeechRecognition: any
-    SpeechGrammarList: any
+    // Define proper interfaces for speech recognition APIs
+    webkitSpeechRecognition: typeof SpeechRecognition
+    SpeechRecognition: {
+      new(): SpeechRecognition;
+      prototype: SpeechRecognition;
+    }
+    SpeechGrammarList: {
+      new(): SpeechGrammarList;
+      prototype: SpeechGrammarList;
+    }
   }
 }
 
@@ -89,7 +96,17 @@ declare module 'astro:content' {
 
 // Additional module declarations for any custom types needed
 declare module '*.md' {
-  const Content: any
+  // Define a proper interface for markdown content
+  interface MarkdownContent {
+    frontmatter: Record<string, unknown>;
+    file: string;
+    rawContent: () => string;
+    compiledContent: () => string;
+    getHeadings: () => Array<{ depth: number; slug: string; text: string }>;
+    default: unknown;
+  }
+
+  const Content: MarkdownContent
   export { Content }
 }
 

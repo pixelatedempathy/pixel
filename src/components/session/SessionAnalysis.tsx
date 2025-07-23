@@ -45,9 +45,23 @@ export default function SessionAnalysis({
 
         const data = await response.json()
 
+        // Define an interface for the API response items
+        interface EmotionApiItem {
+          timestamp?: string;
+          dimensions?: {
+            valence?: number;
+            arousal?: number;
+            dominance?: number;
+          };
+          valence?: number;
+          arousal?: number;
+          dominance?: number;
+          label?: string;
+        }
+
         // Transform API data into the expected format
         const formattedData = Array.isArray(data)
-          ? data.map((item: any) => {
+          ? data.map((item: EmotionApiItem) => {
               const baseData = {
                 timestamp: item.timestamp
                   ? new Date(item.timestamp).toISOString()

@@ -13,14 +13,17 @@ declare module 'scheduler/tracing' {
     current: Set<Interaction>
   }
 
-  export function unstable_clear(callback: Function): any
+  // Define more specific function types
+  type CallbackFn = (...args: unknown[]) => unknown;
+
+  export function unstable_clear(callback: CallbackFn): unknown
   export function unstable_getCurrent(): Set<Interaction>
   export function unstable_getThreadID(): number
   export function unstable_trace(
     name: string,
     timestamp: number,
-    callback: Function,
-    ...args: any[]
-  ): any
-  export function unstable_wrap(callback: Function): Function
+    callback: CallbackFn,
+    ...args: unknown[]
+  ): unknown
+  export function unstable_wrap(callback: CallbackFn): CallbackFn
 }

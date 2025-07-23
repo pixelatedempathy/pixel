@@ -7,7 +7,7 @@
 
 import { detectAndRedactPHI } from './phiDetection'
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
-import { AuditEventType, logAuditEvent } from '../audit'
+import { AuditEventType, logAuditEvent, type AuditDetails } from '../audit'
 
 const logger = createBuildSafeLogger('dlp-service')
 
@@ -24,7 +24,7 @@ class AuditLogger {
     data?: Record<string, unknown>
     severity?: string
   }) {
-    logAuditEvent(type, userId, 'dlp', 'security', data)
+    logAuditEvent(type, 'dlp', userId, 'security', data as AuditDetails)
   }
 }
 
@@ -123,7 +123,7 @@ export class DLPService {
       isActive: true,
       matches: (content, metadata) => {
         const maxSize = 100 * 1024 // 100KB default threshold
-        const dataSize = (metadata?.dataSize as number) || content.length
+        const dataSize = (metadata?.['dataSize'] as number) || content.length
         return dataSize > maxSize && this.containsPotentialPHI(content)
       },
     })
@@ -270,8 +270,8 @@ export class DLPService {
     action: string
     allowed: boolean
     triggeredRules: string[]
-    reason?: string
-    destination?: string
+    reason?: string | undefined
+    destination?: string | undefined
   }): void {
     // Log to application logs
     logger.info(
@@ -307,7 +307,7 @@ export class DLPService {
   private generateSecurityAlert(event: {
     userId: string
     action: string
-    destination?: string
+    destination?: string | undefined
     triggeredRules: string[]
   }): void {
     logger.warn('DLP security alert generated', {

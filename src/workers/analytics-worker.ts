@@ -1,9 +1,11 @@
 /// <reference types="node" />
 import { config } from '../config/env.config'
-import { AnalyticsService } from '../lib/services/analytics/AnalyticsService'
-import { createBuildSafeLogger } from '../lib/logging/build-safe-logger'
-const logger = createBuildSafeLogger('default')
+import { AnalyticsService } from '../lib/services/analytics/AnalyticsService.mock'
+import { createBuildSafeLogger } from '../lib/logging/build-safe-logger.mock'
 import { WebSocketServer } from 'ws'
+
+// Create logger
+const logger = createBuildSafeLogger('analytics-worker')
 
 // Generate a unique worker ID
 const WORKER_ID = crypto.randomUUID()

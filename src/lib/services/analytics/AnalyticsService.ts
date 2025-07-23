@@ -14,8 +14,6 @@ import {
   EventDataSchema,
   EventSchema,
   MetricSchema,
-  isEvent,
-  isMetric,
   isValidEventJson,
   isValidMetricJson,
   ValidationError,

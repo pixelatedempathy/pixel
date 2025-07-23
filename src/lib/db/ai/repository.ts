@@ -1056,9 +1056,74 @@ export class AIRepository {
   }
 
   /**
+   * Bias analysis result interface
+   */
+  interface BiasAnalysisResult {
+    id: string;
+    sessionId: string;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    overallBiasScore: number;
+    alertLevel: string;
+    confidenceScore: number;
+    layerResults: Record<string, unknown>;
+    demographics: Record<string, unknown>;
+    demographicGroups: Record<string, unknown>;
+    recommendations: string[];
+    explanation: string;
+    latencyMs: number;
+    modelId: string;
+    modelProvider: string;
+    metadata: Record<string, unknown>;
+  }
+
+  /**
+   * Bias metric interface
+   */
+  interface BiasMetric {
+    id: string;
+    metricType: string;
+    metricName: string;
+    metricValue: number;
+    sessionId?: string;
+    userId?: string;
+    timestamp: Date;
+    aggregationPeriod: string;
+    metadata: Record<string, unknown>;
+    createdAt: Date;
+  }
+
+  /**
+   * Bias alert interface
+   */
+  interface BiasAlert {
+    id: string;
+    alertId: string;
+    sessionId?: string;
+    userId?: string;
+    createdAt: Date;
+    updatedAt: Date;
+    alertType: string;
+    alertLevel: string;
+    message: string;
+    details: Record<string, unknown>;
+    acknowledged: boolean;
+    acknowledgedBy?: string;
+    acknowledgedAt?: Date | null;
+    resolved: boolean;
+    resolvedBy?: string;
+    resolvedAt?: Date | null;
+    actions: unknown[];
+    notificationChannels: string[];
+    escalated: boolean;
+    escalatedAt?: Date | null;
+  }
+
+  /**
    * Get bias analysis result by session ID
    */
-  async getBiasAnalysisBySession(sessionId: string): Promise<any | null> {
+  async getBiasAnalysisBySession(sessionId: string): Promise<BiasAnalysisResult | null> {
     const { data, error } = await supabase
       .from('ai_bias_analysis')
       .select('*')
@@ -1110,7 +1175,7 @@ export class AIRepository {
       alertLevel?: string[]
       timeRange?: { start: Date; end: Date }
     },
-  ): Promise<any[]> {
+  ): Promise<BiasAnalysisResult[]> {
     let query = supabase
       .from('ai_bias_analysis')
       .select('*')
@@ -1220,7 +1285,7 @@ export class AIRepository {
     aggregationPeriod?: string
     userId?: string
     limit?: number
-  }): Promise<any[]> {
+  }): Promise<BiasMetric[]> {
     let query = supabase
       .from('ai_bias_metrics')
       .select('*')
@@ -1285,7 +1350,7 @@ export class AIRepository {
     alertType: 'bias' | 'system' | 'performance' | 'threshold'
     alertLevel: 'low' | 'medium' | 'high' | 'critical'
     message: string
-    details: any
+    details: Record<string, unknown>
     notificationChannels?: string[]
   }): Promise<string> {
     const { data, error } = await supabase
@@ -1324,7 +1389,7 @@ export class AIRepository {
     userId?: string
     limit?: number
     offset?: number
-  }): Promise<any[]> {
+  }): Promise<BiasAlert[]> {
     let query = supabase
       .from('ai_bias_alerts')
       .select('*')

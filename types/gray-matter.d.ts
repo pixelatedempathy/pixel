@@ -1,6 +1,6 @@
 declare module 'gray-matter' {
-  export interface GrayMatterFile<T = any> {
-    data: any
+  export interface GrayMatterFile<T = unknown> {
+    data: Record<string, unknown>
     content: T
     excerpt?: T
     orig: T
@@ -14,7 +14,7 @@ declare module 'gray-matter' {
     options?: {
       excerpt?: boolean | ((instance: GrayMatterFile<T>) => void)
       excerpt_separator?: string
-      engines?: Record<string, any>
+      engines?: Record<string, unknown>
       language?: string
       delimiters?: string | [string, string]
     },
@@ -23,7 +23,7 @@ declare module 'gray-matter' {
   namespace matter {
     export function stringify<T = string>(
       content: T,
-      data: any,
+      data: Record<string, unknown>,
       options?: { language?: string; delimiters?: [string, string] },
     ): string
 
@@ -32,7 +32,7 @@ declare module 'gray-matter' {
       options?: {
         excerpt?: boolean | ((instance: GrayMatterFile<string>) => void)
         excerpt_separator?: string
-        engines?: Record<string, any>
+        engines?: Record<string, unknown>
         language?: string
         delimiters?: string | [string, string]
       },

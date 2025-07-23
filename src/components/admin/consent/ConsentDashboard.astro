@@ -26,34 +26,6 @@ interface ConsentType {
   updated_at?: string
 }
 
-interface ConsentVersion {
-  id: string
-  version: string
-  consent_type_id: string
-  content: string
-  is_current: boolean
-  effective_date: string
-  created_at?: string
-  updated_at?: string
-}
-
-interface UserConsent {
-  id: string
-  user_id: string
-  consent_version_id: string
-  is_active: boolean
-  withdrawal_date: string | null
-  withdrawal_reason: string | null
-  created_at: string
-  updated_at: string
-}
-
-// Response types for Supabase queries
-interface ConsentVersionWithType extends ConsentVersion {
-  consent_types: ConsentType
-}
-
-
 // Fetch consent statistics
 interface ActiveConsentResponse {
   id: string
@@ -141,42 +113,34 @@ interface UserConsentWithDetails {
   }
 }
 
-// Group consents by type
-const consentsByType: Record<string, number> = {}
-if (typedActiveConsents) {
-  typedActiveConsents.forEach((consent) => {
-    const typeName = consent.consent_versions?.consent_types?.name;
-    if (typeName) {
-      consentsByType[typeName] = (consentsByType[typeName] || 0) + 1;
-    }
-  });
-}
-
-// Group withdrawals by type
-const withdrawalsByType: Record<string, number> = {}
-if (typedWithdrawnConsents) {
-  typedWithdrawnConsents.forEach((consent) => {
-    const typeName = consent.consent_versions?.consent_types?.name;
-    if (typeName) {
-      withdrawalsByType[typeName] = (withdrawalsByType[typeName] || 0) + 1;
-    }
-  });
-}
-
 // Type assertions for the data
-const typedConsentVersions = (consentVersions as unknown) as ConsentVersionWithTypeName[] | null;
-const typedActiveConsents = (activeConsents as unknown) as UserConsentWithDetails[] | null;
-const typedWithdrawnConsents = (withdrawnConsents as unknown) as UserConsentWithDetails[] | null;
+const typedConsentVersions = consentVersions as unknown as ConsentVersionWithTypeName[] | null;
+const typedActiveConsents = activeConsents as unknown as UserConsentWithDetails[] | [];
+const typedWithdrawnConsents = withdrawnConsents as unknown as UserConsentWithDetails[] | [];
 
 // Calculate overall stats
-const totalActiveConsents = typedActiveConsents?.length || 0
-const totalWithdrawnConsents = typedWithdrawnConsents?.length || 0
-const totalConsentTypes = consentTypes?.length || 0
-const totalConsentVersions = typedConsentVersions?.length || 0
+const totalActiveConsents = typedActiveConsents?.length || 0;
+const totalWithdrawnConsents = typedWithdrawnConsents?.length || 0;
+const totalConsentTypes = consentTypes?.length || 0;
+const totalConsentVersions = typedConsentVersions?.length || 0;
 
-// Initialize typed variables
-const typedActiveConsents: ActiveConsentResponse[] = activeConsents || [];
-const typedWithdrawnConsents: WithdrawnConsentResponse[] = withdrawnConsents || [];
+// Group consents by type
+const consentsByType: Record<string, number> = {};
+typedActiveConsents?.forEach((consent) => {
+  const typeName = consent.consent_versions?.consent_types?.name;
+  if (typeName) {
+    consentsByType[typeName] = (consentsByType[typeName] || 0) + 1;
+  }
+});
+
+// Group withdrawals by type
+const withdrawalsByType: Record<string, number> = {};
+typedWithdrawnConsents?.forEach((consent) => {
+  const typeName = consent.consent_versions?.consent_types?.name;
+  if (typeName) {
+    withdrawalsByType[typeName] = (withdrawalsByType[typeName] || 0) + 1;
+  }
+});
 
 // Format date helper
 const formatDate = (dateString: string) => {
@@ -449,7 +413,7 @@ const hasErrors = Boolean(
       <CardContent>
         <div class="space-y-4">
           {typedWithdrawnConsents.slice(0, 5).map((consent) => (
-            <div key={consent.id} class="border-b pb-4">
+            <div class="border-b pb-4">
               <div class="flex items-center justify-between mb-2">
                 <div>
                   <Badge variant="outline">

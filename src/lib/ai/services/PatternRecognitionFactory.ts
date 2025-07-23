@@ -1,7 +1,7 @@
 import { createBuildSafeLogger } from '../../logging/build-safe-logger'
 import type { TherapySession } from '../models/ai-types'
 import type { EmotionAnalysis } from '../emotions/types'
-import { StatisticalAnalysis } from '../../analytics/statistics'
+
 import {
   type PatternRecognitionService,
   type PatternRecognitionResult,

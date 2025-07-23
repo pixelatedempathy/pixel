@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { WebSocket } from 'ws'
+
 
 // Event type definitions
 export enum EventType {

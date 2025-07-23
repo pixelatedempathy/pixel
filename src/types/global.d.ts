@@ -53,7 +53,7 @@ declare global {
   }
 
   namespace Vi {
-    interface Assertion<T = any> {
+    interface Assertion<T = unknown> {
       toHaveNoViolations(): Promise<void>
       // DOM testing matchers
       toBeInTheDocument(): void

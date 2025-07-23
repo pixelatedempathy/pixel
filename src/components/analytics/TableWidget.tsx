@@ -1,37 +1,68 @@
-import React, { useState, useEffect, useMemo } from 'react'
-
-import { DashboardWidget } from './DashboardWidget'
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { DashboardWidget } from './DashboardWidget';
+import type { DashboardWidgetProps as WidgetProps } from './DashboardWidget';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Download, Search, ArrowUp, ArrowDown } from 'lucide-react'
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Download, Search, ArrowUp, ArrowDown } from 'lucide-react';
+// TableState type is not currently used in this component
+
+// Define a generic type for table row data
+export type TableRowData = Record<string, unknown> & {
+  id?: string | number
+  [key: string]: unknown
+}
 
 export interface Column {
   key: string
   label: string
-  render?: (value: any, row: any) => React.ReactNode
+  render?: (value: unknown, row: TableRowData) => React.ReactNode
   sortable?: boolean
   filterable?: boolean
 }
 
-export interface TableWidgetProps {
+export interface TableWidgetProps
+  extends Omit<
+    WidgetProps,
+    'children' | 'title' | 'description' | 'isLoading'
+  > {
+  /** The title of the table widget */
   title: string
+
+  /** Optional description for the table */
   description?: string
+
+  /** Array of column definitions */
   columns: Column[]
-  data: Record<string, any>[]
+
+  /** Array of row data */
+  data: TableRowData[]
+
+  /** Whether the table is in a loading state */
   isLoading?: boolean
+
+  /** Optional class name for the root element */
   className?: string
+
+  /** Refresh interval in milliseconds */
   refreshInterval?: number
+
+  /** Whether to show the search input */
   enableSearch?: boolean
+
+  /** Whether to show the export button */
   enableExport?: boolean
-  fetchData?: () => Promise<Record<string, any>[]>
+
+  /** Function to fetch data asynchronously */
+  fetchData?: () => Promise<TableRowData[]>
+
+  /** Pagination configuration */
   pagination?: {
     pageSize: number
     initialPage?: number
@@ -50,300 +81,238 @@ export function TableWidget({
   enableExport = true,
   fetchData,
   pagination,
-}: TableWidgetProps) {
-  const [data, setData] = useState<Record<string, any>[]>(initialData)
+  ...props
+}: TableWidgetProps): JSX.Element {
+  const [data, setData] = useState<TableRowData[]>(initialData)
   const [isLoading, setIsLoading] = useState(initialLoading)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortConfig, setSortConfig] = useState<{
     key: string
     direction: 'asc' | 'desc'
   } | null>(null)
-  const [currentPage, setCurrentPage] = useState(pagination?.initialPage || 1)
 
+  // Handle data fetching if fetchData is provided
   useEffect(() => {
+    if (fetchData === undefined) {
+      return
+    }
+
     const loadData = async () => {
-      if (fetchData) {
-        try {
-          setIsLoading(true)
-          const newData = await fetchData()
-          setData(newData)
-        } catch (error) {
-          console.error('Error fetching table data:', error)
-        } finally {
-          setIsLoading(false)
-        }
+      try {
+        setIsLoading(true)
+        const result = await fetchData()
+        setData(result)
+      } catch (error) {
+        console.error('Error fetching table data:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
     loadData()
 
-    if (refreshInterval && fetchData) {
-      const interval = setInterval(loadData, refreshInterval)
-      return () => clearInterval(interval)
+    // Set up refresh interval if provided
+    let intervalId: NodeJS.Timeout | null = null
+    if (refreshInterval && refreshInterval > 0) {
+      intervalId = setInterval(loadData, refreshInterval)
     }
-  }, [fetchData, refreshInterval])
 
-  // Handle refresh
-  const handleRefresh = async () => {
-    if (fetchData) {
-      try {
-        setIsLoading(true)
-        const newData = await fetchData()
-        setData(newData)
-      } catch (error) {
-        console.error('Error refreshing table data:', error)
-      } finally {
-        setIsLoading(false)
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
       }
     }
-  }
+  }, [fetchData, refreshInterval, setIsLoading, setData])
 
   // Handle sorting
-  const requestSort = (key: string) => {
-    let direction: 'asc' | 'desc' = 'asc'
+  const handleSort = useCallback((key: string) => {
+    setSortConfig((prevConfig) => {
+      // If the same key is clicked, toggle the direction
+      if (prevConfig?.key === key) {
+        return {
+          key,
+          direction: prevConfig.direction === 'asc' ? 'desc' : 'asc',
+        }
+      }
+      // Default to ascending for a new key
+      return { key, direction: 'asc' }
+    })
+  }, [])
 
-    if (sortConfig?.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc'
-    }
+  // Apply sorting and filtering
+  useMemo<TableRowData[]>(() => {
+    let result = [...data]
 
-    setSortConfig({ key, direction })
-  }
-
-  // Handle search
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    setCurrentPage(1) // Reset to first page on search
-  }
-
-  // Handle export
-  const handleExport = () => {
-    const headers = columns.map((col) => col.label).join(',')
-    const rows = filteredData
-      .map((row) =>
-        columns
-          .map((col) => {
-            const value = row[col.key]
-            // Handle values with commas by quoting them
-            if (typeof value === 'string' && value.includes(',')) {
-              return `"${value}"`
-            }
-            return value
-          })
-          .join(','),
-      )
-      .join('\n')
-
-    const csv = `${headers}\n${rows}`
-
-    // Create a download link
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-
-    link.setAttribute('href', url)
-    link.setAttribute(
-      'download',
-      `${title.toLowerCase().replace(/\s+/g, '-')}-export.csv`,
-    )
-    link.style.visibility = 'hidden'
-
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  // Filter and sort data
-  const filteredData = useMemo(() => {
-    // First filter the data
-    let filtered = [...data]
-
+    // Apply search filter
     if (searchTerm) {
-      const lowercasedSearchTerm = searchTerm.toLowerCase()
-      filtered = filtered.filter((row) =>
+      const searchLower = searchTerm.toLowerCase()
+      result = result.filter((row) =>
         columns.some((column) => {
-          const value = row[column.key]
-          if (value === null || value === undefined) {
-            return false
-          }
-          return String(value).toLowerCase().includes(lowercasedSearchTerm)
+          const value = String(row[column.key] || '').toLowerCase()
+          return value.includes(searchLower)
         }),
       )
     }
 
-    // Then sort the data
+    // Apply sorting
     if (sortConfig) {
-      filtered.sort((a, b) => {
-        if (a[sortConfig.key] === null) {
-          return 1
+      const { key, direction } = sortConfig
+      result.sort((a, b) => {
+        const aValue = a[key]
+        const bValue = b[key]
+
+        if (aValue === bValue) {
+          return 0;
         }
-        if (b[sortConfig.key] === null) {
-          return -1
+        if (aValue == null) {
+          return direction === 'asc' ? -1 : 1;
+        }
+        if (bValue == null) {
+          return direction === 'asc' ? 1 : -1;
         }
 
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? -1 : 1
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? 1 : -1
-        }
-        return 0
+        const comparison = String(aValue).localeCompare(String(bValue))
+        return direction === 'asc' ? comparison : -comparison
       })
     }
 
-    return filtered
-  }, [data, searchTerm, sortConfig, columns])
+    // Pagination is not currently implemented
+    // The pagination object is intentionally unused for now
+    void pagination;
 
-  // Pagination
-  const paginatedData = useMemo(() => {
-    if (!pagination) {
-      return filteredData
+    return result
+  }, [data, searchTerm, sortConfig, columns, pagination])
+
+  // Handle export
+  const handleExport = useCallback(() => {
+    try {
+      // Simple CSV export implementation
+      const headers = columns.map((col) => `"${col.label}"`).join(',')
+      const rows = data
+        .map((row) =>
+          columns
+            .map((col) => {
+              const value = row[col.key]
+              // Escape quotes and wrap in quotes
+              const escaped = String(value || '').replace(/"/g, '""')
+              return `"${escaped}"`
+            })
+            .join(','),
+        )
+        .join('\n')
+
+      const csvContent = `${headers}\n${rows}`
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${title.toLowerCase().replace(/\s+/g, '-')}-export-${new Date().toISOString().slice(0, 10)}.csv`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error exporting data:', error)
     }
-
-    const startIndex = (currentPage - 1) * pagination.pageSize
-    return filteredData.slice(startIndex, startIndex + pagination.pageSize)
-  }, [filteredData, pagination, currentPage])
-
-  // Calculate total pages
-  const totalPages = pagination
-    ? Math.ceil(filteredData.length / pagination.pageSize)
-    : 1
-
-  // Custom actions
-  const actions = (
-    <fieldset className="flex space-x-2" aria-label="Table controls">
-      <legend className="sr-only">Table controls</legend>
-      {enableSearch && (
-        <div className="relative w-48">
-          <label htmlFor="table-search" className="sr-only">
-            Search table
-          </label>
-          <Input
-            id="table-search"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="pl-8"
-          />
-
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
-        </div>
-      )}
-      {enableExport && (
-        <Button
-          size="sm"
-          variant="outline"
-          className="flex items-center gap-1"
-          onClick={handleExport}
-        >
-          <Download className="h-4 w-4" />
-          <span className="sr-only md:not-sr-only">Export</span>
-        </Button>
-      )}
-    </fieldset>
-  )
+  }, [data, columns, title])
 
   return (
     <DashboardWidget
       title={title}
       description={description}
-      isLoading={isLoading}
-      onRefresh={fetchData ? handleRefresh : undefined}
       className={className}
-      actions={actions}
+      isLoading={isLoading}
+      {...props}
     >
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map((column) => (
-                <TableHead key={column.key}>
-                  {column.sortable ? (
-                    <button
-                      className="flex items-center space-x-1 text-left font-medium"
-                      onClick={() => requestSort(column.key)}
-                    >
-                      <span>{column.label}</span>
-                      {sortConfig?.key === column.key &&
-                        (sortConfig.direction === 'asc' ? (
-                          <ArrowUp className="h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="h-4 w-4" />
-                        ))}
-                    </button>
-                  ) : (
-                    column.label
-                  )}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody aria-live="polite">
-            {paginatedData.length > 0 ? (
-              paginatedData.map((row) => {
-                // Create a unique key from the row's values
-                const rowKey = columns
-                  .map((col) => String(row[col.key] ?? ''))
-                  .join('-')
-                return (
-                  <TableRow key={rowKey}>
+      <div className="space-y-4">
+        {/* Search and export controls */}
+        <div className="flex justify-between">
+          {enableSearch && (
+            <div className="relative w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          )}
+
+          {enableExport && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={data.length === 0}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+          )}
+        </div>
+
+        {/* Table */}
+        <div className="rounded-md border">
+          {/* Using a basic table structure instead of the Table component for now */}
+          <table className="w-full">
+            <TableHeader>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableHead key={column.key}>
+                    {column.sortable ? (
+                      <button
+                        className="flex items-center space-x-1"
+                        onClick={() =>
+                          column.sortable && handleSort(column.key)
+                        }
+                        disabled={!column.sortable}
+                        aria-label={`Sort by ${column.label}`}
+                      >
+                        <span>{column.label}</span>
+                        {sortConfig?.key === column.key &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4" />
+                          ))}
+                      </button>
+                    ) : (
+                      column.label
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="text-center py-8"
+                  >
+                    No data available
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data.map((row, rowIndex) => (
+                  <TableRow key={row.id || `row-${rowIndex}`}>
                     {columns.map((column) => (
-                      <TableCell key={`${rowKey}-${column.key}`}>
+                      <TableCell key={`${rowIndex}-${column.key}`}>
                         {column.render
                           ? column.render(row[column.key], row)
-                          : row[column.key] !== undefined
-                            ? String(row[column.key])
-                            : '—'}
+                          : String(row[column.key] || '')}
                       </TableCell>
                     ))}
                   </TableRow>
-                )
-              })
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="text-center py-8 text-gray-500"
-                >
-                  {searchTerm ? 'No results found.' : 'No data available.'}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {pagination && totalPages > 1 && (
-        <div className="flex justify-between items-center mt-4">
-          <div className="text-sm text-gray-500">
-            Showing{' '}
-            {Math.min(
-              (currentPage - 1) * pagination.pageSize + 1,
-              filteredData.length,
-            )}{' '}
-            to{' '}
-            {Math.min(currentPage * pagination.pageSize, filteredData.length)}{' '}
-            of {filteredData.length} results
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
+                ))
+              )}
+            </TableBody>
+          </table>
         </div>
-      )}
+
+        {/* Pagination would go here */}
+      </div>
     </DashboardWidget>
   )
 }

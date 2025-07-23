@@ -19,7 +19,7 @@ declare module '@react-three/fiber' {
     dpr?: number | [min: number, max: number]
     linear?: boolean
     flat?: boolean
-    events?: any // TODO: Define proper event types
+    events?: Record<string, unknown> // Replaced 'any' with more specific type
     eventSource?: HTMLElement | React.MutableRefObject<HTMLElement>
     eventPrefix?: string
     onCreated?: (state: RootState) => void

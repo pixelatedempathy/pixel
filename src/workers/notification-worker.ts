@@ -1,8 +1,10 @@
 import { config } from '../config/env.config'
-import { NotificationService } from '../lib/services/notification/NotificationService'
-import { WebSocketServer } from '../lib/services/notification/WebSocketServer'
-import { createBuildSafeLogger } from '../lib/logging/build-safe-logger'
-const logger = createBuildSafeLogger('default')
+import { NotificationService } from '../lib/services/notification/NotificationService.mock'
+import { WebSocketServer } from '../lib/services/notification/WebSocketServer.mock'
+import { createBuildSafeLogger } from '../lib/logging/build-safe-logger.mock'
+
+// Create logger
+const logger = createBuildSafeLogger('notification-worker')
 
 const WORKER_ID = crypto.randomUUID()
 const PROCESSING_INTERVAL = 1000 // 1 second

@@ -8,13 +8,24 @@ export interface SearchDocument {
   category?: string
 }
 
+// Define search options interface
+export interface SearchOptions {
+  limit?: number;
+  threshold?: number;
+  fuzzy?: boolean;
+  boost?: Record<string, number>;
+  includeScore?: boolean;
+  includeMatches?: boolean;
+  keys?: string[];
+}
+
 export interface ISearchClient {
-  search: (query: string, options?: any) => SearchDocument[]
+  search: (query: string, options?: SearchOptions) => SearchDocument[]
   importDocuments: (documents: SearchDocument[]) => void
 }
 
 export declare class SearchClient implements ISearchClient {
-  search(query: string, options?: any): SearchDocument[]
+  search(query: string, options?: SearchOptions): SearchDocument[]
   importDocuments(docs: SearchDocument[]): void
 }
 

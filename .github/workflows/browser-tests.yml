@@ -56,7 +56,7 @@ jobs:
         run: pnpm exec playwright test tests/browser-compatibility.spec.ts --reporter=html,list
         env:
           DISABLE_WEB_FONTS: 'true'
-          PUBLIC_SITE_URL: 'http://localhost:4321'
+          PUBLIC_SITE_URL: http://localhost:4321
           NODE_ENV: test
           SKIP_KEYSTATIC: 'true'
           SKIP_MSW: 'true'
@@ -115,7 +115,7 @@ jobs:
           CI: true
           NODE_ENV: test
           DISABLE_WEB_FONTS: 'true'
-          PUBLIC_SITE_URL: 'http://localhost:4321'
+          PUBLIC_SITE_URL: http://localhost:4321
           SKIP_KEYSTATIC: 'true'
           SKIP_MSW: 'true'
         id: visual-tests

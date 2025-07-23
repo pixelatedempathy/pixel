@@ -11,7 +11,7 @@ export interface TableColumn<T> {
   /** Whether this column is sortable */
   sortable?: boolean
   /** Custom cell renderer */
-  Cell?: (props: { value: any; row: T }) => React.ReactNode
+  Cell?: (props: { value: unknown; row: T }) => React.ReactNode
   /** Column width (CSS value) */
   width?: string
   /** Whether to hide column on mobile */

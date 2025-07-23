@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch'
 import Button from '@/components/ui/Button.astro'
 import { DLPAction, type DLPRule } from '../../../lib/security/dlp'
 import { dlpService } from '../../../lib/security/dlp'
+import { Trash2 } from 'lucide-react'
 
 interface Props {
   rules: DLPRule[]
@@ -75,23 +76,32 @@ const getActionBadge = (action: DLPAction) => {
                         data-rule-id={ruleItem.id}
                         data-rule-name={ruleItem.name}
                         className="toggle-rule"
-                        onCheckedChange={(checked: boolean) => {
+                        onCheckedChange={(isChecked: boolean) => {
                           const ruleId = ruleItem.id;
                           const ruleName = ruleItem.name;
-                          const isActive = checked;
-                          
+
                           // Update rule in the service
                           const allRules = dlpService.getRules();
-                          const ruleIndex = allRules.findIndex(r => r.id === ruleId);
-                          if (ruleIndex !== -1) {
-                            const updatedRule = { ...allRules[ruleIndex], isActive };
+                          const existingRule = allRules.find(r => r.id === ruleId);
+
+                          if (existingRule) {
+                            const updatedRule: DLPRule = {
+                              ...existingRule,
+                              isActive: isChecked,
+                              id: existingRule.id,
+                              name: existingRule.name,
+                              description: existingRule.description,
+                              action: existingRule.action,
+                              matches: existingRule.matches,
+                              ...(existingRule.redact && { redact: existingRule.redact })
+                            };
                             dlpService.removeRule(ruleId);
                             dlpService.addRule(updatedRule);
                             
                             // Dispatch event for the parent component to handle
                             document.dispatchEvent(
                               new CustomEvent('dlp:rule-updated', {
-                                detail: { id: ruleId, name: ruleName, isActive },
+                                detail: { id: ruleId, name: ruleName, isActive: isChecked },
                               }),
                             );
                           }
@@ -113,42 +123,20 @@ const getActionBadge = (action: DLPAction) => {
                         size="sm"
                         data-edit-rule={ruleItem.id}
                         data-rule={JSON.stringify(ruleItem)}
+                        id={`edit-rule-${ruleItem.id}`}
+                        class="edit-rule-btn"
                       >
                         Edit
                       </Button>
                       <Button
-                        variant="outline"
-                        size="sm"
-                        data-delete-rule
+                        variant="ghost"
+                        size="icon"
+                        class="delete-rule-btn"
                         data-rule-id={ruleItem.id}
                         data-rule-name={ruleItem.name}
-                        className="text-destructive hover:bg-destructive/10"
-                        onclick={(e: Event) => {
-                          const target = e.currentTarget as HTMLElement;
-                          const ruleId = target.getAttribute('data-rule-id');
-                          const ruleName = target.getAttribute('data-rule-name');
-                          
-                          if (!ruleId || !ruleName) return;
-                          
-                          if (confirm(`Are you sure you want to delete the rule "${ruleName}"?`)) {
-                            dlpService.deleteRule(ruleId);
-                            
-                            // Dispatch event for the parent component to handle
-                            document.dispatchEvent(
-                              new CustomEvent('dlp:rule-deleted', {
-                                detail: { id: ruleId, name: ruleName },
-                              }),
-                            );
-                            
-                            // Remove the card from the UI
-                            const card = target.closest('.rule-card');
-                            if (card) {
-                              card.remove();
-                            }
-                          }
-                        }}
                       >
-                        Delete
+                        <Trash2 class="h-4 w-4" />
+                        <span class="sr-only">Delete rule</span>
                       </Button>
                     </div>
                   </div>

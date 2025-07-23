@@ -206,7 +206,7 @@ const TreatmentPlanManager: React.FC = () => {
     if (isEdit && editingPlanData) {
       const updatedGoals = [...(editingPlanData.goals || [])]
       if (updatedGoals[index]) {
-        ;(updatedGoals[index] as any)[field] = value // Keep as any for simplicity given EditableGoal union
+        ;(updatedGoals[index] as EditableGoal)[field as keyof EditableGoal] = value as never // Type-safe cast for EditableGoal union
         setEditingPlanData((prev: FormUpdatePlanData | null) =>
           prev ? { ...prev, goals: updatedGoals } : null,
         )
@@ -214,7 +214,7 @@ const TreatmentPlanManager: React.FC = () => {
     } else {
       const updatedGoals = [...newPlanData.goals]
       if (updatedGoals[index]) {
-        ;(updatedGoals[index] as any)[field] = value // ClientSideNewGoal is more straightforward
+        ;(updatedGoals[index] as ClientSideNewGoal)[field as keyof ClientSideNewGoal] = value as never // ClientSideNewGoal is more straightforward
         setNewPlanData((prev: FormNewPlanData) => ({
           ...prev,
           goals: updatedGoals,
@@ -294,7 +294,7 @@ const TreatmentPlanManager: React.FC = () => {
         updatedGoals[goalIndex] &&
         updatedGoals[goalIndex].objectives[objIndex]
       ) {
-        ;(updatedGoals[goalIndex].objectives[objIndex] as any)[field] = value
+        ;(updatedGoals[goalIndex].objectives[objIndex] as EditableObjective)[field as keyof EditableObjective] = value as never
         setEditingPlanData((prev: FormUpdatePlanData | null) =>
           prev ? { ...prev, goals: updatedGoals } : null,
         )
@@ -307,7 +307,7 @@ const TreatmentPlanManager: React.FC = () => {
         updatedNewGoals[goalIndex] &&
         updatedNewGoals[goalIndex].objectives[objIndex]
       ) {
-        ;(updatedNewGoals[goalIndex].objectives[objIndex] as any)[field] = value
+        ;(updatedNewGoals[goalIndex].objectives[objIndex] as ClientSideNewObjective)[field as keyof ClientSideNewObjective] = value as never
         setNewPlanData((prev: FormNewPlanData) => ({
           ...prev,
           goals: updatedNewGoals,
