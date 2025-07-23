@@ -3,10 +3,10 @@
  */
 
 export interface Logger {
-  info: (message: string, ...args: any[]) => void;
-  warn: (message: string, ...args: any[]) => void;
-  error: (message: string, ...args: any[]) => void;
-  debug: (message: string, ...args: any[]) => void;
+  info: (message: string, ...args: unknown[]) => void;
+  warn: (message: string, ...args: unknown[]) => void;
+  error: (message: string, ...args: unknown[]) => void;
+  debug: (message: string, ...args: unknown[]) => void;
 }
 
 /**
@@ -14,16 +14,16 @@ export interface Logger {
  */
 export function createBuildSafeLogger(component: string): Logger {
   return {
-    info: (message: string, ...args: any[]) => {
+    info: (message: string, ...args: unknown[]) => {
       console.log(`[${component}] INFO: ${message}`, ...args);
     },
-    warn: (message: string, ...args: any[]) => {
+    warn: (message: string, ...args: unknown[]) => {
       console.warn(`[${component}] WARN: ${message}`, ...args);
     },
-    error: (message: string, ...args: any[]) => {
+    error: (message: string, ...args: unknown[]) => {
       console.error(`[${component}] ERROR: ${message}`, ...args);
     },
-    debug: (message: string, ...args: any[]) => {
+    debug: (message: string, ...args: unknown[]) => {
       console.debug(`[${component}] DEBUG: ${message}`, ...args);
     },
   };

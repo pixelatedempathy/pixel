@@ -8,7 +8,7 @@ export type ConversationMessage = {
   content: string
   timestamp: string // ISO 8601 date-time string
   sessionId?: string // Optional: to group messages by session
-  metadata?: Record<string, any> // Optional: for additional context like emotional tone, detected themes, etc.
+  metadata?: Record<string, unknown> // Optional: for additional context like emotional tone, detected themes, etc.
 }
 
 /**

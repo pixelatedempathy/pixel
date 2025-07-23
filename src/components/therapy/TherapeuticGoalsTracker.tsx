@@ -518,9 +518,9 @@ export function TherapeuticGoalsTracker({
             <>
               <h5 className="font-medium mb-2 text-sm">Progress History</h5>
               <div className="space-y-2 mb-4">
-                {activeGoal.progressHistory.slice(-3).map((snapshot, index) => (
+                {activeGoal.progressHistory.slice(-3).map((snapshot) => (
                   <div
-                    key={index}
+                    key={`progress-${snapshot.timestamp}-${snapshot.progressPercent}`}
                     className="flex items-center justify-between text-sm"
                   >
                     <span className="text-gray-600">
@@ -550,7 +550,7 @@ export function TherapeuticGoalsTracker({
               <div className="space-y-2">
                 {getRelatedInterventions(activeGoal.id).length > 0 ? (
                   getRelatedInterventions(activeGoal.id).map(
-                    (intervention, index) => (
+                    (intervention) => (
                       <div key={`intervention-${intervention.type}-${intervention.timestamp.toISOString()}`} className="text-sm">
                         <div className="flex justify-between">
                           <span className="font-medium">

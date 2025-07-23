@@ -66,6 +66,33 @@ const DEFAULT_CONFIG: PIIDetectionConfig = {
 }
 
 /**
+ * Interface for FHE Service
+ */
+interface FHEService {
+  isInitialized(): boolean;
+  processEncrypted(
+    text: string,
+    operation: FHEOperation,
+    options: {
+      operation: string;
+      threshold: number;
+      patterns: string[];
+    }
+  ): Promise<{
+    data: {
+      hasPII: string;
+      confidence: string;
+      types: string;
+      redacted?: string;
+    };
+    metadata: {
+      operation: FHEOperation;
+      timestamp: number;
+    };
+  }>;
+}
+
+/**
  * PII Detection Service class
  * Singleton implementation to provide PII detection and redaction
  */
@@ -353,30 +380,6 @@ class PIIDetectionService {
       }
     }
   }
-
-interface FHEService {
-  isInitialized(): boolean;
-  processEncrypted(
-    text: string,
-    operation: FHEOperation,
-    options: {
-      operation: string;
-      threshold: number;
-      patterns: string[];
-    }
-  ): Promise<{
-    data: {
-      hasPII: string;
-      confidence: string;
-      types: string;
-      redacted?: string;
-    };
-    metadata: {
-      operation: FHEOperation;
-      timestamp: number;
-    };
-  }>;
-}
 
   /**
    * Detect PII in encrypted text using FHE

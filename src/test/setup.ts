@@ -7,7 +7,7 @@ import '@testing-library/jest-dom'
 
 // Add type declarations for DOM testing matchers
 declare module 'vitest' {
-  interface Assertion<T = any> {
+  interface Assertion<T = unknown> {
     toBeInTheDocument(): T
     toHaveAttribute(attr: string, value?: string): T
     toHaveClass(...classNames: string[]): T

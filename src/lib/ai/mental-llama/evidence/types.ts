@@ -29,7 +29,7 @@ export interface EvidenceItem {
   /**
    * Additional context or metadata about this evidence
    */
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 
   /**
    * Timestamp when this evidence was extracted

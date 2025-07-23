@@ -69,7 +69,7 @@ export interface SecurityBreach {
   /**
    * Additional metadata about the breach
    */
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 
   /**
    * Whether the breach has been resolved

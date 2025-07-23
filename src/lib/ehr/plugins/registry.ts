@@ -96,11 +96,11 @@ export class PluginRegistry {
     return Array.from(this.metadata.values())
   }
 
-  on(event: string, listener: (...args: any[]) => void): void {
-    this.events.on(event, listener)
+  on<T extends unknown[]>(event: string, listener: (...args: T) => void): void {
+    this.events.on(event, listener as (...args: unknown[]) => void)
   }
 
-  off(event: string, listener: (...args: any[]) => void): void {
-    this.events.off(event, listener)
+  off<T extends unknown[]>(event: string, listener: (...args: T) => void): void {
+    this.events.off(event, listener as (...args: unknown[]) => void)
   }
 }

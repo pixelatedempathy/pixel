@@ -1,20 +1,23 @@
-import React, { useState, useEffect, useMemo } from 'react'
-
-import { DashboardWidget } from './DashboardWidget'
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { DashboardWidget } from './DashboardWidget';
+import type { DashboardWidgetProps as WidgetProps } from './DashboardWidget';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Download, Search, ArrowUp, ArrowDown } from 'lucide-react'
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Download, Search, ArrowUp, ArrowDown } from 'lucide-react';
+// TableState type is not currently used in this component
 
 // Define a generic type for table row data
-export type TableRowData = Record<string, unknown>;
+export type TableRowData = Record<string, unknown> & {
+  id?: string | number
+  [key: string]: unknown
+}
 
 export interface Column {
   key: string
@@ -24,17 +27,42 @@ export interface Column {
   filterable?: boolean
 }
 
-export interface TableWidgetProps {
+export interface TableWidgetProps
+  extends Omit<
+    WidgetProps,
+    'children' | 'title' | 'description' | 'isLoading'
+  > {
+  /** The title of the table widget */
   title: string
+
+  /** Optional description for the table */
   description?: string
+
+  /** Array of column definitions */
   columns: Column[]
+
+  /** Array of row data */
   data: TableRowData[]
+
+  /** Whether the table is in a loading state */
   isLoading?: boolean
+
+  /** Optional class name for the root element */
   className?: string
+
+  /** Refresh interval in milliseconds */
   refreshInterval?: number
+
+  /** Whether to show the search input */
   enableSearch?: boolean
+
+  /** Whether to show the export button */
   enableExport?: boolean
+
+  /** Function to fetch data asynchronously */
   fetchData?: () => Promise<TableRowData[]>
+
+  /** Pagination configuration */
   pagination?: {
     pageSize: number
     initialPage?: number
@@ -53,24 +81,147 @@ export function TableWidget({
   enableExport = true,
   fetchData,
   pagination,
-}: TableWidgetProps) {
+  ...props
+}: TableWidgetProps): JSX.Element {
   const [data, setData] = useState<TableRowData[]>(initialData)
   const [isLoading, setIsLoading] = useState(initialLoading)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortConfig, setSortConfig] = useState<{
     key: string
     direction: 'asc' | 'desc'
   } | null>(null)
-  
-  // Add the rest of the component implementation here
-  // This is a placeholder for the actual implementation
-  
+  // Handle data fetching if fetchData is provided
+  useEffect(() => {
+    if (fetchData === undefined) {
+      return
+    }
+
+    const loadData = async () => {
+      try {
+        setIsLoading(true)
+        const result = await fetchData()
+        setData(result)
+      } catch (error) {
+        console.error('Error fetching table data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadData()
+
+    // Set up refresh interval if provided
+    let intervalId: NodeJS.Timeout | null = null
+    if (refreshInterval && refreshInterval > 0) {
+      intervalId = setInterval(loadData, refreshInterval)
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [fetchData, refreshInterval, setIsLoading, setData])
+
+  // Handle sorting
+  const handleSort = useCallback((key: string) => {
+    setSortConfig((prevConfig) => {
+      // If the same key is clicked, toggle the direction
+      if (prevConfig?.key === key) {
+        return {
+          key,
+          direction: prevConfig.direction === 'asc' ? 'desc' : 'asc',
+        }
+      }
+      // Default to ascending for a new key
+      return { key, direction: 'asc' }
+    })
+  }, [])
+
+  // Apply sorting and filtering
+  const filteredAndSortedData = useMemo<TableRowData[]>(() => {
+    let result = [...data]
+
+    // Apply search filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase()
+      result = result.filter((row) =>
+        columns.some((column) => {
+          const value = String(row[column.key] || '').toLowerCase()
+          return value.includes(searchLower)
+        }),
+      )
+    }
+
+    // Apply sorting
+    if (sortConfig) {
+      const { key, direction } = sortConfig
+      result.sort((a, b) => {
+        const aValue = a[key]
+        const bValue = b[key]
+
+        if (aValue === bValue) {
+          return 0;
+        }
+        if (aValue == null) {
+          return direction === 'asc' ? -1 : 1;
+        }
+        if (bValue == null) {
+          return direction === 'asc' ? 1 : -1;
+        }
+
+        const comparison = String(aValue).localeCompare(String(bValue))
+        return direction === 'asc' ? comparison : -comparison
+      })
+    }
+
+    // Pagination is not currently implemented
+    // The pagination object is intentionally unused for now
+    void pagination;
+
+    return result
+  }, [data, searchTerm, sortConfig, columns, pagination])
+  // Handle export
+  const handleExport = useCallback(() => {
+    try {
+      // Simple CSV export implementation
+      const headers = columns.map((col) => `"${col.label}"`).join(',')
+      const rows = data
+        .map((row) =>
+          columns
+            .map((col) => {
+              const value = row[col.key]
+              // Escape quotes and wrap in quotes
+              const escaped = String(value || '').replace(/"/g, '""')
+              return `"${escaped}"`
+            })
+            .join(','),
+        )
+        .join('\n')
+
+      const csvContent = `${headers}\n${rows}`
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${title.toLowerCase().replace(/\s+/g, '-')}-export-${new Date().toISOString().slice(0, 10)}.csv`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error exporting data:', error)
+    }
+  }, [data, columns, title])
+
   return (
     <DashboardWidget
       title={title}
       description={description}
       className={className}
       isLoading={isLoading}
+      {...props}
     >
       <div className="space-y-4">
         {/* Search and export controls */}
@@ -86,18 +237,24 @@ export function TableWidget({
               />
             </div>
           )}
-          
+
           {enableExport && (
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={data.length === 0}
+            >
               <Download className="mr-2 h-4 w-4" />
               Export
             </Button>
           )}
         </div>
-        
+
         {/* Table */}
         <div className="rounded-md border">
-          <Table>
+          {/* Using a basic table structure instead of the Table component for now */}
+          <table className="w-full">
             <TableHeader>
               <TableRow>
                 {columns.map((column) => (
@@ -105,16 +262,19 @@ export function TableWidget({
                     {column.sortable ? (
                       <button
                         className="flex items-center space-x-1"
-                        onClick={() => {
-                          // Sorting logic would go here
-                        }}
+                        onClick={() =>
+                          column.sortable && handleSort(column.key)
+                        }
+                        disabled={!column.sortable}
+                        aria-label={`Sort by ${column.label}`}
                       >
                         <span>{column.label}</span>
-                        {sortConfig?.key === column.key && (
-                          sortConfig.direction === 'asc' ? 
-                            <ArrowUp className="h-4 w-4" /> : 
+                        {sortConfig?.key === column.key &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : (
                             <ArrowDown className="h-4 w-4" />
-                        )}
+                          ))}
                       </button>
                     ) : (
                       column.label
@@ -126,27 +286,30 @@ export function TableWidget({
             <TableBody>
               {data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center py-8">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="text-center py-8"
+                  >
                     No data available
                   </TableCell>
                 </TableRow>
               ) : (
                 data.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
+                  <TableRow key={row.id || `row-${rowIndex}`}>
                     {columns.map((column) => (
                       <TableCell key={`${rowIndex}-${column.key}`}>
-                        {column.render ? 
-                          column.render(row[column.key], row) : 
-                          String(row[column.key] || '')}
+                        {column.render
+                          ? column.render(row[column.key], row)
+                          : String(row[column.key] || '')}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               )}
             </TableBody>
-          </Table>
+          </table>
         </div>
-        
+
         {/* Pagination would go here */}
       </div>
     </DashboardWidget>

@@ -85,12 +85,12 @@ export function TableWidget({
 }: TableWidgetProps): JSX.Element {
   const [data, setData] = useState<TableRowData[]>(initialData)
   const [isLoading, setIsLoading] = useState(initialLoading)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortConfig, setSortConfig] = useState<{
     key: string
     direction: 'asc' | 'desc'
   } | null>(null)
-
   // Handle data fetching if fetchData is provided
   useEffect(() => {
     if (fetchData === undefined) {
@@ -124,7 +124,7 @@ export function TableWidget({
     }
   }, [fetchData, refreshInterval, setIsLoading, setData])
 
-  // Handle sorting
+  // Handle sort
   const handleSort = useCallback((key: string) => {
     setSortConfig((prevConfig) => {
       // If the same key is clicked, toggle the direction
@@ -132,15 +132,15 @@ export function TableWidget({
         return {
           key,
           direction: prevConfig.direction === 'asc' ? 'desc' : 'asc',
-        }
+        };
       }
       // Default to ascending for a new key
-      return { key, direction: 'asc' }
-    })
-  }, [])
+      return { key, direction: 'asc' };
+    });
+  }, []);
 
   // Apply sorting and filtering
-  useMemo<TableRowData[]>(() => {
+  const filteredAndSortedData = useMemo<TableRowData[]>(() => {
     let result = [...data]
 
     // Apply search filter
@@ -182,13 +182,12 @@ export function TableWidget({
 
     return result
   }, [data, searchTerm, sortConfig, columns, pagination])
-
   // Handle export
   const handleExport = useCallback(() => {
     try {
       // Simple CSV export implementation
       const headers = columns.map((col) => `"${col.label}"`).join(',')
-      const rows = data
+      const rows = filteredAndSortedData
         .map((row) =>
           columns
             .map((col) => {
@@ -254,7 +253,6 @@ export function TableWidget({
 
         {/* Table */}
         <div className="rounded-md border">
-          {/* Using a basic table structure instead of the Table component for now */}
           <table className="w-full">
             <TableHeader>
               <TableRow>
@@ -263,9 +261,7 @@ export function TableWidget({
                     {column.sortable ? (
                       <button
                         className="flex items-center space-x-1"
-                        onClick={() =>
-                          column.sortable && handleSort(column.key)
-                        }
+                        onClick={() => column.sortable && handleSort(column.key)}
                         disabled={!column.sortable}
                         aria-label={`Sort by ${column.label}`}
                       >
@@ -287,15 +283,12 @@ export function TableWidget({
             <TableBody>
               {data.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="text-center py-8"
-                  >
+                  <TableCell colSpan={columns.length} className="text-center py-8">
                     No data available
                   </TableCell>
                 </TableRow>
               ) : (
-                data.map((row, rowIndex) => (
+                filteredAndSortedData.map((row, rowIndex) => (
                   <TableRow key={row.id || `row-${rowIndex}`}>
                     {columns.map((column) => (
                       <TableCell key={`${rowIndex}-${column.key}`}>

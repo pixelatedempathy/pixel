@@ -5,7 +5,7 @@ export class NotificationService {
   /**
    * Start processing notifications
    */
-  async startProcessing(interval: number): Promise<void> {
+  async startProcessing(_interval: number): Promise<void> {
     // Mock implementation
     return Promise.resolve();
   }

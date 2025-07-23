@@ -87,13 +87,7 @@ const getActionBadge = (action: DLPAction) => {
                           if (existingRule) {
                             const updatedRule: DLPRule = {
                               ...existingRule,
-                              isActive: isChecked,
-                              id: existingRule.id,
-                              name: existingRule.name,
-                              description: existingRule.description,
-                              action: existingRule.action,
-                              matches: existingRule.matches,
-                              ...(existingRule.redact && { redact: existingRule.redact })
+                              isActive: isChecked
                             };
                             dlpService.removeRule(ruleId);
                             dlpService.addRule(updatedRule);

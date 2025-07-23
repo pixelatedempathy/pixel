@@ -33,7 +33,7 @@ interface Endpoint {
 
 interface TestCase {
   name: string
-  payload?: any
+  payload?: Record<string, unknown>
   headers?: Record<string, string>
   expectedStatus: number
   description: string

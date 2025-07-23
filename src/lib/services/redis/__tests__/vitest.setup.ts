@@ -5,35 +5,26 @@ import type { RedisErrorCode } from '../types'
 // Make sure this is called exactly once
 expect.extend(customMatchers)
 
+// Define custom assertion interface
+interface CustomMatchers {
+  toBeRedisError(expectedCode: RedisErrorCode): void
+  toBeInRedis(expectedValue: unknown): Promise<void>
+  toExistInRedis(): Promise<void>
+  toHaveTTL(expectedTTL: number): Promise<void>
+}
+
 // Augment the global scope with custom matcher types
 declare global {
-  // Use module augmentation instead of namespace
-  interface ViAssertion {
-    toBeRedisError(expectedCode: RedisErrorCode): void
-    toBeInRedis(expectedValue: unknown): Promise<void>
-    toExistInRedis(): Promise<void>
-    toHaveTTL(expectedTTL: number): Promise<void>
+  namespace Vi {
+    interface Assertion extends CustomMatchers {}
+    interface AsymmetricMatchersContaining extends CustomMatchers {}
   }
 }
 
 // Extend Vi.Assertion interface
 declare module 'vitest' {
-  interface Assertion
-    extends Pick<
-      ViAssertion,
-      'toBeRedisError' | 'toBeInRedis' | 'toExistInRedis' | 'toHaveTTL'
-    > {
-    // Add any additional assertion methods here
-  }
-
-  // Define proper asymmetric matchers
-  interface AsymmetricMatchersContaining
-    extends Pick<
-      ViAssertion,
-      'toBeRedisError' | 'toBeInRedis' | 'toExistInRedis' | 'toHaveTTL'
-    > {
-    // Add any additional asymmetric matchers here
-  }
+  interface Assertion extends CustomMatchers {}
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
 }
 
 export {}

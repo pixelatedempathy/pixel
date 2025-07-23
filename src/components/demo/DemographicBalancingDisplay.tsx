@@ -14,77 +14,69 @@ interface DemographicBalancingDisplayProps {
   onBalanceUpdate?: (balanceScore: number) => void
 }
 
-const DemographicBalancingDisplay: React.FC<
-  DemographicBalancingDisplayProps
-> = ({ currentProfile, onBalanceUpdate }) => {
-  const [demographicStats, setDemographicStats] = useState<DemographicData[]>(
-    [],
-  )
-  const [overallBalance, setOverallBalance] = useState(0)
+// Simulated demographic targets for training dataset balance
+const demographicTargets = {
+  age: {
+    '18-25': 15,
+    '26-35': 25,
+    '36-50': 30,
+    '51-65': 20,
+    '65+': 10,
+  },
+  gender: {
+    'female': 45,
+    'male': 40,
+    'non-binary': 10,
+    'prefer not to say': 5,
+  },
+  occupation: {
+    'Healthcare': 12,
+    'Education': 15,
+    'Technology': 18,
+    'Business/Finance': 20,
+    'Service Industry': 15,
+    'Student': 10,
+    'Retired': 5,
+    'Other': 5,
+  },
+  background: {
+    Urban: 60,
+    Suburban: 25,
+    Rural: 15,
+  },
+}
 
-  // Simulated demographic targets for training dataset balance
-  const demographicTargets = {
-    age: {
-      '18-25': 15,
-      '26-35': 25,
-      '36-50': 30,
-      '51-65': 20,
-      '65+': 10,
-    },
-    gender: {
-      'female': 45,
-      'male': 40,
-      'non-binary': 10,
-      'prefer not to say': 5,
-    },
-    occupation: {
-      'Healthcare': 12,
-      'Education': 15,
-      'Technology': 18,
-      'Business/Finance': 20,
-      'Service Industry': 15,
-      'Student': 10,
-      'Retired': 5,
-      'Other': 5,
-    },
-    background: {
-      Urban: 60,
-      Suburban: 25,
-      Rural: 15,
-    },
-  }
-
-  // Simulated current dataset statistics
-  const currentStats = {
-    age: {
-      '18-25': 12,
-      '26-35': 28,
-      '36-50': 25,
-      '51-65': 22,
-      '65+': 13,
-    },
-    gender: {
-      'female': 52,
-      'male': 35,
-      'non-binary': 8,
-      'prefer not to say': 5,
-    },
-    occupation: {
-      'Healthcare': 15,
-      'Education': 18,
-      'Technology': 22,
-      'Business/Finance': 18,
-      'Service Industry': 12,
-      'Student': 8,
-      'Retired': 4,
-      'Other': 3,
-    },
-    background: {
-      Urban: 65,
-      Suburban: 22,
-      Rural: 13,
-    },
-  }
+// Simulated current dataset statistics - moved outside component to prevent recreation on each render
+const currentStats = {
+  age: {
+    '18-25': 12,
+    '26-35': 28,
+    '36-50': 25,
+    '51-65': 22,
+    '65+': 13,
+  },
+  gender: {
+    'female': 52,
+    'male': 35,
+    'non-binary': 8,
+    'prefer not to say': 5,
+  },
+  occupation: {
+    'Healthcare': 15,
+    'Education': 18,
+    'Technology': 22,
+    'Business/Finance': 18,
+    'Service Industry': 12,
+    'Student': 8,
+    'Retired': 4,
+    'Other': 3,
+  },
+  background: {
+    Urban: 65,
+    Suburban: 22,
+    Rural: 13,
+  },
+}
 
   const getAgeCategory = (age: number): string => {
     if (age <= 25) {
@@ -234,14 +226,12 @@ const DemographicBalancingDisplay: React.FC<
   }, [
     currentProfile, 
     onBalanceUpdate, 
-    currentStats.age, 
-    currentStats.gender, 
-    currentStats.background, 
-    currentStats.occupation, 
+    // Remove currentStats from dependencies since it's now defined outside the component
+    // and won't change between renders
     demographicTargets.age, 
     demographicTargets.gender, 
     demographicTargets.background, 
-    demographicTargets.occupation, currentStats
+    demographicTargets.occupation
   ])
 
   const getBalanceColor = (percentage: number) => {
@@ -414,8 +404,8 @@ const DemographicBalancingDisplay: React.FC<
           {demographicStats
             .filter((stat) => stat.percentage < 75 || stat.percentage > 125)
             .slice(0, 3)
-            .map((stat, index) => (
-              <div key={index} className="flex items-start gap-2">
+            .map((stat) => (
+              <div key={`${stat.category}-${stat.subcategory}`} className="flex items-start gap-2">
                 <span className="text-indigo-500">•</span>
                 <span>
                   <strong>

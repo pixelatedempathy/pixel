@@ -72,6 +72,13 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { onOpenChange } = React.useContext(DialogContext)
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onOpenChange(false)
+    }
+  }
+
   return (
     <div
       ref={ref}
@@ -80,6 +87,10 @@ const DialogOverlay = React.forwardRef<
         className,
       )}
       onClick={() => onOpenChange(false)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label="Close dialog"
       {...props}
     />
   )

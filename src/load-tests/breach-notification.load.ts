@@ -7,13 +7,6 @@ import { Counter, Rate, Trend } from 'k6/metrics'
 import type { RefinedResponse } from 'k6/http'
 
 // Define response types for better type safety
-interface BreachResponse {
-  id: string
-  status: string
-  notificationStatus: string
-  [key: string]: unknown
-}
-
 interface NotificationResponse {
   totalNotifications: number
   deliveredNotifications: number

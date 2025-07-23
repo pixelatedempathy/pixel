@@ -118,7 +118,7 @@ export class PatientProfileService {
     messageContent: string,
     role: 'therapist' | 'patient' | 'system',
     sessionId?: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<PatientProfile | null> {
     const profile = await this.getProfileById(profileId)
     if (!profile) {

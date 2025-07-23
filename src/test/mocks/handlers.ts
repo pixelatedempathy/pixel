@@ -28,7 +28,7 @@ export const handlers = [
 
 // Mock HTTP response helper
 export const HttpResponse = {
-  json: (data: any) => ({
+  json: <T>(data: T) => ({
     ok: true,
     status: 200,
     json: () => Promise.resolve(data),

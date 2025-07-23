@@ -104,7 +104,7 @@ const reportFile = path.join(
 /**
  * Run a test suite
  */
-async function runTestSuite(suite: TestSuite): Promise<any> {
+async function runTestSuite(suite: TestSuite): Promise<TestResultOutput> {
   return new Promise((resolve, reject) => {
     const startTime = performance.now()
 
@@ -160,7 +160,7 @@ async function runTestSuite(suite: TestSuite): Promise<any> {
 /**
  * Generate HTML report
  */
-function generateReport(results: any[]): string {
+function generateReport(results: TestResultOutput[]): string {
   return `
   <!DOCTYPE html>
   <html lang="en">

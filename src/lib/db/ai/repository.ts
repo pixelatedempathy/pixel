@@ -36,58 +36,6 @@ interface ClientProfile {
   personalityTraits: Record<string, unknown>
   riskFactors: string[]
 }
-import type { RiskFactor, Emotion } from '../../ai/emotions/types'
-
-// Define an interface for items from client_technique_history table
-interface ClientTechniqueHistoryItem {
-  technique_id: string
-  technique_name: string
-  last_used_at: string // Supabase returns date/timestamp as string
-  efficacy_rating: number
-  usage_count: number
-}
-
-// Define interfaces for database tables that aren't fully defined in Database type
-interface TherapySessionRecord {
-  id: string
-  client_id: string
-  therapist_id: string
-  start_time: string
-  end_time?: string
-  status: string
-  security_level: string
-  emotion_analysis_enabled: boolean
-  metadata: Record<string, unknown>
-}
-
-interface EmotionAnalysisRecord {
-  id: string
-  session_id: string
-  client_id: string
-  timestamp: string
-  text: string
-  emotions: Record<string, unknown>
-  dominant_emotion: string
-  intensity: number
-  valence: number
-  arousal: number
-  dominance: number
-  metadata: Record<string, unknown>
-  risk_factors?: RiskFactor[]
-  requires_attention?: boolean
-}
-
-interface EfficacyFeedbackRecord {
-  recommendation_id: string
-  client_id: string
-  technique_id: string
-  efficacy_rating: number
-  timestamp: string
-  feedback: string
-  session_id: string
-  therapist_id: string
-  context: Record<string, unknown>
-}
 
 /**
  * Repository for AI analysis results
@@ -980,9 +928,9 @@ export class AIRepository {
     overallBiasScore: number
     alertLevel: 'low' | 'medium' | 'high' | 'critical'
     confidenceScore: number
-    layerResults: BiasLayerResults
-    demographics?: DemographicData
-    demographicGroups?: DemographicGroups
+    layerResults: Record<string, unknown>
+    demographics?: Record<string, unknown>
+    demographicGroups?: Record<string, unknown>
     recommendations?: string[]
     explanation?: string
     latencyMs?: number
@@ -990,41 +938,6 @@ export class AIRepository {
     modelProvider?: string
     metadata?: Record<string, unknown>
   }): Promise<string> {
-    // Define interfaces for bias analysis types
-    interface BiasLayerResults {
-      textLayer?: {
-        score: number
-        details: Record<string, unknown>
-      }
-      semanticLayer?: {
-        score: number
-        details: Record<string, unknown>
-      }
-      contextualLayer?: {
-        score: number
-        details: Record<string, unknown>
-      }
-      [key: string]:
-        | {
-            score: number
-            details: Record<string, unknown>
-          }
-        | undefined
-    }
-
-    interface DemographicData {
-      gender?: Record<string, number>
-      age?: Record<string, number>
-      ethnicity?: Record<string, number>
-      religion?: Record<string, number>
-      [key: string]: Record<string, number> | undefined
-    }
-
-    interface DemographicGroups {
-      affected: string[]
-      impactScore: Record<string, number>
-      [key: string]: string[] | Record<string, number> | unknown
-    }
     const { data, error } = await supabase
       .from('ai_bias_analysis')
       .insert({

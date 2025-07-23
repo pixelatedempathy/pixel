@@ -33,7 +33,7 @@ frontend:
         - pnpm config set strict-peer-dependencies false
 
         # Install all dependencies with simplified flags
-        - pnpm install --frozen-lockfile
+        - pnpm install --no-frozen-lockfile
         - pnpm rebuild
         - pnpm install --global supabase@2.31.8
 

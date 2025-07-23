@@ -365,9 +365,25 @@ export async function generateInsights(): Promise<SecurityInsight[]> {
   }
 }
 
+// Define interface for the analytics report
+interface BreachAnalyticsReport {
+  timeframe: {
+    from: string;
+    to: string;
+  };
+  metrics: BreachMetrics & {
+    encryptedData: string;
+  };
+  trends: TrendPoint[];
+  predictions: BreachPrediction[];
+  riskFactors: RiskFactor[];
+  insights: SecurityInsight[];
+  generatedAt: string;
+}
+
 export async function generateReport(
   timeframe: AnalyticsTimeframe,
-): Promise<any> {
+): Promise<BreachAnalyticsReport> {
   try {
     // Gather all analytics data
     const [metrics, trends, predictions, riskFactors, insights] =

@@ -18,7 +18,7 @@ interface GoogleCloudStorageOptions {
   apiEndpoint?: string;
   autoRetry?: boolean;
   maxRetries?: number;
-  promise?: Promise<any>;
+  promise?: Promise<unknown>;
   timeout?: number;
   [key: string]: unknown;
 }

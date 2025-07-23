@@ -216,7 +216,7 @@ export class JobQueueService {
           -1,
           'WITHSCORES',
         )
-        jobStrings = pendingJobsWithScores.map((item: any) => item.value)
+        jobStrings = pendingJobsWithScores.map((item: { value: string }) => item.value)
         break
       }
       case JobStatus.IN_PROGRESS:
@@ -249,7 +249,7 @@ export class JobQueueService {
     switch (status) {
       case JobStatus.PENDING: {
         const pendingJobs = await redis.zrange(this.queueKey, 0, -1)
-        jobIds = pendingJobs.map((jobStr: any) => JSON.parse(jobStr).id)
+        jobIds = pendingJobs.map((jobStr: string) => JSON.parse(jobStr).id)
         break
       }
       case JobStatus.IN_PROGRESS:
@@ -265,9 +265,9 @@ export class JobQueueService {
         const cancelledJobs = Object.values(await redis.hgetall(this.failedKey))
         jobIds = cancelledJobs
           .filter(
-            (jobStr: any) => JSON.parse(jobStr).status === JobStatus.CANCELLED,
+            (jobStr: string) => JSON.parse(jobStr).status === JobStatus.CANCELLED,
           )
-          .map((jobStr: any) => JSON.parse(jobStr).id)
+          .map((jobStr: string) => JSON.parse(jobStr).id)
         break
       }
       default:
@@ -320,7 +320,7 @@ export class JobQueueService {
     // Need to filter failedKey for actual cancelled jobs if they are stored there
     const allFailedJobs = Object.values(await redis.hgetall(this.failedKey))
     const cancelledCount = allFailedJobs.filter(
-      (jobStr: any) => JSON.parse(jobStr).status === JobStatus.CANCELLED,
+      (jobStr: string) => JSON.parse(jobStr).status === JobStatus.CANCELLED,
     ).length
     const actualFailedCount = failed - cancelledCount
 

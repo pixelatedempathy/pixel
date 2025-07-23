@@ -115,6 +115,22 @@ export interface VerificationStep {
 }
 
 /**
+ * Test case configuration interface
+ */
+interface TestCaseConfig {
+  name: string;
+  description: string;
+  backupType: string;
+  dataVerification: Array<{
+    type: VerificationMethod;
+    target: string;
+    expected?: string | number | boolean;
+    query?: string;
+    threshold?: number;
+  }>;
+}
+
+/**
  * Recovery Testing Manager
  * Handles all aspects of backup recovery testing
  */
@@ -141,19 +157,6 @@ export class RecoveryTestingManager {
   /**
    * Internal initialization method
    */
-interface TestCaseConfig {
-  name: string;
-  description: string;
-  backupType: string;
-  dataVerification: Array<{
-    type: VerificationMethod;
-    target: string;
-    expected?: string | number | boolean;
-    query?: string;
-    threshold?: number;
-  }>;
-}
-
   private initialize(): void {
     if (!this.config.testCases || this.config.testCases.length === 0) {
       this.loadDefaultTestCases()

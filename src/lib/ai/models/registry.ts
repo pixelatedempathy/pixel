@@ -860,7 +860,7 @@ export class AIModelRegistry {
     if (requirements.capabilities) {
       candidates = candidates.filter((model) =>
         requirements.capabilities!.every((cap) =>
-          model.legacyCapabilities.includes(cap as any),
+          model.legacyCapabilities.includes(cap as ModelCapability),
         ),
       )
     }
@@ -1096,7 +1096,7 @@ function extendedToLegacy(extended: ExtendedAIModel): AIModel {
   return {
     id: extended.id,
     name: extended.name,
-    provider: extended.provider as any,
+    provider: extended.provider,
     version: extended.version,
     capabilities: extended.capabilities,
     configuration: extended.configuration,

@@ -12,13 +12,13 @@ export function createPluginAPI(
 
   return {
     events: {
-      on(event: string, handler: (data: any) => void): void {
-        events.on(event, handler)
+      on<T>(event: string, handler: (data: T) => void): void {
+        events.on(event, handler as (data: unknown) => void)
       },
-      off(event: string, handler: (data: any) => void): void {
-        events.off(event, handler)
+      off<T>(event: string, handler: (data: T) => void): void {
+        events.off(event, handler as (data: unknown) => void)
       },
-      emit(event: string, data: any): void {
+      emit<T>(event: string, data: T): void {
         events.emit(event, data)
       },
     },

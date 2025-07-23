@@ -282,7 +282,7 @@ const ClientFacingDemo: React.FC = () => {
                     Sample Files Processed
                   </h4>
                   <div className="space-y-3">
-                    {sampleFiles.map((file, index) => (
+                    {sampleFiles.map((file) => (
                       <div
                         key={`${file.name}-${file.type}`}
                         className="flex items-center justify-between p-3 bg-slate-700 rounded-lg"

@@ -353,7 +353,7 @@ export class UniversalDemoAnalytics {
 
   private queueEvent(
     eventName: string,
-    properties: Record<string, any> = {},
+    properties: Record<string, unknown> = {},
   ): void {
     const eventData: AnalyticsEventData = {
       event: eventName,
@@ -379,7 +379,7 @@ export class UniversalDemoAnalytics {
 
   public async trackEvent(
     eventName: string,
-    properties: Record<string, any> = {},
+    properties: Record<string, unknown> = {},
   ): Promise<void> {
     this.queueEvent(eventName, properties)
   }
@@ -447,7 +447,7 @@ export class UniversalDemoAnalytics {
 
   public trackCustomEvent(
     eventName: string,
-    properties: Record<string, any> = {},
+    properties: Record<string, unknown> = {},
   ): void {
     this.trackEvent(eventName, properties)
   }
@@ -461,7 +461,7 @@ export class UniversalDemoAnalytics {
     return this.abTestVariant
   }
 
-  public getPageConfig(): any {
+  public getPageConfig(): PageConfig {
     return this.pageConfig
   }
 }

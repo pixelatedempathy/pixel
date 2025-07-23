@@ -114,11 +114,6 @@ test.describe('Keyboard Navigation Tests', () => {
             continue
           }
 
-          // Get current focused element for comparison
-          const beforeFocusElement = await pageContext.evaluate(
-            () => document.activeElement
-          )
-
           // Focus the element
           await el.focus()
 

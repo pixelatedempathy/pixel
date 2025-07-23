@@ -5,7 +5,7 @@
 
 export class KVStore {
   private storagePrefix: string
-  private cache: Map<string, any> = new Map()
+  private cache: Map<string, unknown> = new Map()
   private useLocalStorage: boolean
 
   /**

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { DimensionalEmotionMap } from '@/lib/ai/emotions/dimensionalTypes'
 import type { MultidimensionalPattern } from '@/lib/ai/temporal/types'
 
@@ -35,7 +35,7 @@ export function useMultidimensionalEmotions(
   const { clientId, sessionId, timeRange = 30, dataPoints = 100 } = options
 
   // Helper to fetch data
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true)
     setError(null)
 
@@ -101,7 +101,7 @@ export function useMultidimensionalEmotions(
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [clientId, sessionId, timeRange, dataPoints])
 
   useEffect(() => {
     fetchData()

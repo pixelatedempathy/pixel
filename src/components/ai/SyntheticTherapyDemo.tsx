@@ -353,7 +353,7 @@ export default function SyntheticTherapyDemo() {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         {selectedConversation.encodedSymptoms.map(
-                          (symptom, index) => (
+                          (symptom) => (
                             <div
                               key={`${symptom.name}-${symptom.duration}`}
                               className="rounded-lg border p-4 space-y-2"

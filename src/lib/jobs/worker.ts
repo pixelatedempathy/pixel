@@ -11,12 +11,48 @@ import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
 const logger = createBuildSafeLogger('JobsWorker')
 
+// Define interfaces for job payloads
+interface TherapeuticSession {
+  id: string;
+  userId: string;
+  startTime: string;
+  endTime: string;
+  content: string;
+  metadata: Record<string, unknown>;
+}
+
+interface User {
+  id: string;
+  name: string;
+  role: string;
+  metadata: Record<string, unknown>;
+}
+
+interface RequestInfo {
+  id: string;
+  timestamp: string;
+  source: string;
+  metadata: Record<string, unknown>;
+}
+
+interface TimeRange {
+  start: string;
+  end: string;
+}
+
+interface ReportOptions {
+  format: string;
+  includeDetails: boolean;
+  groupBy?: string;
+  filters?: Record<string, unknown>;
+}
+
 // Initialize BiasDetectionEngine (singleton)
 const biasDetectionEngine = new BiasDetectionEngine()
 
 // Ensure the engine is initialized before processing jobs
 async function initializeEngine() {
-  if (!(biasDetectionEngine as any).isInitialized) {
+  if (!biasDetectionEngine.isInitialized) {
     await biasDetectionEngine.initialize()
   }
 }
@@ -83,21 +119,21 @@ const jobsWorker = {
       })
 
       // Declare variables outside of case blocks to avoid no-case-declarations issues
-      let sessions: any[]
-      let user: any
-      let request: any
-      let timeRange: any
-      let options: any
-      let results: any
-      let report: any
+      let sessions: TherapeuticSession[]
+      let user: User
+      let request: RequestInfo
+      let timeRange: TimeRange
+      let options: ReportOptions
+      let results: Record<string, unknown>
+      let report: Record<string, unknown>
 
       switch (job.type) {
         case 'bias-analysis-batch':
-          // Assuming payload contains { sessions: TherapeuticSession[], user: any, request: any }
+          // Payload contains sessions, user, and request information
           ;({ sessions, user, request } = job.payload as {
-            sessions: any[]
-            user: any
-            request: any
+            sessions: TherapeuticSession[]
+            user: User
+            request: RequestInfo
           })
           results = await biasDetectionEngine.analyzeSessionsBatch(
             sessions,
@@ -110,19 +146,17 @@ const jobsWorker = {
           })
           break
         case 'report-generation':
-          // Assuming payload contains { sessions: TherapeuticSession[], timeRange: any, options: any }
+          // Payload contains sessions, timeRange, and options
           ;({
             sessions: sessions,
             timeRange,
             options,
           } = job.payload as {
-            sessions: any[]
-            timeRange: any
-            options: any
+            sessions: TherapeuticSession[]
+            timeRange: TimeRange
+            options: ReportOptions
           })
-          report = await (
-            biasDetectionEngine as any
-          )._generateBiasReportInternal(sessions, timeRange, options)
+          report = await biasDetectionEngine.generateBiasReport(sessions, timeRange, options)
           await jobQueue.updateJobStatus(job.id, JobStatus.COMPLETED, {
             result: report,
             completedAt: new Date().toISOString(),

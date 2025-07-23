@@ -105,7 +105,7 @@ function AlertDialogContent({ className, children, ...props }: AlertDialogConten
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
-      <div
+      <dialog
         className={cn(
           'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%]',
           className
@@ -117,12 +117,14 @@ function AlertDialogContent({ className, children, ...props }: AlertDialogConten
             e.stopPropagation();
           }
         }}
-        role="alertdialog"
-        tabIndex={0}
+        aria-modal="true"
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        open
         {...props}
       >
         {children}
-      </div>
+      </dialog>
     </AlertDialogPortal>
   )
 }

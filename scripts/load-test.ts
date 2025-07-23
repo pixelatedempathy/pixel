@@ -25,6 +25,23 @@ interface TestMetrics {
   error?: string
 }
 
+// Move the interface outside the class
+interface LoadTestReport {
+  timestamp: string;
+  config: LoadTestConfig;
+  statistics: {
+    totalRequests: number;
+    successfulRequests: number;
+    failedRequests: number;
+    successRate: number;
+    scenarioStats: Record<string, number[]>;
+    errors: Array<{
+      scenario: string;
+      error?: string;
+    }>;
+  };
+}
+
 class LoadTestService {
   private redis: RedisService
   private monitoring: MonitoringService
@@ -274,22 +291,6 @@ class LoadTestService {
     };
 
     await this.saveReport(report);
-  }
-
-  interface LoadTestReport {
-    timestamp: string;
-    config: LoadTestConfig;
-    statistics: {
-      totalRequests: number;
-      successfulRequests: number;
-      failedRequests: number;
-      successRate: number;
-      scenarioStats: Record<string, number[]>;
-      errors: Array<{
-        scenario: string;
-        error?: string;
-      }>;
-    };
   }
 
   private async saveReport(report: LoadTestReport): Promise<void> {

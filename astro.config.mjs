@@ -51,7 +51,26 @@ export default defineConfig({
       },
     },
     ssr: {
-      external: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node', 'pdfkit'],
+      external: [
+        // Packages from build.rollupOptions.external
+        '@google-cloud/storage',
+        '@aws-sdk/client-s3',
+        '@aws-sdk/client-dynamodb',
+        '@aws-sdk/client-kms',
+        'redis',
+        'ioredis',
+        'pg',
+        'mysql2',
+        'sqlite3',
+        'better-sqlite3',
+        'pdfkit',
+        // Additional SSR-specific packages
+        'sharp',
+        'canvas',
+        'puppeteer',
+        'playwright',
+        '@sentry/profiling-node'
+      ],
     },
     optimizeDeps: {
       exclude: ['@aws-sdk/client-s3', '@aws-sdk/client-kms', 'sharp', 'canvas', 'puppeteer', 'playwright', '@sentry/profiling-node', 'pdfkit'],
@@ -83,8 +102,8 @@ export default defineConfig({
           'info',
           'arrow-left',
           'shield',
-          'user-plus',
-        ],
+          'user-plus'
+        ]
       },
       svgdir: './src/icons',
     }),

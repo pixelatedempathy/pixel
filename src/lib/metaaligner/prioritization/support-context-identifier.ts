@@ -8,6 +8,16 @@ import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
 const logger = createBuildSafeLogger('support-context-identifier')
 
+/**
+ * Interface for user emotional profile
+ */
+export interface UserEmotionalProfile {
+  baselineEmotionalState?: EmotionalState;
+  typicalCopingStrategies?: string[];
+  emotionalTriggers?: string[];
+  supportPreferences?: string[];
+}
+
 export interface SupportContextResult {
   isSupport: boolean
   confidence: number
@@ -315,7 +325,7 @@ export class SupportContextIdentifier {
     queries: Array<{
       query: string
       conversationHistory?: string[]
-      userEmotionalProfile?: any
+      userEmotionalProfile?: UserEmotionalProfile
     }>,
   ): Promise<SupportContextResult[]> {
     return Promise.all(
@@ -557,7 +567,7 @@ export class SupportContextIdentifier {
   private async performAIAnalysis(
     userQuery: string,
     conversationHistory?: string[],
-    userEmotionalProfile?: any,
+    userEmotionalProfile?: UserEmotionalProfile,
   ): Promise<SupportContextResult> {
     let contextualPrompt = SUPPORT_IDENTIFICATION_PROMPT
 

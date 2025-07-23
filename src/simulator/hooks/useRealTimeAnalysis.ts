@@ -2,17 +2,6 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { FeedbackService } from '../services/FeedbackService'
 import type { EmotionState, SpeechPattern, DetectedTechnique } from '../types'
 
-// Define interface for FeedbackService methods we're using
-interface FeedbackServiceMethods {
-  getEmotionState(): EmotionState
-  getSpeechPatterns(): SpeechPattern[]
-  getDetectedTechniques(): DetectedTechnique[]
-  stopProcessing(): void
-  updateConsent(hasConsent: boolean): void
-  on(event: 'error', callback: (data: Error) => void): void
-  on(event: 'connectionChange', callback: (data: boolean) => void): void
-}
-
 // Ensure FeedbackService implements our interface
 declare module '../services/FeedbackService' {
   // Extend the interface with the required methods instead of using empty interface

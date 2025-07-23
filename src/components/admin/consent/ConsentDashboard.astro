@@ -115,18 +115,18 @@ interface UserConsentWithDetails {
 
 // Type assertions for the data
 const typedConsentVersions = consentVersions as unknown as ConsentVersionWithTypeName[] | null;
-const typedActiveConsents = activeConsents as unknown as UserConsentWithDetails[] | [];
-const typedWithdrawnConsents = withdrawnConsents as unknown as UserConsentWithDetails[] | [];
+const typedActiveConsents  = activeConsents    as unknown as UserConsentWithDetails[]     | null;
+const typedWithdrawnConsents = withdrawnConsents as unknown as UserConsentWithDetails[]  | null;
 
 // Calculate overall stats
-const totalActiveConsents = typedActiveConsents?.length || 0;
-const totalWithdrawnConsents = typedWithdrawnConsents?.length || 0;
-const totalConsentTypes = consentTypes?.length || 0;
-const totalConsentVersions = typedConsentVersions?.length || 0;
+const totalActiveConsents    = (typedActiveConsents    || []).length;
+const totalWithdrawnConsents = (typedWithdrawnConsents || []).length;
+const totalConsentTypes      = consentTypes?.length       || 0;
+const totalConsentVersions   = typedConsentVersions?.length || 0;
 
 // Group consents by type
 const consentsByType: Record<string, number> = {};
-typedActiveConsents?.forEach((consent) => {
+;(typedActiveConsents || []).forEach((consent) => {
   const typeName = consent.consent_versions?.consent_types?.name;
   if (typeName) {
     consentsByType[typeName] = (consentsByType[typeName] || 0) + 1;
@@ -135,7 +135,7 @@ typedActiveConsents?.forEach((consent) => {
 
 // Group withdrawals by type
 const withdrawalsByType: Record<string, number> = {};
-typedWithdrawnConsents?.forEach((consent) => {
+;(typedWithdrawnConsents || []).forEach((consent) => {
   const typeName = consent.consent_versions?.consent_types?.name;
   if (typeName) {
     withdrawalsByType[typeName] = (withdrawalsByType[typeName] || 0) + 1;

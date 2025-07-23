@@ -254,7 +254,7 @@ export const PresetScenarioSelector: React.FC<PresetScenarioSelectorProps> = ({
                 <span className="text-sm font-medium">Selected</span>
               </div>
             )}
-          </div>
+          </button>
         ))}
       </div>
 

@@ -12,7 +12,7 @@ import middlewarePatchPlugin from './src/plugins/vite-plugin-middleware-patch'
 const cdnAssetMap = (() => {
   try {
     return JSON.parse(fs.readFileSync('./src/cdn-asset-map.json', 'utf-8'))
-  } catch (e) {
+  } catch (_) {
     return {}
   }
 })()

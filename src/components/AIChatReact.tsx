@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import type { AIModel } from '../lib/ai/models/types'
 
 interface Message {
+  id: string; // Add unique ID to each message
   role: 'user' | 'assistant'
   content: string
 }
@@ -14,6 +15,9 @@ export interface AIChatReactProps {
   'client:idle'?: boolean
   'client:only'?: boolean
 }
+
+// Helper function to generate unique IDs
+const generateId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 export default function AIChatReact({
   availableModels,
@@ -34,6 +38,7 @@ export default function AIChatReact({
     }
 
     const userMessage: Message = {
+      id: generateId(), // Generate unique ID
       role: 'user',
       content: inputValue,
     }
@@ -47,6 +52,7 @@ export default function AIChatReact({
       // For demo purposes, we'll simulate a response after a delay
       setTimeout(() => {
         const assistantMessage: Message = {
+          id: generateId(), // Generate unique ID
           role: 'assistant',
           content: `I'm a demo AI assistant using ${selectedModel}. You said: "${userMessage.content}". In a real implementation, this would connect to the TogetherAI API.`,
         }
@@ -100,9 +106,9 @@ export default function AIChatReact({
             <p>Send a message to start chatting with the AI assistant</p>
           </div>
         ) : (
-          messages.map((message, index) => (
+          messages.map((message) => (
             <div
-              key={index}
+              key={message.id} // Use unique ID as key instead of index
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
