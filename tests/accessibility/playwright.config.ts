@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { isCI, getBaseUrl, getDevCommand, getDevPort, shouldReuseServer } from '../utils/env'
 
 /**
  * Playwright configuration for accessibility testing
@@ -10,9 +11,9 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCI(),
+  retries: isCI() ? 2 : 0,
+  workers: isCI() ? 1 : undefined,
   reporter: [
     ['html', { outputFolder: '../../playwright-report/accessibility' }],
     ['list'],
@@ -20,7 +21,7 @@ export default defineConfig({
   ],
   use: {
     actionTimeout: 10000,
-    baseURL: process.env.CI ? 'http://localhost:3000' : 'http://localhost:4321',
+    baseURL: getBaseUrl(),
     trace: 'on-first-retry',
     video: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -52,8 +53,6 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         colorScheme: 'dark',
-        reducedMotion: 'reduce',
-        forcedColors: 'active', // Simulate forced colors mode (high contrast)
       },
     },
     {
@@ -65,8 +64,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: process.env.CI ? 'pnpm preview' : 'pnpm dev',
-    port: process.env.CI ? 3000 : 4321,
-    reuseExistingServer: !process.env.CI,
+    command: getDevCommand(),
+    port: getDevPort(),
+    reuseExistingServer: shouldReuseServer(),
   },
 })

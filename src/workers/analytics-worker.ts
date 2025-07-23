@@ -1,7 +1,7 @@
 /// <reference types="node" />
-import { env } from '@/config/env.config'
-import { AnalyticsService } from '@/lib/services/analytics/AnalyticsService'
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+import { config } from '../config/env.config'
+import { AnalyticsService } from '../lib/services/analytics/AnalyticsService'
+import { createBuildSafeLogger } from '../lib/logging/build-safe-logger'
 const logger = createBuildSafeLogger('default')
 import { WebSocketServer } from 'ws'
 
@@ -11,7 +11,7 @@ const WORKER_ID = crypto.randomUUID()
 // Constants
 const PROCESSING_INTERVAL = 1000 // 1 second
 const CLEANUP_INTERVAL = 24 * 60 * 60 * 1000 // 24 hours
-const WS_PORT = env.ANALYTICS_WS_PORT
+const WS_PORT = config.workers.analytics.wsPort()
 
 // Initialize services
 let analyticsService: AnalyticsService

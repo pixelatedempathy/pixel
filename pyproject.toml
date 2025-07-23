@@ -3,56 +3,45 @@ name = "pixel"
 version = "0.1.0"
 description = "Pixelated Empathy - AI-powered bias detection and mental health platform"
 authors = [
-    {name = "Pixelated Empathy Team", email = "team@pixelatedempathy.com"}
+  { name = "Pixelated Empathy Team", email = "team@pixelatedempathy.com" },
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "flask",
-    "flask-cors",
-    "pandas",
-    "numpy",
-    "scikit-learn",
-    "pyjwt",
-    "werkzeug",
-    "fairlearn",
-    "shap>=0.41.0",
-    "lime",
-    "transformers",
-    "spacy",
-    "nltk",
-    "evaluate",
-    "cryptography",
-    "requests",
-    "python-dotenv",
-    "numba>=0.56.0",
-    "faiss-cpu>=1.11.0",
-    "sentence-transformers>=5.0.0",
-    "pytest>=8.4.1",
-    "pytest-asyncio>=1.0.0",
-    "flake8>=7.3.0",
-    "matplotlib>=3.10.3",
-    "mypy>=1.16.1",
-    "psutil>=7.0.0",
-    "chardet>=5.2.0",
-    "pydub>=0.25.1",
-    "hatch>=1.14.1",
-    "sourcery>=1.37.0",
+  "flask",
+  "flask-cors",
+  "pandas",
+  "numpy",
+  "scikit-learn",
+  "pyjwt",
+  "werkzeug",
+  "fairlearn",
+  "shap>=0.41.0",
+  "lime",
+  "transformers",
+  "spacy",
+  "nltk",
+  "evaluate",
+  "cryptography",
+  "requests",
+  "python-dotenv",
+  "numba>=0.56.0",
+  "faiss-cpu>=1.11.0",
+  "sentence-transformers>=5.0.0",
+  "pytest>=8.4.1",
+  "pytest-asyncio>=1.0.0",
+  "flake8>=7.3.0",
+  "matplotlib>=3.10.3",
+  "mypy>=1.16.1",
+  "psutil>=7.0.0",
+  "chardet>=5.2.0",
+  "pydub>=0.25.1",
+  "hatch>=1.14.1",
+  "sourcery>=1.37.0",
 ]
 
 [project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "pytest-asyncio",
-    "coverage"
-]
-dev = [
-    "black",
-    "ruff",
-    "mypy",
-    "pyright"
-]
+test = ["pytest", "pytest-cov", "pytest-mock", "pytest-asyncio", "coverage"]
+dev = ["black", "ruff", "mypy", "pyright"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -80,7 +69,28 @@ pythonVersion = "3.11"
 target-version = "py311"
 line-length = 100
 exclude = ["node_modules", "stubs", "venv", "env", "build", "dist"]
-select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "DTZ", "PIE", "PT", "Q", "RET", "SIM", "T20", "TID", "ARG", "PL", "RUF"]
+select = [
+  "E",
+  "F",
+  "W",
+  "I",
+  "N",
+  "UP",
+  "B",
+  "A",
+  "C4",
+  "DTZ",
+  "PIE",
+  "PT",
+  "Q",
+  "RET",
+  "SIM",
+  "T20",
+  "TID",
+  "ARG",
+  "PL",
+  "RUF",
+]
 ignore = ["E501"]
 
 [tool.ruff.isort]
@@ -106,6 +116,4 @@ show_missing = true
 skip_covered = true
 
 [tool.uv.workspace]
-members = [
-    "pixel",
-]
+members = ["pixel"]

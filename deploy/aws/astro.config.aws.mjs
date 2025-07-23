@@ -53,41 +53,60 @@ export default defineConfig({
         config() {
           return {
             define: {
-              'process.env.SENTRY_DISABLE_TELEMETRY': 'true'
-            }
+              'process.env.SENTRY_DISABLE_TELEMETRY': 'true',
+            },
           }
-        }
+        },
       },
       {
         name: 'aws-lambda-optimizations',
         resolveId(id) {
           // Block problematic modules for AWS Lambda
-          const blockedModules = ['fsevents', 'chokidar', 'sharp', 'canvas'];
-          
-          if (blockedModules.some(mod => id.includes(mod))) {
-            return { id: 'virtual:empty', external: false };
+          const blockedModules = ['fsevents', 'chokidar', 'sharp', 'canvas']
+
+          if (blockedModules.some((mod) => id.includes(mod))) {
+            return { id: 'virtual:empty', external: false }
           }
-          
+
           // Externalize Node.js built-ins for Lambda
           const nodeModules = [
-            'fs', 'path', 'crypto', 'os', 'child_process',
-            'worker_threads', 'stream', 'zlib', 'http', 'https', 'net', 'tls',
-            'util', 'events', 'string_decoder', 'readline', 'inspector',
-            'diagnostics_channel', 'async_hooks', 'url', 'module', 'constants', 'assert'
-          ];
-          
+            'fs',
+            'path',
+            'crypto',
+            'os',
+            'child_process',
+            'worker_threads',
+            'stream',
+            'zlib',
+            'http',
+            'https',
+            'net',
+            'tls',
+            'util',
+            'events',
+            'string_decoder',
+            'readline',
+            'inspector',
+            'diagnostics_channel',
+            'async_hooks',
+            'url',
+            'module',
+            'constants',
+            'assert',
+          ]
+
           if (nodeModules.includes(id) || id.startsWith('node:')) {
-            return { id, external: true };
+            return { id, external: true }
           }
-          
-          return null;
+
+          return null
         },
         load(id) {
           if (id === 'virtual:empty') {
-            return 'export default {};';
+            return 'export default {};'
           }
-        }
-      }
+        },
+      },
     ],
 
     // Handle KaTeX font assets
@@ -100,7 +119,9 @@ export default defineConfig({
       // AWS-specific environment variables
       'process.env.AWS_REGION': JSON.stringify(process.env.AWS_REGION),
       'process.env.AWS_DEPLOYMENT': JSON.stringify(process.env.AWS_DEPLOYMENT),
-      'process.env.AWS_LAMBDA_FUNCTION_NAME': JSON.stringify(process.env.AWS_LAMBDA_FUNCTION_NAME),
+      'process.env.AWS_LAMBDA_FUNCTION_NAME': JSON.stringify(
+        process.env.AWS_LAMBDA_FUNCTION_NAME,
+      ),
     },
 
     build: {
@@ -117,27 +138,47 @@ export default defineConfig({
         external: (id) => {
           // Externalize problematic modules for Lambda
           const lambdaExternals = [
-            'fsevents', 'chokidar', 'sharp', 'canvas', 'puppeteer', 'playwright'
-          ];
-          
-          if (lambdaExternals.some(mod => id.includes(mod))) {
-            return true;
+            'fsevents',
+            'chokidar',
+            'sharp',
+            'canvas',
+            'puppeteer',
+            'playwright',
+          ]
+
+          if (lambdaExternals.some((mod) => id.includes(mod))) {
+            return true
           }
-          
+
           // Always externalize Node.js built-ins
-          if (id.startsWith('node:') || [
-            'fs', 'path', 'crypto', 'os', 'child_process', 'worker_threads',
-            'stream', 'zlib', 'http', 'https', 'net', 'tls', 'util', 'events'
-          ].includes(id)) {
-            return true;
+          if (
+            id.startsWith('node:') ||
+            [
+              'fs',
+              'path',
+              'crypto',
+              'os',
+              'child_process',
+              'worker_threads',
+              'stream',
+              'zlib',
+              'http',
+              'https',
+              'net',
+              'tls',
+              'util',
+              'events',
+            ].includes(id)
+          ) {
+            return true
           }
-          
+
           // Externalize AWS SDK (available in Lambda runtime)
           if (id.includes('@aws-sdk')) {
-            return true;
+            return true
           }
-          
-          return false;
+
+          return false
         },
         output: {
           manualChunks: (id) => {
@@ -172,9 +213,14 @@ export default defineConfig({
       exclude: [
         'msw',
         'virtual:keystatic-config',
-        'chokidar', 'fsevents', 'sharp', 'canvas',
-        'puppeteer', 'playwright',
-        '@aws-sdk/client-s3', '@aws-sdk/client-lambda',
+        'chokidar',
+        'fsevents',
+        'sharp',
+        'canvas',
+        'puppeteer',
+        'playwright',
+        '@aws-sdk/client-s3',
+        '@aws-sdk/client-lambda',
       ],
     },
 
@@ -195,45 +241,55 @@ export default defineConfig({
   // Integrations optimized for AWS
   integrations: [
     // Conditionally disable heavy integrations for AWS deployment
-    ...(process.env.AWS_DEPLOYMENT !== '1' ? [
-      expressiveCode({
-        themes: ['github-dark', 'github-light'],
-        styleOverrides: {
-          borderRadius: '0.5rem',
-        },
-      }),
-      flexsearchIntegration(),
-    ] : []),
-    react(), 
+    ...(process.env.AWS_DEPLOYMENT !== '1'
+      ? [
+          expressiveCode({
+            themes: ['github-dark', 'github-light'],
+            styleOverrides: {
+              borderRadius: '0.5rem',
+            },
+          }),
+          flexsearchIntegration(),
+        ]
+      : []),
+    react(),
     mdx({
       components: path.resolve('./mdx-components.js'),
-    }), 
+    }),
     UnoCSS({
       injectReset: true,
       mode: 'global',
       safelist: ['font-sans', 'font-mono', 'font-condensed'],
       configFile: './uno.config.ts',
-    }), 
+    }),
     icon({
       include: {
         lucide: [
-          'calendar', 'user', 'settings', 'heart', 'brain', 'shield-check',
-          'info', 'arrow-left', 'shield', 'user-plus',
+          'calendar',
+          'user',
+          'settings',
+          'heart',
+          'brain',
+          'shield-check',
+          'info',
+          'arrow-left',
+          'shield',
+          'user-plus',
         ],
       },
       svgdir: './src/icons',
-    }), 
-    markdoc(), 
+    }),
+    markdoc(),
     ...(process.env.SKIP_KEYSTATIC !== 'true' ? [keystatic()] : []),
     sentry({
       dsn: process.env.SENTRY_DSN,
       sourceMapsUploadOptions: {
-        project: process.env.SENTRY_PROJECT || "pixel-astro",
-        org: process.env.SENTRY_ORG || "pixelated-empathy-dq",
+        project: process.env.SENTRY_PROJECT || 'pixel-astro',
+        org: process.env.SENTRY_ORG || 'pixelated-empathy-dq',
         authToken: process.env.SENTRY_AUTH_TOKEN,
       },
       telemetry: false,
-    })
+    }),
   ],
 
   // Markdown configuration

@@ -26,7 +26,12 @@ export interface RedisEventHandler {
 
 export interface RedisMockClient extends Partial<Redis> {
   get(key: string): Promise<string | null>
-  set(key: string, value: string, mode?: string, duration?: number): Promise<'OK'>
+  set(
+    key: string,
+    value: string,
+    mode?: string,
+    duration?: number,
+  ): Promise<'OK'>
   del(key: string): Promise<number>
   exists(key: string): Promise<number>
   sadd(key: string, member: string): Promise<number>
@@ -40,7 +45,12 @@ export interface RedisMockClient extends Partial<Redis> {
   hlen(key: string): Promise<number>
   zadd(key: string, score: number, member: string): Promise<number>
   zrem(key: string, member: string): Promise<number>
-  zrange(key: string, start: number, stop: number, withScores?: string): Promise<string[] | RedisZSetMember[]>
+  zrange(
+    key: string,
+    start: number,
+    stop: number,
+    withScores?: string,
+  ): Promise<string[] | RedisZSetMember[]>
   zpopmin(key: string): Promise<RedisZSetMember[]>
   zcard(key: string): Promise<number>
   ping(): Promise<string>

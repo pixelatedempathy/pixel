@@ -240,7 +240,7 @@ jobs:
           echo '<li>Browser Compatibility Report - This consolidated report</li>' >> report.html
           echo '</ul>' >> report.html
           echo '</div>' >> report.html
-          
+
           echo '</body></html>' >> report.html
 
           # Set outputs for use in subsequent steps
@@ -267,16 +267,16 @@ jobs:
           # Prepare notification content
           cat > notification.txt << EOF
           🚨 Browser Compatibility Issues Detected
-          
+
           Repository: ${{ github.repository }}
           Branch: ${{ github.ref_name }}
           Commit: ${{ github.sha }}
-          
+
           Test Results:
           - Total Tests: ${TOTAL_TESTS:-Unknown}
           - Failed Tests: ${ISSUE_COUNT}
           - Workflow: ${WORKFLOW_URL}
-          
+
           Please review the test results and address any compatibility issues.
           EOF
 

@@ -69,7 +69,7 @@ log "Passed: ${TESTS_PASSED}" "${GREEN}"
 log "Failed: ${TESTS_FAILED}" "${RED}"
 
 # Return exit code based on results
-if [ $TESTS_FAILED -gt 0 ]; then
+if [[ ${TESTS_FAILED} -gt 0 ]]; then
 	log "\nSome security tests failed! ❌" "${RED}"
 	exit 1
 else

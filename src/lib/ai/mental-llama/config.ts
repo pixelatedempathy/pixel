@@ -114,7 +114,7 @@ export const DEFAULT_PRODUCTION_CONFIG: ProductionConfig = {
     enablePerformanceTracking: true,
     metricsCollectionIntervalMs: 60000,
     enableDetailedLogging: (() => {
-import { config as envConfig } from '@/config/env.config'
+      import { config as envConfig } from '@/config/env.config'
 
       try {
         return !envConfig.isProduction()

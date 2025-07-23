@@ -26,8 +26,7 @@ export async function analyze(
     const baseValue = (hash % 3) - 1 // -1, 0, or 1
 
     // Use score to influence the trend
-    const scoreInfluence =
-      factor.score > 0.7 ? 1 : factor.score < 0.3 ? -1 : 0
+    const scoreInfluence = factor.score > 0.7 ? 1 : factor.score < 0.3 ? -1 : 0
 
     // Combined influence
     const trendValue = baseValue + scoreInfluence

@@ -48,19 +48,22 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       const temporalFeatures = this.extractTemporalFeatures(sessions)
 
       // Apply clustering algorithms to identify patterns
-      const clusters = await this.performHierarchicalClustering(temporalFeatures)
+      const clusters =
+        await this.performHierarchicalClustering(temporalFeatures)
 
       // Detect behavioral patterns using statistical analysis
       const behavioralPatterns = await this.detectBehavioralPatterns(sessions)
 
       // Identify emotional regulation patterns
-      const emotionalPatterns = await this.detectEmotionalRegulationPatterns(sessions)
+      const emotionalPatterns =
+        await this.detectEmotionalRegulationPatterns(sessions)
 
       // Cognitive pattern detection using NLP techniques
       const cognitivePatterns = await this.detectCognitivePatterns(sessions)
 
       // Communication pattern analysis
-      const communicationPatterns = await this.detectCommunicationPatterns(sessions)
+      const communicationPatterns =
+        await this.detectCommunicationPatterns(sessions)
 
       const patterns = [
         ...behavioralPatterns,
@@ -85,7 +88,8 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       })
 
       // Statistical validation and filtering
-      const finalPatterns = this.validatePatternsStatistically(validatedPatterns)
+      const finalPatterns =
+        this.validatePatternsStatistically(validatedPatterns)
 
       logger.info('Pattern detection completed', {
         clientId,
@@ -102,7 +106,10 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
         clientId,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
-      throw new ProcessingError('Failed to detect cross-session patterns', error)
+      throw new ProcessingError(
+        'Failed to detect cross-session patterns',
+        error,
+      )
     }
   }
 
@@ -121,13 +128,15 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       const sessionFeatures = this.extractSessionFeatures(session)
 
       // Analyze emotional state transitions
-      const emotionalTransitions = this.analyzeEmotionalTransitions(sessionFeatures)
+      const emotionalTransitions =
+        this.analyzeEmotionalTransitions(sessionFeatures)
 
       // Create pattern result
       const pattern: PatternRecognitionResult = {
         patternId: `emotion_transition_${session.sessionId}`,
         type: 'emotional',
-        description: 'Significant emotional state transitions detected during session',
+        description:
+          'Significant emotional state transitions detected during session',
         frequency: emotionalTransitions.length / 10, // Normalized
         confidence: this.calculateWeightedConfidence(
           emotionalTransitions.map((t) => t.confidence),
@@ -148,9 +157,12 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
           ),
         },
         clinicalRelevance: {
-          significance: this.calculateClinicalSignificance(emotionalTransitions),
-          recommendation: this.generateEmotionalRecommendation(emotionalTransitions),
-          interventionSuggested: this.shouldSuggestIntervention(emotionalTransitions),
+          significance:
+            this.calculateClinicalSignificance(emotionalTransitions),
+          recommendation:
+            this.generateEmotionalRecommendation(emotionalTransitions),
+          interventionSuggested:
+            this.shouldSuggestIntervention(emotionalTransitions),
           urgency: this.assessUrgencyLevel(emotionalTransitions),
           evidenceScore: this.calculateEvidenceScore(emotionalTransitions),
         },
@@ -164,7 +176,8 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
           outlierCount: this.countOutliers(
             emotionalTransitions.map((t) => t.confidence),
           ),
-          correlationStrength: this.calculateCorrelationStrength(emotionalTransitions),
+          correlationStrength:
+            this.calculateCorrelationStrength(emotionalTransitions),
         },
       }
 
@@ -231,7 +244,9 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
             const mergedPattern = this.mergePatterns(p1, p2)
             try {
               PatternRecognitionResultSchema.parse(mergedPattern)
-              if (!common.some((p) => p.patternId === mergedPattern.patternId)) {
+              if (
+                !common.some((p) => p.patternId === mergedPattern.patternId)
+              ) {
                 common.push(mergedPattern)
               }
               foundSimilar = true
@@ -251,7 +266,12 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       }
 
       for (const p2 of validPatterns2) {
-        if (!common.some((p) => this.calculatePatternSimilarity(p, p2) >= similarityThreshold)) {
+        if (
+          !common.some(
+            (p) =>
+              this.calculatePatternSimilarity(p, p2) >= similarityThreshold,
+          )
+        ) {
           unique2.push(p2)
         }
       }
@@ -287,10 +307,12 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
       const riskFactorMatrix = this.extractRiskFactorMatrix(analyses)
 
       // Calculate comprehensive correlation metrics
-      const correlationResults = await this.calculateAdvancedCorrelations(riskFactorMatrix)
+      const correlationResults =
+        await this.calculateAdvancedCorrelations(riskFactorMatrix)
 
       // Apply statistical significance testing
-      const significantCorrelations = this.filterSignificantCorrelations(correlationResults)
+      const significantCorrelations =
+        this.filterSignificantCorrelations(correlationResults)
 
       // Generate clinically relevant insights
       const correlations = this.generateClinicalCorrelations(
@@ -317,7 +339,10 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
         clientId,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
-      throw new ProcessingError('Failed to analyze risk factor correlations', error)
+      throw new ProcessingError(
+        'Failed to analyze risk factor correlations',
+        error,
+      )
     }
   }
 
@@ -439,7 +464,10 @@ class ProductionPatternRecognitionService implements PatternRecognitionService {
         clientId,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
-      throw new ProcessingError('Failed to detect advanced cross-session patterns', error)
+      throw new ProcessingError(
+        'Failed to detect advanced cross-session patterns',
+        error,
+      )
     }
   }
 

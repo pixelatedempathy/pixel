@@ -153,6 +153,14 @@ export class DLPService {
   }
 
   /**
+   * Alias for removeRule
+   * @param ruleId Rule ID to delete
+   */
+  deleteRule(ruleId: string): void {
+    this.removeRule(ruleId);
+  }
+
+  /**
    * Get all DLP rules
    * @returns Array of all DLP rules
    */

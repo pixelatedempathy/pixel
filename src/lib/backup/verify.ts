@@ -3,6 +3,7 @@ import { EventEmitter } from 'node:events'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { RedisService } from '@/lib/services/redis/RedisService'
+import { getEnv } from '@/lib/utils/env'
 
 interface BackupConfig {
   backupDir: string
@@ -37,7 +38,7 @@ export class BackupVerificationService extends EventEmitter {
     super()
     this.redis = redis
     this.config = {
-      backupDir: process.env.BACKUP_DIR || './backups',
+      backupDir: getEnv('BACKUP_DIR', './backups'),
       retentionDays: 30,
       verificationInterval: 24 * 60 * 60 * 1000, // 24 hours
       integrityCheckEnabled: true,

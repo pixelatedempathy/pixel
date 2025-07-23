@@ -176,7 +176,7 @@ Patient: You're making assumptions about my family structure and my life.`,
  */
 export function calculateBiasFactors(sessionData: SessionData): BiasFactors {
   const content = sessionData.content.toLowerCase()
-  const {demographics} = sessionData
+  const { demographics } = sessionData
 
   // Base bias scores
   let linguistic = 0.15 + Math.random() * 0.1

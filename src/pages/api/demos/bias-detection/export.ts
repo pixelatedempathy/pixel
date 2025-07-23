@@ -149,7 +149,7 @@ function convertToCSV(exportData: Record<string, unknown>): string {
 
   // Analysis data
   if (exportData.analysis) {
-    const {analysis} = exportData
+    const { analysis } = exportData
     csvRows.push(
       `Analysis,Overall Bias Score,${analysis.overallBiasScore},${analysis.alertLevel}`,
     )
@@ -225,7 +225,7 @@ function convertToText(exportData: Record<string, unknown>): string {
   content += `${'='.repeat(50)}\n\n`
 
   if (exportData.analysis) {
-    const {analysis} = exportData
+    const { analysis } = exportData
     content += `ANALYSIS RESULTS\n`
     content += `Session ID: ${analysis.sessionId}\n`
     content += `Overall Bias Score: ${(analysis.overallBiasScore * 100).toFixed(1)}%\n`

@@ -242,9 +242,7 @@ test.describe('Psychology Pipeline Demo - Complete Workflow', () => {
       await page.waitForTimeout(3000)
 
       // Verify element is still visible after updates
-      await expect(
-        page.locator('[data-testid="anxiety-ratio"]')
-      ).toBeVisible()
+      await expect(page.locator('[data-testid="anxiety-ratio"]')).toBeVisible()
       // Note: In real scenario, ratios might change slightly
     })
 

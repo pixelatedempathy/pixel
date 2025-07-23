@@ -111,7 +111,7 @@ jobs:
           # Run tests and store exit code to determine if any tests failed
           NODE_OPTIONS="--no-warnings --experimental-specifier-resolution=node" BASE_URL=${{ vars.APP_URL }} \
             pnpm exec playwright test --config=temp-playwright.config.js --reporter=list || true
-          
+
           echo "✅ PRODUCTION monitoring tests completed"
           echo "status=success" >> $GITHUB_OUTPUT
 
@@ -243,7 +243,7 @@ jobs:
           # Run tests and store exit code to determine if any tests failed
           NODE_OPTIONS="--no-warnings --experimental-specifier-resolution=node" BASE_URL=${{ vars.APP_URL }} \
             pnpm exec playwright test --config=temp-playwright.config.js --reporter=list || true
-          
+
           echo "✅ STAGING monitoring tests completed"
           echo "status=success" >> $GITHUB_OUTPUT
 

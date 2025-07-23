@@ -5,7 +5,7 @@ Parameters:
   DeploymentBucket:
     Type: String
     Description: 'S3 bucket containing the deployment package'
-  
+
   Environment:
     Type: String
     Default: 'production'
@@ -145,7 +145,11 @@ Resources:
         IPV6Enabled: true
         Origins:
           - Id: AstroLambdaOrigin
-            DomainName: !Select [2, !Split ['/', !GetAtt AstroLambdaFunctionUrl.FunctionUrl]]
+            DomainName:
+              !Select [
+                2,
+                !Split ['/', !GetAtt AstroLambdaFunctionUrl.FunctionUrl],
+              ]
             CustomOriginConfig:
               HTTPPort: 443
               HTTPSPort: 443
@@ -166,4 +170,4 @@ Outputs:
 
   StaticAssetsBucketName:
     Description: 'S3 Bucket for Static Assets'
-    Value: !Ref StaticAssetsBucket 
+    Value: !Ref StaticAssetsBucket

@@ -79,7 +79,7 @@ async function setupStorageBuckets() {
         }
       }
     })
-    
+
     // Wait for all bucket operations to complete
     await Promise.all(bucketPromises)
 

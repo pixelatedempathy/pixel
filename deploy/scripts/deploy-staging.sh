@@ -7,10 +7,10 @@ set -euo pipefail
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-DEPLOY_DIR="$PROJECT_ROOT/deploy/staging"
-BACKUP_DIR="$PROJECT_ROOT/backups/$(date +%Y%m%d_%H%M%S)"
-LOG_FILE="$PROJECT_ROOT/logs/deploy-staging-$(date +%Y%m%d_%H%M%S).log"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+DEPLOY_DIR="${PROJECT_ROOT}/deploy/staging"
+BACKUP_DIR="${PROJECT_ROOT}/backups/$(date +%Y%m%d_%H%M%S)"
+LOG_FILE="${PROJECT_ROOT}/logs/deploy-staging-$(date +%Y%m%d_%H%M%S).log"
 
 # Colors for output
 RED='\033[0;31m'
@@ -26,7 +26,7 @@ log() {
 	local message="$*"
 	local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
-	echo -e "${timestamp} [${level}] ${message}" | tee -a "$LOG_FILE"
+	echo -e "${timestamp} [${level}] ${message}" | tee -a "${LOG_FILE}"
 }
 
 info() {
@@ -48,14 +48,14 @@ success() {
 # Error handling
 cleanup() {
 	local exit_code=$?
-	if [ $exit_code -ne 0 ]; then
-		error "Deployment failed with exit code $exit_code"
-		if [ "${ROLLBACK_ON_FAILURE:-true}" = "true" ]; then
+	if [[ "${exit_code}" -ne 0 ]]; then
+		error "Deployment failed with exit code ${exit_code}"
+		if [[ "${ROLLBACK_ON_FAILURE:-true}" = "true" ]]; then
 			warn "Initiating rollback..."
 			rollback
 		fi
 	fi
-	exit $exit_code
+	exit "${exit_code}"
 }
 
 trap cleanup EXIT
@@ -64,13 +64,13 @@ trap cleanup EXIT
 rollback() {
 	info "Rolling back to previous version..."
 
-	if [ -d "$BACKUP_DIR" ]; then
-		cd "$DEPLOY_DIR"
+	if [[ -d "${BACKUP_DIR}" ]]; then
+		cd "${DEPLOY_DIR}"
 		docker-compose down --timeout 30
 
 		# Restore previous containers if backup exists
-		if [ -f "$BACKUP_DIR/containers.tar" ]; then
-			docker load <"$BACKUP_DIR/containers.tar"
+		if [[ -f "${BACKUP_DIR}/containers.tar" ]]; then
+			docker load <"${BACKUP_DIR}/containers.tar"
 			docker-compose up -d
 			success "Rollback completed successfully"
 		else
@@ -98,13 +98,13 @@ pre_deployment_checks() {
 	fi
 
 	# Check if required environment file exists
-	if [ ! -f "$DEPLOY_DIR/.env" ]; then
-		error "Environment file not found: $DEPLOY_DIR/.env"
+	if [[ ! -f "${DEPLOY_DIR}/.env" ]]; then
+		error "Environment file not found: ${DEPLOY_DIR}/.env"
 		exit 1
 	fi
 
 	# Validate environment variables
-	source "$DEPLOY_DIR/.env"
+	source "${DEPLOY_DIR}/.env"
 	required_vars=(
 		"DATABASE_URL"
 		"REDIS_URL"
@@ -119,17 +119,17 @@ pre_deployment_checks() {
 	)
 
 	for var in "${required_vars[@]}"; do
-		if [ -z "${!var-}" ]; then
-			error "Required environment variable $var is not set"
+		if [[ -z "${!var-}" ]]; then
+			error "Required environment variable ${var} is not set"
 			exit 1
 		fi
 	done
 
 	# Check disk space (require at least 5GB free)
-	available_space=$(df "$PROJECT_ROOT" | awk 'NR==2 {print $4}')
+	available_space=$(df "${PROJECT_ROOT}" | awk 'NR==2 {print $4}')
 	required_space=5242880 # 5GB in KB
 
-	if [ "$available_space" -lt "$required_space" ]; then
+	if [[ "${available_space}" -lt "${required_space}" ]]; then
 		error "Insufficient disk space. Required: 5GB, Available: $((available_space / 1024 / 1024))GB"
 		exit 1
 	fi
@@ -141,33 +141,33 @@ pre_deployment_checks() {
 create_backup() {
 	info "Creating backup..."
 
-	mkdir -p "$BACKUP_DIR"
+	mkdir -p "${BACKUP_DIR}"
 
 	# Backup current containers
-	cd "$DEPLOY_DIR"
+	cd "${DEPLOY_DIR}"
 	if docker-compose ps -q | grep -q .; then
 		docker-compose ps -q | xargs docker commit || true
-		docker save $(docker-compose ps -q 2>/dev/null || true) >"$BACKUP_DIR/containers.tar" 2>/dev/null || true
+		docker save $(docker-compose ps -q 2>/dev/null || true) >"${BACKUP_DIR}/containers.tar" 2>/dev/null || true
 	fi
 
 	# Backup database
 	if docker-compose ps postgres | grep -q Up; then
-		docker-compose exec -T postgres pg_dump -U "${POSTGRES_USER}" bias_detection_staging >"$BACKUP_DIR/database.sql"
+		docker-compose exec -T postgres pg_dump -U "${POSTGRES_USER}" bias_detection_staging >"${BACKUP_DIR}/database.sql"
 	fi
 
 	# Backup application data
-	if [ -d "/var/lib/docker/volumes" ]; then
-		docker run --rm -v bias-detection-staging_app-data:/data -v "$BACKUP_DIR":/backup alpine tar czf /backup/app-data.tar.gz -C /data . || true
+	if [[ -d "/var/lib/docker/volumes" ]]; then
+		docker run --rm -v bias-detection-staging_app-data:/data -v "${BACKUP_DIR}":/backup alpine tar czf /backup/app-data.tar.gz -C /data . || true
 	fi
 
-	success "Backup created at $BACKUP_DIR"
+	success "Backup created at ${BACKUP_DIR}"
 }
 
 # Build and deploy
 deploy() {
 	info "Starting deployment..."
 
-	cd "$DEPLOY_DIR"
+	cd "${DEPLOY_DIR}"
 
 	# Pull latest images
 	info "Pulling latest base images..."
@@ -195,8 +195,8 @@ health_checks() {
 	local max_attempts=30
 	local attempt=1
 
-	while [ $attempt -le $max_attempts ]; do
-		info "Health check attempt $attempt/$max_attempts"
+	while [[ "${attempt}" -le "${max_attempts}" ]]; do
+		info "Health check attempt ${attempt}/${max_attempts}"
 
 		# Check main application
 		if curl -f -s "http://localhost:3000/api/bias-detection/health" >/dev/null; then
@@ -204,8 +204,8 @@ health_checks() {
 			break
 		fi
 
-		if [ $attempt -eq $max_attempts ]; then
-			error "Health checks failed after $max_attempts attempts"
+		if [[ "${attempt}" -eq "${max_attempts}" ]]; then
+			error "Health checks failed after ${max_attempts} attempts"
 			return 1
 		fi
 
@@ -221,7 +221,7 @@ health_checks() {
 	fi
 
 	# Check database connection
-	cd "$DEPLOY_DIR"
+	cd "${DEPLOY_DIR}"
 	if docker-compose exec -T postgres pg_isready -U "${POSTGRES_USER}" -d bias_detection_staging >/dev/null; then
 		success "Database is healthy"
 	else
@@ -244,7 +244,7 @@ health_checks() {
 post_deployment() {
 	info "Running post-deployment tasks..."
 
-	cd "$DEPLOY_DIR"
+	cd "${DEPLOY_DIR}"
 
 	# Run database migrations if needed
 	info "Checking for database migrations..."
@@ -270,8 +270,8 @@ cleanup_old_resources() {
 	docker image prune -f --filter "until=24h" || true
 
 	# Remove old backups (keep last 5)
-	if [ -d "$PROJECT_ROOT/backups" ]; then
-		find "$PROJECT_ROOT/backups" -type d -name "*_*" | sort -r | tail -n +6 | xargs rm -rf || true
+	if [[ -d "${PROJECT_ROOT}/backups" ]]; then
+		find "${PROJECT_ROOT}/backups" -type d -name "*_*" | sort -r | tail -n +6 | xargs rm -rf || true
 	fi
 
 	success "Cleanup completed"
@@ -285,22 +285,22 @@ send_notifications() {
 	info "Sending deployment notification..."
 
 	# Slack notification (if webhook is configured)
-	if [ -n "${SLACK_WEBHOOK_URL-}" ]; then
+	if [[ -n "${SLACK_WEBHOOK_URL-}" ]]; then
 		local color
-		case $status in
+		case ${status} in
 		"success") color="good" ;;
 		"failure") color="danger" ;;
 		*) color="warning" ;;
 		esac
 
 		curl -X POST -H 'Content-type: application/json' \
-			--data "{\"text\":\"🚀 Bias Detection Engine Staging Deployment\", \"attachments\":[{\"color\":\"$color\", \"text\":\"$message\"}]}" \
+			--data "{\"text\":\"🚀 Bias Detection Engine Staging Deployment\", \"attachments\":[{\"color\"$${${"}}$co}lor\", \"text\"$$${\}"$m}ess}age\"}]}" \
 			"${SLACK_WEBHOOK_URL}" >/dev/null 2>&1 || true
 	fi
 
 	# Email notification (if configured)
-	if [ -n "${NOTIFICATION_EMAIL-}" ] && command -v mail >/dev/null 2>&1; then
-		echo "$message" | mail -s "Bias Detection Engine Deployment - $status" "$NOTIFICATION_EMAIL" || true
+	if [[ -n "${NOTIFICATION_EMAIL-}" ]] && command -v mail >/dev/null 2>&1; then
+		echo "${message}" | mail -s "Bias Detection Engine Deployment - ${status}" "${NOTIFICATION_EMAIL}" || true
 	fi
 }
 
@@ -310,7 +310,7 @@ main() {
 	info "Deployment ID: $(date +%Y%m%d_%H%M%S)"
 
 	# Create log directory
-	mkdir -p "$(dirname "$LOG_FILE")"
+	mkdir -p "$(dirname "${LOG_FILE}")"
 
 	# Run deployment steps
 	pre_deployment_checks
@@ -323,8 +323,8 @@ main() {
 	success "Deployment completed successfully!"
 	send_notifications "success" "Staging deployment completed successfully at $(date)"
 
-	info "Deployment logs: $LOG_FILE"
-	info "Backup location: $BACKUP_DIR"
+	info "Deployment logs: ${LOG_FILE}"
+	info "Backup location: ${BACKUP_DIR}"
 	info "Application URL: http://localhost:3000"
 	info "Monitoring: http://localhost:3001 (Grafana)"
 }
@@ -361,6 +361,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Run main deployment
-if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
 	main "$@"
 fi

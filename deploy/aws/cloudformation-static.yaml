@@ -5,7 +5,7 @@ Parameters:
   DeploymentBucket:
     Type: String
     Description: 'S3 bucket containing the deployment package'
-  
+
   Environment:
     Type: String
     Default: 'production'
@@ -82,9 +82,9 @@ Resources:
         DefaultCacheBehavior:
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
-          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf  # Managed-CORS-S3Origin
-          ResponseHeadersPolicyId: 5cc3b908-e619-4b99-88e5-2cf7f45965bd  # Managed-SimpleCORS
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # Managed-CORS-S3Origin
+          ResponseHeadersPolicyId: 5cc3b908-e619-4b99-88e5-2cf7f45965bd # Managed-SimpleCORS
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: 404
@@ -112,9 +112,9 @@ Resources:
           import tempfile
           import os
           import mimetypes
-          
+
           s3 = boto3.client('s3')
-          
+
           def handler(event, context):
               try:
                   source_bucket = event['SourceBucket']
@@ -199,15 +199,15 @@ Outputs:
   WebsiteBucket:
     Description: 'S3 bucket for static website'
     Value: !Ref StaticWebsiteBucket
-    
+
   CloudFrontDistributionID:
     Description: 'CloudFront Distribution ID'
     Value: !Ref CloudFrontDistribution
-    
+
   CloudFrontDistributionURL:
     Description: 'CloudFront Distribution URL'
     Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
-    
+
   WebsiteURL:
     Description: 'Website URL'
-    Value: !Sub 'https://${CloudFrontDistribution.DomainName}' 
+    Value: !Sub 'https://${CloudFrontDistribution.DomainName}'

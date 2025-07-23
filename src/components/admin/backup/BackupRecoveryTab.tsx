@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardHeader,
   CardContent,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select-radix';
-import { RecoveryTestStatus } from '../../../lib/security/backup/backup-types';
-import type { BackupType, BackupStatus } from '../../../lib/security/backup';
-import { toast } from '@/components/ui/toast';
+} from '@/components/ui/select-radix'
+import { RecoveryTestStatus } from '../../../lib/security/backup/backup-types'
+import type { BackupType, BackupStatus } from '../../../lib/security/backup'
+import { toast } from '@/components/ui/toast'
 
 // Define the enum locally to avoid server-side imports
 enum TestEnvironmentType {
@@ -28,88 +28,98 @@ enum TestEnvironmentType {
 }
 
 interface Backup {
-  id: string;
-  type: BackupType;
-  timestamp: string;
-  size: number;
-  location: string;
-  status: BackupStatus;
-  retentionDate: string;
+  id: string
+  type: BackupType
+  timestamp: string
+  size: number
+  location: string
+  status: BackupStatus
+  retentionDate: string
 }
 
 interface RecoveryTest {
-  id: string;
-  backupId: string;
-  testDate: string;
-  status: RecoveryTestStatus;
-  timeTaken: number;
-  environment: string;
+  id: string
+  backupId: string
+  testDate: string
+  status: RecoveryTestStatus
+  timeTaken: number
+  environment: string
   verificationResults?: Array<{
-    testCase: string;
-    passed: boolean;
-    details: Record<string, unknown>;
-  }>;
+    testCase: string
+    passed: boolean
+    details: Record<string, unknown>
+  }>
   issues?: Array<{
-    type: string;
-    description: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-  }>;
+    type: string
+    description: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+  }>
 }
 
 interface BackupRecoveryTabProps {
-  backups: Backup[];
-  recoveryHistory: RecoveryTest[];
+  backups: Backup[]
+  recoveryHistory: RecoveryTest[]
 }
 
 // Helper functions
-const formatDate = (dateString: string) => new Date(dateString).toLocaleString();
+const formatDate = (dateString: string) => new Date(dateString).toLocaleString()
 
 const formatDuration = (ms: number) => {
   if (ms < 1000) {
-    return `${ms}ms`;
+    return `${ms}ms`
   }
-  return `${(ms / 1000).toFixed(2)}s`;
-};
-
-
+  return `${(ms / 1000).toFixed(2)}s`
+}
 
 const renderStatusBadge = (status: RecoveryTestStatus) => {
   switch (status) {
     case RecoveryTestStatus.PASSED:
-      return <Badge variant="outline" className="bg-green-100 text-green-800">Passed</Badge>;
+      return (
+        <Badge variant="outline" className="bg-green-100 text-green-800">
+          Passed
+        </Badge>
+      )
     case RecoveryTestStatus.FAILED:
-      return <Badge variant="destructive">Failed</Badge>;
+      return <Badge variant="destructive">Failed</Badge>
     case RecoveryTestStatus.IN_PROGRESS:
-      return <Badge variant="outline" className="bg-blue-100 text-blue-800">In Progress</Badge>;
+      return (
+        <Badge variant="outline" className="bg-blue-100 text-blue-800">
+          In Progress
+        </Badge>
+      )
     default:
-      return <Badge variant="secondary">{status}</Badge>;
+      return <Badge variant="secondary">{status}</Badge>
   }
-};
+}
 
 const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
   backups,
-  recoveryHistory: initialRecoveryHistory
+  recoveryHistory: initialRecoveryHistory,
 }) => {
-  const [selectedBackupId, setSelectedBackupId] = useState<string>('');
-  const [isTesting, setIsTesting] = useState(false);
-  const [latestTestResult, setLatestTestResult] = useState<RecoveryTest | null>(null);
+  const [selectedBackupId, setSelectedBackupId] = useState<string>('')
+  const [isTesting, setIsTesting] = useState(false)
+  const [latestTestResult, setLatestTestResult] = useState<RecoveryTest | null>(
+    null,
+  )
   const [recoveryHistory, setRecoveryHistory] = useState<RecoveryTest[]>(
-    initialRecoveryHistory
-  );
-  const [selectedTest, setSelectedTest] = useState<string | null>(null);
+    initialRecoveryHistory,
+  )
+  const [selectedTest, setSelectedTest] = useState<string | null>(null)
 
-  const [testEnvironment, setTestEnvironment] = useState<TestEnvironmentType>(TestEnvironmentType.Sandbox);
+  const [testEnvironment, setTestEnvironment] = useState<TestEnvironmentType>(
+    TestEnvironmentType.Sandbox,
+  )
 
-  const selectedBackup = backups.find((b) => b.id === selectedBackupId);
+  const selectedBackup = backups.find((b) => b.id === selectedBackupId)
 
   const handleRunTest = async () => {
     if (!selectedBackup) {
-      toast.error('Please select a backup to test.');
-      return;
+      toast.error('Please select a backup to test.')
+      return
     }
 
-    setIsTesting(true);
-    setLatestTestResult(null);
+    setIsTesting(true)
+    setLatestTestResult(null)
 
     try {
       const response = await fetch('/api/admin/backup/recovery-test', {
@@ -121,36 +131,36 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
           backupId: selectedBackup.id,
           environment: testEnvironment,
         }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to run recovery test.');
+        throw new Error(data.error || 'Failed to run recovery test.')
       }
 
-      setLatestTestResult(data);
-      setRecoveryHistory([data, ...recoveryHistory]);
-      toast.success('Recovery test completed successfully!');
+      setLatestTestResult(data)
+      setRecoveryHistory([data, ...recoveryHistory])
+      toast.success('Recovery test completed successfully!')
     } catch (error: any) {
-      console.error('Recovery test failed:', error);
-      toast.error(error.message || 'An unexpected error occurred.');
+      console.error('Recovery test failed:', error)
+      toast.error(error.message || 'An unexpected error occurred.')
     } finally {
-      setIsTesting(false);
+      setIsTesting(false)
     }
-  };
+  }
 
   const handleSelectTest = (testId: string) => {
     if (selectedTest === testId) {
-      setSelectedTest(null);
+      setSelectedTest(null)
     } else {
-      setSelectedTest(testId);
+      setSelectedTest(testId)
     }
-  };
+  }
 
   const availableBackups = backups.filter(
-    (b) => b.status === 'completed' || b.status === 'verified'
-  );
+    (b) => b.status === 'completed' || b.status === 'verified',
+  )
 
   return (
     <div className="space-y-6">
@@ -180,7 +190,8 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
                 <SelectContent>
                   {availableBackups.map((backup) => (
                     <SelectItem key={backup.id} value={backup.id}>
-                      {new Date(backup.timestamp).toLocaleString()} - {backup.type}
+                      {new Date(backup.timestamp).toLocaleString()} -{' '}
+                      {backup.type}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -217,7 +228,10 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
               </Select>
             </div>
           </div>
-          <Button onClick={handleRunTest} disabled={isTesting || !selectedBackupId}>
+          <Button
+            onClick={handleRunTest}
+            disabled={isTesting || !selectedBackupId}
+          >
             {isTesting ? 'Testing...' : 'Run Test'}
           </Button>
         </CardContent>
@@ -229,22 +243,27 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
             <CardTitle>Latest Test Result</CardTitle>
           </CardHeader>
           <CardContent>
-          <div className="space-y-2">
+            <div className="space-y-2">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-sm font-medium">Status:</span>
-                  <span className="ml-2">{renderStatusBadge(latestTestResult.status)}</span>
+                  <span className="ml-2">
+                    {renderStatusBadge(latestTestResult.status)}
+                  </span>
                 </div>
                 <div>
                   <span className="text-sm font-medium">Duration:</span>
-                  <span className="ml-2">{formatDuration(latestTestResult.timeTaken)}</span>
+                  <span className="ml-2">
+                    {formatDuration(latestTestResult.timeTaken)}
+                  </span>
                 </div>
               </div>
               <div>
                 <span className="text-sm font-medium">Environment:</span>
                 <span className="ml-2">{latestTestResult.environment}</span>
               </div>
-            </div>          </CardContent>
+            </div>{' '}
+          </CardContent>
         </Card>
       )}
 
@@ -272,7 +291,7 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
             ) : (
               <div className="divide-y">
                 {recoveryHistory.map((test) => {
-                  const backup = backups.find(b => b.id === test.backupId);
+                  const backup = backups.find((b) => b.id === test.backupId)
 
                   return (
                     <div key={test.id}>
@@ -282,13 +301,9 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
                         <div className="col-span-4 truncate">
                           {backup ? (
                             <>
-                              <span className="font-medium">
-                                {backup.type}
-                              </span>{' '}
+                              <span className="font-medium">{backup.type}</span>{' '}
                               -{' '}
-                              {new Date(
-                                backup.timestamp,
-                              ).toLocaleDateString()}
+                              {new Date(backup.timestamp).toLocaleDateString()}
                             </>
                           ) : (
                             <span className="text-gray-500">
@@ -330,9 +345,7 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
                                 <h5 className="text-xs text-gray-500 dark:text-gray-400">
                                   Environment
                                 </h5>
-                                <p className="text-sm">
-                                  {test.environment}
-                                </p>
+                                <p className="text-sm">{test.environment}</p>
                               </div>
                               <div>
                                 <h5 className="text-xs text-gray-500 dark:text-gray-400">
@@ -351,34 +364,32 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
                                     Verification Results
                                   </h5>
                                   <div className="rounded-md border divide-y">
-                                    {test.verificationResults.map(
-                                      (vr, idx) => (
-                                        <div
-                                          key={`verification-${idx}-${vr.testCase}`}
-                                          className="p-2 flex justify-between items-center"
-                                        >
-                                          <div>
-                                            <span className="font-medium">
-                                              {vr.testCase}
-                                            </span>
-                                          </div>
-                                          <div>
-                                            {vr.passed ? (
-                                              <Badge
-                                                variant="outline"
-                                                className="bg-green-100 text-green-800"
-                                              >
-                                                Passed
-                                              </Badge>
-                                            ) : (
-                                              <Badge variant="destructive">
-                                                Failed
-                                              </Badge>
-                                            )}
-                                          </div>
+                                    {test.verificationResults.map((vr, idx) => (
+                                      <div
+                                        key={`verification-${idx}-${vr.testCase}`}
+                                        className="p-2 flex justify-between items-center"
+                                      >
+                                        <div>
+                                          <span className="font-medium">
+                                            {vr.testCase}
+                                          </span>
                                         </div>
-                                      ),
-                                    )}
+                                        <div>
+                                          {vr.passed ? (
+                                            <Badge
+                                              variant="outline"
+                                              className="bg-green-100 text-green-800"
+                                            >
+                                              Passed
+                                            </Badge>
+                                          ) : (
+                                            <Badge variant="destructive">
+                                              Failed
+                                            </Badge>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               )}
@@ -430,7 +441,7 @@ const BackupRecoveryTab: React.FC<BackupRecoveryTabProps> = ({
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default BackupRecoveryTab;
+export default BackupRecoveryTab

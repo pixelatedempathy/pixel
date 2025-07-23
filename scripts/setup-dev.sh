@@ -16,7 +16,7 @@ echo -e "${BLUE}🔧 Setting up Pixelated Empathy Development Environment${NC}"
 
 # Function to check if a command exists
 command_exists() {
-    command -v "$1" >/dev/null 2>&1
+	command -v "$1" >/dev/null 2>&1
 }
 
 # Check for required tools
@@ -25,25 +25,25 @@ echo -e "${YELLOW}🔍 Checking dependencies...${NC}"
 MISSING_DEPS=()
 
 if ! command_exists node; then
-    MISSING_DEPS+=("node")
+	MISSING_DEPS+=("node")
 fi
 
 if ! command_exists pnpm; then
-    MISSING_DEPS+=("pnpm")
+	MISSING_DEPS+=("pnpm")
 fi
 
 if ! command_exists docker; then
-    MISSING_DEPS+=("docker")
+	MISSING_DEPS+=("docker")
 fi
 
 if ! command_exists docker compose; then
-    MISSING_DEPS+=("docker compose")
+	MISSING_DEPS+=("docker compose")
 fi
 
-if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
-    echo -e "${RED}❌ Missing dependencies: ${MISSING_DEPS[*]}${NC}"
-    echo -e "${YELLOW}Please install the missing dependencies and run this script again${NC}"
-    exit 1
+if [[ ${#MISSING_DEPS[@]} -ne 0 ]]; then
+	echo -e "${RED}❌ Missing dependencies: ${MISSING_DEPS[*]}${NC}"
+	echo -e "${YELLOW}Please install the missing dependencies and run this script again${NC}"
+	exit 1
 fi
 
 echo -e "${GREEN}✅ All dependencies are installed${NC}"
@@ -53,10 +53,10 @@ echo -e "${YELLOW}📦 Installing project dependencies...${NC}"
 pnpm install
 
 # Setup environment file
-if [ ! -f ".env" ]; then
-    echo -e "${YELLOW}📝 Setting up environment file...${NC}"
-    cp .env.example .env.pro
-    echo -e "${YELLOW}⚠️  Please edit .env file with your actual API keys and configuration${NC}"
+if [[ ! -f ".env" ]]; then
+	echo -e "${YELLOW}📝 Setting up environment file...${NC}"
+	cp .env.example .env.pro
+	echo -e "${YELLOW}⚠️  Please edit .env file with your actual API keys and configuration${NC}"
 fi
 
 # Create necessary directories

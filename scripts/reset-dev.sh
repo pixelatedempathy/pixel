@@ -16,9 +16,9 @@ echo -e "${YELLOW}🧹 Resetting Pixelated Empathy Development Environment${NC}"
 # Confirm reset action
 read -p "⚠️  This will remove all Docker containers, volumes, and development data. Continue? [y/N]: " -n 1 -r
 echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}Reset cancelled${NC}"
-    exit 0
+if [[ ! ${REPLY} =~ ^[Yy]$ ]]; then
+	echo -e "${YELLOW}Reset cancelled${NC}"
+	exit 0
 fi
 
 # Stop all running containers
@@ -58,19 +58,19 @@ chmod 777 logs
 # Clean Node.js dependencies (optional)
 read -p "🗑️  Remove node_modules and reinstall dependencies? [y/N]: " -n 1 -r
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}📦 Cleaning Node.js dependencies...${NC}"
-    rm -rf node_modules
-    rm -f pnpm-lock.yaml
-    pnpm install
+if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+	echo -e "${YELLOW}📦 Cleaning Node.js dependencies...${NC}"
+	rm -rf node_modules
+	rm -f pnpm-lock.yaml
+	pnpm install
 fi
 
 # Prune Docker system (optional)
 read -p "🧹 Run Docker system prune to free up space? [y/N]: " -n 1 -r
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}🗑️  Pruning Docker system...${NC}"
-    docker system prune -f
+if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+	echo -e "${YELLOW}🗑️  Pruning Docker system...${NC}"
+	docker system prune -f
 fi
 
 echo -e "\n${GREEN}✨ Development environment reset completed!${NC}"

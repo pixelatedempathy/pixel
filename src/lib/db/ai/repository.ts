@@ -990,40 +990,41 @@ export class AIRepository {
     modelProvider?: string
     metadata?: Record<string, unknown>
   }): Promise<string> {
+    // Define interfaces for bias analysis types
+    interface BiasLayerResults {
+      textLayer?: {
+        score: number
+        details: Record<string, unknown>
+      }
+      semanticLayer?: {
+        score: number
+        details: Record<string, unknown>
+      }
+      contextualLayer?: {
+        score: number
+        details: Record<string, unknown>
+      }
+      [key: string]:
+        | {
+            score: number
+            details: Record<string, unknown>
+          }
+        | undefined
+    }
 
-// Define interfaces for bias analysis types
-interface BiasLayerResults {
-  textLayer?: {
-    score: number;
-    details: Record<string, unknown>;
-  };
-  semanticLayer?: {
-    score: number;
-    details: Record<string, unknown>;
-  };
-  contextualLayer?: {
-    score: number;
-    details: Record<string, unknown>;
-  };
-  [key: string]: {
-    score: number;
-    details: Record<string, unknown>;
-  } | undefined;
-}
+    interface DemographicData {
+      gender?: Record<string, number>
+      age?: Record<string, number>
+      ethnicity?: Record<string, number>
+      religion?: Record<string, number>
+      [key: string]: Record<string, number> | undefined
+    }
 
-interface DemographicData {
-  gender?: Record<string, number>;
-  age?: Record<string, number>;
-  ethnicity?: Record<string, number>;
-  religion?: Record<string, number>;
-  [key: string]: Record<string, number> | undefined;
-}
-
-interface DemographicGroups {
-  affected: string[];
-  impactScore: Record<string, number>;
-  [key: string]: string[] | Record<string, number> | unknown;
-}
+    interface DemographicGroups {
+      affected: string[]
+      impactScore: Record<string, number>
+      [key: string]: string[] | Record<string, number> | unknown
+    }
     const { data, error } = await supabase
       .from('ai_bias_analysis')
       .insert({
@@ -1711,12 +1712,12 @@ interface BiasReport {
     })
 
     // Group by date for trends
-interface DailyTrendData {
-  date: string;
-  count: number;
-  totalBias: number;
-  analyses: number;
-}
+    interface DailyTrendData {
+      date: string
+      count: number
+      totalBias: number
+      analyses: number
+    }
 
     const dailyTrends = Object.values(
       summaryData?.reduce((acc: Record<string, DailyTrendData>, row) => {

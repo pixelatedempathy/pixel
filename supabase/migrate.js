@@ -99,7 +99,7 @@ async function setupStorageBuckets() {
         return { success: true, bucket }
       }
     })
-    
+
     // Wait for all bucket operations to complete
     await Promise.all(bucketPromises)
 
@@ -154,7 +154,7 @@ async function optimizeDatabase() {
       }
       return { success: true, query }
     })
-    
+
     // Wait for all queries to complete
     await Promise.all(queryPromises)
 

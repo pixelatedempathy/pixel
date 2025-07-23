@@ -136,18 +136,18 @@ export class BiasConfigurationError extends BiasDetectionError {
 }
 
 export class BiasConfigurationValidationError extends BiasDetectionError {
-  public readonly configProperty: string;
-  public readonly configValue: unknown;
-  public readonly expectedType: string;
+  public readonly configProperty: string
+  public readonly configValue: unknown
+  public readonly expectedType: string
 
   constructor(
     property: string,
     value: unknown,
     expectedType: string,
     options: {
-      context?: Record<string, unknown>;
-      userMessage?: string;
-      cause?: Error | unknown;
+      context?: Record<string, unknown>
+      userMessage?: string
+      cause?: Error | unknown
     } = {},
   ) {
     super(
@@ -165,10 +165,10 @@ export class BiasConfigurationValidationError extends BiasDetectionError {
           actualType: typeof value,
         },
       },
-    );
-    this.configProperty = property;
-    this.configValue = value;
-    this.expectedType = expectedType;
+    )
+    this.configProperty = property
+    this.configValue = value
+    this.expectedType = expectedType
   }
 }
 
@@ -655,16 +655,21 @@ export function createErrorFromUnknown(
   const message = getErrorMessage(error)
 
   const errorOptions: {
-    component: string;
-    context?: Record<string, unknown>;
-    userMessage: string;
+    component: string
+    context?: Record<string, unknown>
+    userMessage: string
   } = {
     component: context.operation,
     userMessage: 'An unexpected error occurred during processing.',
-    ...(context.additionalContext !== undefined ? { context: context.additionalContext } : {}),
-  };
+    ...(context.additionalContext !== undefined
+      ? { context: context.additionalContext }
+      : {}),
+  }
 
-  return new BiasSystemError(`Error in ${context.operation}: ${message}`, errorOptions)
+  return new BiasSystemError(
+    `Error in ${context.operation}: ${message}`,
+    errorOptions,
+  )
 }
 
 /**

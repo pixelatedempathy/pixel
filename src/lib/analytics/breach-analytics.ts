@@ -67,7 +67,7 @@ interface Breach {
 }
 
 const ANALYTICS_KEY_PREFIX = 'analytics:breach:'
- // 7 days
+// 7 days
 const TREND_INTERVAL = 24 * 60 * 60 * 1000 // 1 day
 
 function getAnalyticsKey(metric: string, timestamp: number): string {
@@ -92,7 +92,8 @@ export async function generateMetrics(
     // Calculate advanced metrics
     const riskScore = await RiskScoring.calculateOverallRisk(filteredBreaches)
     const complianceScore = await calculateScore(filteredBreaches)
-    const notificationEffectiveness = await NotificationEffectiveness.calculate(filteredBreaches)
+    const notificationEffectiveness =
+      await NotificationEffectiveness.calculate(filteredBreaches)
 
     return {
       ...metrics,
@@ -180,9 +181,7 @@ export async function analyzeTrends(
   }
 }
 
-async function calculateTrendPoint(
-  timestamp: Date,
-): Promise<TrendPoint> {
+async function calculateTrendPoint(timestamp: Date): Promise<TrendPoint> {
   const breaches = await BreachNotificationSystem.listRecentBreaches()
   const dayBreaches = breaches.filter(
     (breach) =>
@@ -221,7 +220,9 @@ async function calculateAverageResponseTime(
   return responseTimes.reduce((sum, time) => sum + time, 0) / breaches.length
 }
 
-export async function predictBreaches(days: number = 7): Promise<BreachPrediction[]> {
+export async function predictBreaches(
+  days: number = 7,
+): Promise<BreachPrediction[]> {
   try {
     // Get historical data
     const endDate = new Date()
@@ -325,8 +326,7 @@ export async function generateInsights(): Promise<SecurityInsight[]> {
         type: 'response_time',
         severity: 'medium',
         description: 'Response time is showing an increasing trend',
-        recommendation:
-          'Review incident response procedures and team capacity',
+        recommendation: 'Review incident response procedures and team capacity',
         relatedMetrics: ['averageResponseTime'],
       })
     }
@@ -365,7 +365,9 @@ export async function generateInsights(): Promise<SecurityInsight[]> {
   }
 }
 
-export async function generateReport(timeframe: AnalyticsTimeframe): Promise<any> {
+export async function generateReport(
+  timeframe: AnalyticsTimeframe,
+): Promise<any> {
   try {
     // Gather all analytics data
     const [metrics, trends, predictions, riskFactors, insights] =

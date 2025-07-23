@@ -383,14 +383,16 @@ export default function SyntheticTherapyDemo() {
                                   Manifestations:
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                  {symptom.manifestations.map((manifestation) => (
-                                    <Badge
-                                      key={`${symptom.name}-${manifestation}`}
-                                      variant="secondary"
-                                    >
-                                      {manifestation}
-                                    </Badge>
-                                  ))}
+                                  {symptom.manifestations.map(
+                                    (manifestation) => (
+                                      <Badge
+                                        key={`${symptom.name}-${manifestation}`}
+                                        variant="secondary"
+                                      >
+                                        {manifestation}
+                                      </Badge>
+                                    ),
+                                  )}
                                 </div>
                               </div>
                               <div className="space-y-1">
@@ -447,7 +449,9 @@ export default function SyntheticTherapyDemo() {
                         </div>
 
                         <div className="rounded-lg border p-4 space-y-2">
-                          <div className="font-medium">Correctly Identified</div>
+                          <div className="font-medium">
+                            Correctly Identified
+                          </div>
                           <div className="flex flex-wrap gap-2 mt-2">
                             {selectedConversation.encodedSymptoms
                               .filter((encoded) =>
@@ -492,7 +496,9 @@ export default function SyntheticTherapyDemo() {
                         </div>
 
                         <div className="rounded-lg border p-4 space-y-2">
-                          <div className="font-medium">Incorrectly Identified</div>
+                          <div className="font-medium">
+                            Incorrectly Identified
+                          </div>
                           <div className="flex flex-wrap gap-2 mt-2">
                             {selectedConversation.decodedSymptoms
                               .filter(
@@ -539,8 +545,10 @@ export default function SyntheticTherapyDemo() {
                               : 'destructive'
                           }
                         >
-                          {((selectedConversation.accuracyScore || 0) * 100).toFixed(0)}%
-                          Accuracy
+                          {(
+                            (selectedConversation.accuracyScore || 0) * 100
+                          ).toFixed(0)}
+                          % Accuracy
                         </Badge>
                       </div>
                     </CardContent>

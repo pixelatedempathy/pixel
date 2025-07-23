@@ -29,6 +29,49 @@ const SCREEN_READER_CRITERIA = [
   'link-name',
 ]
 
+// Define interfaces for better type safety
+interface ImageInfo {
+  src: string;
+  id: string;
+  class: string;
+}
+
+interface InputInfo {
+  tagName: string;
+  type: string;
+  id: string;
+  name: string;
+  placeholder: string;
+}
+
+interface ElementInfo {
+  tagName: string;
+  id: string;
+  class: string;
+  href: string;
+  innerHtml: string;
+}
+
+interface HeadingInfo {
+  level: number;
+  text: string;
+  id: string;
+}
+
+interface AriaIssue {
+  element: string;
+  attribute: string;
+  value: string;
+  issue: string;
+}
+
+interface LiveRegion {
+  value: string;
+  id: string;
+  class: string;
+  content: string;
+}
+
 test.describe('Screen Reader Accessibility Tests', () => {
   // Test each critical page for screen reader accessibility
   for (const page of CRITICAL_PAGES) {
@@ -71,10 +114,8 @@ test.describe('Screen Reader Accessibility Tests', () => {
         })
       }
 
-      expect(imagesWithoutAlt.length).toBe(
-        0,
-        `Found ${imagesWithoutAlt.length} images without alt text on ${page.name} page`,
-      )
+      expect(imagesWithoutAlt.length).toBe(0)
+      console.log(`Found ${imagesWithoutAlt.length} images without alt text on ${page.name} page`)
 
       // 2. Form inputs without labels
       const inputsWithoutLabels = await pageContext.$$eval(
@@ -113,10 +154,8 @@ test.describe('Screen Reader Accessibility Tests', () => {
         })
       }
 
-      expect(inputsWithoutLabels.length).toBe(
-        0,
-        `Found ${inputsWithoutLabels.length} inputs without accessible labels on ${page.name} page`,
-      )
+      expect(inputsWithoutLabels.length).toBe(0)
+      console.log(`Found ${inputsWithoutLabels.length} inputs without accessible labels on ${page.name} page`)
 
       // 3. Interactive elements without accessible names
       const elementsWithoutNames = await pageContext.$$eval(
@@ -164,10 +203,8 @@ test.describe('Screen Reader Accessibility Tests', () => {
         })
       }
 
-      expect(elementsWithoutNames.length).toBe(
-        0,
-        `Found ${elementsWithoutNames.length} interactive elements without accessible names on ${page.name} page`,
-      )
+      expect(elementsWithoutNames.length).toBe(0)
+      console.log(`Found ${elementsWithoutNames.length} interactive elements without accessible names on ${page.name} page`)
 
       // 4. Check heading structure
       const headings = await pageContext.$$eval(
@@ -183,10 +220,11 @@ test.describe('Screen Reader Accessibility Tests', () => {
 
       // Verify heading hierarchy
       let previousLevel = 0
-      const headingIssues = []
+      const headingIssues: string[] = []
 
       for (let i = 0; i < headings.length; i++) {
         const heading = headings[i]
+        if (!heading) continue;
 
         // First heading should be h1
         if (i === 0 && heading.level !== 1) {
@@ -214,10 +252,8 @@ test.describe('Screen Reader Accessibility Tests', () => {
         })
       }
 
-      expect(headingIssues.length).toBe(
-        0,
-        `Found ${headingIssues.length} heading structure issues on ${page.name} page`,
-      )
+      expect(headingIssues.length).toBe(0)
+      console.log(`Found ${headingIssues.length} heading structure issues on ${page.name} page`)
 
       // 5. Check for ARIA attributes with invalid values
       const invalidAriaAttributes = await pageContext.$$eval(
@@ -310,7 +346,7 @@ test.describe('Screen Reader Accessibility Tests', () => {
             'aria-selected',
           ]
 
-          const issues = []
+          const issues: AriaIssue[] = []
 
           for (const el of elements) {
             // Check role value
@@ -354,10 +390,8 @@ test.describe('Screen Reader Accessibility Tests', () => {
         })
       }
 
-      expect(invalidAriaAttributes.length).toBe(
-        0,
-        `Found ${invalidAriaAttributes.length} invalid ARIA attributes on ${page.name} page`,
-      )
+      expect(invalidAriaAttributes.length).toBe(0)
+      console.log(`Found ${invalidAriaAttributes.length} invalid ARIA attributes on ${page.name} page`)
 
       // 6. Check for live regions (expecting at least one on dynamic pages)
       if (['Dashboard'].includes(page.name)) {
@@ -373,20 +407,16 @@ test.describe('Screen Reader Accessibility Tests', () => {
           },
         )
 
-        expect(liveRegions.length).toBeGreaterThan(
-          0,
-          `Expected at least one live region on ${page.name} page`,
-        )
+        expect(liveRegions.length).toBeGreaterThan(0)
+        console.log(`Expected at least one live region on ${page.name} page`)
 
         // Check if there's at least one polite or assertive live region
         const validLiveRegions = liveRegions.filter(
           (region) => region.value === 'polite' || region.value === 'assertive',
         )
 
-        expect(validLiveRegions.length).toBeGreaterThan(
-          0,
-          `Expected at least one polite or assertive live region on ${page.name} page`,
-        )
+        expect(validLiveRegions.length).toBeGreaterThan(0)
+        console.log(`Expected at least one polite or assertive live region on ${page.name} page`)
       }
     })
   }
@@ -424,10 +454,8 @@ test.describe('Screen Reader Accessibility Tests', () => {
       return modal?.contains(activeElement) || activeElement === modal
     })
 
-    expect(activeElementIsInModal).toBe(
-      true,
-      'Focus should move to the modal or an element inside it when opened',
-    )
+    expect(activeElementIsInModal).toBe(true)
+    console.log('Focus should move to the modal or an element inside it when opened')
 
     // Find close button
     const closeButton = modal.getByRole('button', { name: /close|cancel|✕|×/i })

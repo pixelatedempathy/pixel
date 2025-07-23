@@ -20,21 +20,21 @@ import {
 
 // Types
 interface ConversionEvent {
-  conversionId: string;
-  value?: number;
-  timestamp: number;
-  path?: string;
-  source?: string;
+  conversionId: string
+  value?: number
+  timestamp: number
+  path?: string
+  source?: string
   // Additional optional properties for conversion events
-  category?: string;
-  userId?: string;
-  metadata?: Record<string, string | number | boolean>;
-  tags?: string[];
+  category?: string
+  userId?: string
+  metadata?: Record<string, string | number | boolean>
+  tags?: string[]
   deviceInfo?: {
-    type: string;
-    browser: string;
-    os: string;
-  };
+    type: string
+    browser: string
+    os: string
+  }
 }
 
 export function ConversionDashboard() {

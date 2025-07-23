@@ -1,12 +1,12 @@
-import { env } from '@/config/env.config'
-import { NotificationService } from '@/lib/services/notification/NotificationService'
-import { WebSocketServer } from '@/lib/services/notification/WebSocketServer'
-import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
+import { config } from '../config/env.config'
+import { NotificationService } from '../lib/services/notification/NotificationService'
+import { WebSocketServer } from '../lib/services/notification/WebSocketServer'
+import { createBuildSafeLogger } from '../lib/logging/build-safe-logger'
 const logger = createBuildSafeLogger('default')
 
 const WORKER_ID = crypto.randomUUID()
 const PROCESSING_INTERVAL = 1000 // 1 second
-const WS_PORT = env.NOTIFICATION_WS_PORT
+const WS_PORT = config.workers.notification.wsPort()
 
 async function startWorker() {
   logger.info('Starting notification worker', { workerId: WORKER_ID })

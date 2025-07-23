@@ -197,7 +197,7 @@ def download_playlist(url: str, output_dir: str, audio_format: str = "mp3"):
         logging.error("Download timed out after 1 hour")
         raise
     except Exception as e:
-        logging.error(f"Download failed: {str(e)}")
+        logging.error(f"Download failed: {e!s}")
         raise
 
 
@@ -244,7 +244,7 @@ def preprocess_audio_files(directory: Path, audio_format: str = "mp3"):
             trimmed.export(audio_file, format=audio_format)
 
         except Exception as e:
-            logging.error(f"Failed to preprocess {audio_file.name}: {str(e)}")
+            logging.error(f"Failed to preprocess {audio_file.name}: {e!s}")
 
 
 def main():
@@ -299,7 +299,7 @@ def main():
             sys.exit(1)
 
         try:
-            with open(args.url_file, "r", encoding="utf-8") as f:
+            with open(args.url_file, encoding="utf-8") as f:
                 file_urls = [line.strip() for line in f if line.strip()]
                 # Validate each URL before adding
                 for file_url in file_urls:
@@ -308,7 +308,7 @@ def main():
                     else:
                         logging.warning(f"Skipping invalid URL: {file_url[:50]}...")
         except Exception as e:
-            logging.error(f"Failed to read URL file: {str(e)}")
+            logging.error(f"Failed to read URL file: {e!s}")
             sys.exit(1)
 
     if not urls:
@@ -328,7 +328,7 @@ def main():
             if args.preprocess:
                 preprocess_audio_files(playlist_dir, audio_format=args.audio_format)
         except Exception as e:
-            logging.error(f"Failed to process URL: {str(e)}")
+            logging.error(f"Failed to process URL: {e!s}")
             continue
 
     logging.info("All downloads complete.")

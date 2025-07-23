@@ -26,20 +26,20 @@ frontend:
 
         # Set Node.js memory limit
         - export NODE_OPTIONS=--max-old-space-size=12288
-        
+
         # Configure pnpm with optimized settings
         - pnpm config set store-dir .pnpm-store
         - pnpm config set auto-install-peers true
         - pnpm config set strict-peer-dependencies false
-        
+
         # Install all dependencies with simplified flags
         - pnpm install --frozen-lockfile
         - pnpm rebuild
         - pnpm install --global supabase@2.31.8
-        
+
         # Install AWS SDK only if needed for CDN
         - pnpm add --save-exact --no-optional @aws-sdk/client-s3;
-        
+
         # Clean up unnecessary files
         - find node_modules -type d \( -name 'test' -o -name 'tests' -o -name '__tests__' -o -name 'examples' \) -exec rm -rf {} + || true
         - find node_modules -type f \( -name '*.md' -o -name '*.markdown' -o -name 'CHANGELOG*' -o -name '*.ts' -o -name '*.tsx' -o -name '*.map' \) -delete || true
@@ -50,55 +50,54 @@ frontend:
         # Set environment variables
         - echo "NODE_ENV=production" > .env
         - echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env
-        
+
         # Build with production optimizations
         - pnpm run build
-        
+
         # Create .amplify-hosting/static directory for optimized static assets
         - mkdir -p .amplify-hosting/static
-            
+
         # Move public assets to .amplify-hosting/static
         - cp -r public/* .amplify-hosting/static/
 
-            
         # Upload to CDN and update asset map
         - node scripts/upload-to-cdn.js
-            
+
         # Clean up if upload was successful
         - find dist \( -type f -not -name 'asset-manifest.json' \) -delete
-        
+
         # Create minimal output structure
         - mkdir -p .amplify-hosting/compute/default
-        
+
         # Copy the built application
         - cp -R dist .amplify-hosting/compute/default/
-        
+
         # Copy only essential files (excluding public assets if using CDN)
         - cp -R public .amplify-hosting/compute/default/
         - mkdir -p .amplify-hosting/compute/default/public
         - cp public/favicon.ico .amplify-hosting/compute/default/public/
         - cp .env .amplify-hosting/compute/default/
         - cp package.json .amplify-hosting/compute/default/
-        
+
         # Copy only necessary node_modules
         - pnpm store prune
         - pnpm prune --production
         - curl -sf https://gobinaries.com/tj/node-prune | sh
         - node-prune
         - cp -R node_modules .amplify-hosting/compute/default/
-        
+
         # Clean up development files
         - find .amplify-hosting -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete
         - find .amplify-hosting -type d -empty -delete
-        
+
         # Final size check
         - du -sh .amplify-hosting/
-        
+
   artifacts:
     baseDirectory: .amplify-hosting
     files:
       - '**/*'
-    
+
   # Disable caching to prevent size issues
   cache:
     paths: []

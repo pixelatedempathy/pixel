@@ -2,6 +2,7 @@
  * Environment variable access helper
  * Safely handles environment variables for both Astro/Vite and Node.js environments
  */
+import { getEnv } from '@/lib/utils/env'
 
 export interface SupabaseEnv {
   url: string
@@ -27,18 +28,18 @@ export function getEnvVars(): SupabaseEnv {
     if (win.__astro_env || win.__vite_env) {
       const env = win.__astro_env || win.__vite_env
       if (env) {
-        url = env.PUBLIC_SUPABASE_URL
-        anonKey = env.PUBLIC_SUPABASE_ANON_KEY
-        serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
+        url = env['PUBLIC_SUPABASE_URL']
+        anonKey = env['PUBLIC_SUPABASE_ANON_KEY']
+        serviceRoleKey = env['SUPABASE_SERVICE_ROLE_KEY']
       }
     }
   }
 
   // Try process.env (Node.js environment)
   if ((!url || !anonKey) && typeof process !== 'undefined' && process.env) {
-    url = url || process.env.PUBLIC_SUPABASE_URL
-    anonKey = anonKey || process.env.PUBLIC_SUPABASE_ANON_KEY
-    serviceRoleKey = serviceRoleKey || process.env.SUPABASE_SERVICE_ROLE_KEY
+    url = url || getEnv('PUBLIC_SUPABASE_URL')
+    anonKey = anonKey || getEnv('PUBLIC_SUPABASE_ANON_KEY')
+    serviceRoleKey = serviceRoleKey || getEnv('SUPABASE_SERVICE_ROLE_KEY')
   }
 
   // Try to dynamically access import.meta.env if available
@@ -50,10 +51,10 @@ export function getEnvVars(): SupabaseEnv {
       )
       const importMeta = getImportMeta()
       if (importMeta && importMeta.env) {
-        url = url || importMeta.env.PUBLIC_SUPABASE_URL
-        anonKey = anonKey || importMeta.env.PUBLIC_SUPABASE_ANON_KEY
+        url = url || importMeta.env['PUBLIC_SUPABASE_URL']
+        anonKey = anonKey || importMeta.env['PUBLIC_SUPABASE_ANON_KEY']
         serviceRoleKey =
-          serviceRoleKey || importMeta.env.SUPABASE_SERVICE_ROLE_KEY
+          serviceRoleKey || importMeta.env['SUPABASE_SERVICE_ROLE_KEY']
       }
     } catch {
       // Silently fail if import.meta is not available

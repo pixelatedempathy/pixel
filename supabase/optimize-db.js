@@ -181,7 +181,7 @@ async function optimizeDatabase() {
         return { success: false, error, query }
       }
     })
-    
+
     // Wait for all queries to complete
     await Promise.all(queryPromises)
 

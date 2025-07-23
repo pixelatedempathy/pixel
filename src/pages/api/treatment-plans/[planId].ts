@@ -48,7 +48,7 @@ const updateTreatmentPlanClientSchema = z.object({
 })
 
 export const GET: APIRoute = async ({ params, locals }) => {
-  const {supabase} = locals
+  const { supabase } = locals
   if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not found' }),
@@ -66,7 +66,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     })
   }
 
-  const {planId} = params
+  const { planId } = params
   if (!planId) {
     return new Response(JSON.stringify({ error: 'Plan ID is required' }), {
       status: 400,
@@ -115,7 +115,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
 }
 
 export const PUT: APIRoute = async ({ params, request, locals }) => {
-  const {supabase} = locals
+  const { supabase } = locals
   if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not found' }),
@@ -133,7 +133,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     })
   }
 
-  const {planId} = params
+  const { planId } = params
   if (!planId) {
     return new Response(JSON.stringify({ error: 'Plan ID is required' }), {
       status: 400,
@@ -275,7 +275,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 }
 
 export const DELETE: APIRoute = async ({ params, locals }) => {
-  const {supabase} = locals
+  const { supabase } = locals
   if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not found' }),
@@ -293,7 +293,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     })
   }
 
-  const {planId} = params
+  const { planId } = params
   if (!planId) {
     return new Response(JSON.stringify({ error: 'Plan ID is required' }), {
       status: 400,

@@ -27,9 +27,9 @@ test.describe('User Experience Features', () => {
     await page.addInitScript(() => {
       // Store the original appendChild method
       const originalAppendChild = Element.prototype.appendChild
-      
+
       // Create a proxy function that doesn't modify the prototype directly
-      window._checkTransition = function(element) {
+      window._checkTransition = function (element) {
         if (
           element?.classList?.contains('astro-transition') ||
           element?.hasAttribute?.('transition:animate')
@@ -37,9 +37,9 @@ test.describe('User Experience Features', () => {
           window._hasTransition = true
         }
       }
-      
+
       // Override appendChild with a function that calls the original and then checks for transitions
-      Element.prototype.appendChild = function(element) {
+      Element.prototype.appendChild = function (element) {
         const result = originalAppendChild.call(this, element)
         window._checkTransition(element)
         return result

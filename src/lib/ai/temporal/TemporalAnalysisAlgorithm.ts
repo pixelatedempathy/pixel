@@ -39,8 +39,7 @@ export function analyzeMultidimensionalPatterns(
 
   // Sort by timestamp to ensure chronological order
   const sortedMaps = [...dimensionalMaps].sort(
-    (a, b) =>
-      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
   )
 
   // Analyze different pattern types
@@ -65,9 +64,7 @@ export function analyzeMultidimensionalPatterns(
 /**
  * Detect trending patterns in dimensional data
  */
-function detectTrends(
-  maps: DimensionalMap[],
-): MultidimensionalPattern[] {
+function detectTrends(maps: DimensionalMap[]): MultidimensionalPattern[] {
   const trends: MultidimensionalPattern[] = []
   const windowSize = Math.min(10, Math.floor(maps.length / 3))
 
@@ -100,11 +97,7 @@ function detectTrends(
           start: window[0].timestamp,
           end: window[window.length - 1].timestamp,
         },
-        description: describeTrend(
-          valenceTrend,
-          arousalTrend,
-          dominanceTrend,
-        ),
+        description: describeTrend(valenceTrend, arousalTrend, dominanceTrend),
         dimensions: window.map((w) => w.dimensions),
         confidence,
         significance: Math.max(
@@ -122,9 +115,7 @@ function detectTrends(
 /**
  * Detect cyclical patterns
  */
-function detectCycles(
-  maps: DimensionalMap[],
-): MultidimensionalPattern[] {
+function detectCycles(maps: DimensionalMap[]): MultidimensionalPattern[] {
   const cycles: MultidimensionalPattern[] = []
 
   // Look for periodic patterns using autocorrelation
@@ -161,9 +152,7 @@ function detectCycles(
 /**
  * Detect sudden shifts or transitions
  */
-function detectShifts(
-  maps: DimensionalMap[],
-): MultidimensionalPattern[] {
+function detectShifts(maps: DimensionalMap[]): MultidimensionalPattern[] {
   const shifts: MultidimensionalPattern[] = []
   const changeThreshold = 0.5 // Minimum change to consider a shift
 
@@ -201,9 +190,7 @@ function detectShifts(
 /**
  * Detect stability periods
  */
-function detectStability(
-  maps: DimensionalMap[],
-): MultidimensionalPattern[] {
+function detectStability(maps: DimensionalMap[]): MultidimensionalPattern[] {
   const stablePatterns: MultidimensionalPattern[] = []
   const stabilityThreshold = 0.2
   const minStabilityLength = 5
@@ -270,10 +257,7 @@ function calculateTrendSlope(
 /**
  * Calculate autocorrelation for cycle detection
  */
-function calculateAutocorrelation(
-  maps: DimensionalMap[],
-  lag: number,
-): number {
+function calculateAutocorrelation(maps: DimensionalMap[], lag: number): number {
   if (maps.length <= lag) {
     return 0
   }
@@ -320,10 +304,7 @@ function calculateTrendConfidence(window: DimensionalMap[]): number {
   )
 
   const mean = values.reduce((sum, val) => sum + val, 0) / values.length
-  const totalVariance = values.reduce(
-    (sum, val) => sum + (val - mean) ** 2,
-    0,
-  )
+  const totalVariance = values.reduce((sum, val) => sum + (val - mean) ** 2, 0)
 
   if (totalVariance === 0) {
     return 0
@@ -350,9 +331,7 @@ function calculateTrendConfidence(window: DimensionalMap[]): number {
 /**
  * Calculate stability confidence
  */
-function calculateStabilityConfidence(
-  window: DimensionalMap[],
-): number {
+function calculateStabilityConfidence(window: DimensionalMap[]): number {
   if (window.length < 2) {
     return 0
   }
@@ -406,10 +385,7 @@ function describeTrend(
 /**
  * Describe shift pattern
  */
-function describeShift(
-  from: EmotionDimensions,
-  to: EmotionDimensions,
-): string {
+function describeShift(from: EmotionDimensions, to: EmotionDimensions): string {
   const valenceDiff = to.valence - from.valence
   const arousalDiff = to.arousal - from.arousal
   const dominanceDiff = to.dominance - from.dominance
@@ -462,15 +438,11 @@ export function calculateEmotionStatistics(
   // Calculate variances
   const variance: EmotionDimensions = {
     valence:
-      dimensions.reduce(
-        (sum, d) => sum + (d.valence - mean.valence) ** 2,
-        0,
-      ) / dimensions.length,
+      dimensions.reduce((sum, d) => sum + (d.valence - mean.valence) ** 2, 0) /
+      dimensions.length,
     arousal:
-      dimensions.reduce(
-        (sum, d) => sum + (d.arousal - mean.arousal) ** 2,
-        0,
-      ) / dimensions.length,
+      dimensions.reduce((sum, d) => sum + (d.arousal - mean.arousal) ** 2, 0) /
+      dimensions.length,
     dominance:
       dimensions.reduce(
         (sum, d) => sum + (d.dominance - mean.dominance) ** 2,
@@ -485,11 +457,9 @@ export function calculateEmotionStatistics(
 
   const firstMean = {
     valence:
-      firstQuarter.reduce((sum, d) => sum + d.valence, 0) /
-      firstQuarter.length,
+      firstQuarter.reduce((sum, d) => sum + d.valence, 0) / firstQuarter.length,
     arousal:
-      firstQuarter.reduce((sum, d) => sum + d.arousal, 0) /
-      firstQuarter.length,
+      firstQuarter.reduce((sum, d) => sum + d.arousal, 0) / firstQuarter.length,
     dominance:
       firstQuarter.reduce((sum, d) => sum + d.dominance, 0) /
       firstQuarter.length,
@@ -501,8 +471,7 @@ export function calculateEmotionStatistics(
     arousal:
       lastQuarter.reduce((sum, d) => sum + d.arousal, 0) / lastQuarter.length,
     dominance:
-      lastQuarter.reduce((sum, d) => sum + d.dominance, 0) /
-      lastQuarter.length,
+      lastQuarter.reduce((sum, d) => sum + d.dominance, 0) / lastQuarter.length,
   }
 
   const trend: EmotionDimensions = {

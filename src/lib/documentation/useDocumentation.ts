@@ -360,7 +360,12 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
       const failureResult = (
         error: string,
         format: 'fhir' | 'ccda' | 'pdf',
-        metadata: { exportedAt: Date; exportedBy: string; patientId: string; providerId: string }
+        metadata: {
+          exportedAt: Date
+          exportedBy: string
+          patientId: string
+          providerId: string
+        },
       ): EHRExportResult => ({
         success: false,
         errors: [error],
@@ -386,39 +391,50 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
         }
 
         const documentationSystem = await getDocumentationSystemInstance()
-        const rawResult = await documentationSystem.exportToEHR(sessionId, options) as unknown;
+        const rawResult = (await documentationSystem.exportToEHR(
+          sessionId,
+          options,
+        )) as unknown
 
         // Construct a fully type-safe EHRExportResult
         const result: EHRExportResult = {
-          success: typeof rawResult.success === 'boolean' ? rawResult.success : false,
-          format: typeof rawResult.format === 'string' ? rawResult.format : options.format,
-          metadata: typeof rawResult.metadata === 'object' && rawResult.metadata !== null
-            ? rawResult.metadata
-            : {
-                exportedAt: new Date(),
-                exportedBy: 'system',
-                patientId: options.patientId,
-                providerId: options.providerId,
-              },
+          success:
+            typeof rawResult.success === 'boolean' ? rawResult.success : false,
+          format:
+            typeof rawResult.format === 'string'
+              ? rawResult.format
+              : options.format,
+          metadata:
+            typeof rawResult.metadata === 'object' &&
+            rawResult.metadata !== null
+              ? rawResult.metadata
+              : {
+                  exportedAt: new Date(),
+                  exportedBy: 'system',
+                  patientId: options.patientId,
+                  providerId: options.providerId,
+                },
           ...(rawResult.data !== undefined ? { data: rawResult.data } : {}),
-          ...(Array.isArray(rawResult.errors) ? { errors: rawResult.errors } : {}),
-        };
+          ...(Array.isArray(rawResult.errors)
+            ? { errors: rawResult.errors }
+            : {}),
+        }
 
-        safeSetState(setExportResult, result);
+        safeSetState(setExportResult, result)
 
         if (result.success) {
           toast.success(
             `Documentation exported successfully to ${options.format.toUpperCase()}`,
-          );
+          )
         } else {
           const errorMsg =
             Array.isArray(result.errors) && result.errors.length > 0
               ? result.errors.join(', ')
-              : 'Unknown error';
-          toast.error(`Export failed: ${errorMsg}`);
+              : 'Unknown error'
+          toast.error(`Export failed: ${errorMsg}`)
         }
 
-        return result;
+        return result
       } catch (error) {
         const errorObj = handleError(error, 'exportToEHR')
         // Fallbacks for format and metadata if options is not available
@@ -429,7 +445,11 @@ export function useDocumentation(sessionId: string): UseDocumentationReturn {
           patientId: options?.patientId || '',
           providerId: options?.providerId || '',
         }
-        const result = failureResult(errorObj.message, fallbackFormat, fallbackMetadata)
+        const result = failureResult(
+          errorObj.message,
+          fallbackFormat,
+          fallbackMetadata,
+        )
         safeSetState(setError, errorObj)
         safeSetState(setExportResult, result)
         toast.error('Failed to export documentation')

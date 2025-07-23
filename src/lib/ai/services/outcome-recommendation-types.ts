@@ -66,12 +66,14 @@ export const TreatmentForecastSchema = z.object({
   timeEstimate: z.string(),
   interventions: z.array(z.string()),
   risk: z.enum(['low', 'medium', 'high']),
-  details: z.object({
-    expectedDuration: z.number().int().positive(),
-    successRate: z.number().min(0).max(100),
-    contraindications: z.array(z.string()),
-    sideEffects: z.array(z.string()),
-  }).optional(),
+  details: z
+    .object({
+      expectedDuration: z.number().int().positive(),
+      successRate: z.number().min(0).max(100),
+      contraindications: z.array(z.string()),
+      sideEffects: z.array(z.string()),
+    })
+    .optional(),
   metadata: z.record(z.unknown()).optional(),
 })
 
@@ -113,7 +115,9 @@ export function isEmotionState(value: unknown): value is EmotionState {
   }
 }
 
-export function isMentalHealthAnalysis(value: unknown): value is MentalHealthAnalysis {
+export function isMentalHealthAnalysis(
+  value: unknown,
+): value is MentalHealthAnalysis {
   try {
     MentalHealthAnalysisSchema.parse(value)
     return true
@@ -122,7 +126,9 @@ export function isMentalHealthAnalysis(value: unknown): value is MentalHealthAna
   }
 }
 
-export function isRecommendationContext(value: unknown): value is RecommendationContext {
+export function isRecommendationContext(
+  value: unknown,
+): value is RecommendationContext {
   try {
     RecommendationContextSchema.parse(value)
     return true
@@ -131,7 +137,9 @@ export function isRecommendationContext(value: unknown): value is Recommendation
   }
 }
 
-export function isRecommendationRequest(value: unknown): value is RecommendationRequest {
+export function isRecommendationRequest(
+  value: unknown,
+): value is RecommendationRequest {
   try {
     RecommendationRequestSchema.parse(value)
     return true
@@ -140,7 +148,9 @@ export function isRecommendationRequest(value: unknown): value is Recommendation
   }
 }
 
-export function isTreatmentForecast(value: unknown): value is TreatmentForecast {
+export function isTreatmentForecast(
+  value: unknown,
+): value is TreatmentForecast {
   try {
     TreatmentForecastSchema.parse(value)
     return true
@@ -154,7 +164,7 @@ export class RecommendationError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly details?: unknown
+    public readonly details?: unknown,
   ) {
     super(message)
     this.name = 'RecommendationError'

@@ -4,20 +4,21 @@ Unit Tests for Clinical Similarity Search
 Tests advanced similarity search functionality for clinical knowledge retrieval.
 """
 
-import pytest
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 
+import pytest
+
+from .clinical_knowledge_embedder import KnowledgeItem
 from .clinical_similarity_search import (
     ClinicalSimilaritySearch,
-    SearchQuery,
-    SearchContext,
-    RelevanceType,
     EnhancedSearchResult,
+    RelevanceType,
+    SearchContext,
+    SearchQuery,
 )
-from .clinical_knowledge_embedder import KnowledgeItem
 from .faiss_knowledge_index import SearchResult
 
 

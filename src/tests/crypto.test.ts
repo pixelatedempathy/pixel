@@ -55,7 +55,7 @@ const Encryption = {
       throw new Error('Failed to decrypt data')
     }
     return parts.slice(2).join(':')
-  }
+  },
 }
 
 interface KeyMetadata {

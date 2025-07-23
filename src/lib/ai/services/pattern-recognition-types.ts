@@ -16,11 +16,13 @@ export const TimelineAnalysisSchema = z.object({
   frequency: z.number().min(0),
   trend: z.enum(['increasing', 'decreasing', 'stable']),
   trendStrength: z.number().min(0).max(1),
-  seasonality: z.object({
-    period: z.number().min(0),
-    amplitude: z.number().min(0),
-    confidence: z.number().min(0).max(1),
-  }).optional(),
+  seasonality: z
+    .object({
+      period: z.number().min(0),
+      amplitude: z.number().min(0),
+      confidence: z.number().min(0).max(1),
+    })
+    .optional(),
 })
 
 export const ClinicalRelevanceSchema = z.object({
@@ -47,13 +49,15 @@ export const PatternRecognitionResultSchema = z.object({
 // Risk Correlation Schema
 export const RiskCorrelationSchema = z.object({
   primaryFactor: z.string(),
-  correlatedFactors: z.array(z.object({
-    factor: z.string(),
-    correlation: z.number().min(-1).max(1),
-    confidence: z.number().min(0).max(1),
-    pValue: z.number().min(0).max(1),
-    effectSize: z.enum(['small', 'medium', 'large']),
-  })),
+  correlatedFactors: z.array(
+    z.object({
+      factor: z.string(),
+      correlation: z.number().min(-1).max(1),
+      confidence: z.number().min(0).max(1),
+      pValue: z.number().min(0).max(1),
+      effectSize: z.enum(['small', 'medium', 'large']),
+    }),
+  ),
   timeFrame: z.object({
     start: z.date(),
     end: z.date(),
@@ -69,11 +73,13 @@ export const RiskCorrelationSchema = z.object({
     kendallTau: z.number().min(-1).max(1),
     confidence95Interval: z.tuple([z.number(), z.number()]),
   }),
-  fheAnalysis: z.object({
-    encryptedCorrelationMatrix: z.string(),
-    homomorphicConfidence: z.number().min(0).max(1),
-    privacyPreserved: z.boolean(),
-  }).optional(),
+  fheAnalysis: z
+    .object({
+      encryptedCorrelationMatrix: z.string(),
+      homomorphicConfidence: z.number().min(0).max(1),
+      privacyPreserved: z.boolean(),
+    })
+    .optional(),
 })
 
 // Trend Pattern Schema
@@ -86,7 +92,12 @@ export const TrendPatternSchema = z.object({
   indicators: z.array(z.string()),
   description: z.string(),
   algorithmicAnalysis: z.object({
-    trendDirection: z.enum(['increasing', 'decreasing', 'stable', 'oscillating']),
+    trendDirection: z.enum([
+      'increasing',
+      'decreasing',
+      'stable',
+      'oscillating',
+    ]),
     trendStrength: z.number().min(0).max(1),
     linearRegression: z.object({
       slope: z.number(),
@@ -94,17 +105,21 @@ export const TrendPatternSchema = z.object({
       rSquared: z.number().min(0).max(1),
       pValue: z.number().min(0).max(1),
     }),
-    seasonalDecomposition: z.object({
-      trendComponent: z.array(z.number()),
-      seasonalComponent: z.array(z.number()),
-      residualComponent: z.array(z.number()),
-      seasonalityStrength: z.number().min(0).max(1),
-    }).optional(),
-    changePoints: z.array(z.object({
-      timestamp: z.date(),
-      confidenceLevel: z.number().min(0).max(1),
-      changeType: z.enum(['increase', 'decrease', 'plateau']),
-    })),
+    seasonalDecomposition: z
+      .object({
+        trendComponent: z.array(z.number()),
+        seasonalComponent: z.array(z.number()),
+        residualComponent: z.array(z.number()),
+        seasonalityStrength: z.number().min(0).max(1),
+      })
+      .optional(),
+    changePoints: z.array(
+      z.object({
+        timestamp: z.date(),
+        confidenceLevel: z.number().min(0).max(1),
+        changeType: z.enum(['increase', 'decrease', 'plateau']),
+      }),
+    ),
   }),
   clinicalImplications: z.object({
     severity: z.enum(['low', 'medium', 'high', 'critical']),
@@ -144,13 +159,17 @@ export const CrossSessionPatternSchema = z.object({
 })
 
 // Type definitions
-export type PatternRecognitionResult = z.infer<typeof PatternRecognitionResultSchema>
+export type PatternRecognitionResult = z.infer<
+  typeof PatternRecognitionResultSchema
+>
 export type RiskCorrelation = z.infer<typeof RiskCorrelationSchema>
 export type TrendPattern = z.infer<typeof TrendPatternSchema>
 export type CrossSessionPattern = z.infer<typeof CrossSessionPatternSchema>
 
 // Type guards
-export function isPatternRecognitionResult(value: unknown): value is PatternRecognitionResult {
+export function isPatternRecognitionResult(
+  value: unknown,
+): value is PatternRecognitionResult {
   try {
     PatternRecognitionResultSchema.parse(value)
     return true
@@ -177,7 +196,9 @@ export function isTrendPattern(value: unknown): value is TrendPattern {
   }
 }
 
-export function isCrossSessionPattern(value: unknown): value is CrossSessionPattern {
+export function isCrossSessionPattern(
+  value: unknown,
+): value is CrossSessionPattern {
   try {
     CrossSessionPatternSchema.parse(value)
     return true
@@ -228,7 +249,7 @@ export class PatternRecognitionError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly details?: unknown
+    public readonly details?: unknown,
   ) {
     super(message)
     this.name = 'PatternRecognitionError'

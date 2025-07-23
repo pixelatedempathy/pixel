@@ -15,20 +15,23 @@ export interface RequestMetrics {
 }
 
 interface MiddlewareContext {
-  url: URL;
-  request: Request;
+  url: URL
+  request: Request
 }
 
-type NextFunction = () => Promise<Response>;
+type NextFunction = () => Promise<Response>
 
 /**
  * Monitoring middleware for Astro
  * Tracks requests, performance, and errors
  */
-export async function monitoringMiddleware(context: MiddlewareContext, next: NextFunction) {
+export async function monitoringMiddleware(
+  context: MiddlewareContext,
+  next: NextFunction,
+) {
   const startTime = Date.now()
-  const {url} = context
-  const {method} = context.request
+  const { url } = context
+  const { method } = context.request
   const userAgent = context.request.headers.get('user-agent') || 'unknown'
   const ip =
     context.request.headers.get('x-forwarded-for') ||

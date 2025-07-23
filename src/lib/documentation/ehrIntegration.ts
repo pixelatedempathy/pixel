@@ -76,7 +76,7 @@ export class EHRIntegration {
           exportedBy: options.providerId,
           patientId: options.patientId,
           providerId: options.providerId,
-        }
+        },
       }
       return result
     } catch (error) {
@@ -95,7 +95,7 @@ export class EHRIntegration {
           exportedBy: options.providerId,
           patientId: options.patientId,
           providerId: options.providerId,
-        }
+        },
       }
       return result
     }
@@ -412,10 +412,10 @@ export class EHRIntegration {
         try {
           await this.fhirClient.createResource(auditEvent)
         } catch (error) {
-          logger.error('Failed to create audit event in FHIR server', { 
-            error, 
+          logger.error('Failed to create audit event in FHIR server', {
+            error,
             auditInfo,
-            auditEvent
+            auditEvent,
           })
           // Fall through to the catch block below
           throw error
@@ -423,12 +423,16 @@ export class EHRIntegration {
       } else {
         // Log that we're in a non-FHIR environment
         const fhirClient = this.fhirClient as Record<string, unknown> | null
-        logger.debug('Skipping audit event creation - FHIR client not properly configured', {
-          hasFhirClient: !!fhirClient,
-          isObject: fhirClient && typeof fhirClient === 'object',
-          hasCreateResource: fhirClient && 'createResource' in fhirClient,
-          isFunction: fhirClient && typeof fhirClient['createResource'] === 'function'
-        })
+        logger.debug(
+          'Skipping audit event creation - FHIR client not properly configured',
+          {
+            hasFhirClient: !!fhirClient,
+            isObject: fhirClient && typeof fhirClient === 'object',
+            hasCreateResource: fhirClient && 'createResource' in fhirClient,
+            isFunction:
+              fhirClient && typeof fhirClient['createResource'] === 'function',
+          },
+        )
       }
     } catch (error) {
       logger.error('Failed to create audit log', { error, auditInfo })

@@ -37,26 +37,26 @@ check_python() {
 
 	if command -v python3 &>/dev/null; then
 		PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
-		PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d. -f1)
-		PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
+		PYTHON_MAJOR=$(echo "${PYTHON_VERSION}" | cut -d. -f1)
+		PYTHON_MINOR=$(echo "${PYTHON_VERSION}" | cut -d. -f2)
 
-		if [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -ge 8 ]; then
-			print_success "Python $PYTHON_VERSION found"
+		if [[ ${PYTHON_MAJOR} -eq 3 ]] && [[ ${PYTHON_MINOR} -ge 8 ]]; then
+			print_success "Python ${PYTHON_VERSION} found"
 			PYTHON_CMD="python3"
 		else
-			print_error "Python 3.8+ required, found $PYTHON_VERSION"
+			print_error "Python 3.8+ required, found ${PYTHON_VERSION}"
 			exit 1
 		fi
 	elif command -v python &>/dev/null; then
 		PYTHON_VERSION=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
-		PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d. -f1)
-		PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
+		PYTHON_MAJOR=$(echo "${PYTHON_VERSION}" | cut -d. -f1)
+		PYTHON_MINOR=$(echo "${PYTHON_VERSION}" | cut -d. -f2)
 
-		if [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -ge 8 ]; then
-			print_success "Python $PYTHON_VERSION found"
+		if [[ ${PYTHON_MAJOR} -eq 3 ]] && [[ ${PYTHON_MINOR} -ge 8 ]]; then
+			print_success "Python ${PYTHON_VERSION} found"
 			PYTHON_CMD="python"
 		else
-			print_error "Python 3.8+ required, found $PYTHON_VERSION"
+			print_error "Python 3.8+ required, found ${PYTHON_VERSION}"
 			exit 1
 		fi
 	else
@@ -85,12 +85,12 @@ check_pip() {
 create_venv() {
 	print_status "Creating virtual environment..."
 
-	if [ -d "venv" ]; then
+	if [[ -d "venv" ]]; then
 		print_warning "Virtual environment already exists. Removing..."
 		rm -rf venv
 	fi
 
-	$PYTHON_CMD -m venv venv
+	${PYTHON_CMD} -m venv venv
 	print_success "Virtual environment created"
 }
 
@@ -139,7 +139,7 @@ install_dependencies() {
 	pip install wheel setuptools
 
 	# Install requirements
-	if [ -f "requirements.txt" ]; then
+	if [[ -f "requirements.txt" ]]; then
 		pip install -r requirements.txt
 		print_success "Dependencies installed from requirements.txt"
 	else
@@ -212,7 +212,7 @@ for package in optional_packages:
 print('\n✅ Installation test completed successfully!')
 "
 
-	if [ $? -eq 0 ]; then
+	if [[ $? -eq 0 ]]; then
 		print_success "Installation test passed"
 	else
 		print_error "Installation test failed"

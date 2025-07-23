@@ -55,102 +55,106 @@ const getActionBadge = (action: DLPAction) => {
       </Card>
     ) : (
       <div class="space-y-4">
-        {rules.map((rule) => {
-          const actionBadge = getActionBadge(rule.action)
+        {rules.map((ruleItem: DLPRule) => {
+          const actionBadge = getActionBadge(ruleItem.action as DLPAction);
           return (
-            <Card key={rule.id}>
-              <CardHeader class="pb-2">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <CardTitle class="text-lg">{rule.name}</CardTitle>
-                    <CardDescription>{rule.description}</CardDescription>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-muted-foreground">
-                      {rule.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                    <Switch
-                      checked={rule.isActive}
-                      data-rule-id={rule.id}
-                      data-rule-name={rule.name}
-                      className="toggle-rule"
-                      onCheckedChange={(checked) => {
-                        const ruleId = rule.id;
-                        const ruleName = rule.name;
-                        const isActive = checked;
-                        
-                        // Update rule in the service
-                        const rule = dlpService.getRule(ruleId);
-                        if (rule) {
-                          rule.isActive = isActive;
-                          dlpService.addRule(rule);
+            <div class="rule-card">
+              <Card>
+                <CardHeader class="pb-2">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <CardTitle class="text-lg">{ruleItem.name}</CardTitle>
+                      <CardDescription>{ruleItem.description}</CardDescription>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-sm text-muted-foreground">
+                        {ruleItem.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                      <Switch
+                        checked={ruleItem.isActive}
+                        data-rule-id={ruleItem.id}
+                        data-rule-name={ruleItem.name}
+                        className="toggle-rule"
+                        onCheckedChange={(checked: boolean) => {
+                          const ruleId = ruleItem.id;
+                          const ruleName = ruleItem.name;
+                          const isActive = checked;
                           
-                          // Dispatch event for the parent component to handle
-                          document.dispatchEvent(
-                            new CustomEvent('dlp:rule-updated', {
-                              detail: { id: ruleId, name: ruleName, isActive },
-                            }),
-                          );
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent class="pt-0">
-                <div class="flex justify-between items-center">
-                  <div>
-                    <Badge variant={actionBadge.variant}>
-                      {actionBadge.text}
-                    </Badge>
-                  </div>
-                  <div class="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      data-edit-rule={rule.id}
-                      data-rule={JSON.stringify(rule)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      data-delete-rule
-                      data-rule-id={rule.id}
-                      data-rule-name={rule.name}
-                      className="text-destructive hover:bg-destructive/10"
-                      onClick={(e) => {
-                        const target = e.currentTarget as HTMLButtonElement;
-                        const ruleId = target.dataset.ruleId;
-                        const ruleName = target.dataset.ruleName;
-                        
-                        if (!ruleId || !ruleName) return;
-                        
-                        if (confirm(`Are you sure you want to delete the rule "${ruleName}"?`)) {
-                          dlpService.deleteRule(ruleId);
-                          
-                          // Dispatch event for the parent component to handle
-                          document.dispatchEvent(
-                            new CustomEvent('dlp:rule-deleted', {
-                              detail: { id: ruleId, name: ruleName },
-                            }),
-                          );
-                          
-                          // Remove the card from the UI
-                          const card = target.closest('.rule-card');
-                          if (card) {
-                            card.remove();
+                          // Update rule in the service
+                          const allRules = dlpService.getRules();
+                          const ruleIndex = allRules.findIndex(r => r.id === ruleId);
+                          if (ruleIndex !== -1) {
+                            const updatedRule = { ...allRules[ruleIndex], isActive };
+                            dlpService.removeRule(ruleId);
+                            dlpService.addRule(updatedRule);
+                            
+                            // Dispatch event for the parent component to handle
+                            document.dispatchEvent(
+                              new CustomEvent('dlp:rule-updated', {
+                                detail: { id: ruleId, name: ruleName, isActive },
+                              }),
+                            );
                           }
-                        }
-                      }}
-                    >
-                      Delete
-                    </Button>
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent class="pt-0">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <Badge variant={actionBadge.variant as any}>
+                        {actionBadge.text}
+                      </Badge>
+                    </div>
+                    <div class="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        data-edit-rule={ruleItem.id}
+                        data-rule={JSON.stringify(ruleItem)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        data-delete-rule
+                        data-rule-id={ruleItem.id}
+                        data-rule-name={ruleItem.name}
+                        className="text-destructive hover:bg-destructive/10"
+                        onclick={(e: Event) => {
+                          const target = e.currentTarget as HTMLElement;
+                          const ruleId = target.getAttribute('data-rule-id');
+                          const ruleName = target.getAttribute('data-rule-name');
+                          
+                          if (!ruleId || !ruleName) return;
+                          
+                          if (confirm(`Are you sure you want to delete the rule "${ruleName}"?`)) {
+                            dlpService.deleteRule(ruleId);
+                            
+                            // Dispatch event for the parent component to handle
+                            document.dispatchEvent(
+                              new CustomEvent('dlp:rule-deleted', {
+                                detail: { id: ruleId, name: ruleName },
+                              }),
+                            );
+                            
+                            // Remove the card from the UI
+                            const card = target.closest('.rule-card');
+                            if (card) {
+                              card.remove();
+                            }
+                          }
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )
         })}
       </div>

@@ -72,29 +72,29 @@ export function useSpeechRecognition({
 
   // Add SpeechRecognition interface
   interface SpeechRecognition {
-    start(): void;
-    stop(): void;
-    onresult: (event: SpeechRecognitionEvent) => void;
-    onerror: (event: SpeechRecognitionErrorEvent) => void;
-    onend: () => void;
+    start(): void
+    stop(): void
+    onresult: (event: SpeechRecognitionEvent) => void
+    onerror: (event: SpeechRecognitionErrorEvent) => void
+    onend: () => void
   }
 
   // Add SpeechRecognitionEvent interface
   interface SpeechRecognitionEvent {
-    resultIndex: number;
+    resultIndex: number
     results: {
       [index: number]: {
-        isFinal: boolean;
+        isFinal: boolean
         [index: number]: {
-          transcript: string;
-        };
-      };
-    };
+          transcript: string
+        }
+      }
+    }
   }
 
   // Add SpeechRecognitionErrorEvent interface
   interface SpeechRecognitionErrorEvent {
-    error: string;
+    error: string
   }
 
   // Update ref whenever state changes to avoid stale closures

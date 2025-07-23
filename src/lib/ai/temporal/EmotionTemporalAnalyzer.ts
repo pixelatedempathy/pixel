@@ -92,7 +92,9 @@ export class EmotionTemporalAnalyzer {
     return { progression: 'stable', score: 0.7 }
   }
 
-  async findEmotionCorrelations(clientId: string): Promise<EmotionCorrelation[]> {
+  async findEmotionCorrelations(
+    clientId: string,
+  ): Promise<EmotionCorrelation[]> {
     logger.info('Finding emotion correlations', { clientId })
     return []
   }

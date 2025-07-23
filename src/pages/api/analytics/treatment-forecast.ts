@@ -49,7 +49,7 @@ export const post = async ({ request }: { request: Request }) => {
     } = parsed.data
 
     // Construct context factors securely
-        const context = collectContext({
+    const context = collectContext({
       session,
       chatSession,
       recentEmotionState,
@@ -59,7 +59,7 @@ export const post = async ({ request }: { request: Request }) => {
     })
 
     // Generate recommendations (forecasts)
-        const forecasts = recommend({
+    const forecasts = recommend({
       context,
       desiredOutcomes,
       maxResults: maxResults || 5,

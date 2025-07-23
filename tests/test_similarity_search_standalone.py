@@ -3,7 +3,6 @@
 Standalone test for Clinical Similarity Search
 """
 
-import sys
 from pathlib import Path
 
 
@@ -21,7 +20,6 @@ def test_search_file_exists():
     """Test that the clinical similarity search file exists."""
     search_file = get_search_file_path()
     assert search_file.exists(), "Clinical similarity search file must exist"
-    print("✓ Clinical similarity search file exists")
 
 
 def test_search_file_size():
@@ -30,19 +28,16 @@ def test_search_file_size():
     assert search_file.exists(), "Search file must exist for size test"
 
     file_size = search_file.stat().st_size
-    print(f"✓ File size: {file_size} bytes ({file_size/1024:.1f} KB)")
 
     assert (
         file_size > 20000
     ), f"File size {file_size} should be > 20KB for comprehensive implementation"
-    print("✓ File size indicates comprehensive implementation")
 
 
 def test_test_file_exists():
     """Test that the test file exists."""
     test_file = get_test_file_path()
     assert test_file.exists(), "Test file must exist"
-    print("✓ Test file exists")
 
 
 def test_test_file_size():
@@ -51,12 +46,10 @@ def test_test_file_size():
     assert test_file.exists(), "Test file must exist for size test"
 
     test_size = test_file.stat().st_size
-    print(f"✓ Test file size: {test_size} bytes ({test_size/1024:.1f} KB)")
 
     assert (
         test_size > 15000
     ), f"Test file size {test_size} should be > 15KB for comprehensive test coverage"
-    print("✓ Test file size indicates comprehensive test coverage")
 
 
 def get_file_content():
@@ -64,7 +57,7 @@ def get_file_content():
     search_file = get_search_file_path()
     assert search_file.exists(), "Search file must exist to read content"
 
-    with open(search_file, "r") as f:
+    with open(search_file) as f:
         return f.read()
 
 
@@ -80,8 +73,6 @@ def test_required_classes_exist():
     assert "class SearchContext" in content, "SearchContext class must be present"
     assert "class RelevanceType" in content, "RelevanceType class must be present"
     assert "class EnhancedSearchResult" in content, "EnhancedSearchResult class must be present"
-
-    print("✓ All required classes found in implementation")
 
 
 def test_required_methods_exist():
@@ -107,8 +98,6 @@ def test_required_methods_exist():
         "_calculate_diagnostic_relevance" in content
     ), "_calculate_diagnostic_relevance method must be present"
 
-    print("✓ All required methods found in implementation")
-
 
 def test_advanced_features_exist():
     """Test that advanced features are implemented."""
@@ -131,9 +120,6 @@ def test_advanced_features_exist():
     assert (
         len(found_features) >= required_feature_count
     ), f"Must have at least {required_feature_count} advanced features, found {len(found_features)}"
-
-    print(f"✓ Advanced features found: {len(found_features)}/{len(advanced_features)}")
-    print("✓ Implementation includes advanced similarity search features")
 
 
 def test_clinical_terms_mapping_structure():
@@ -161,8 +147,6 @@ def test_clinical_terms_mapping_structure():
     assert isinstance(trauma_synonyms, list), "Trauma synonyms must be a list"
     assert len(trauma_synonyms) >= 2, "Trauma category must have at least 2 synonyms"
 
-    print("✓ Clinical terms mapping structure verified")
-
 
 def test_diagnostic_keywords_structure():
     """Test diagnostic keywords set structure."""
@@ -181,8 +165,6 @@ def test_diagnostic_keywords_structure():
     assert len(diagnostic_keywords) >= 5, "Must have at least 5 diagnostic keywords"
     assert "diagnosis" in diagnostic_keywords, "Must include 'diagnosis' keyword"
     assert "symptoms" in diagnostic_keywords, "Must include 'symptoms' keyword"
-
-    print("✓ Diagnostic keyword set verified")
 
 
 def test_therapeutic_keywords_structure():
@@ -203,8 +185,6 @@ def test_therapeutic_keywords_structure():
     assert len(therapeutic_keywords) >= 5, "Must have at least 5 therapeutic keywords"
     assert "therapy" in therapeutic_keywords, "Must include 'therapy' keyword"
     assert "treatment" in therapeutic_keywords, "Must include 'treatment' keyword"
-
-    print("✓ Therapeutic keyword set verified")
 
 
 def test_relevance_calculation_logic():
@@ -229,8 +209,6 @@ def test_relevance_calculation_logic():
 
     assert 0 <= relevance <= 1, f"Relevance score {relevance} must be between 0 and 1"
     assert relevance > 0, f"Should find some overlap, got {relevance}"
-
-    print("✓ Relevance calculation logic verified")
 
 
 def test_search_query_structure():
@@ -258,8 +236,6 @@ def test_search_query_structure():
     assert isinstance(query.knowledge_types, list), "Knowledge types must be a list"
     assert isinstance(query.clinical_domains, list), "Clinical domains must be a list"
 
-    print("✓ Search query structure verified")
-
 
 def test_enhanced_search_result_structure():
     """Test enhanced search result structure."""
@@ -282,12 +258,9 @@ def test_enhanced_search_result_structure():
     assert result.rank == 0, "Rank must have correct default"
     assert isinstance(result.clinical_domains, list), "Clinical domains must be a list"
 
-    print("✓ Enhanced search result structure verified")
-
 
 def run_all_tests():
     """Run all individual test functions."""
-    print("Testing Clinical Similarity Search Structure...")
 
     # File existence and size tests
     test_search_file_exists()
@@ -301,26 +274,14 @@ def run_all_tests():
     test_advanced_features_exist()
 
     # Clinical knowledge tests
-    print("\nTesting Clinical Knowledge Mappings...")
     test_clinical_terms_mapping_structure()
     test_diagnostic_keywords_structure()
     test_therapeutic_keywords_structure()
     test_relevance_calculation_logic()
 
     # Search structure tests
-    print("\nTesting Search Query Structure...")
     test_search_query_structure()
     test_enhanced_search_result_structure()
-
-    print("\n🎉 Clinical Similarity Search structure verification completed!")
-    print("📋 Summary:")
-    print("   - Implementation file: ✓ Created")
-    print("   - Test file: ✓ Created")
-    print("   - Core functionality: ✓ Implemented")
-    print("   - Clinical knowledge mappings: ✓ Verified")
-    print("   - Search query structure: ✓ Verified")
-    print("   - Advanced features: ✓ Included")
-    print("   - Ready for production deployment!")
 
 
 if __name__ == "__main__":

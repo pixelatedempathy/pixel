@@ -10,7 +10,7 @@ import {
 
 export const GET: APIRoute = async ({ url }) => {
   try {
-    const {searchParams} = new URL(url)
+    const { searchParams } = new URL(url)
     const category = searchParams.get('category')
     const riskLevel = searchParams.get('risk')
     const id = searchParams.get('id')

@@ -249,16 +249,20 @@ test.describe('Accessibility Audit and Compliance', () => {
       }
 
       // Should start with h1 or h2
-      expect(headingLevels[0].level).toBeLessThanOrEqual(2)
+      if (headingLevels.length > 0) {
+        expect(headingLevels[0]?.level).toBeLessThanOrEqual(2)
 
-      // Check for proper nesting (no skipping levels)
-      for (let i = 1; i < headingLevels.length; i++) {
-        const currentLevel = headingLevels[i].level
-        const previousLevel = headingLevels[i - 1].level
+        // Check for proper nesting (no skipping levels)
+        for (let i = 1; i < headingLevels.length; i++) {
+          const currentLevel = headingLevels[i]?.level
+          const previousLevel = headingLevels[i - 1]?.level
 
-        // Should not skip more than one level
-        if (currentLevel > previousLevel) {
-          expect(currentLevel - previousLevel).toBeLessThanOrEqual(1)
+          if (currentLevel !== undefined && previousLevel !== undefined) {
+            // Should not skip more than one level
+            if (currentLevel > previousLevel) {
+              expect(currentLevel - previousLevel).toBeLessThanOrEqual(1)
+            }
+          }
         }
       }
 
@@ -340,7 +344,7 @@ test.describe('Accessibility Audit and Compliance', () => {
           // Basic contrast check (simplified)
           const hasGoodContrast = await element.evaluate((el) => {
             const computed = window.getComputedStyle(el)
-            const {color} = computed
+            const { color } = computed
             const bgColor = computed.backgroundColor
 
             // Simple check: ensure text is not the same color as background

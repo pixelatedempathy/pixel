@@ -3,11 +3,10 @@
 Standalone test for Real-Time Knowledge Retrieval
 """
 
-import sys
-import time
 import threading
-from pathlib import Path
+import time
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 
 def test_retrieval_files_exist():
@@ -25,8 +24,6 @@ def test_retrieval_files_exist():
 
     assert retrieval_file.exists(), "Real-time knowledge retrieval file must exist"
     assert test_file.exists(), "Test file must exist"
-
-    print("✓ Required files exist")
 
 
 def test_retrieval_file_size():
@@ -48,8 +45,6 @@ def test_retrieval_file_size():
     assert file_size > 30000, f"Retrieval file should be > 30KB, got {file_size/1024:.1f} KB"
     assert test_size > 25000, f"Test file should be > 25KB, got {test_size/1024:.1f} KB"
 
-    print(f"✓ File sizes: {file_size/1024:.1f} KB (retrieval), {test_size/1024:.1f} KB (test)")
-
 
 def test_retrieval_file_components():
     """Test that retrieval file contains required components."""
@@ -57,7 +52,7 @@ def test_retrieval_file_components():
         Path(__file__).parent.parent / "ai" / "pixel" / "data" / "realtime_knowledge_retrieval.py"
     )
 
-    with open(retrieval_file, "r") as f:
+    with open(retrieval_file) as f:
         content = f.read()
 
     required_components = [
@@ -79,8 +74,6 @@ def test_retrieval_file_components():
     missing_components = [comp for comp in required_components if comp not in content]
     assert not missing_components, f"Missing required components: {missing_components}"
 
-    print("✓ All required components found")
-
 
 def test_advanced_features_present():
     """Test that advanced features are included in implementation."""
@@ -88,7 +81,7 @@ def test_advanced_features_present():
         Path(__file__).parent.parent / "ai" / "pixel" / "data" / "realtime_knowledge_retrieval.py"
     )
 
-    with open(retrieval_file, "r") as f:
+    with open(retrieval_file) as f:
         content = f.read()
 
     advanced_features = [
@@ -106,8 +99,6 @@ def test_advanced_features_present():
     coverage_ratio = len(found_features) / len(advanced_features)
 
     assert coverage_ratio >= 0.8, f"Advanced features coverage too low: {coverage_ratio:.1%}"
-
-    print(f"✓ Advanced features coverage: {len(found_features)}/{len(advanced_features)}")
 
 
 def test_cache_functionality():
@@ -154,8 +145,6 @@ def test_cache_functionality():
     cache.put("key3", "value3")
     assert len(cache.cache) <= 2
 
-    print("✓ Cache functionality verified")
-
 
 def test_batch_processor():
     """Test batch processing implementation."""
@@ -188,8 +177,6 @@ def test_batch_processor():
 
     assert len(processed_batches) == 1, "Should process exactly one batch"
     assert len(processed_batches[0]) == 3, "Batch should contain 3 items"
-
-    print("✓ Batch processing verified")
 
 
 def test_statistics_tracking():
@@ -230,8 +217,6 @@ def test_statistics_tracking():
     assert stats.requests_by_phase["forward_pass"] == 2
     assert stats.requests_by_phase["validation"] == 1
 
-    print("✓ Statistics tracking verified")
-
 
 def test_thread_pool_executor():
     """Test thread pool executor functionality."""
@@ -250,8 +235,6 @@ def test_thread_pool_executor():
     assert len(results) == 3
     assert all("Result for query_" in result for result in results)
 
-    print("✓ Thread pool executor verified")
-
 
 def test_threading_locks():
     """Test threading locks functionality."""
@@ -266,7 +249,6 @@ def test_threading_locks():
     thread1 = threading.Thread(target=increment_counter)
     thread2 = threading.Thread(target=increment_counter)
     thread3 = threading.Thread(target=increment_counter)
-    threads = [thread1, thread2, thread3]
 
     # Start all threads
     thread1.start()
@@ -278,8 +260,6 @@ def test_threading_locks():
     thread3.join()
 
     assert shared_data["counter"] == 300, f"Expected 300, got {shared_data['counter']}"
-
-    print("✓ Threading locks verified")
 
 
 def run_all_tests():
@@ -296,9 +276,6 @@ def run_all_tests():
         test_threading_locks,
     ]
 
-    print("Testing Real-Time Knowledge Retrieval Structure...")
-    print()
-
     # Execute all tests and collect results
     test_results = []
 
@@ -306,27 +283,12 @@ def run_all_tests():
         try:
             test_func()
             return True
-        except Exception as e:
-            print(f"✗ {test_func.__name__} failed: {e}")
+        except Exception:
             return False
 
     test_results = [run_single_test(func) for func in test_functions]
     passed_tests = sum(test_results)
     total_tests = len(test_functions)
-
-    print()
-    print("🎉 Real-Time Knowledge Retrieval verification completed!")
-    print("📋 Summary:")
-    print(f"   - Tests passed: {passed_tests}/{total_tests}")
-    print("   - Implementation file: ✓ Created")
-    print("   - Test file: ✓ Created")
-    print("   - Core functionality: ✓ Implemented")
-    print("   - Caching system: ✓ Verified")
-    print("   - Batch processing: ✓ Verified")
-    print("   - Statistics tracking: ✓ Verified")
-    print("   - Threading/async: ✓ Verified")
-    print("   - Advanced features: ✓ Included")
-    print("   - Ready for production deployment!")
 
     assert passed_tests == total_tests, f"Some tests failed: {passed_tests}/{total_tests} passed"
 

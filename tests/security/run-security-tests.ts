@@ -16,6 +16,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 import { performance } from 'perf_hooks'
+import { getEnvironment, getBaseUrl, getSecurityReportPath } from './utils/env'
 
 // Get current directory equivalent to __dirname in CommonJS
 const __filename = fileURLToPath(import.meta.url)
@@ -58,10 +59,10 @@ interface TestSuite {
 
 // Default configuration
 const config: Config = {
-  outputDir: path.join(process.cwd(), 'security-reports'),
+  outputDir: getSecurityReportPath(),
   reportTitle: 'AI Security Test Report',
-  environment: process.env.NODE_ENV || 'development',
-  baseUrl: 'http://localhost:3000',
+  environment: getEnvironment(),
+  baseUrl: getBaseUrl(),
   authToken: 'user-token',
   adminToken: 'admin-token',
 }

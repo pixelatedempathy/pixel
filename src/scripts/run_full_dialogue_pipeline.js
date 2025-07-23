@@ -200,7 +200,7 @@ async function handleFullPipeline() {
     console.log('\n=== Step 2: Validate Dialogues ===\n')
     return runScript(VALIDATE_SCRIPT)
   }
-  
+
   return false
 }
 
@@ -250,14 +250,14 @@ async function main() {
   async function runMenuLoop() {
     const choice = await showMainMenu()
     const result = await processMenuChoice(choice)
-    
+
     // If result is null, exit the loop
     if (result !== null) {
       // Schedule the next iteration asynchronously
       return runMenuLoop()
     }
   }
-  
+
   // Start the menu loop
   await runMenuLoop()
 }

@@ -12,7 +12,7 @@ const logger = createBuildSafeLogger('outcome-recommendation')
 
 /**
  * Generates treatment recommendations based on the provided context and desired outcomes.
- * 
+ *
  * @param request - The recommendation request containing context and parameters
  * @returns Array of treatment forecasts
  * @throws {ValidationError} If the request is invalid
@@ -53,14 +53,15 @@ export function recommend(request: RecommendationRequest): TreatmentForecast[] {
 
     // Apply confidence threshold if specified
     const filteredForecasts = request.minConfidence
-      ? validatedForecasts.filter((f) => f.confidence >= (request.minConfidence || 0))
+      ? validatedForecasts.filter(
+          (f) => f.confidence >= (request.minConfidence || 0),
+        )
       : validatedForecasts
 
     // Sort by confidence and limit results
     return filteredForecasts
       .sort((a, b) => b.confidence - a.confidence)
       .slice(0, request.maxResults)
-
   } catch (error) {
     if (error instanceof ValidationError) {
       throw error
@@ -78,19 +79,19 @@ export function recommend(request: RecommendationRequest): TreatmentForecast[] {
  * Internal helper to generate treatment forecasts.
  * This is currently a mock implementation - replace with actual ML model.
  */
-function generateForecasts(request: RecommendationRequest): TreatmentForecast[] {
+function generateForecasts(
+  request: RecommendationRequest,
+): TreatmentForecast[] {
   const { context, desiredOutcomes } = request
 
   // Get base interventions based on mental health analysis
-  const baseInterventions = context.mentalHealthAnalysis?.recommendedApproaches || [
-    'CBT',
-    'Mindfulness',
-    'Behavioral activation',
-  ]
+  const baseInterventions = context.mentalHealthAnalysis
+    ?.recommendedApproaches || ['CBT', 'Mindfulness', 'Behavioral activation']
 
   // Consider recent emotion state for risk assessment
   const emotionIntensity = context.recentEmotionState.intensity
-  const baseRisk = emotionIntensity > 0.7 ? 'high' : emotionIntensity > 0.4 ? 'medium' : 'low'
+  const baseRisk =
+    emotionIntensity > 0.7 ? 'high' : emotionIntensity > 0.4 ? 'medium' : 'low'
 
   return desiredOutcomes.map((outcome, index) => {
     // Calculate confidence based on multiple factors
@@ -144,7 +145,9 @@ function generateForecasts(request: RecommendationRequest): TreatmentForecast[] 
 /**
  * Calculate overall risk level based on multiple risk factors.
  */
-function calculateRisk(factors: ('low' | 'moderate' | 'high')[]): 'low' | 'medium' | 'high' {
+function calculateRisk(
+  factors: ('low' | 'moderate' | 'high')[],
+): 'low' | 'medium' | 'high' {
   const riskScores = {
     low: 0,
     moderate: 1,
@@ -152,9 +155,10 @@ function calculateRisk(factors: ('low' | 'moderate' | 'high')[]): 'low' | 'mediu
     high: 2,
   }
 
-  const avgScore = factors.reduce((sum, factor) => {
-    return sum + riskScores[factor]
-  }, 0) / factors.length
+  const avgScore =
+    factors.reduce((sum, factor) => {
+      return sum + riskScores[factor]
+    }, 0) / factors.length
 
   if (avgScore > 1.5) return 'high'
   if (avgScore > 0.5) return 'medium'
@@ -166,7 +170,7 @@ function calculateRisk(factors: ('low' | 'moderate' | 'high')[]): 'low' | 'mediu
  */
 function generateContraindications(risk: 'low' | 'medium' | 'high'): string[] {
   const base = ['Acute suicidal ideation', 'Active psychosis']
-  
+
   if (risk === 'high') {
     return [...base, 'Severe depression', 'Unstable environment']
   }
@@ -181,7 +185,7 @@ function generateContraindications(risk: 'low' | 'medium' | 'high'): string[] {
  */
 function generateSideEffects(risk: 'low' | 'medium' | 'high'): string[] {
   const base = ['Temporary mood fluctuations', 'Initial anxiety increase']
-  
+
   if (risk === 'high') {
     return [...base, 'Significant emotional distress', 'Sleep pattern changes']
   }

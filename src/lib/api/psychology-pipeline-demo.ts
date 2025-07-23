@@ -495,7 +495,7 @@ function generateKnowledgeBasedDialogue(
   dialogue.push({
     speaker: 'therapist' as const,
     content: generateKnowledgeBasedOpening(
-      conversationParameters.therapeuticApproach
+      conversationParameters.therapeuticApproach,
     ),
     timestamp: new Date().toISOString(),
     techniques: ['rapport_building', 'assessment'],
@@ -566,7 +566,7 @@ function generateKnowledgeBasedDialogue(
   dialogue.push({
     speaker: 'therapist' as const,
     content: generateKnowledgeBasedFollowUp(
-      conversationParameters.therapeuticApproach
+      conversationParameters.therapeuticApproach,
     ),
     timestamp: new Date().toISOString(),
     techniques: conversationParameters.targetTechniques.slice(2, 4),
@@ -582,34 +582,34 @@ function generateKnowledgeBasedDialogue(
 }
 
 interface KnowledgeBase {
-  dsm5?: string[];
-  techniques?: string[];
-  research?: string[];
-  guidelines?: string[];
-  contraindications?: string[];
-  [key: string]: unknown;
+  dsm5?: string[]
+  techniques?: string[]
+  research?: string[]
+  guidelines?: string[]
+  contraindications?: string[]
+  [key: string]: unknown
 }
 
 interface ClientProfile {
-  name?: string;
-  age?: number;
-  gender?: string;
-  background?: string;
-  presentingProblem?: string;
-  history?: string;
-  symptoms?: string[];
-  diagnosis?: string;
-  severity?: string;
-  [key: string]: unknown;
+  name?: string
+  age?: number
+  gender?: string
+  background?: string
+  presentingProblem?: string
+  history?: string
+  symptoms?: string[]
+  diagnosis?: string
+  severity?: string
+  [key: string]: unknown
 }
 
 interface DialogueEntry {
-  role: 'therapist' | 'client';
-  content: string;
-  timestamp?: string;
-  emotions?: string[];
-  techniques?: string[];
-  [key: string]: unknown;
+  role: 'therapist' | 'client'
+  content: string
+  timestamp?: string
+  emotions?: string[]
+  techniques?: string[]
+  [key: string]: unknown
 }
 
 function generateKnowledgeBasedOpening(approach: string): string {
@@ -685,11 +685,11 @@ function generateKnowledgeBasedFollowUp(approach: string): string {
 }
 
 interface ConversationRequest {
-  clientProfile: ClientProfile;
-  therapeuticApproach: string;
-  knowledgeBase: KnowledgeBase;
-  sessionGoals?: string[];
-  [key: string]: unknown;
+  clientProfile: ClientProfile
+  therapeuticApproach: string
+  knowledgeBase: KnowledgeBase
+  sessionGoals?: string[]
+  [key: string]: unknown
 }
 
 function calculateConversationQuality(request: ConversationRequest) {

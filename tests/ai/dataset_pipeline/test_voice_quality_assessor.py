@@ -4,7 +4,9 @@ Unit tests for voice_quality_assessor.py
 """
 
 from pathlib import Path
+
 from pydub import AudioSegment  # type: ignore[import]
+
 from ai.dataset_pipeline import voice_quality_assessor as vqa
 
 
@@ -60,10 +62,8 @@ def test_assess_audio_quality_fail_clipping(tmp_path: Path):  # type: ignore[unu
     file_path = tmp_path / "test_clipping.wav"
     audio.export(file_path, format="wav")
     result = vqa.assess_audio_quality(str(file_path))
-    assert (
-        result["passed"] is False
-        and result["clipping_ratio"] > vqa.DEFAULT_CONFIG["max_clipping_ratio"]
-    )
+    assert result["passed"] is False
+    assert result["clipping_ratio"] > vqa.DEFAULT_CONFIG["max_clipping_ratio"]
 
 
 def test_batch_assess(tmp_path: Path):  # type: ignore[unused-argument]

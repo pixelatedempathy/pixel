@@ -1,10 +1,10 @@
-import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-import sitemap from '@astrojs/sitemap';
-import mdx from '@astrojs/mdx';
-import unocss from '@unocss/astro';
-import path from 'node:path';
-import process from 'node:process';
+import { defineConfig } from 'astro/config'
+import react from '@astrojs/react'
+import sitemap from '@astrojs/sitemap'
+import mdx from '@astrojs/mdx'
+import unocss from '@unocss/astro'
+import path from 'node:path'
+import process from 'node:process'
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,4 +28,4 @@ export default defineConfig({
     },
   },
   // Removed invalid experimental flag
-});
+})

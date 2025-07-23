@@ -8,16 +8,16 @@ import type { RefinedResponse } from 'k6/http'
 
 // Define response types for better type safety
 interface BreachResponse {
-  id: string;
-  status: string;
-  notificationStatus: string;
-  [key: string]: unknown;
+  id: string
+  status: string
+  notificationStatus: string
+  [key: string]: unknown
 }
 
 interface NotificationResponse {
-  totalNotifications: number;
-  deliveredNotifications: number;
-  [key: string]: unknown;
+  totalNotifications: number
+  deliveredNotifications: number
+  [key: string]: unknown
 }
 
 // Since k6 doesn't support Node.js modules, we simulate PHI audit logging
@@ -172,8 +172,10 @@ export default function () {
 
   // Check if breach creation was successful
   const success = check(createResponse, {
-    'breach created successfully': (r: RefinedResponse<unknown>) => r.status === 200,
-    'has breach ID': (r: RefinedResponse<unknown>) => r.json('id') !== undefined,
+    'breach created successfully': (r: RefinedResponse<unknown>) =>
+      r.status === 200,
+    'has breach ID': (r: RefinedResponse<unknown>) =>
+      r.json('id') !== undefined,
   })
 
   if (!success) {
@@ -212,7 +214,8 @@ export default function () {
     )
 
     check(notificationResponse, {
-      'notifications sent successfully': (r: RefinedResponse<unknown>) => r.status === 200,
+      'notifications sent successfully': (r: RefinedResponse<unknown>) =>
+        r.status === 200,
       'all notifications delivered': (r: RefinedResponse<unknown>) => {
         const data = r.json() as NotificationResponse
         return (
@@ -240,7 +243,8 @@ export function setup() {
   )
 
   check(response, {
-    'test environment setup successfully': (r: RefinedResponse<unknown>) => r.status === 200,
+    'test environment setup successfully': (r: RefinedResponse<unknown>) =>
+      r.status === 200,
   })
 
   return response.json()
@@ -257,6 +261,7 @@ export function teardown(data: { testRunId: string }) {
   )
 
   check(response, {
-    'test environment cleaned up successfully': (r: RefinedResponse<unknown>) => r.status === 200,
+    'test environment cleaned up successfully': (r: RefinedResponse<unknown>) =>
+      r.status === 200,
   })
 }

@@ -97,9 +97,9 @@ async function downloadAllFonts() {
   try {
     // Process downloads in parallel to improve performance
     // This replaces the sequential for...of loop with await
-    const downloadPromises = fonts.map(font => downloadFont(font));
-    await Promise.all(downloadPromises);
-    
+    const downloadPromises = fonts.map((font) => downloadFont(font))
+    await Promise.all(downloadPromises)
+
     console.log('\n✅ All fonts downloaded successfully!')
 
     // Create a fallback for offline builds

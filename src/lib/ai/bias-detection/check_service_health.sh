@@ -13,12 +13,12 @@ HEALTH_URL="http://${SERVICE_HOST}:${SERVICE_PORT}${HEALTH_ENDPOINT}"
 # -f: Fail silently on HTTP errors (4xx or 5xx)
 # -o /dev/null: Discard output
 # -w "%{http_code}": Print HTTP status code
-HTTP_CODE=$(curl -s -f -o /dev/null -w "%{http_code}" ${HEALTH_URL})
+HTTP_CODE=$(curl -s -f -o /dev/null -w "%{http_code}" "${HEALTH_URL}")
 
-if [ "$HTTP_CODE" -eq 200 ]; then
-    echo "Bias Detection Service is healthy (HTTP 200 OK)"
-    exit 0
+if [[ ${HTTP_CODE} -eq 200 ]]; then
+	echo "Bias Detection Service is healthy (HTTP 200 OK)"
+	exit 0
 else
-    echo "Bias Detection Service is unhealthy (HTTP ${HTTP_CODE}) or not reachable."
-    exit 1
+	echo "Bias Detection Service is unhealthy (HTTP ${HTTP_CODE}) or not reachable."
+	exit 1
 fi

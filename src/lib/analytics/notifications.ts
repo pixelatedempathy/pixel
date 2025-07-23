@@ -183,7 +183,9 @@ function getEmptyMetrics(): EffectivenessMetrics {
  * @returns Detailed effectiveness metrics
  * @throws Error if breaches array is invalid
  */
-export async function calculate(breaches: Breach[]): Promise<EffectivenessMetrics> {
+export async function calculate(
+  breaches: Breach[],
+): Promise<EffectivenessMetrics> {
   if (!Array.isArray(breaches)) {
     throw new Error('Invalid breaches array provided')
   }

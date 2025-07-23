@@ -1,5 +1,9 @@
 import type { RedisServiceConfig, IRedisService } from './types.js'
-import type { RedisMockClient, RedisZSetMember, RedisPipeline } from './redis-operation-types'
+import type {
+  RedisMockClient,
+  RedisZSetMember,
+  RedisPipeline,
+} from './redis-operation-types'
 import { EventEmitter } from 'events'
 import { getHipaaCompliantLogger } from '@/lib/logging/standardized-logger'
 import { Redis } from 'ioredis'
@@ -309,17 +313,23 @@ export class RedisService extends EventEmitter implements IRedisService {
       zpopmin: async (key: string) => {
         const zset = zsetStore.get(key)
         if (!zset || zset.size === 0) {
-          logger.debug(`[RedisService Mock] zpopmin called on empty or missing zset for key: ${key}`)
+          logger.debug(
+            `[RedisService Mock] zpopmin called on empty or missing zset for key: ${key}`,
+          )
           return []
         }
         const sorted = Array.from(zset.entries()).sort((a, b) => a[1] - b[1])
         if (sorted.length === 0) {
-          logger.debug(`[RedisService Mock] zpopmin found no elements after sorting for key: ${key}`)
+          logger.debug(
+            `[RedisService Mock] zpopmin found no elements after sorting for key: ${key}`,
+          )
           return []
         }
         const first = sorted[0]
         if (!first) {
-          logger.debug(`[RedisService Mock] zpopmin: sorted[0] is undefined for key: ${key}`)
+          logger.debug(
+            `[RedisService Mock] zpopmin: sorted[0] is undefined for key: ${key}`,
+          )
           return []
         }
         const [member, score] = first
@@ -391,7 +401,7 @@ export class RedisService extends EventEmitter implements IRedisService {
         return this.config.retryDelay || 100
       },
       keyPrefix: this.config.keyPrefix,
-      connectTimeout: this.config.connectTimeout
+      connectTimeout: this.config.connectTimeout,
     }
 
     return new Redis(this.config.url, redisOptions)
@@ -795,10 +805,18 @@ export class RedisService extends EventEmitter implements IRedisService {
         const result = await client.zrange(key, start, stop, 'WITHSCORES')
         const arr: RedisZSetMember[] = []
         for (let i = 0; i < result.length; i += 2) {
-          if (typeof result[i] === 'string' && typeof result[i + 1] !== 'undefined') {
-            arr.push({ value: result[i] as string, score: Number(result[i + 1]) })
+          if (
+            typeof result[i] === 'string' &&
+            typeof result[i + 1] !== 'undefined'
+          ) {
+            arr.push({
+              value: result[i] as string,
+              score: Number(result[i + 1]),
+            })
           } else {
-            logger.debug(`[RedisService] zrange WITHSCORES: Skipping invalid pair at index ${i}: value=${String(result[i])}, score=${String(result[i + 1])}`)
+            logger.debug(
+              `[RedisService] zrange WITHSCORES: Skipping invalid pair at index ${i}: value=${String(result[i])}, score=${String(result[i + 1])}`,
+            )
           }
         }
         return arr
@@ -818,10 +836,18 @@ export class RedisService extends EventEmitter implements IRedisService {
       const client = await this.ensureConnection()
       // ioredis returns [member, score] or [] if empty
       const result = await client.zpopmin(key)
-      if (Array.isArray(result) && result.length === 2 && typeof result[0] === 'string' && typeof result[1] !== 'undefined') {
+      if (
+        Array.isArray(result) &&
+        result.length === 2 &&
+        typeof result[0] === 'string' &&
+        typeof result[1] !== 'undefined'
+      ) {
         return [{ value: result[0], score: Number(result[1]) }]
       } else {
-        logger.debug(`[RedisService] zpopmin: Unexpected result format for key ${key}:`, result)
+        logger.debug(
+          `[RedisService] zpopmin: Unexpected result format for key ${key}:`,
+          result,
+        )
       }
       return []
     } catch (error) {

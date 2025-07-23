@@ -39,8 +39,6 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
-
-
       - name: Link Supabase project
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -151,23 +149,23 @@ jobs:
           set -euo pipefail
           timestamp=$(date +%Y%m%d_%H%M%S)
           config_backup_file="config_backup_${ENVIRONMENT}_${timestamp}.tar.gz"
-          
+
           echo "::group::Creating configuration files backup"
           # Create a tar.gz archive of critical configuration files
           config_files=()
-          
+
           for file in "api/local.settings.json" "ai/production_config.json"; do
             if [ -f "$file" ]; then
               config_files+=("$file")
             fi
           done
-          
+
           if [ ${#config_files[@]} -eq 0 ]; then
             echo "No configuration files found to backup."
             echo "config_backup_status=skipped" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
+
           if ! tar -czvf "${BACKUP_DIR}/${config_backup_file}" "${config_files[@]}"; then
             echo "::error::Failed to create configuration files backup"
             echo "config_backup_status=failed" >> $GITHUB_OUTPUT

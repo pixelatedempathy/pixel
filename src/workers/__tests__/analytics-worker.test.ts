@@ -1,7 +1,6 @@
 import { env } from '@/config/env.config'
 import { AnalyticsService } from '@/lib/services/analytics/AnalyticsService'
 
-
 import { WebSocketServer, WebSocket } from 'ws'
 
 // Mock dependencies
@@ -118,7 +117,7 @@ describe('analytics-worker', () => {
       // Import worker module
       await import('../analytics-worker')
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(mockLoggerInstance.error).toHaveBeenCalledWith(
         expect.stringContaining('Error starting analytics worker'),
         expect.any(Error),
       )

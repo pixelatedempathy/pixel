@@ -1,7 +1,9 @@
 import pytest
 
 from ai.pixel.evaluation.clinical_accuracy_evaluator import ClinicalAccuracyEvaluator
-from ai.pixel.evaluation.conversational_quality_evaluator import ConversationalQualityEvaluator
+from ai.pixel.evaluation.conversational_quality_evaluator import (
+    ConversationalQualityEvaluator,
+)
 from ai.pixel.evaluation.empathy_evaluator import EmpathyEvaluator
 from ai.pixel.evaluation.eq_evaluator import EQEvaluator
 from ai.pixel.evaluation.persona_switching_evaluator import PersonaSwitchingEvaluator

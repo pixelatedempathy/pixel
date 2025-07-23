@@ -1,5 +1,12 @@
 # Astro Tasks
 
+## Progress Summary
+
+✅ Fixed the Astro configuration issue by removing the invalid experimental flag
+✅ Created utility functions for environment variable access
+✅ Installed missing type dependencies
+✅ Updated several files to use environment variable utility functions
+
 ## Priority 1: Configuration Issues
 
 - [x] **Fix invalid experimental feature**: The `directRenderScript` experimental feature is invalid or outdated
@@ -7,28 +14,39 @@
 
 ## Priority 2: TypeScript Dependencies
 
-- [ ] **Install missing Playwright types**: Many test files are missing `@playwright/test` type declarations
+- [x] **Install missing Playwright types**: Many test files are missing `@playwright/test` type declarations
   ```bash
   pnpm add -D @playwright/test
   ```
 
-- [ ] **Install missing Cheerio types**: Required for security tests
+- [x] **Install missing Cheerio types**: Required for security tests
   ```bash
   pnpm add -D @types/cheerio
   ```
 
-- [ ] **Install missing Vitest types**: Many test files have issues with Vitest imports
+- [x] **Install missing Vitest types**: Many test files have issues with Vitest imports
   ```bash
   pnpm add -D vitest
   ```
 
-## Priority 3: TypeScript Errors by Category
+## Priority 3: Environment Variable Access
 
-### Environment Variable Access
+- [x] **Create environment variable utility functions**: Created `src/lib/utils/env.ts` with:
+  - `getEnv()`: Safely access environment variables with proper typing
+  - `getRequiredEnv()`: Get required environment variables with error handling
+  - `isEnvTrue()`: Check if an environment variable is set to a truthy value
+  - `isEnvFalse()`: Check if an environment variable is set to a falsy value
 
-- [ ] **Fix environment variable access**: Use bracket notation for accessing environment variables
-  - [ ] Replace `process.env.VARIABLE_NAME` with `process.env['VARIABLE_NAME']`
-  - [ ] Create a utility function to safely access environment variables
+- [ ] **Update environment variable access**: Replace direct `process.env` access with utility functions
+  - [x] Updated `src/lib/services/redis/index.ts`
+  - [x] Updated `src/lib/services/OllamaCheckInService.ts`
+  - [x] Updated `src/lib/supabase/env.ts`
+  - [x] Updated `src/lib/backup/verify.ts`
+  - [x] Updated `src/lib/services/redis/__tests__/RedisService.test.ts`
+  - [x] Updated `src/lib/auth/supabase.ts`
+  - [ ] Update remaining files with environment variable access issues
+
+## Priority 4: TypeScript Errors by Category
 
 ### Test Files
 
@@ -65,7 +83,7 @@
   - [ ] Fix errors in `plugins/remark-directive-sugar.ts`
   - [ ] Fix errors in `plugins/remark-image-container.ts`
 
-## Priority 4: CommonJS Module Warnings
+## Priority 5: CommonJS Module Warnings
 
 - [ ] **Convert CommonJS modules to ES modules**:
   - [ ] `scripts/generate-compatibility-report.js`
@@ -76,10 +94,11 @@
 ## Action Plan
 
 1. ✅ Fix configuration issues (completed)
-2. Install missing type dependencies
-3. Create utility functions for common patterns (environment variables, etc.)
-4. Fix test files by adding proper type annotations
-5. Fix service files with proper type definitions
-6. Fix script and plugin files
-7. Convert CommonJS modules to ES modules
-8. Re-run `npx astro check` to verify all issues are resolved
+2. ✅ Install missing type dependencies (completed)
+3. ✅ Create utility functions for environment variables (completed)
+4. Continue updating files to use environment variable utility functions
+5. Fix test files by adding proper type annotations
+6. Fix service files with proper type definitions
+7. Fix script and plugin files
+8. Convert CommonJS modules to ES modules
+9. Re-run `npx astro check` to verify all issues are resolved

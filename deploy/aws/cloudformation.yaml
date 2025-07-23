@@ -7,11 +7,11 @@ Parameters:
     Type: String
     Default: 'pixelatedempathy.com'
     Description: 'Domain name for the application'
-  
+
   DeploymentBucket:
     Type: String
     Description: 'S3 bucket containing the deployment package'
-  
+
   Environment:
     Type: String
     Default: 'production'
@@ -232,7 +232,11 @@ Resources:
         IPV6Enabled: true
         Origins:
           - Id: AstroLambdaOrigin
-            DomainName: !Select [2, !Split ['/', !GetAtt AstroLambdaFunctionUrl.FunctionUrl]]
+            DomainName:
+              !Select [
+                2,
+                !Split ['/', !GetAtt AstroLambdaFunctionUrl.FunctionUrl],
+              ]
             CustomOriginConfig:
               HTTPPort: 443
               HTTPSPort: 443
@@ -397,4 +401,4 @@ Outputs:
     Description: 'Route 53 Name Servers'
     Value: !Join [', ', !GetAtt Route53HostedZone.NameServers]
     Export:
-      Name: !Sub '${AWS::StackName}-NameServers' 
+      Name: !Sub '${AWS::StackName}-NameServers'

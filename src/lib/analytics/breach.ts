@@ -172,7 +172,9 @@ export async function updateRemediationStatus(
 /**
  * Get breach by ID
  */
-export async function getBreachById(id: string): Promise<SecurityBreach | null> {
+export async function getBreachById(
+  id: string,
+): Promise<SecurityBreach | null> {
   try {
     const { data, error } = await supabase
       .from('security_breaches')

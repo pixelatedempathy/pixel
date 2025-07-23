@@ -52,31 +52,36 @@ export default defineConfig({
         config() {
           return {
             define: {
-              'process.env.SENTRY_DISABLE_TELEMETRY': 'true'
-            }
+              'process.env.SENTRY_DISABLE_TELEMETRY': 'true',
+            },
           }
-        }
+        },
       },
       {
         name: 'vercel-optimizations',
         resolveId(id) {
           // Block server-only modules for Vercel edge functions
           const serverOnlyModules = [
-            'fsevents', 'chokidar', 'sharp', 'canvas', 'puppeteer', 'playwright'
-          ];
-          
-          if (serverOnlyModules.some(mod => id.includes(mod))) {
-            return { id: 'virtual:empty', external: false };
+            'fsevents',
+            'chokidar',
+            'sharp',
+            'canvas',
+            'puppeteer',
+            'playwright',
+          ]
+
+          if (serverOnlyModules.some((mod) => id.includes(mod))) {
+            return { id: 'virtual:empty', external: false }
           }
-          
-          return null;
+
+          return null
         },
         load(id) {
           if (id === 'virtual:empty') {
-            return 'export default {};';
+            return 'export default {};'
           }
-        }
-      }
+        },
+      },
     ],
 
     // Handle KaTeX font assets
@@ -101,9 +106,14 @@ export default defineConfig({
         external: (id) => {
           // Externalize heavy server-only modules
           const heavyModules = [
-            'sharp', 'canvas', 'puppeteer', 'playwright', 'fsevents', 'chokidar'
-          ];
-          return heavyModules.some(mod => id.includes(mod));
+            'sharp',
+            'canvas',
+            'puppeteer',
+            'playwright',
+            'fsevents',
+            'chokidar',
+          ]
+          return heavyModules.some((mod) => id.includes(mod))
         },
         output: {
           manualChunks: (id) => {
@@ -135,16 +145,24 @@ export default defineConfig({
       exclude: [
         'msw',
         'virtual:keystatic-config',
-        'sharp', 'canvas', 'puppeteer', 'playwright',
-        'fsevents', 'chokidar',
+        'sharp',
+        'canvas',
+        'puppeteer',
+        'playwright',
+        'fsevents',
+        'chokidar',
       ],
     },
 
     ssr: {
       // External dependencies for Vercel serverless
       external: [
-        'sharp', 'canvas', 'puppeteer', 'playwright',
-        'fsevents', 'chokidar',
+        'sharp',
+        'canvas',
+        'puppeteer',
+        'playwright',
+        'fsevents',
+        'chokidar',
       ],
     },
   },
@@ -156,38 +174,46 @@ export default defineConfig({
       styleOverrides: {
         borderRadius: '0.5rem',
       },
-    }), 
-    react(), 
+    }),
+    react(),
     mdx({
       components: path.resolve('./mdx-components.js'),
-    }), 
+    }),
     UnoCSS({
       injectReset: true,
       mode: 'global',
       safelist: ['font-sans', 'font-mono', 'font-condensed'],
       configFile: './uno.config.ts',
-    }), 
+    }),
     icon({
       include: {
         lucide: [
-          'calendar', 'user', 'settings', 'heart', 'brain', 'shield-check',
-          'info', 'arrow-left', 'shield', 'user-plus',
+          'calendar',
+          'user',
+          'settings',
+          'heart',
+          'brain',
+          'shield-check',
+          'info',
+          'arrow-left',
+          'shield',
+          'user-plus',
         ],
       },
       svgdir: './src/icons',
-    }), 
-    flexsearchIntegration(), 
-    markdoc(), 
+    }),
+    flexsearchIntegration(),
+    markdoc(),
     ...(process.env.SKIP_KEYSTATIC !== 'true' ? [keystatic()] : []),
     sentry({
       dsn: process.env.SENTRY_DSN,
       sourceMapsUploadOptions: {
-        project: process.env.SENTRY_PROJECT || "pixel-astro",
-        org: process.env.SENTRY_ORG || "pixelated-empathy-dq",
+        project: process.env.SENTRY_PROJECT || 'pixel-astro',
+        org: process.env.SENTRY_ORG || 'pixelated-empathy-dq',
         authToken: process.env.SENTRY_AUTH_TOKEN,
       },
       telemetry: false,
-    })
+    }),
   ],
 
   // Markdown configuration
@@ -230,11 +256,7 @@ export default defineConfig({
   // Image optimization for Vercel
   image: {
     service: passthroughImageService(),
-    domains: [
-      'pixelatedempathy.com',
-      'cdn.pixelatedempathy.com',
-      'vercel.app',
-    ],
+    domains: ['pixelatedempathy.com', 'cdn.pixelatedempathy.com', 'vercel.app'],
     defaultStrategy: 'viewport',
   },
 

@@ -21,7 +21,7 @@ export interface DateFormatOptions extends Intl.DateTimeFormatOptions {
  */
 export function formatDate(
   dateString: string,
-  options: DateFormatOptions = {}
+  options: DateFormatOptions = {},
 ): string {
   try {
     const date = new Date(dateString)
@@ -56,7 +56,9 @@ export function formatDate(
 
     return date.toLocaleDateString(options.locale || 'en-US', formatOptions)
   } catch (error) {
-    throw new Error(`Failed to format date: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    throw new Error(
+      `Failed to format date: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    )
   }
 }
 
@@ -105,17 +107,16 @@ function formatRelativeDate(date: Date): string {
  */
 function formatCustomDate(date: Date, formatString: string): string {
   const tokens: Record<string, () => string> = {
-    'YYYY': () => date.getFullYear().toString(),
-    'MM': () => (date.getMonth() + 1).toString().padStart(2, '0'),
-    'DD': () => date.getDate().toString().padStart(2, '0'),
-    'HH': () => date.getHours().toString().padStart(2, '0'),
-    'mm': () => date.getMinutes().toString().padStart(2, '0'),
-    'ss': () => date.getSeconds().toString().padStart(2, '0'),
+    YYYY: () => date.getFullYear().toString(),
+    MM: () => (date.getMonth() + 1).toString().padStart(2, '0'),
+    DD: () => date.getDate().toString().padStart(2, '0'),
+    HH: () => date.getHours().toString().padStart(2, '0'),
+    mm: () => date.getMinutes().toString().padStart(2, '0'),
+    ss: () => date.getSeconds().toString().padStart(2, '0'),
   }
 
-  return formatString.replace(
-    /YYYY|MM|DD|HH|mm|ss/g,
-    match => tokens[match]()
+  return formatString.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) =>
+    tokens[match](),
   )
 }
 
@@ -141,7 +142,7 @@ export function isValidDate(dateString: string): boolean {
  */
 export function getStartOf(
   date: Date,
-  unit: 'day' | 'week' | 'month' | 'year'
+  unit: 'day' | 'week' | 'month' | 'year',
 ): Date {
   const result = new Date(date)
 

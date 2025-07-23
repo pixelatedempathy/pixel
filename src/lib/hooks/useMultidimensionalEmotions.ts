@@ -103,8 +103,6 @@ export function useMultidimensionalEmotions(
     }
   }
 
-
-
   useEffect(() => {
     fetchData()
   }, [fetchData])

@@ -7,18 +7,15 @@ This test suite provides comprehensive testing for the Pixelated Empathy
 Bias Detection Flask Service, covering all major components and endpoints.
 """
 
-import asyncio
 import json
 import os
 import tempfile
 import unittest
 from datetime import datetime
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pandas as pd
 import pytest
-from flask import Flask
 
 # Import the service and related classes
 from bias_detection_service import (
@@ -38,14 +35,14 @@ class TestBiasDetectionConfig(unittest.TestCase):
         """Test default configuration values"""
         config = BiasDetectionConfig()
 
-        self.assertEqual(config.warning_threshold, 0.3)
-        self.assertEqual(config.high_threshold, 0.6)
-        self.assertEqual(config.critical_threshold, 0.8)
-        self.assertTrue(config.enable_hipaa_compliance)
-        self.assertTrue(config.enable_audit_logging)
-        self.assertTrue(config.enable_encryption)
-        self.assertEqual(config.max_session_size_mb, 50)
-        self.assertEqual(config.rate_limit_per_minute, 60)
+        assert config.warning_threshold == 0.3
+        assert config.high_threshold == 0.6
+        assert config.critical_threshold == 0.8
+        assert config.enable_hipaa_compliance
+        assert config.enable_audit_logging
+        assert config.enable_encryption
+        assert config.max_session_size_mb == 50
+        assert config.rate_limit_per_minute == 60
 
         # Test default layer weights
         expected_weights = {
@@ -54,7 +51,7 @@ class TestBiasDetectionConfig(unittest.TestCase):
             "interactive": 0.20,
             "evaluation": 0.25,
         }
-        self.assertEqual(config.layer_weights, expected_weights)
+        assert config.layer_weights == expected_weights
 
     def test_custom_config(self):
         """Test custom configuration values"""
@@ -73,11 +70,11 @@ class TestBiasDetectionConfig(unittest.TestCase):
             enable_hipaa_compliance=False,
         )
 
-        self.assertEqual(config.warning_threshold, 0.4)
-        self.assertEqual(config.high_threshold, 0.7)
-        self.assertEqual(config.critical_threshold, 0.9)
-        self.assertEqual(config.layer_weights, custom_weights)
-        self.assertFalse(config.enable_hipaa_compliance)
+        assert config.warning_threshold == 0.4
+        assert config.high_threshold == 0.7
+        assert config.critical_threshold == 0.9
+        assert config.layer_weights == custom_weights
+        assert not config.enable_hipaa_compliance
 
 
 class TestSessionData(unittest.TestCase):
@@ -96,10 +93,10 @@ class TestSessionData(unittest.TestCase):
             metadata={"version": "1.0"},
         )
 
-        self.assertEqual(session_data.session_id, "test_session_001")
-        self.assertEqual(session_data.participant_demographics["age"], 25)
-        self.assertIsNotNone(session_data.timestamp)
-        self.assertIsInstance(session_data.timestamp, str)
+        assert session_data.session_id == "test_session_001"
+        assert session_data.participant_demographics["age"] == 25
+        assert session_data.timestamp is not None
+        assert isinstance(session_data.timestamp, str)
 
     def test_session_data_auto_timestamp(self):
         """Test automatic timestamp generation"""
@@ -114,7 +111,7 @@ class TestSessionData(unittest.TestCase):
             metadata={},
         )
 
-        self.assertIsNotNone(session_data.timestamp)
+        assert session_data.timestamp is not None
         # Verify timestamp is in ISO format
         if session_data.timestamp is not None:
             datetime.fromisoformat(session_data.timestamp)
@@ -135,20 +132,20 @@ class TestSecurityManager(unittest.TestCase):
         test_data = "sensitive patient information"
 
         encrypted = self.security_manager.encrypt_data(test_data)
-        self.assertNotEqual(encrypted, test_data)
-        self.assertIsInstance(encrypted, str)
+        assert encrypted != test_data
+        assert isinstance(encrypted, str)
 
         decrypted = self.security_manager.decrypt_data(encrypted)
-        self.assertEqual(decrypted, test_data)
+        assert decrypted == test_data
 
     def test_hash_session_id(self):
         """Test session ID hashing"""
         session_id = "test_session_123"
         hashed = self.security_manager.hash_session_id(session_id)
 
-        self.assertNotEqual(hashed, session_id)
-        self.assertIsInstance(hashed, str)
-        self.assertEqual(len(hashed), 64)  # SHA256 hash length
+        assert hashed != session_id
+        assert isinstance(hashed, str)
+        assert len(hashed) == 64  # SHA256 hash length
 
     @patch("jwt.decode")
     def test_verify_jwt_token_valid(self, mock_jwt_decode):
@@ -158,14 +155,14 @@ class TestSecurityManager(unittest.TestCase):
         token = "valid.jwt.token"
         result = self.security_manager.verify_jwt_token(token)
 
-        self.assertEqual(result["user_id"], "test_user")
+        assert result["user_id"] == "test_user"
         mock_jwt_decode.assert_called_once()
 
     @patch("jwt.decode")
     def test_verify_jwt_token_invalid(self, mock_jwt_decode):
         """Test JWT token verification with invalid token"""
-        from werkzeug.exceptions import Unauthorized
         import jwt
+        from werkzeug.exceptions import Unauthorized
 
         mock_jwt_decode.side_effect = jwt.InvalidTokenError("Invalid token")
 
@@ -202,14 +199,14 @@ class TestAuditLogger(unittest.TestCase):
         )
 
         # Verify log file was created and contains entry
-        self.assertTrue(os.path.exists(self.audit_logger.audit_file))
+        assert os.path.exists(self.audit_logger.audit_file)
 
-        with open(self.audit_logger.audit_file, "r") as f:
+        with open(self.audit_logger.audit_file) as f:
             log_entry = json.loads(f.read().strip())
 
-        self.assertEqual(log_entry["event_type"], "analysis_started")
-        self.assertEqual(log_entry["user_id"], "test_user")
-        self.assertEqual(log_entry["details"]["analysis_type"], "comprehensive")
+        assert log_entry["event_type"] == "analysis_started"
+        assert log_entry["user_id"] == "test_user"
+        assert log_entry["details"]["analysis_type"] == "comprehensive"
 
     @pytest.mark.asyncio
     async def test_log_event_sensitive(self):
@@ -222,11 +219,11 @@ class TestAuditLogger(unittest.TestCase):
             sensitive_data=True,
         )
 
-        with open(self.audit_logger.audit_file, "r") as f:
+        with open(self.audit_logger.audit_file) as f:
             log_entry = json.loads(f.read().strip())
 
-        self.assertEqual(log_entry["details"], "ENCRYPTED")
-        self.assertEqual(log_entry["encrypted_details"], "encrypted_data")
+        assert log_entry["details"] == "ENCRYPTED"
+        assert log_entry["encrypted_details"] == "encrypted_data"
         self.security_manager.encrypt_data.assert_called_once()
 
 
@@ -275,57 +272,56 @@ class TestBiasDetectionService(unittest.TestCase):
         # Test balanced distribution (high entropy)
         balanced_values = [25, 25, 25, 25]
         entropy = self.service._calculate_entropy(balanced_values)
-        self.assertGreater(entropy, 1.3)  # Should be close to log(4) ≈ 1.386
+        assert entropy > 1.3  # Should be close to log(4) ≈ 1.386
 
         # Test unbalanced distribution (low entropy)
         unbalanced_values = [90, 5, 3, 2]
         entropy = self.service._calculate_entropy(unbalanced_values)
-        self.assertLess(entropy, 1.0)
+        assert entropy < 1.0
 
         # Test empty values
         empty_values = []
         entropy = self.service._calculate_entropy(empty_values)
-        self.assertEqual(entropy, 0.0)
+        assert entropy == 0.0
 
     def test_demographic_representation_analysis(self):
         """Test demographic representation analysis"""
         result = self.service._analyze_demographic_representation(self.test_session_data)
 
-        self.assertIn("bias_score", result)
-        self.assertIn("representation_score", result)
-        self.assertIn("gender_entropy", result)
-        self.assertIn("age_entropy", result)
-        self.assertIn("ethnicity_entropy", result)
-        self.assertIn("distributions", result)
+        assert "bias_score" in result
+        assert "representation_score" in result
+        assert "gender_entropy" in result
+        assert "age_entropy" in result
+        assert "ethnicity_entropy" in result
+        assert "distributions" in result
 
         # Bias score should be between 0 and 1
-        self.assertGreaterEqual(result["bias_score"], 0.0)
-        self.assertLessEqual(result["bias_score"], 1.0)
+        assert result["bias_score"] >= 0.0
+        assert result["bias_score"] <= 1.0
 
     def test_extract_text_content(self):
         """Test text content extraction from session data"""
         text_content = self.service._extract_text_content(self.test_session_data)
 
-        self.assertIn("How are you feeling today?", text_content)
-        self.assertIn("Can you tell me more about that?", text_content)
-        self.assertIn("I feel anxious about my job", text_content)
-        self.assertIn("The workload is overwhelming", text_content)
-        self.assertIn("Patient expressing anxiety", text_content)
+        assert "How are you feeling today?" in text_content
+        assert "Can you tell me more about that?" in text_content
+        assert "I feel anxious about my job" in text_content
+        assert "The workload is overwhelming" in text_content
+        assert "Patient expressing anxiety" in text_content
 
     def test_detect_gender_bias(self):
         """Test gender bias detection in text"""
         # Mock spaCy doc for testing
-        from unittest.mock import Mock
 
         # Balanced text
         balanced_tokens = [Mock(text="he"), Mock(text="she"), Mock(text="him"), Mock(text="her")]
         bias_score = self.service._detect_gender_bias(balanced_tokens)
-        self.assertEqual(bias_score, 0.0)  # Perfectly balanced
+        assert bias_score == 0.0  # Perfectly balanced
 
         # Unbalanced text
         unbalanced_tokens = [Mock(text="he"), Mock(text="him"), Mock(text="his")]
         bias_score = self.service._detect_gender_bias(unbalanced_tokens)
-        self.assertEqual(bias_score, 1.0)  # Completely unbalanced
+        assert bias_score == 1.0  # Completely unbalanced
 
     def test_calculate_overall_bias_score(self):
         """Test overall bias score calculation"""
@@ -345,10 +341,10 @@ class TestBiasDetectionService(unittest.TestCase):
     def test_determine_alert_level(self):
         """Test alert level determination"""
         # Test different bias score ranges
-        self.assertEqual(self.service._determine_alert_level(0.1), "low")
-        self.assertEqual(self.service._determine_alert_level(0.4), "warning")
-        self.assertEqual(self.service._determine_alert_level(0.7), "high")
-        self.assertEqual(self.service._determine_alert_level(0.9), "critical")
+        assert self.service._determine_alert_level(0.1) == "low"
+        assert self.service._determine_alert_level(0.4) == "warning"
+        assert self.service._determine_alert_level(0.7) == "high"
+        assert self.service._determine_alert_level(0.9) == "critical"
 
     def test_calculate_confidence(self):
         """Test confidence calculation"""
@@ -358,7 +354,7 @@ class TestBiasDetectionService(unittest.TestCase):
             {"layer": "model_level", "bias_score": 0.5},
         ]
         confidence = self.service._calculate_confidence(successful_results)
-        self.assertEqual(confidence, 0.8)
+        assert confidence == 0.8
 
         # Some layers with errors
         mixed_results = [
@@ -366,7 +362,7 @@ class TestBiasDetectionService(unittest.TestCase):
             {"layer": "model_level", "error": "Failed to analyze"},
         ]
         confidence = self.service._calculate_confidence(mixed_results)
-        self.assertEqual(confidence, 0.5)
+        assert confidence == 0.5
 
     def test_generate_recommendations(self):
         """Test recommendation generation"""
@@ -378,11 +374,11 @@ class TestBiasDetectionService(unittest.TestCase):
 
         recommendations = self.service._generate_recommendations(high_bias_results)
 
-        self.assertIn("Fix preprocessing", recommendations)
-        self.assertIn("Retrain model", recommendations)
+        assert "Fix preprocessing" in recommendations
+        assert "Retrain model" in recommendations
         # Should include critical-level recommendations
         critical_recs = [r for r in recommendations if "CRITICAL" in r]
-        self.assertGreater(len(critical_recs), 0)
+        assert len(critical_recs) > 0
 
     @pytest.mark.asyncio
     async def test_analyze_session_full(self):
@@ -392,46 +388,46 @@ class TestBiasDetectionService(unittest.TestCase):
             result = await self.service.analyze_session(self.test_session_data, "test_user")
 
             # Verify result structure
-            self.assertIn("session_id", result)
-            self.assertIn("overall_bias_score", result)
-            self.assertIn("layer_results", result)
-            self.assertIn("recommendations", result)
-            self.assertIn("alert_level", result)
-            self.assertIn("confidence", result)
-            self.assertIn("processing_time_seconds", result)
+            assert "session_id" in result
+            assert "overall_bias_score" in result
+            assert "layer_results" in result
+            assert "recommendations" in result
+            assert "alert_level" in result
+            assert "confidence" in result
+            assert "processing_time_seconds" in result
 
             # Verify layer results structure
             layer_results = result["layer_results"]
-            self.assertIn("preprocessing", layer_results)
-            self.assertIn("model_level", layer_results)
-            self.assertIn("interactive", layer_results)
-            self.assertIn("evaluation", layer_results)
+            assert "preprocessing" in layer_results
+            assert "model_level" in layer_results
+            assert "interactive" in layer_results
+            assert "evaluation" in layer_results
 
             # Verify bias score is within valid range
-            self.assertGreaterEqual(result["overall_bias_score"], 0.0)
-            self.assertLessEqual(result["overall_bias_score"], 1.0)
+            assert result["overall_bias_score"] >= 0.0
+            assert result["overall_bias_score"] <= 1.0
 
     def test_response_consistency_analysis(self):
         """Test response consistency analysis"""
         result = self.service._analyze_response_consistency(self.test_session_data)
 
-        self.assertIn("bias_score", result)
-        self.assertIn("response_length_variance", result)
-        self.assertIn("response_time_variance", result)
-        self.assertIn("total_responses", result)
+        assert "bias_score" in result
+        assert "response_length_variance" in result
+        assert "response_time_variance" in result
+        assert "total_responses" in result
 
-        self.assertEqual(result["total_responses"], 2)
+        assert result["total_responses"] == 2
 
     def test_create_synthetic_dataset(self):
         """Test synthetic dataset creation for ML analysis"""
         dataset = self.service._create_synthetic_dataset(self.test_session_data)
 
         if dataset is not None:  # Only test if dataset creation succeeds
-            self.assertIn("df", dataset)
-            self.assertIn("label_names", dataset)
-            self.assertIn("protected_attributes", dataset)
-            self.assertIsInstance(dataset["df"], pd.DataFrame)
-            self.assertGreater(len(dataset["df"]), 0)
+            assert "df" in dataset
+            assert "label_names" in dataset
+            assert "protected_attributes" in dataset
+            assert isinstance(dataset["df"], pd.DataFrame)
+            assert len(dataset["df"]) > 0
 
 
 class TestFlaskEndpoints(unittest.TestCase):
@@ -449,13 +445,13 @@ class TestFlaskEndpoints(unittest.TestCase):
     def test_health_check(self):
         """Test health check endpoint"""
         response = self.client.get("/health")
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         data = response.get_json()
-        self.assertEqual(data["status"], "healthy")
-        self.assertIn("components", data)
-        self.assertIn("timestamp", data)
-        self.assertIn("version", data)
+        assert data["status"] == "healthy"
+        assert "components" in data
+        assert "timestamp" in data
+        assert "version" in data
 
     def test_analyze_endpoint_valid_data(self):
         """Test analyze endpoint with valid data"""
@@ -473,12 +469,12 @@ class TestFlaskEndpoints(unittest.TestCase):
         }
 
         response = self.client.post("/analyze", json=test_data)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         data = response.get_json()
-        self.assertIn("session_id", data)
-        self.assertIn("overall_bias_score", data)
-        self.assertIn("layer_results", data)
+        assert "session_id" in data
+        assert "overall_bias_score" in data
+        assert "layer_results" in data
 
     def test_analyze_endpoint_missing_required_fields(self):
         """Test analyze endpoint with missing required fields"""
@@ -488,64 +484,64 @@ class TestFlaskEndpoints(unittest.TestCase):
         }
 
         response = self.client.post("/analyze", json=invalid_data)
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         data = response.get_json()
-        self.assertIn("error", data)
-        self.assertIn("Missing required field", data["error"])
+        assert "error" in data
+        assert "Missing required field" in data["error"]
 
     def test_analyze_endpoint_no_data(self):
         """Test analyze endpoint with no data"""
         response = self.client.post("/analyze")
-        self.assertEqual(response.status_code, 400)
+        assert response.status_code == 400
 
         data = response.get_json()
-        self.assertIn("error", data)
-        self.assertEqual(data["error"], "No data provided")
+        assert "error" in data
+        assert data["error"] == "No data provided"
 
     def test_dashboard_endpoint(self):
         """Test dashboard data endpoint"""
         response = self.client.get("/dashboard")
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         data = response.get_json()
-        self.assertIn("summary", data)
-        self.assertIn("trends", data)
-        self.assertIn("demographics", data)
+        assert "summary" in data
+        assert "trends" in data
+        assert "demographics" in data
 
     def test_export_endpoint_json(self):
         """Test export endpoint with JSON format"""
         export_data = {"format": "json", "date_range": {"start": "2024-01-01", "end": "2024-01-31"}}
 
         response = self.client.post("/export", json=export_data)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         data = response.get_json()
-        self.assertIn("sessions", data)
-        self.assertIn("metadata", data)
+        assert "sessions" in data
+        assert "metadata" in data
 
     def test_export_endpoint_csv(self):
         """Test export endpoint with CSV format"""
         export_data = {"format": "csv", "date_range": {"start": "2024-01-01", "end": "2024-01-31"}}
 
         response = self.client.post("/export", json=export_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.mimetype, "text/csv")
+        assert response.status_code == 200
+        assert response.mimetype == "text/csv"
 
     def test_404_endpoint(self):
         """Test 404 error handling"""
         response = self.client.get("/nonexistent")
-        self.assertEqual(response.status_code, 404)
+        assert response.status_code == 404
 
         data = response.get_json()
-        self.assertIn("error", data)
-        self.assertEqual(data["error"], "Endpoint not found")
+        assert "error" in data
+        assert data["error"] == "Endpoint not found"
 
 
 # Helper class for async mocking
 class AsyncMock(MagicMock):
     async def __call__(self, *args, **kwargs):
-        return super(AsyncMock, self).__call__(*args, **kwargs)
+        return super().__call__(*args, **kwargs)
 
 
 if __name__ == "__main__":

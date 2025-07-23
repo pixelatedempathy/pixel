@@ -7,9 +7,9 @@ import type { CollectionEntry } from 'astro:content'
 
 // Define a type for API endpoints context
 interface APIEndpointContext {
-  request: Request;
-  params: Record<string, string>;
-  url: URL;
+  request: Request
+  params: Record<string, string>
+  url: URL
 }
 
 const ALLOWED_CATEGORIES = ['CBT', 'Mindfulness', 'DBT', 'ACT', 'EMDR', 'Other']

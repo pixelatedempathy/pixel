@@ -120,18 +120,27 @@ export function validateConfig(config: Partial<BiasDetectionConfig>): void {
 
   // Validate threshold values
   if (config.thresholds) {
-    const {thresholds} = config
+    const { thresholds } = config
 
-    if (thresholds.warningLevel !== undefined && (thresholds.warningLevel < 0 || thresholds.warningLevel > 1)) {
-          errors.push('thresholds.warningLevel must be between 0.0 and 1.0')
+    if (
+      thresholds.warningLevel !== undefined &&
+      (thresholds.warningLevel < 0 || thresholds.warningLevel > 1)
+    ) {
+      errors.push('thresholds.warningLevel must be between 0.0 and 1.0')
     }
 
-    if (thresholds.highLevel !== undefined && (thresholds.highLevel < 0 || thresholds.highLevel > 1)) {
-          errors.push('thresholds.highLevel must be between 0.0 and 1.0')
+    if (
+      thresholds.highLevel !== undefined &&
+      (thresholds.highLevel < 0 || thresholds.highLevel > 1)
+    ) {
+      errors.push('thresholds.highLevel must be between 0.0 and 1.0')
     }
 
-    if (thresholds.criticalLevel !== undefined && (thresholds.criticalLevel < 0 || thresholds.criticalLevel > 1)) {
-          errors.push('thresholds.criticalLevel must be between 0.0 and 1.0')
+    if (
+      thresholds.criticalLevel !== undefined &&
+      (thresholds.criticalLevel < 0 || thresholds.criticalLevel > 1)
+    ) {
+      errors.push('thresholds.criticalLevel must be between 0.0 and 1.0')
     }
 
     // Validate threshold ordering
@@ -189,11 +198,13 @@ export function validateConfig(config: Partial<BiasDetectionConfig>): void {
     }
   }
 
-  if (config.pythonServiceTimeout !== undefined && (config.pythonServiceTimeout < 1000 ||
-        config.pythonServiceTimeout > 300000)) {
-        errors.push(
-          `pythonServiceTimeout must be between 1000ms and 300000ms, got ${config.pythonServiceTimeout}ms`,
-        )
+  if (
+    config.pythonServiceTimeout !== undefined &&
+    (config.pythonServiceTimeout < 1000 || config.pythonServiceTimeout > 300000)
+  ) {
+    errors.push(
+      `pythonServiceTimeout must be between 1000ms and 300000ms, got ${config.pythonServiceTimeout}ms`,
+    )
   }
 
   // Validate evaluation metrics

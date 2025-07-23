@@ -166,7 +166,12 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
     } finally {
       setIsReconnecting(false)
     }
-  }, [sessionId, initializePeerConnection, setupMediaStream, createAndSendOffer])
+  }, [
+    sessionId,
+    initializePeerConnection,
+    setupMediaStream,
+    createAndSendOffer,
+  ])
 
   // Create and send an offer to the peer
   const createAndSendOffer = useCallback(async () => {
@@ -186,53 +191,56 @@ const VideoDisplay: React.FC<VideoDisplayProps> = ({
   }, [sessionId, userId])
 
   // Handle incoming signaling messages
-  const handleSignalingMessage = useCallback(async (message: SignalingMessage) => {
-    const peerConnection = peerConnectionRef.current
-    if (!peerConnection) {
-      return
-    }
-
-    try {
-      switch (message.type) {
-        case 'offer':
-          if (message.data) {
-            await peerConnection.setRemoteDescription(
-              new RTCSessionDescription(
-                message.data as RTCSessionDescriptionInit,
-              ),
-            )
-            const answer = await peerConnection.createAnswer()
-            await peerConnection.setLocalDescription(answer)
-            await signalingService.sendAnswer(sessionId, userId, answer)
-          }
-          break
-
-        case 'answer':
-          if (message.data) {
-            await peerConnection.setRemoteDescription(
-              new RTCSessionDescription(
-                message.data as RTCSessionDescriptionInit,
-              ),
-            )
-          }
-          break
-
-        case 'ice-candidate':
-          if (message.data) {
-            await peerConnection.addIceCandidate(
-              new RTCIceCandidate(message.data as RTCIceCandidateInit),
-            )
-          }
-          break
+  const handleSignalingMessage = useCallback(
+    async (message: SignalingMessage) => {
+      const peerConnection = peerConnectionRef.current
+      if (!peerConnection) {
+        return
       }
-    } catch (error) {
-      logger.error('Error handling signaling message', {
-        error,
-        sessionId,
-        messageType: message.type,
-      })
-    }
-  }, [sessionId, userId])
+
+      try {
+        switch (message.type) {
+          case 'offer':
+            if (message.data) {
+              await peerConnection.setRemoteDescription(
+                new RTCSessionDescription(
+                  message.data as RTCSessionDescriptionInit,
+                ),
+              )
+              const answer = await peerConnection.createAnswer()
+              await peerConnection.setLocalDescription(answer)
+              await signalingService.sendAnswer(sessionId, userId, answer)
+            }
+            break
+
+          case 'answer':
+            if (message.data) {
+              await peerConnection.setRemoteDescription(
+                new RTCSessionDescription(
+                  message.data as RTCSessionDescriptionInit,
+                ),
+              )
+            }
+            break
+
+          case 'ice-candidate':
+            if (message.data) {
+              await peerConnection.addIceCandidate(
+                new RTCIceCandidate(message.data as RTCIceCandidateInit),
+              )
+            }
+            break
+        }
+      } catch (error) {
+        logger.error('Error handling signaling message', {
+          error,
+          sessionId,
+          messageType: message.type,
+        })
+      }
+    },
+    [sessionId, userId],
+  )
 
   // Initialize connection when component mounts or when connection status changes
   useEffect(() => {

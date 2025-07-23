@@ -117,7 +117,7 @@ export interface IRedisService {
   zpopmin: (key: string) => Promise<RedisZSetMember[]>
   /** Get sorted set cardinality */
   zcard: (key: string) => Promise<number>
-  
+
   // List operations
   /** Push to the head of a list */
   lpush: (key: string, ...elements: string[]) => Promise<number>

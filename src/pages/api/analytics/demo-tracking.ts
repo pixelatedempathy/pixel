@@ -15,18 +15,27 @@ const analyticsData: EnrichedAnalyticsEvent[] = []
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const eventData = await request.json() as DemoAnalyticsEvent
+    const eventData = (await request.json()) as DemoAnalyticsEvent
 
     // Validate required fields
     const validationErrors: AnalyticsError['details'] = []
     if (!eventData.event) {
-      validationErrors.push({ field: 'event', message: 'Event name is required' })
+      validationErrors.push({
+        field: 'event',
+        message: 'Event name is required',
+      })
     }
     if (!eventData.session_id) {
-      validationErrors.push({ field: 'session_id', message: 'Session ID is required' })
+      validationErrors.push({
+        field: 'session_id',
+        message: 'Session ID is required',
+      })
     }
     if (!eventData.ab_variant) {
-      validationErrors.push({ field: 'ab_variant', message: 'A/B variant is required' })
+      validationErrors.push({
+        field: 'ab_variant',
+        message: 'A/B variant is required',
+      })
     }
 
     if (validationErrors.length > 0) {
@@ -100,7 +109,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 export const GET: APIRoute = async ({ url }) => {
   try {
-    const {searchParams} = new URL(url)
+    const { searchParams } = new URL(url)
     const sessionId = searchParams.get('session_id')
     const abVariant = searchParams.get('ab_variant')
     const event = searchParams.get('event')
@@ -109,11 +118,15 @@ export const GET: APIRoute = async ({ url }) => {
     let filteredData = analyticsData
 
     if (sessionId) {
-      filteredData = filteredData.filter((item) => item.session_id === sessionId)
+      filteredData = filteredData.filter(
+        (item) => item.session_id === sessionId,
+      )
     }
 
     if (abVariant) {
-      filteredData = filteredData.filter((item) => item.ab_variant === abVariant)
+      filteredData = filteredData.filter(
+        (item) => item.ab_variant === abVariant,
+      )
     }
 
     if (event) {
@@ -152,10 +165,12 @@ export const GET: APIRoute = async ({ url }) => {
   }
 }
 
-async function sendToGoogleAnalytics(event: EnrichedAnalyticsEvent): Promise<void> {
+async function sendToGoogleAnalytics(
+  event: EnrichedAnalyticsEvent,
+): Promise<void> {
   // Google Analytics 4 Measurement Protocol
   const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID
-  const {GA_API_SECRET} = import.meta.env
+  const { GA_API_SECRET } = import.meta.env
 
   if (!GA_MEASUREMENT_ID || !GA_API_SECRET) {
     console.warn('Google Analytics credentials not configured')
@@ -209,7 +224,7 @@ async function sendToGoogleAnalytics(event: EnrichedAnalyticsEvent): Promise<voi
 }
 
 async function sendToMixpanel(event: EnrichedAnalyticsEvent): Promise<void> {
-  const {MIXPANEL_TOKEN} = import.meta.env
+  const { MIXPANEL_TOKEN } = import.meta.env
 
   if (!MIXPANEL_TOKEN) {
     console.warn('Mixpanel token not configured')
@@ -245,9 +260,11 @@ async function sendToMixpanel(event: EnrichedAnalyticsEvent): Promise<void> {
   }
 }
 
-async function sendToCustomAnalytics(event: EnrichedAnalyticsEvent): Promise<void> {
+async function sendToCustomAnalytics(
+  event: EnrichedAnalyticsEvent,
+): Promise<void> {
   // Send to your custom analytics service
-  const {CUSTOM_ANALYTICS_ENDPOINT, CUSTOM_ANALYTICS_TOKEN} = import.meta.env
+  const { CUSTOM_ANALYTICS_ENDPOINT, CUSTOM_ANALYTICS_TOKEN } = import.meta.env
 
   if (!CUSTOM_ANALYTICS_ENDPOINT || !CUSTOM_ANALYTICS_TOKEN) {
     return
@@ -271,7 +288,9 @@ async function sendToCustomAnalytics(event: EnrichedAnalyticsEvent): Promise<voi
   }
 }
 
-function generateAnalyticsSummary(events: EnrichedAnalyticsEvent[]): AnalyticsSummary {
+function generateAnalyticsSummary(
+  events: EnrichedAnalyticsEvent[],
+): AnalyticsSummary {
   const summary: AnalyticsSummary = {
     total_events: events.length,
     unique_sessions: new Set(events.map((e) => e.session_id)).size,

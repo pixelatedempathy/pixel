@@ -5,35 +5,35 @@ import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 const logger = createBuildSafeLogger('BiasExportAPI')
 
 interface CsvSession {
-  sessionId: string;
-  timestamp: string;
-  biasScore: number;
-  alertLevel: string;
+  sessionId: string
+  timestamp: string
+  biasScore: number
+  alertLevel: string
   participantDemographics?: {
-    gender?: string;
-    age?: number;
-    ethnicity?: string;
-  };
-  scenario?: string;
+    gender?: string
+    age?: number
+    ethnicity?: string
+  }
+  scenario?: string
 }
 
 interface CsvAlert {
-  id: string;
-  sessionId: string;
-  level: string;
-  message: string;
-  timestamp: string;
-  biasType: string;
-  confidence: number;
-  affectedDemographics?: string[];
-  recommendations?: string[];
+  id: string
+  sessionId: string
+  level: string
+  message: string
+  timestamp: string
+  biasType: string
+  confidence: number
+  affectedDemographics?: string[]
+  recommendations?: string[]
 }
 
 interface DemographicGroup {
-  group: string;
-  count: number;
-  percentage: number;
-  averageBiasScore: number;
+  group: string
+  count: number
+  percentage: number
+  averageBiasScore: number
 }
 
 export const GET: APIRoute = async ({ request }) => {
@@ -272,10 +272,10 @@ function exportAsPDF(data: unknown): Response {
       ? (data.alerts as CsvAlert[])
       : []
   interface DemographicsData {
-    breakdown: DemographicGroup[];
-    totalParticipants?: number;
-    timeRange?: string;
-    lastUpdated?: string;
+    breakdown: DemographicGroup[]
+    totalParticipants?: number
+    timeRange?: string
+    lastUpdated?: string
   }
 
   const demographics =

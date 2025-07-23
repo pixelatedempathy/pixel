@@ -29,7 +29,7 @@ function getDirectorySize(dirPath) {
       `du -sb "${dirPath}" 2>/dev/null || echo "0\t${dirPath}"`,
       { encoding: 'utf8' },
     )
-    return parseInt(result.split('\t')[0]);
+    return parseInt(result.split('\t')[0])
   } catch (error) {
     return 0
   }

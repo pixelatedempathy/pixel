@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { getBaseUrl } from '../utils/env'
 
 // Check if server is running before running tests
 async function isServerRunning(baseUrl: string): Promise<boolean> {
@@ -22,7 +23,7 @@ async function isServerRunning(baseUrl: string): Promise<boolean> {
 test.describe('Health Check Monitoring', () => {
   // Test the main page loads successfully
   test('Homepage loads correctly', async ({ page }) => {
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4321'
+    const baseUrl = getBaseUrl()
 
     // Skip test if server is not running
     const serverRunning = await isServerRunning(baseUrl)
@@ -65,7 +66,7 @@ test.describe('Health Check Monitoring', () => {
 
   // Test API health endpoint
   test('API health endpoint returns 200', async ({ request }) => {
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4321'
+    const baseUrl = getBaseUrl()
 
     // Skip test if server is not running
     const serverRunning = await isServerRunning(baseUrl)
@@ -112,7 +113,7 @@ test.describe('Health Check Monitoring', () => {
 
   // Test authentication page loads
   test('Login page loads correctly', async ({ page }) => {
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4321'
+    const baseUrl = getBaseUrl()
 
     // Skip test if server is not running
     const serverRunning = await isServerRunning(baseUrl)
@@ -197,7 +198,7 @@ test.describe('Health Check Monitoring', () => {
 
   // Test critical path navigation
   test('Critical navigation paths work', async ({ page }) => {
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4321'
+    const baseUrl = getBaseUrl()
 
     // Skip test if server is not running
     const serverRunning = await isServerRunning(baseUrl)
@@ -243,17 +244,17 @@ test.describe('Health Check Monitoring', () => {
       await page.goto(baseUrl)
 
       // Use a full URL if the href is relative
-      const fullUrl = mainNavLinks[i].href.startsWith('/')
-        ? `${baseUrl}${mainNavLinks[i].href}`
-        : mainNavLinks[i].href
+      const fullUrl = mainNavLinks[i]?.href.startsWith('/')
+        ? `${baseUrl}${mainNavLinks[i]?.href}`
+        : mainNavLinks[i]?.href
 
-      console.log(`Testing navigation to ${fullUrl} (${mainNavLinks[i].text})`)
+      console.log(`Testing navigation to ${fullUrl} (${mainNavLinks[i]?.text})`)
 
       try {
         await page.goto(fullUrl, { timeout: 10000 })
 
         // Success if we can navigate to the page
-        expect(page.url()).toContain(mainNavLinks[i].href)
+        expect(page.url()).toContain(mainNavLinks[i]?.href)
       } catch (_error) {
         console.error(`Failed to navigate to ${fullUrl}:`, _error)
       }
@@ -262,7 +263,7 @@ test.describe('Health Check Monitoring', () => {
 
   // Test that essential resources load
   test('Essential resources load correctly', async ({ page }) => {
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4321'
+    const baseUrl = getBaseUrl()
 
     // Skip test if server is not running
     const serverRunning = await isServerRunning(baseUrl)

@@ -37,14 +37,14 @@ check_python() {
 
 	if command -v python3 &>/dev/null; then
 		PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
-		PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d. -f1)
-		PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
+		PYTHON_MAJOR=$(echo "${PYTHON_VERSION}" | cut -d. -f1)
+		PYTHON_MINOR=$(echo "${PYTHON_VERSION}" | cut -d. -f2)
 
-		if [ "$PYTHON_MAJOR" -ge 3 ] && [ "$PYTHON_MINOR" -ge 8 ]; then
-			print_success "Python $PYTHON_VERSION found"
+		if [[ ${PYTHON_MAJOR} -ge 3 ]] && [[ ${PYTHON_MINOR} -ge 8 ]]; then
+			print_success "Python ${PYTHON_VERSION} found"
 			PYTHON_CMD="python3"
 		else
-			print_error "Python 3.8+ required, found $PYTHON_VERSION"
+			print_error "Python 3.8+ required, found ${PYTHON_VERSION}"
 			exit 1
 		fi
 	else
@@ -56,7 +56,7 @@ check_python() {
 # Create virtual environment
 create_venv() {
 	print_status "Creating Python virtual environment with uv..."
-	uv venv --python $PYTHON_CMD
+	uv venv --python "${PYTHON_CMD}"
 	print_success "Virtual environment created in .venv"
 
 	# Activate virtual environment
@@ -69,7 +69,7 @@ install_core_dependencies() {
 	print_status "Installing core Python dependencies with uv..."
 
 	# Install requirements
-	if [ -f "requirements.txt" ]; then
+	if [[ -f "requirements.txt" ]]; then
 		uv pip install -r requirements.txt
 		print_success "Core dependencies installed"
 	else
@@ -184,7 +184,7 @@ configure_environment() {
 	print_status "Configuring environment..."
 
 	# Create .env template if it doesn't exist
-	if [ ! -f ".env.bias-detection" ]; then
+	if [[ ! -f ".env.bias-detection" ]]; then
 		cat >.env.bias-detection <<EOF
 # Bias Detection Engine Configuration
 BIAS_DETECTION_SERVICE_PORT=8080
@@ -287,7 +287,7 @@ except Exception as e:
 print('\n🎉 All tests passed!')
 "
 
-	if [ $? -eq 0 ]; then
+	if [[ $? -eq 0 ]]; then
 		print_success "Basic tests passed"
 	else
 		print_error "Some tests failed"

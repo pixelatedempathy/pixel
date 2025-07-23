@@ -123,7 +123,7 @@ export function AdvancedFilteringComponent({
     onChange({
       ...options,
       [category]: {
-        ...(options[category] as Record<string, unknown> || {}),
+        ...((options[category] as Record<string, unknown>) || {}),
         [key]: value,
       },
     })
@@ -139,9 +139,11 @@ export function AdvancedFilteringComponent({
     onChange({
       ...options,
       [category]: {
-        ...(options[category] as Record<string, unknown> || {}),
+        ...((options[category] as Record<string, unknown>) || {}),
         [parentKey]: {
-          ...((options[category] as Record<string, unknown>)?.[parentKey] as Record<string, unknown> || {}),
+          ...(((options[category] as Record<string, unknown>)?.[
+            parentKey
+          ] as Record<string, unknown>) || {}),
           [key]: value,
         },
       },
@@ -154,7 +156,8 @@ export function AdvancedFilteringComponent({
     key: string,
     value: string,
   ) => {
-    const currentArray = ((options[category] as Record<string, unknown>)?.[key] as string[]) || []
+    const currentArray =
+      ((options[category] as Record<string, unknown>)?.[key] as string[]) || []
     const newArray = currentArray.includes(value)
       ? currentArray.filter((item) => item !== value)
       : [...currentArray, value]
@@ -365,7 +368,8 @@ export function AdvancedFilteringComponent({
                               [
                                 min,
                                 options.emotions?.dimensionalRanges?.valence
-                                  ? options.emotions.dimensionalRanges.valence[1]
+                                  ? options.emotions.dimensionalRanges
+                                      .valence[1]
                                   : 1,
                               ],
                             )
@@ -390,7 +394,8 @@ export function AdvancedFilteringComponent({
                               'valence',
                               [
                                 options.emotions?.dimensionalRanges?.valence
-                                  ? options.emotions.dimensionalRanges.valence[0]
+                                  ? options.emotions.dimensionalRanges
+                                      .valence[0]
                                   : -1,
                                 max,
                               ],
@@ -432,7 +437,8 @@ export function AdvancedFilteringComponent({
                               [
                                 min,
                                 options.emotions?.dimensionalRanges?.arousal
-                                  ? options.emotions.dimensionalRanges.arousal[1]
+                                  ? options.emotions.dimensionalRanges
+                                      .arousal[1]
                                   : 1,
                               ],
                             )
@@ -457,7 +463,8 @@ export function AdvancedFilteringComponent({
                               'arousal',
                               [
                                 options.emotions?.dimensionalRanges?.arousal
-                                  ? options.emotions.dimensionalRanges.arousal[0]
+                                  ? options.emotions.dimensionalRanges
+                                      .arousal[0]
                                   : -1,
                                 max,
                               ],
@@ -501,7 +508,8 @@ export function AdvancedFilteringComponent({
                               [
                                 min,
                                 options.emotions?.dimensionalRanges?.dominance
-                                  ? options.emotions.dimensionalRanges.dominance[1]
+                                  ? options.emotions.dimensionalRanges
+                                      .dominance[1]
                                   : 1,
                               ],
                             )
@@ -526,7 +534,8 @@ export function AdvancedFilteringComponent({
                               'dominance',
                               [
                                 options.emotions?.dimensionalRanges?.dominance
-                                  ? options.emotions.dimensionalRanges.dominance[0]
+                                  ? options.emotions.dimensionalRanges
+                                      .dominance[0]
                                   : -1,
                                 max,
                               ],
@@ -778,22 +787,22 @@ export function AdvancedFilteringComponent({
               </div>
 
               <div className="flex border-b mb-4">
-                {(['time', 'emotions', 'patterns', 'visualization'] as const).map(
-                  (tab) => (
-                    <button
-                      key={tab}
-                      className={cn(
-                        'py-2 px-3 text-sm capitalize',
-                        activeTab === tab
-                          ? 'border-b-2 border-primary font-medium'
-                          : 'text-gray-500 hover:text-gray-700',
-                      )}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {tab}
-                    </button>
-                  ),
-                )}
+                {(
+                  ['time', 'emotions', 'patterns', 'visualization'] as const
+                ).map((tab) => (
+                  <button
+                    key={tab}
+                    className={cn(
+                      'py-2 px-3 text-sm capitalize',
+                      activeTab === tab
+                        ? 'border-b-2 border-primary font-medium'
+                        : 'text-gray-500 hover:text-gray-700',
+                    )}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
 
               <div className="max-h-96 overflow-y-auto">

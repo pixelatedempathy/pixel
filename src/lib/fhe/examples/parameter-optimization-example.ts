@@ -51,12 +51,15 @@ function compareOptimizationStrategies(): void {
     OptimizationStrategy.MemoryEfficient,
   ]
 
-  const results: Record<string, {
-    polyModulusDegree: number;
-    coeffModulusBitsCount: number;
-    coeffModulusBitsSum: number;
-    plainModulus?: number;
-  }> = {}
+  const results: Record<
+    string,
+    {
+      polyModulusDegree: number
+      coeffModulusBitsCount: number
+      coeffModulusBitsSum: number
+      plainModulus?: number
+    }
+  > = {}
 
   for (const strategy of strategies) {
     // Set the strategy
@@ -101,18 +104,21 @@ function compareOperationComplexity(): void {
     FHEOperation.CATEGORIZE, // Very complex
   ]
 
-  const results: Record<string, {
-    bfv: {
-      polyModulusDegree: number;
-      coeffModulusBitsCount: number;
-      plainModulus?: number;
-    };
-    ckks: {
-      polyModulusDegree: number;
-      coeffModulusBitsCount: number;
-      scale?: number;
-    };
-  }> = {}
+  const results: Record<
+    string,
+    {
+      bfv: {
+        polyModulusDegree: number
+        coeffModulusBitsCount: number
+        plainModulus?: number
+      }
+      ckks: {
+        polyModulusDegree: number
+        coeffModulusBitsCount: number
+        scale?: number
+      }
+    }
+  > = {}
 
   for (const operation of operations) {
     // Get optimized parameters for BFV scheme

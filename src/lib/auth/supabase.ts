@@ -1,13 +1,14 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-
 import { Resend } from 'resend'
+import { getEnv, isEnvTrue } from '@/lib/utils/env'
 
-// Initialize logger with proper typing
-const logger = getLogger({ name: 'supabase-auth' } as LoggerOptions)
+// Initialize logger (need to fix the logger import and type)
+// TODO: Fix logger import
+const logger = console // Temporary replacement until logger is properly imported
 
 // Initialize Supabase client with proper error handling
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
-const supabaseKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY
+const supabaseUrl = import.meta.env['PUBLIC_SUPABASE_URL']
+const supabaseKey = import.meta.env['SUPABASE_SERVICE_ROLE_KEY']
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Missing required Supabase configuration')
@@ -22,7 +23,7 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   },
 })
 
-const resendApiKey = process.env.RESEND_API_KEY
+const resendApiKey = getEnv('RESEND_API_KEY')
 if (!resendApiKey) {
   throw new Error('Missing required Resend API key')
 }
@@ -39,12 +40,12 @@ interface SecurityConfig {
 }
 
 const SECURITY_CONFIG: SecurityConfig = {
-  maxLoginAttempts: Number(import.meta.env.SECURITY_MAX_LOGIN_ATTEMPTS) || 5,
+  maxLoginAttempts: Number(import.meta.env['SECURITY_MAX_LOGIN_ATTEMPTS']) || 5,
   lockoutDuration:
-    Number(import.meta.env.SECURITY_ACCOUNT_LOCKOUT_DURATION) || 1800,
+    Number(import.meta.env['SECURITY_ACCOUNT_LOCKOUT_DURATION']) || 1800,
   enableBruteForceProtection:
-    import.meta.env.SECURITY_ENABLE_BRUTE_FORCE_PROTECTION === 'true',
-  enableAlerts: import.meta.env.SECURITY_ENABLE_ALERTS === 'true',
+    isEnvTrue('SECURITY_ENABLE_BRUTE_FORCE_PROTECTION'),
+  enableAlerts: isEnvTrue('SECURITY_ENABLE_ALERTS'),
   defaultSecurityLevel: 'standard',
 }
 

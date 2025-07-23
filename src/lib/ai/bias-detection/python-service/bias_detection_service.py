@@ -21,11 +21,10 @@ import os
 import sys
 import time
 import traceback
-import uuid
-from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime
 from functools import wraps
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import jwt
 
@@ -36,10 +35,8 @@ import pandas as pd
 # Flask and web framework
 from flask import Flask, Response, g, jsonify, request
 from flask_cors import CORS
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from werkzeug.exceptions import BadRequest, InternalServerError, Unauthorized
+from sklearn.preprocessing import LabelEncoder
+from werkzeug.exceptions import Unauthorized
 
 # IBM AIF360
 try:
@@ -179,7 +176,7 @@ class BiasDetectionConfig:
     warning_threshold: float = 0.3
     high_threshold: float = 0.6
     critical_threshold: float = 0.8
-    layer_weights: Optional[Dict[str, float]] = None
+    layer_weights: dict[str, float] | None = None
     enable_hipaa_compliance: bool = True
     enable_audit_logging: bool = True
     enable_encryption: bool = True
@@ -201,14 +198,14 @@ class SessionData:
     """Structured session data for bias analysis"""
 
     session_id: str
-    participant_demographics: Dict[str, Any]
-    training_scenario: Dict[str, Any]
-    content: Dict[str, Any]
-    ai_responses: List[Dict[str, Any]]
-    expected_outcomes: List[Dict[str, Any]]
-    transcripts: List[Dict[str, Any]]
-    metadata: Dict[str, Any]
-    timestamp: Optional[str] = None
+    participant_demographics: dict[str, Any]
+    training_scenario: dict[str, Any]
+    content: dict[str, Any]
+    ai_responses: list[dict[str, Any]]
+    expected_outcomes: list[dict[str, Any]]
+    transcripts: list[dict[str, Any]]
+    metadata: dict[str, Any]
+    timestamp: str | None = None
 
     def __post_init__(self):
         if self.timestamp is None:
@@ -248,7 +245,7 @@ class SecurityManager:
         """Create hash of session ID for audit logging"""
         return hashlib.sha256(session_id.encode()).hexdigest()
 
-    def verify_jwt_token(self, token: str) -> Dict[str, Any]:
+    def verify_jwt_token(self, token: str) -> dict[str, Any]:
         """Verify JWT token"""
         try:
             return jwt.decode(token, app.config["JWT_SECRET_KEY"], algorithms=["HS256"])
@@ -270,7 +267,7 @@ class AuditLogger:
         event_type: str,
         session_id: str,
         user_id: str,
-        details: Dict[str, Any],
+        details: dict[str, Any],
         sensitive_data: bool = False,
     ):
         """Log audit event with encryption for sensitive data"""
@@ -330,7 +327,7 @@ class BiasDetectionService:
         except Exception as e:
             logger.error(f"Failed to initialize components: {e}")
 
-    async def analyze_session(self, session_data: SessionData, user_id: str) -> Dict[str, Any]:
+    async def analyze_session(self, session_data: SessionData, user_id: str) -> dict[str, Any]:
         """Perform comprehensive bias analysis on a therapeutic session"""
         start_time = time.time()
 
@@ -418,7 +415,7 @@ class BiasDetectionService:
             logger.error(f"Bias analysis failed for session {session_data.session_id}: {e}")
             raise
 
-    async def _run_preprocessing_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_preprocessing_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run preprocessing layer bias analysis using AIF360 and demographic analysis"""
         try:
             result = {
@@ -472,7 +469,7 @@ class BiasDetectionService:
                 "recommendations": [],
             }
 
-    async def _run_model_level_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_model_level_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run model-level bias analysis using Fairlearn and interpretability tools"""
         try:
             result = {
@@ -526,7 +523,7 @@ class BiasDetectionService:
                 "recommendations": [],
             }
 
-    async def _run_interactive_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_interactive_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run interactive analysis using What-If Tool concepts and user interaction patterns"""
         try:
             result = {
@@ -578,7 +575,7 @@ class BiasDetectionService:
                 "recommendations": [],
             }
 
-    async def _run_evaluation_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_evaluation_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run evaluation analysis using Hugging Face evaluate and custom metrics"""
         try:
             result = {
@@ -633,7 +630,7 @@ class BiasDetectionService:
 
     # Helper methods for specific toolkit integrations
 
-    async def _run_aif360_preprocessing(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_aif360_preprocessing(self, session_data: SessionData) -> dict[str, Any]:
         """Run AIF360 preprocessing analysis"""
         try:
             if not AIF360_AVAILABLE:
@@ -681,7 +678,7 @@ class BiasDetectionService:
             logger.error(f"AIF360 preprocessing analysis failed: {e}")
             return {"bias_score": 0.0, "error": str(e)}
 
-    async def _run_fairlearn_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_fairlearn_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run Fairlearn analysis"""
         try:
             if not FAIRLEARN_AVAILABLE:
@@ -695,7 +692,7 @@ class BiasDetectionService:
                     "error": "Insufficient data for Fairlearn analysis",
                 }
 
-            X = data["df"].drop(columns=data["label_names"])
+            data["df"].drop(columns=data["label_names"])
             y = data["df"][data["label_names"][0]]
             sensitive_features = data["df"][data["protected_attributes"]]
 
@@ -722,7 +719,7 @@ class BiasDetectionService:
             logger.error(f"Fairlearn analysis failed: {e}")
             return {"bias_score": 0.0, "error": str(e)}
 
-    async def _detect_linguistic_bias(self, text_content: str) -> Dict[str, Any]:
+    async def _detect_linguistic_bias(self, text_content: str) -> dict[str, Any]:
         """Detect linguistic bias in text content"""
         try:
             if not self.nlp or not NLP_AVAILABLE:
@@ -883,7 +880,7 @@ class BiasDetectionService:
         cultural_ratio = cultural_count / total_tokens
         return min(cultural_ratio * 12, 1.0)  # Scale up for detection
 
-    def _analyze_sentiment(self, text: str) -> Dict[str, Any]:
+    def _analyze_sentiment(self, text: str) -> dict[str, Any]:
         """Analyze sentiment of text"""
         try:
             if not self.sentiment_analyzer:
@@ -910,7 +907,7 @@ class BiasDetectionService:
         subjectivity = getattr(sentiment_obj, "subjectivity", 0.0)
         return {"polarity": float(polarity), "subjectivity": float(subjectivity)}
 
-    def _detect_biased_terms(self, doc) -> List[Dict[str, Any]]:
+    def _detect_biased_terms(self, doc) -> list[dict[str, Any]]:
         """Detect potentially biased terms in text"""
         biased_terms_dict = {
             "gender": ["mankind", "manpower", "chairman", "policeman", "fireman"],
@@ -963,7 +960,7 @@ class BiasDetectionService:
         }
         return alternatives.get(term, "consider alternative phrasing")
 
-    def _analyze_demographic_representation(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_demographic_representation(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze demographic representation in session data"""
         try:
             demographics = session_data.participant_demographics
@@ -1016,7 +1013,7 @@ class BiasDetectionService:
             logger.error(f"Demographic representation analysis failed: {e}")
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _calculate_entropy(self, values: List[float]) -> float:
+    def _calculate_entropy(self, values: list[float]) -> float:
         """Calculate entropy of a distribution"""
         if not values or sum(values) == 0:
             return 0.0
@@ -1027,11 +1024,10 @@ class BiasDetectionService:
 
     # Additional analysis methods
 
-    def _create_synthetic_dataset(self, session_data: SessionData) -> Optional[Dict[str, Any]]:
+    def _create_synthetic_dataset(self, session_data: SessionData) -> dict[str, Any] | None:
         """Create synthetic dataset for ML toolkit analysis"""
         try:
             # Extract features from session data
-            demographics = session_data.participant_demographics
             responses = session_data.ai_responses or []
 
             if not responses:
@@ -1076,7 +1072,7 @@ class BiasDetectionService:
             logger.error(f"Failed to create synthetic dataset: {e}")
             return None
 
-    async def _run_interpretability_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_interpretability_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run model interpretability analysis using SHAP/LIME"""
         try:
             if not INTERPRETABILITY_AVAILABLE:
@@ -1102,7 +1098,7 @@ class BiasDetectionService:
             logger.error(f"Interpretability analysis failed: {e}")
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _analyze_response_consistency(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_response_consistency(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze consistency of AI responses across demographics"""
         try:
             responses = session_data.ai_responses or []
@@ -1130,7 +1126,7 @@ class BiasDetectionService:
             logger.error(f"Response consistency analysis failed: {e}")
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _analyze_interaction_patterns(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_interaction_patterns(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze interaction patterns for bias"""
         try:
             # Placeholder analysis
@@ -1142,7 +1138,7 @@ class BiasDetectionService:
         except Exception as e:
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _analyze_response_times(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_response_times(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze response time patterns for bias"""
         try:
             responses = session_data.ai_responses or []
@@ -1165,7 +1161,7 @@ class BiasDetectionService:
         except Exception as e:
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _analyze_engagement_levels(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_engagement_levels(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze engagement level patterns for bias"""
         try:
             # Placeholder analysis
@@ -1177,7 +1173,7 @@ class BiasDetectionService:
         except Exception as e:
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _analyze_outcome_fairness(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_outcome_fairness(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze fairness of outcomes"""
         try:
             outcomes = session_data.expected_outcomes or []
@@ -1196,7 +1192,7 @@ class BiasDetectionService:
         except Exception as e:
             return {"bias_score": 0.0, "error": str(e)}
 
-    async def _run_hf_evaluate_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_hf_evaluate_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run Hugging Face evaluate analysis"""
         try:
             if not HF_EVALUATE_AVAILABLE:
@@ -1214,7 +1210,7 @@ class BiasDetectionService:
         except Exception as e:
             return {"bias_score": 0.0, "error": str(e)}
 
-    def _analyze_performance_disparities(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_performance_disparities(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze performance disparities across groups"""
         try:
             # Placeholder analysis
@@ -1251,7 +1247,7 @@ class BiasDetectionService:
 
         return " ".join(text_parts)
 
-    def _calculate_overall_bias_score(self, layer_results: List[Dict[str, Any]]) -> float:
+    def _calculate_overall_bias_score(self, layer_results: list[dict[str, Any]]) -> float:
         """Calculate weighted overall bias score"""
         total_score = 0.0
         total_weight = 0.0
@@ -1274,7 +1270,7 @@ class BiasDetectionService:
 
         return total_score / total_weight if total_weight > 0 else 0.0
 
-    def _calculate_confidence(self, layer_results: List[Dict[str, Any]]) -> float:
+    def _calculate_confidence(self, layer_results: list[dict[str, Any]]) -> float:
         """Calculate confidence in bias detection results"""
         # Base confidence on data availability and consistency
         data_quality_scores = []
@@ -1287,7 +1283,7 @@ class BiasDetectionService:
 
         return float(np.mean(data_quality_scores)) if data_quality_scores else 0.0
 
-    def _generate_recommendations(self, layer_results: List[Dict[str, Any]]) -> List[str]:
+    def _generate_recommendations(self, layer_results: list[dict[str, Any]]) -> list[str]:
         """Generate actionable recommendations based on analysis results"""
         recommendations = []
 
@@ -1328,12 +1324,11 @@ class BiasDetectionService:
         """Determine alert level based on bias score"""
         if bias_score >= self.config.critical_threshold:
             return "critical"
-        elif bias_score >= self.config.high_threshold:
+        if bias_score >= self.config.high_threshold:
             return "high"
-        elif bias_score >= self.config.warning_threshold:
+        if bias_score >= self.config.warning_threshold:
             return "warning"
-        else:
-            return "low"
+        return "low"
 
 
 # Initialize service
@@ -1481,7 +1476,7 @@ def export_data():
 
         data = request.get_json()
         export_format = data.get("format", "json")
-        date_range = data.get("date_range", {})
+        data.get("date_range", {})
 
         # Placeholder export data
         export_data = {

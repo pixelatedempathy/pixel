@@ -14,7 +14,6 @@ from datetime import datetime
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
 from pythonjsonlogger import jsonlogger
 
 # Add the python directory to the path
@@ -26,9 +25,7 @@ try:
         BiasDetectionService,
         SessionData,
     )
-except ImportError as e:
-    print(f"Failed to import bias detection service: {e}")
-    print("Please ensure all dependencies are installed " "by running setup.sh or setup.bat")
+except ImportError:
     sys.exit(1)
 
 # Configure JSON logging

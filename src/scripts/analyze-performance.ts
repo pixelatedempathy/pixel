@@ -1,6 +1,6 @@
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
 
-const logger = createBuildSafeLogger('analyze-performance') 
+const logger = createBuildSafeLogger('analyze-performance')
 
 // Note: PerformanceLogger import removed - may need to be replaced with alternative implementation
 
@@ -18,12 +18,12 @@ interface PerformanceReport {
 }
 
 interface PerformanceMetric {
-  success: boolean;
-  cached: boolean;
-  latency: number;
-  errorCode?: string;
-  model: string;
-  totalTokens?: number;
+  success: boolean
+  cached: boolean
+  latency: number
+  errorCode?: string
+  model: string
+  totalTokens?: number
 }
 
 async function generateReport(days = 7): Promise<PerformanceReport> {

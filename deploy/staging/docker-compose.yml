@@ -19,8 +19,8 @@ services:
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     ports:
-      - "3000:3000"
-      - "5000:5000"
+      - '3000:3000'
+      - '5000:5000'
     networks:
       - bias-detection-network
     depends_on:
@@ -30,7 +30,8 @@ services:
       - app-logs:/app/logs
       - app-data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/bias-detection/health"]
+      test:
+        ['CMD', 'curl', '-f', 'http://localhost:3000/api/bias-detection/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -46,14 +47,18 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - bias-detection-network
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d bias_detection_staging"]
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER} -d bias_detection_staging',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -65,13 +70,13 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     ports:
-      - "6379:6379"
+      - '6379:6379'
     networks:
       - bias-detection-network
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
       interval: 10s
       timeout: 3s
       retries: 5
@@ -82,8 +87,8 @@ services:
     container_name: bias-detection-nginx-staging
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     networks:
       - bias-detection-network
     volumes:
@@ -93,7 +98,7 @@ services:
     depends_on:
       - bias-detection-app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -111,7 +116,7 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     ports:
-      - "9090:9090"
+      - '9090:9090'
     networks:
       - bias-detection-network
     volumes:
@@ -127,7 +132,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
     ports:
-      - "3001:3000"
+      - '3001:3000'
     networks:
       - bias-detection-network
     volumes:
@@ -170,4 +175,4 @@ volumes:
   prometheus-data:
     driver: local
   grafana-data:
-    driver: local 
+    driver: local

@@ -7,7 +7,7 @@ echo "  Node version: $(node --version)"
 echo "  pnpm version: $(pnpm --version)"
 echo "  Working directory: $(pwd)"
 echo "  User: $(whoami)"
-echo "  PATH: $PATH"
+echo "  PATH: ${PATH}"
 
 echo "🔍 Checking critical files:"
 ls -la dist/server/entry.mjs || echo "❌ Server entry missing"
@@ -25,8 +25,8 @@ echo "📦 Available scripts in package.json:"
 node -e "const pkg = require('./package.json'); console.log(Object.keys(pkg.scripts).join(', '))" || echo "❌ Cannot read scripts"
 
 echo "🔧 Ensuring proper PATH and starting application..."
-export PATH="/opt/bitnami/node/bin:/app/node_modules/.bin:$PATH"
-echo "  Final PATH: $PATH"
+export PATH="/opt/bitnami/node/bin:/app/node_modules/.bin:${PATH}"
+echo "  Final PATH: ${PATH}"
 
 echo "✅ Final binary verification:"
 which astro && echo "   ✅ astro available at: $(which astro)" || echo "   ❌ astro still not found!"
@@ -36,13 +36,13 @@ echo "🚀 Attempting startup with error output enabled..."
 
 # Check if we can run the startup fallback if main approach fails
 if ! command -v astro >/dev/null 2>&1; then
-  echo "⚠️ astro command not available, trying fallback approach..."
-  if [ -f "/app/startup-fallback.sh" ]; then
-    echo "🔄 Executing startup fallback script..."
-    exec /app/startup-fallback.sh
-  else
-    echo "⚠️ Fallback script not found, continuing with main approach..."
-  fi
+	echo "⚠️ astro command not available, trying fallback approach..."
+	if [[ -f "/app/startup-fallback.sh" ]]; then
+		echo "🔄 Executing startup fallback script..."
+		exec /app/startup-fallback.sh
+	else
+		echo "⚠️ Fallback script not found, continuing with main approach..."
+	fi
 fi
 
 echo "📁 Ensuring .astro directory exists with proper permissions..."
@@ -52,9 +52,9 @@ echo "🔧 Setting up environment variables for Azure App Service..."
 export PORT=${WEBSITES_PORT:-${PORT:-3000}}
 export HOST=${HOST:-0.0.0.0}
 export NODE_ENV=${NODE_ENV:-production}
-echo "  Final PORT: $PORT"
-echo "  Final HOST: $HOST"
-echo "  Final NODE_ENV: $NODE_ENV"
+echo "  Final PORT: ${PORT}"
+echo "  Final HOST: ${HOST}"
+echo "  Final NODE_ENV: ${NODE_ENV}"
 
 echo "🚀 Starting application with node scripts/start-server.js..."
 exec node scripts/start-server.js

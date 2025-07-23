@@ -134,8 +134,8 @@ export class CrisisDetectionService {
   ): Promise<CrisisDetectionResult[]> {
     try {
       return await Promise.all(
-              texts.map((text) => this.detectCrisis(text, options)),
-            );
+        texts.map((text) => this.detectCrisis(text, options)),
+      )
     } catch (error) {
       appLogger.error('Error in batch crisis detection:', {
         message: error instanceof Error ? error.message : String(error),
@@ -218,7 +218,7 @@ export class CrisisDetectionService {
       )
 
       // Parse AI response
-      const {content} = response
+      const { content } = response
       try {
         const parsed = JSON.parse(content)
 

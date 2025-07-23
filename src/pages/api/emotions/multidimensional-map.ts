@@ -79,7 +79,9 @@ export const GET = protectRoute()(async (context: AuthAPIContext) => {
       })
     }
 
-    const sessions = fetchedSessions.filter((s): s is { sessionId: string } => !!s.sessionId);
+    const sessions = fetchedSessions.filter(
+      (s): s is { sessionId: string } => !!s.sessionId,
+    )
 
     if (sessions.length === 0) {
       return new Response(
@@ -148,11 +150,10 @@ export const GET = protectRoute()(async (context: AuthAPIContext) => {
       )
 
       // Analyze multidimensional patterns
-      const patterns =
-        analyzeMultidimensionalPatterns(
-          limitedEmotionData as TypesEmotionAnalysis[],
-          dimensionalMaps,
-        )
+      const patterns = analyzeMultidimensionalPatterns(
+        limitedEmotionData as TypesEmotionAnalysis[],
+        dimensionalMaps,
+      )
       logger.info('Returning multidimensional patterns', {
         count: patterns.length,
       })

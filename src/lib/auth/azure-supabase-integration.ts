@@ -195,14 +195,13 @@ export class AzureSupabaseIntegration {
 
       // Note: In a real implementation, you would use Supabase's admin API
       // to create a proper session. This is a simplified version.
-      const { error } =
-        await this.supabase.auth.admin.generateLink({
-          type: 'magiclink',
-          email: user.email,
-          options: {
-            data: customClaims,
-          },
-        })
+      const { error } = await this.supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: user.email,
+        options: {
+          data: customClaims,
+        },
+      })
 
       if (error) {
         throw error

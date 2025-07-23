@@ -17,13 +17,13 @@ interface FeedbackServiceMethods {
 declare module '../services/FeedbackService' {
   // Extend the interface with the required methods instead of using empty interface
   interface FeedbackService {
-    getEmotionState(): EmotionState;
-    getSpeechPatterns(): SpeechPattern[];
-    getDetectedTechniques(): DetectedTechnique[];
-    stopProcessing(): void;
-    updateConsent(hasConsent: boolean): void;
-    on(event: 'error', callback: (data: Error) => void): void;
-    on(event: 'connectionChange', callback: (data: boolean) => void): void;
+    getEmotionState(): EmotionState
+    getSpeechPatterns(): SpeechPattern[]
+    getDetectedTechniques(): DetectedTechnique[]
+    stopProcessing(): void
+    updateConsent(hasConsent: boolean): void
+    on(event: 'error', callback: (data: Error) => void): void
+    on(event: 'connectionChange', callback: (data: boolean) => void): void
   }
 }
 

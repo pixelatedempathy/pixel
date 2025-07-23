@@ -2,12 +2,12 @@
 
 /**
  * Consolidated Ollama Overlord Check-in Utility
- * 
+ *
  * This is the SINGLE, UNIFIED method for checking in with the Ollama Overlord.
  * All other check-in scripts should be removed and references updated to use this.
- * 
+ *
  * Usage: node scripts/ollama-checkin.mjs "Task completion summary"
- * 
+ *
  * Features:
  * - Cross-platform compatibility (Windows, macOS, Linux)
  * - Robust error handling and logging
@@ -33,9 +33,9 @@ const CONFIG = {
   TASK_LIST_PATHS: [
     path.join(__dirname, '..', 'lint-fixes-task-list.md'),
     path.join(__dirname, '..', '.notes', 'tasks', 'current-task-list.md'),
-    path.join(__dirname, '..', '.notes', 'tasks', 'tasks-proposed.md')
+    path.join(__dirname, '..', '.notes', 'tasks', 'tasks-proposed.md'),
   ],
-  TIMEOUT: 30000
+  TIMEOUT: 30000,
 }
 
 // ANSI color codes for cross-platform terminal output
@@ -118,7 +118,7 @@ function makeApiCall(prompt) {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(data),
       },
-      timeout: CONFIG.TIMEOUT
+      timeout: CONFIG.TIMEOUT,
     }
 
     const req = https.request(options, (res) => {
@@ -173,13 +173,15 @@ function parseResponse(responseText) {
 
     if (trimmedLine.toUpperCase().startsWith('DECISION:')) {
       originalDecision = trimmedLine.replace(/^DECISION:\s*/i, '').trim()
-      decision = originalDecision
-        .toLowerCase()
-        .trim()
+      decision = originalDecision.toLowerCase().trim()
       // Handle various decision formats for internal processing
       if (decision.includes('approve') || decision.includes('✅')) {
         decision = 'yes'
-      } else if (decision.includes('reject') || decision.includes('❌') || decision.includes('block')) {
+      } else if (
+        decision.includes('reject') ||
+        decision.includes('❌') ||
+        decision.includes('block')
+      ) {
         decision = 'no'
       }
       inImprovements = false
@@ -223,20 +225,32 @@ function handleDecision(decision, improvements) {
     case 'y':
       log('✅', 'APPROVED: You may proceed to the next task', 'green')
       if (improvements.length > 0) {
-        log('💡', 'Consider implementing the suggested improvements in future tasks', 'cyan')
+        log(
+          '💡',
+          'Consider implementing the suggested improvements in future tasks',
+          'cyan',
+        )
       }
       return 0
     case 'no':
     case 'n':
       log('🛑', 'BLOCKED: Please address concerns before proceeding', 'red')
-      log('   ', 'Consider the suggested improvements and revisit the implementation', 'red')
+      log(
+        '   ',
+        'Consider the suggested improvements and revisit the implementation',
+        'red',
+      )
       if (improvements.length > 0) {
         log('📋', 'Recommended improvements:', 'yellow')
         improvements.forEach((improvement, index) => {
           log('   ', `${index + 1}. ${improvement}`, 'yellow')
         })
       }
-      log('💡', 'Address the key concerns and check in again when ready', 'yellow')
+      log(
+        '💡',
+        'Address the key concerns and check in again when ready',
+        'yellow',
+      )
       return 2
     default:
       log(
@@ -244,7 +258,11 @@ function handleDecision(decision, improvements) {
         `UNCLEAR: Decision was '${decision}' (expected yes/no)`,
         'yellow',
       )
-      log('   ', 'Manual review required - please clarify decision criteria', 'yellow')
+      log(
+        '   ',
+        'Manual review required - please clarify decision criteria',
+        'yellow',
+      )
       return 3
   }
 }
@@ -252,42 +270,49 @@ function handleDecision(decision, improvements) {
 function getFileContext() {
   try {
     // Get current git status for recently modified files
-    const gitStatus = execSync('git status --porcelain', { 
-      encoding: 'utf8', 
+    const gitStatus = execSync('git status --porcelain', {
+      encoding: 'utf8',
       cwd: path.join(__dirname, '..'),
-      timeout: 5000 
+      timeout: 5000,
     }).trim()
-    
+
     const changedFiles = []
     if (gitStatus) {
       const lines = gitStatus.split('\n')
-      for (const line of lines.slice(0, 5)) { // Limit to first 8 files
+      for (const line of lines.slice(0, 5)) {
+        // Limit to first 8 files
         const status = line.substring(0, 2)
         const filename = line.substring(3)
-        if (filename && !filename.includes('tasks-proposed.md')) { // Exclude the log file itself
-          const statusSymbol = status.includes('M') ? '📝' : 
-                              status.includes('A') ? '✨' : 
-                              status.includes('D') ? '🗑️' : 
-                              status.includes('R') ? '📋' : '📄'
+        if (filename && !filename.includes('tasks-proposed.md')) {
+          // Exclude the log file itself
+          const statusSymbol = status.includes('M')
+            ? '📝'
+            : status.includes('A')
+              ? '✨'
+              : status.includes('D')
+                ? '🗑️'
+                : status.includes('R')
+                  ? '📋'
+                  : '📄'
           changedFiles.push(`${statusSymbol} ${filename}`)
         }
       }
     }
-    
+
     return changedFiles
   } catch {
     // Fallback: try to get some context from current working directory
     try {
       const recentFiles = []
       const commonPaths = ['src/', 'scripts/', 'api/', 'docs/', '.github/']
-      
+
       for (const pathPrefix of commonPaths) {
         const fullPath = path.join(__dirname, '..', pathPrefix)
         if (fs.existsSync(fullPath)) {
           recentFiles.push(`📁 ${pathPrefix}`)
         }
       }
-      
+
       return recentFiles.slice(0, 3) // Return up to 3 directory indicators
     } catch {
       return ['📄 (context unavailable)']
@@ -298,14 +323,15 @@ function getFileContext() {
 function updateTaskLogs(taskSummary, improvements, decision, originalDecision) {
   const timestamp = new Date().toISOString()
   const fileContext = getFileContext()
-  
-  const fileContextSection = fileContext.length > 0 
-    ? `\n**Files Context:**\n${fileContext.map(file => `- ${file}`).join('\n')}\n`
-    : '\n**Files Context:** (no git changes detected)\n'
-  
+
+  const fileContextSection =
+    fileContext.length > 0
+      ? `\n**Files Context:**\n${fileContext.map((file) => `- ${file}`).join('\n')}\n`
+      : '\n**Files Context:** (no git changes detected)\n'
+
   // Use original decision format for better visual appeal
   const displayDecision = originalDecision || decision.toUpperCase()
-  
+
   const logEntry = `\n## Check-in Log Entry - ${timestamp}\n\n**Task Completed:** ${taskSummary}${fileContextSection}\n**Improvements Suggested:**\n${improvements.map((imp) => `- ${imp}`).join('\n') || '(None)'}\n\n**Decision:** ${displayDecision}\n\n---\n`
 
   for (const taskListPath of CONFIG.TASK_LIST_PATHS) {
@@ -314,7 +340,11 @@ function updateTaskLogs(taskSummary, improvements, decision, originalDecision) {
         fs.appendFileSync(taskListPath, logEntry)
         log('📝', `Updated task list: ${path.basename(taskListPath)}`, 'cyan')
       } catch (error) {
-        log('⚠️ ', `Failed to update ${path.basename(taskListPath)}: ${error.message}`, 'yellow')
+        log(
+          '⚠️ ',
+          `Failed to update ${path.basename(taskListPath)}: ${error.message}`,
+          'yellow',
+        )
       }
     }
   }
@@ -324,9 +354,15 @@ function showUsage() {
   console.error(colorize('\nUsage:', 'bright'))
   console.error('  node scripts/ollama-checkin.mjs "Task completion summary"')
   console.error('\nExamples:')
-  console.error('  node scripts/ollama-checkin.mjs "Fixed all TypeScript eslint errors in 5 components"')
-  console.error('  node scripts/ollama-checkin.mjs "Implemented user authentication with JWT tokens"')
-  console.error('  node scripts/ollama-checkin.mjs "Added unit tests with 90% coverage"')
+  console.error(
+    '  node scripts/ollama-checkin.mjs "Fixed all TypeScript eslint errors in 5 components"',
+  )
+  console.error(
+    '  node scripts/ollama-checkin.mjs "Implemented user authentication with JWT tokens"',
+  )
+  console.error(
+    '  node scripts/ollama-checkin.mjs "Added unit tests with 90% coverage"',
+  )
   console.error('')
 }
 
@@ -339,7 +375,11 @@ async function main() {
   }
 
   if (taskSummary.length < 10) {
-    log('⚠️ ', 'Task summary seems too short. Please provide more detail.', 'yellow')
+    log(
+      '⚠️ ',
+      'Task summary seems too short. Please provide more detail.',
+      'yellow',
+    )
     showUsage()
     process.exit(1)
   }
@@ -353,16 +393,17 @@ async function main() {
     const prompt = createPrompt(taskSummary)
     const response = await makeApiCall(prompt)
 
-    const { improvements, decision, originalDecision } = parseResponse(response.response)
+    const { improvements, decision, originalDecision } = parseResponse(
+      response.response,
+    )
 
     displayResults(improvements, decision)
     updateTaskLogs(taskSummary, improvements, decision, originalDecision)
 
     const exitCode = handleDecision(decision, improvements)
-    
+
     log('📊', `Exit code: ${exitCode}`, 'cyan')
     process.exit(exitCode)
-
   } catch (error) {
     log('❌', `Error: ${error.message}`, 'red')
     log('🔍', 'Check your network connection and API availability', 'yellow')

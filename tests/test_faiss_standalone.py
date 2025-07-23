@@ -12,44 +12,39 @@ sys.path.insert(0, str(Path(__file__).parent / "ai"))
 
 def test_faiss_index_structure():
     """Test that FAISS index files are properly structured."""
-    print("Testing FAISS Knowledge Index Structure...")
 
     # Check file existence
     faiss_file = Path(__file__).parent / "ai" / "pixel" / "data" / "faiss_knowledge_index.py"
     test_file = Path(__file__).parent / "ai" / "pixel" / "data" / "test_faiss_knowledge_index.py"
 
     if faiss_file.exists():
-        print("✓ FAISS knowledge index file exists")
 
         # Check file size (should be substantial)
         file_size = faiss_file.stat().st_size
-        print(f"✓ File size: {file_size} bytes ({file_size/1024:.1f} KB)")
 
         if file_size > 20000:  # Should be > 20KB for comprehensive implementation
-            print("✓ File size indicates comprehensive implementation")
+            pass")
         else:
-            print("⚠ File might be incomplete")
+            pass")
     else:
-        print("✗ FAISS knowledge index file missing")
+        pass")
 
     if test_file.exists():
-        print("✓ Test file exists")
 
         # Check test file size
         test_size = test_file.stat().st_size
-        print(f"✓ Test file size: {test_size} bytes ({test_size/1024:.1f} KB)")
 
         if test_size > 15000:  # Should be > 15KB for comprehensive tests
-            print("✓ Test file size indicates comprehensive test coverage")
+            pass")
         else:
-            print("⚠ Test file might be incomplete")
+            pass")
     else:
-        print("✗ Test file missing")
+        pass")
 
     # Test basic imports and structure
     try:
         # Read the file content to check for key components
-        with open(faiss_file, "r") as f:
+        with open(faiss_file) as f:
             content = f.read()
 
         required_components = [
@@ -66,14 +61,12 @@ def test_faiss_index_structure():
         ]
 
         if missing_components := [
-            component
-            for component in required_components
-            if component not in content
+            component for component in required_components if component not in content
         ]:
-            print(f"⚠ Missing components: {missing_components}")
+            pass")
 
         else:
-            print("✓ All required components found in implementation")
+            pass")
         # Check for comprehensive functionality
         advanced_features = [
             "IndexType.IVF_FLAT",
@@ -85,21 +78,17 @@ def test_faiss_index_structure():
         ]
 
         found_features = [feature for feature in advanced_features if feature in content]
-        print(f"✓ Advanced features found: {len(found_features)}/{len(advanced_features)}")
 
         if len(found_features) >= len(advanced_features) * 0.8:
-            print("✓ Implementation includes advanced FAISS features")
+            pass")
         else:
-            print("⚠ Some advanced features may be missing")
+            pass")
 
     except Exception as e:
-        print(f"✗ Error analyzing file content: {e}")
+        pass")
 
     # Test mock functionality
     try:
-        print("\nTesting Mock FAISS Index...")
-
-
 
         class SimpleMockIndex:
             def __init__(self, dimension):
@@ -120,8 +109,7 @@ def test_faiss_index_structure():
 
                 distances = [
                     (
-                        sum((a - b) ** 2 for a, b in zip(query_vec, vec))
-                        ** 0.5,
+                        sum((a - b) ** 2 for a, b in zip(query_vec, vec, strict=False)) ** 0.5,
                         i,
                     )
                     for i, vec in enumerate(self.vectors)
@@ -131,7 +119,6 @@ def test_faiss_index_structure():
 
                 return [d[0] for d in top_k], [d[1] for d in top_k]
 
-
         # Test mock index
         mock_index = SimpleMockIndex(3)
 
@@ -140,7 +127,6 @@ def test_faiss_index_structure():
         mock_index.add(test_vectors)
 
         assert mock_index.ntotal == 3
-        print("✓ Mock index can add vectors")
 
         # Test search
         query = [[1, 0, 0]]
@@ -149,20 +135,11 @@ def test_faiss_index_structure():
         assert len(distances) == 2
         assert len(indices) == 2
         assert indices[0] == 0  # Should find exact match first
-        print("✓ Mock index search functionality works")
 
-        print("✓ Mock FAISS functionality verified")
 
     except Exception as e:
-        print(f"✗ Mock functionality test failed: {e}")
+        pass")
 
-    print("\n🎉 FAISS Knowledge Index structure verification completed!")
-    print("📋 Summary:")
-    print("   - Implementation file: ✓ Created")
-    print("   - Test file: ✓ Created")
-    print("   - Core functionality: ✓ Implemented")
-    print("   - Mock mode: ✓ Working")
-    print("   - Ready for production when dependencies installed!")
 
 
 if __name__ == "__main__":

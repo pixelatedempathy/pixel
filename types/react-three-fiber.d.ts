@@ -50,10 +50,14 @@ declare module '@react-three/fiber' {
   }
 
   export const Canvas: React.FC<CanvasProps>
-  
-  export function useFrame(callback: (state: RootState, delta: number) => void): void
-  
-  export function extend(objects: Record<string, THREE.Object3D | THREE.Material | THREE.Geometry>): void
-  
+
+  export function useFrame(
+    callback: (state: RootState, delta: number) => void,
+  ): void
+
+  export function extend(
+    objects: Record<string, THREE.Object3D | THREE.Material | THREE.Geometry>,
+  ): void
+
   export function useThree(): RootState
 }

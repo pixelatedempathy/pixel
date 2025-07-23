@@ -9,7 +9,7 @@
  * @returns The environment variable value or the default value
  */
 export function getEnv(key: string, defaultValue?: string): string | undefined {
-  return process.env[key] ?? defaultValue;
+  return process.env[key] ?? defaultValue
 }
 
 /**
@@ -19,11 +19,11 @@ export function getEnv(key: string, defaultValue?: string): string | undefined {
  * @returns The environment variable value
  */
 export function getRequiredEnv(key: string): string {
-  const value = process.env[key];
+  const value = process.env[key]
   if (value === undefined) {
-    throw new Error(`Required environment variable ${key} is not set`);
+    throw new Error(`Required environment variable ${key} is not set`)
   }
-  return value;
+  return value
 }
 
 /**
@@ -32,8 +32,8 @@ export function getRequiredEnv(key: string): string {
  * @returns true if the environment variable is set to a truthy value, false otherwise
  */
 export function isEnvTrue(key: string): boolean {
-  const value = process.env[key]?.toLowerCase();
-  return value === 'true' || value === '1' || value === 'yes';
+  const value = process.env[key]?.toLowerCase()
+  return value === 'true' || value === '1' || value === 'yes'
 }
 
 /**
@@ -42,6 +42,6 @@ export function isEnvTrue(key: string): boolean {
  * @returns true if the environment variable is set to a falsy value, false otherwise
  */
 export function isEnvFalse(key: string): boolean {
-  const value = process.env[key]?.toLowerCase();
-  return value === 'false' || value === '0' || value === 'no';
+  const value = process.env[key]?.toLowerCase()
+  return value === 'false' || value === '0' || value === 'no'
 }

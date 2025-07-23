@@ -12,7 +12,10 @@ function getClientIP(request: Request): string {
   // Check for forwarded headers (common in production with load balancers)
   const forwardedFor = request.headers.get('x-forwarded-for')
   if (forwardedFor) {
-    const ip = (typeof forwardedFor === 'string' ? forwardedFor : '').split(',')[0]?.trim?.() || '';
+    const ip =
+      (typeof forwardedFor === 'string' ? forwardedFor : '')
+        .split(',')[0]
+        ?.trim?.() || ''
     logger.debug('Extracted IP from x-forwarded-for', { forwardedFor, ip })
     return ip
   } else {

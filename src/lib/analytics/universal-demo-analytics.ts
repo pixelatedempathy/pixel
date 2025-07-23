@@ -468,8 +468,12 @@ export class UniversalDemoAnalytics {
 
 declare global {
   interface Window {
-    demoAnalytics?: UniversalDemoAnalytics;
-    gtag?: (command: string, event: string, params: Record<string, unknown>) => void;
+    demoAnalytics?: UniversalDemoAnalytics
+    gtag?: (
+      command: string,
+      event: string,
+      params: Record<string, unknown>,
+    ) => void
   }
 }
 

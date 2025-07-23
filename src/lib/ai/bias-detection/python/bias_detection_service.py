@@ -10,20 +10,16 @@ This module implements the core bias detection functionality using:
 - spaCy and NLTK for linguistic analysis
 """
 
-import asyncio
 import hashlib
-import json
 import logging
-from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any
 
 import numpy as np
 import pandas as pd
 
 # Core ML libraries
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
 
 # IBM AIF360
 try:
@@ -82,11 +78,6 @@ except ImportError:
     logging.warning("NLP libraries not fully available. Text analysis will be limited.")
 
 # Visualization and data processing
-import matplotlib.pyplot as plt
-import plotly.express as px
-import plotly.graph_objs as go
-import seaborn as sns
-from plotly.subplots import make_subplots
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -100,7 +91,7 @@ class BiasDetectionConfig:
     warning_threshold: float = 0.3
     high_threshold: float = 0.6
     critical_threshold: float = 0.8
-    layer_weights: Optional[Dict[str, float]] = None
+    layer_weights: dict[str, float] | None = None
     enable_hipaa_compliance: bool = True
     enable_audit_logging: bool = True
 
@@ -119,13 +110,13 @@ class SessionData:
     """Structured session data for bias analysis"""
 
     session_id: str
-    participant_demographics: Dict[str, Any]
-    training_scenario: Dict[str, Any]
-    content: Dict[str, Any]
-    ai_responses: List[Dict[str, Any]]
-    expected_outcomes: List[Dict[str, Any]]
-    transcripts: List[Dict[str, Any]]
-    metadata: Dict[str, Any]
+    participant_demographics: dict[str, Any]
+    training_scenario: dict[str, Any]
+    content: dict[str, Any]
+    ai_responses: list[dict[str, Any]]
+    expected_outcomes: list[dict[str, Any]]
+    transcripts: list[dict[str, Any]]
+    metadata: dict[str, Any]
 
 
 class BiasDetectionService:
@@ -154,7 +145,7 @@ class BiasDetectionService:
                 self.nlp = None
                 self.sentiment_analyzer = None
 
-    async def analyze_session(self, session_data: SessionData) -> Dict[str, Any]:
+    async def analyze_session(self, session_data: SessionData) -> dict[str, Any]:
         """
         Perform comprehensive bias analysis on a therapeutic session
         """
@@ -224,13 +215,13 @@ class BiasDetectionService:
             logger.error(f"Bias analysis failed for session {session_data.session_id}: {e}")
             raise
 
-    def _generate_recommendations(self, layer_results: List[Dict[str, Any]]) -> List[str]:
+    def _generate_recommendations(self, layer_results: list[dict[str, Any]]) -> list[str]:
         return []
 
-    def _calculate_confidence(self, layer_results: List[Dict[str, Any]]) -> float:
+    def _calculate_confidence(self, layer_results: list[dict[str, Any]]) -> float:
         return 0.0
 
-    async def _run_preprocessing_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_preprocessing_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run preprocessing layer analysis using spaCy and NLTK"""
         logger.info("Running preprocessing analysis")
 
@@ -263,18 +254,18 @@ class BiasDetectionService:
             ),
         }
 
-    def _assess_data_quality(self, session_data: SessionData) -> Dict[str, Any]:
+    def _assess_data_quality(self, session_data: SessionData) -> dict[str, Any]:
         return {"overall_quality": 1.0}
 
     def _generate_preprocessing_recommendations(
         self,
-        linguistic_bias: Dict[str, Any],
-        representation_analysis: Dict[str, Any],
-        data_quality: Dict[str, Any],
-    ) -> List[str]:
+        linguistic_bias: dict[str, Any],
+        representation_analysis: dict[str, Any],
+        data_quality: dict[str, Any],
+    ) -> list[str]:
         return []
 
-    async def _detect_linguistic_bias(self, text_content: str) -> Dict[str, Any]:
+    async def _detect_linguistic_bias(self, text_content: str) -> dict[str, Any]:
         """Detect linguistic bias using NLP techniques"""
         if not self.nlp or not text_content:
             return {
@@ -316,11 +307,6 @@ class BiasDetectionService:
 
     def _detect_gender_bias(self, doc) -> float:
         """Detect gender bias in text"""
-        bias_indicators = [
-            "gendered_pronouns",
-            "stereotypical_roles",
-            "gendered_adjectives",
-        ]
 
         gendered_terms = {
             "male_terms": ["he", "him", "his", "man", "men", "guy", "guys"],
@@ -359,8 +345,6 @@ class BiasDetectionService:
         # Implement racial bias detection logic
         # This is a simplified version - in practice, this would be more sophisticated
 
-        bias_terms = ["racial_stereotypes", "coded_language", "cultural_assumptions"]
-
         # For now, return a placeholder score
         # Real implementation would use more sophisticated NLP techniques
         return 0.1  # Low baseline bias score
@@ -390,16 +374,11 @@ class BiasDetectionService:
 
     def _detect_cultural_bias(self, doc) -> float:
         """Detect cultural bias in text"""
-        cultural_indicators = [
-            "cultural_assumptions",
-            "western_bias",
-            "language_preferences",
-        ]
 
         # Simplified implementation
         return 0.1  # Placeholder
 
-    def _analyze_sentiment(self, text: str) -> Dict[str, Any]:
+    def _analyze_sentiment(self, text: str) -> dict[str, Any]:
         """Analyze sentiment using NLTK and TextBlob"""
         if not self.sentiment_analyzer:
             return {"error": "Sentiment analyzer not available"}
@@ -418,7 +397,7 @@ class BiasDetectionService:
             "overall_sentiment": (vader_scores["compound"] + textblob_sentiment.polarity) / 2,
         }
 
-    def _detect_biased_terms(self, doc) -> List[Dict[str, Any]]:
+    def _detect_biased_terms(self, doc) -> list[dict[str, Any]]:
         """Detect potentially biased terms in text"""
         biased_terms_db = {
             "gender": ["mankind", "manpower", "chairman"],
@@ -469,7 +448,7 @@ class BiasDetectionService:
 
         return alternatives.get(term.lower(), "Consider more neutral language")
 
-    def _analyze_representation(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_representation(self, session_data: SessionData) -> dict[str, Any]:
         """Analyze demographic representation in the session data"""
         demographics = session_data.participant_demographics
 
@@ -507,41 +486,41 @@ class BiasDetectionService:
             "diversity_index": diversity_index,
         }
 
-    def _analyze_age_distribution(self, demographics: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _analyze_age_distribution(self, demographics: list[dict[str, Any]]) -> dict[str, Any]:
         return {}
 
-    def _analyze_gender_distribution(self, demographics: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _analyze_gender_distribution(self, demographics: list[dict[str, Any]]) -> dict[str, Any]:
         return {}
 
-    def _analyze_ethnicity_distribution(self, demographics: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _analyze_ethnicity_distribution(self, demographics: list[dict[str, Any]]) -> dict[str, Any]:
         return {}
 
-    def _calculate_diversity_index(self, demographics: List[Dict[str, Any]]) -> float:
+    def _calculate_diversity_index(self, demographics: list[dict[str, Any]]) -> float:
         return 0.0
 
-    def _get_baseline_demographics(self) -> Dict[str, Any]:
+    def _get_baseline_demographics(self) -> dict[str, Any]:
         return {}
 
     def _identify_underrepresented_groups(
-        self, demographics: List[Dict[str, Any]], baseline: Dict[str, Any]
-    ) -> List[str]:
+        self, demographics: list[dict[str, Any]], baseline: dict[str, Any]
+    ) -> list[str]:
         return []
 
     def _identify_overrepresented_groups(
-        self, demographics: List[Dict[str, Any]], baseline: Dict[str, Any]
-    ) -> List[str]:
+        self, demographics: list[dict[str, Any]], baseline: dict[str, Any]
+    ) -> list[str]:
         return []
 
     def _calculate_representation_bias_score(
         self,
-        age_dist: Dict[str, Any],
-        gender_dist: Dict[str, Any],
-        ethnicity_dist: Dict[str, Any],
+        age_dist: dict[str, Any],
+        gender_dist: dict[str, Any],
+        ethnicity_dist: dict[str, Any],
         diversity_index: float,
     ) -> float:
         return 0.0
 
-    async def _run_model_level_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_model_level_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run model-level analysis using AIF360 and Fairlearn"""
         logger.info("Running model-level analysis")
 
@@ -579,26 +558,26 @@ class BiasDetectionService:
             ),
         }
 
-    def _prepare_model_data(self, session_data: SessionData) -> Optional[pd.DataFrame]:
+    def _prepare_model_data(self, session_data: SessionData) -> pd.DataFrame | None:
         return None
 
-    async def _run_aif360_analysis(self, model_data: pd.DataFrame) -> Dict[str, Any]:
+    async def _run_aif360_analysis(self, model_data: pd.DataFrame) -> dict[str, Any]:
         return {}
 
-    async def _run_fairlearn_analysis(self, model_data: pd.DataFrame) -> Dict[str, Any]:
+    async def _run_fairlearn_analysis(self, model_data: pd.DataFrame) -> dict[str, Any]:
         return {}
 
     def _calculate_model_bias_score(
-        self, aif360_results: Dict[str, Any], fairlearn_results: Dict[str, Any]
+        self, aif360_results: dict[str, Any], fairlearn_results: dict[str, Any]
     ) -> float:
         return 0.0
 
     def _generate_model_recommendations(
-        self, aif360_results: Dict[str, Any], fairlearn_results: Dict[str, Any]
-    ) -> List[str]:
+        self, aif360_results: dict[str, Any], fairlearn_results: dict[str, Any]
+    ) -> list[str]:
         return []
 
-    async def _run_interactive_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_interactive_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run interactive analysis using What-If Tool concepts"""
         logger.info("Running interactive analysis")
 
@@ -629,34 +608,34 @@ class BiasDetectionService:
             ),
         }
 
-    def _generate_counterfactual_scenarios(self, session_data: SessionData) -> List[Dict[str, Any]]:
+    def _generate_counterfactual_scenarios(self, session_data: SessionData) -> list[dict[str, Any]]:
         return []
 
     async def _analyze_counterfactuals(
-        self, session_data: SessionData, counterfactuals: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, session_data: SessionData, counterfactuals: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         return {}
 
-    def _analyze_feature_importance(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_feature_importance(self, session_data: SessionData) -> dict[str, Any]:
         return {}
 
-    def _generate_what_if_scenarios(self, session_data: SessionData) -> List[Dict[str, Any]]:
+    def _generate_what_if_scenarios(self, session_data: SessionData) -> list[dict[str, Any]]:
         return []
 
     def _calculate_interactive_bias_score(
         self,
-        counterfactual_results: Dict[str, Any],
-        feature_importance: Dict[str, Any],
-        what_if_scenarios: List[Dict[str, Any]],
+        counterfactual_results: dict[str, Any],
+        feature_importance: dict[str, Any],
+        what_if_scenarios: list[dict[str, Any]],
     ) -> float:
         return 0.0
 
     def _generate_interactive_recommendations(
-        self, counterfactual_results: Dict[str, Any], feature_importance: Dict[str, Any]
-    ) -> List[str]:
+        self, counterfactual_results: dict[str, Any], feature_importance: dict[str, Any]
+    ) -> list[str]:
         return []
 
-    async def _run_evaluation_analysis(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_evaluation_analysis(self, session_data: SessionData) -> dict[str, Any]:
         """Run evaluation analysis using Hugging Face evaluate"""
         logger.info("Running evaluation analysis")
 
@@ -686,26 +665,26 @@ class BiasDetectionService:
             ),
         }
 
-    async def _run_huggingface_evaluation(self, session_data: SessionData) -> Dict[str, Any]:
+    async def _run_huggingface_evaluation(self, session_data: SessionData) -> dict[str, Any]:
         return {}
 
-    def _calculate_custom_bias_metrics(self, session_data: SessionData) -> Dict[str, Any]:
+    def _calculate_custom_bias_metrics(self, session_data: SessionData) -> dict[str, Any]:
         return {}
 
-    def _analyze_temporal_bias_patterns(self, session_data: SessionData) -> Dict[str, Any]:
+    def _analyze_temporal_bias_patterns(self, session_data: SessionData) -> dict[str, Any]:
         return {}
 
     def _calculate_evaluation_bias_score(
         self,
-        hf_metrics: Dict[str, Any],
-        custom_metrics: Dict[str, Any],
-        temporal_analysis: Dict[str, Any],
+        hf_metrics: dict[str, Any],
+        custom_metrics: dict[str, Any],
+        temporal_analysis: dict[str, Any],
     ) -> float:
         return 0.0
 
     def _generate_evaluation_recommendations(
-        self, hf_metrics: Dict[str, Any], custom_metrics: Dict[str, Any]
-    ) -> List[str]:
+        self, hf_metrics: dict[str, Any], custom_metrics: dict[str, Any]
+    ) -> list[str]:
         return []
 
     # Helper methods continue in the next part due to length limits...
@@ -729,13 +708,10 @@ class BiasDetectionService:
         for response in session_data.ai_responses:
             text_parts.extend((response.get("content", ""), response.get("reasoning", "")))
         # Transcripts
-        text_parts.extend(
-            transcript.get("content", "")
-            for transcript in session_data.transcripts
-        )
+        text_parts.extend(transcript.get("content", "") for transcript in session_data.transcripts)
         return " ".join(filter(None, text_parts))
 
-    def _calculate_overall_bias_score(self, layer_results: List[Dict[str, Any]]) -> float:
+    def _calculate_overall_bias_score(self, layer_results: list[dict[str, Any]]) -> float:
         """Calculate weighted overall bias score from all layers"""
         weights = self.config.layer_weights
         if not weights:
@@ -759,14 +735,13 @@ class BiasDetectionService:
         """Determine alert level based on bias score"""
         if bias_score >= self.config.critical_threshold:
             return "critical"
-        elif bias_score >= self.config.high_threshold:
+        if bias_score >= self.config.high_threshold:
             return "high"
-        elif bias_score >= self.config.warning_threshold:
+        if bias_score >= self.config.warning_threshold:
             return "medium"
-        else:
-            return "low"
+        return "low"
 
-    async def _log_audit_event(self, session_id: str, result: Dict[str, Any]) -> None:
+    async def _log_audit_event(self, session_id: str, result: dict[str, Any]) -> None:
         """Log audit event for compliance"""
         if self.config.enable_hipaa_compliance:
             # Hash session ID for privacy
@@ -790,4 +765,3 @@ if __name__ == "__main__":
     service = BiasDetectionService(config)
 
     # This would be called by the web service
-    print("Bias Detection Service initialized and ready")

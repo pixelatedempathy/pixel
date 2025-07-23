@@ -53,7 +53,7 @@ const newTreatmentPlanClientSchema = z.object({
 })
 
 export const GET: APIRoute = async ({ locals }) => {
-  const {supabase} = locals
+  const { supabase } = locals
   if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not available.' }),
@@ -122,7 +122,7 @@ export const GET: APIRoute = async ({ locals }) => {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const {supabase} = locals
+  const { supabase } = locals
   if (!supabase) {
     return new Response(
       JSON.stringify({ error: 'Supabase client not available.' }),

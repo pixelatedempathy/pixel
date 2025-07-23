@@ -11,7 +11,6 @@ import {
 } from './feature-detection'
 import { setupCSSPolyfills } from './css-polyfills'
 
-
 /**
  * Setup browser environment
  * Initializes feature detection, loads polyfills, and sets up browser-specific functionality

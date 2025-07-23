@@ -1,3 +1,7 @@
+from collections.abc import Generator
+
+from _typeshed import Incomplete
+
 from .audio_segment import AudioSegment as AudioSegment
 from .utils import (
     db_to_float as db_to_float,
@@ -5,8 +9,6 @@ from .utils import (
     get_frame_width as get_frame_width,
     get_min_max_value as get_min_max_value,
 )
-from _typeshed import Incomplete
-from collections.abc import Generator
 
 class SignalGenerator:
     sample_rate: Incomplete

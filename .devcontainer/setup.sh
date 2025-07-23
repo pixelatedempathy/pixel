@@ -14,7 +14,7 @@ apt-get install -y \
 
 # set-up and install fnm (Fast Node Manager)
 curl -fsSL https://fnm.vercel.app/install | bash
-export PATH="/root/.local/share/fnm:$PATH"
+export PATH="/root/.local/share/fnm:${PATH}"
 eval "$(fnm env --use-on-cd)"
 fnm install 22
 fnm use 22
@@ -27,7 +27,7 @@ pnpm setup
 
 # Install uv (Python package manager)
 curl -LsSf https://astral.sh/uv/install.sh | sh
-export PATH="/root/.cargo/bin:$PATH"
+export PATH="/root/.cargo/bin:${PATH}"
 
 # Install Python 3.11 via uv
 /root/.cargo/bin/uv python install 3.11
@@ -35,11 +35,11 @@ export PATH="/root/.cargo/bin:$PATH"
 # setup and install oh-my-zsh
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-cp -R /root/.oh-my-zsh /home/$USERNAME
-cp /root/.zshrc /home/$USERNAME
-sed -i -e "s/\/root\/.oh-my-zsh/\/home\/$USERNAME\/.oh-my-zsh/g" /home/$USERNAME/.zshrc
+cp -R /root/.oh-my-zsh /home/"${USERNAME}"
+cp /root/.zshrc /home/"${USERNAME}"
+sed -i -e "s/\/root\/.oh-my-zsh/\/home\/${USERNAME}\/.oh-my-zsh/g" /home/"${USERNAME}"/.zshrc
 
 # Add uv and cargo to user's zshrc
-echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /home/$USERNAME/.zshrc
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /home/"${USERNAME}"/.zshrc
 
-chown -R $USER_UID:$USER_GID /home/$USERNAME/.oh-my-zsh /home/$USERNAME/.zshrc
+chown -R "${USER_UID}":"${USER_GID}" /home/"${USERNAME}"/.oh-my-zsh /home/"${USERNAME}"/.zshrc

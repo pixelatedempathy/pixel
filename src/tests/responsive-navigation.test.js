@@ -149,16 +149,18 @@ test.describe('Responsive Design and Navigation Tests', () => {
 
     // Check that links have proper href attributes
     // Get all links first, then check them in parallel
-    const linkPromises = [];
+    const linkPromises = []
     for (let i = 0; i < Math.min(linkCount, 5); i++) {
-      const link = navLinks.nth(i);
-      linkPromises.push(link.getAttribute('href').then(href => {
-        expect(href).toBeTruthy();
-      }));
+      const link = navLinks.nth(i)
+      linkPromises.push(
+        link.getAttribute('href').then((href) => {
+          expect(href).toBeTruthy()
+        }),
+      )
     }
-    
+
     // Wait for all link checks to complete
-    await Promise.all(linkPromises);
+    await Promise.all(linkPromises)
   })
 
   test('should have accessible navigation', async ({ page }) => {
@@ -204,10 +206,10 @@ test.describe('Responsive Design and Navigation Tests', () => {
       const footer = page.locator('footer')
       await expect(header).toBeVisible()
       await expect(footer).toBeVisible()
-    });
+    })
 
     // Wait for all breakpoint checks to complete
-    await Promise.all(breakpointPromises);
+    await Promise.all(breakpointPromises)
   })
 
   test('should have proper button and link interactions', async ({ page }) => {
@@ -217,15 +219,15 @@ test.describe('Responsive Design and Navigation Tests', () => {
 
     if (buttonCount > 0) {
       // Create promises for each button check
-      const buttonPromises = [];
+      const buttonPromises = []
       for (let i = 0; i < buttonCount; i++) {
-        const button = ctaButtons.nth(i);
-        buttonPromises.push(expect(button).toBeVisible());
-        buttonPromises.push(expect(button).toHaveAttribute('href'));
+        const button = ctaButtons.nth(i)
+        buttonPromises.push(expect(button).toBeVisible())
+        buttonPromises.push(expect(button).toHaveAttribute('href'))
       }
-      
+
       // Wait for all button checks to complete
-      await Promise.all(buttonPromises);
+      await Promise.all(buttonPromises)
     }
 
     // Test footer links
@@ -234,14 +236,14 @@ test.describe('Responsive Design and Navigation Tests', () => {
 
     if (footerLinkCount > 0) {
       // Create promises for each footer link check
-      const footerLinkPromises = [];
+      const footerLinkPromises = []
       for (let i = 0; i < Math.min(footerLinkCount, 3); i++) {
-        const link = footerLinks.nth(i);
-        footerLinkPromises.push(expect(link).toBeVisible());
+        const link = footerLinks.nth(i)
+        footerLinkPromises.push(expect(link).toBeVisible())
       }
-      
+
       // Wait for all footer link checks to complete
-      await Promise.all(footerLinkPromises);
+      await Promise.all(footerLinkPromises)
     }
   })
 

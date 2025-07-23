@@ -34,7 +34,7 @@ jobs:
     outputs:
       environment: ${{ steps.env.outputs.environment }}
       should_deploy: ${{ steps.env.outputs.should_deploy }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
           else
             ENVIRONMENT="preview"
           fi
-          
+
           # Determine if we should deploy
           SHOULD_DEPLOY="false"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] || \
@@ -59,7 +59,7 @@ jobs:
              [ "${{ github.ref }}" = "refs/heads/develop" ]; then
             SHOULD_DEPLOY="true"
           fi
-          
+
           echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
           echo "should_deploy=$SHOULD_DEPLOY" >> $GITHUB_OUTPUT
           echo "Environment: $ENVIRONMENT"
@@ -138,7 +138,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.should_deploy == 'true'
-    environment: 
+    environment:
       name: vercel-${{ needs.build.outputs.environment }}
       url: ${{ steps.deploy.outputs.preview-url }}
 
@@ -177,7 +177,7 @@ jobs:
             echo "Deploying to preview..."
             DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           fi
-          
+
           echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
           echo "Deployment URL: $DEPLOYMENT_URL"
 
@@ -188,12 +188,12 @@ jobs:
           script: |
             const deploymentUrl = '${{ steps.deploy.outputs.preview-url }}';
             const comment = `🚀 **Vercel Preview Deployment**
-            
+
             ✅ Preview: ${deploymentUrl}
-            
+
             Built with commit: ${context.sha.substring(0, 7)}
             Environment: ${{ needs.build.outputs.environment }}`;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -229,17 +229,17 @@ jobs:
         run: |
           DEPLOYMENT_URL="${{ needs.deploy.outputs.preview-url }}"
           echo "Testing deployment at: $DEPLOYMENT_URL"
-          
+
           # Wait for deployment to be ready
           sleep 30
-          
+
           # Simple health check
           if curl -f -s --max-time 30 "$DEPLOYMENT_URL/api/health/simple" >/dev/null; then
             echo "✅ Health check passed"
           else
             echo "⚠️ Health check failed (may be normal for new deployments)"
           fi
-          
+
           # Check if main page loads
           if curl -f -s --max-time 30 "$DEPLOYMENT_URL" >/dev/null; then
             echo "✅ Main page loads successfully"
@@ -276,7 +276,7 @@ jobs:
           echo "Build Status: ${{ needs.build.result }}"
           echo "Deploy Status: ${{ needs.deploy.result }}"
           echo "Tests Status: ${{ needs.post-deploy-tests.result }}"
-          
+
           if [ "${{ needs.deploy.result }}" = "success" ]; then
             echo "✅ Deployment completed successfully!"
             echo "URL: ${{ needs.deploy.outputs.preview-url }}"

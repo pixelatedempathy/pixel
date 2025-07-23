@@ -149,7 +149,7 @@ program
           )
         }
 
-type BreachSeverity = 'low' | 'medium' | 'high' | 'critical';
+        type BreachSeverity = 'low' | 'medium' | 'high' | 'critical'
 
         console.log(chalk.blue('\nBreak details:'))
         console.log(chalk.blue('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'))

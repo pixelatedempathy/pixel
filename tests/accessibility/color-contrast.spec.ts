@@ -28,6 +28,36 @@ const CRITICAL_COMPONENTS = [
   '.pagination', // Pagination controls
 ]
 
+// Define interfaces for better type safety
+interface ContrastInfo {
+  element: string;
+  textContent: string;
+  fontSize: string;
+  fontWeight: string;
+  fgColor: string;
+  bgColor: string;
+  contrastRatio?: number;
+  requiredRatio?: number;
+  hasValidContrast: boolean;
+  skip: boolean;
+}
+
+interface HoverContrastInfo {
+  color: string;
+  bgColor: string;
+  contrastRatio?: number;
+  hasValidContrast: boolean;
+  skip: boolean;
+  states: Record<string, any>;
+}
+
+interface FocusContrastInfo extends HoverContrastInfo {
+  hasFocusOutline: boolean;
+  focusOutlineColor: string | null;
+  outlineContrastRatio?: number;
+  outlineHasValidContrast: boolean;
+}
+
 test.describe('Color Contrast Accessibility Tests', () => {
   for (const page of PAGES_TO_TEST) {
     test(`${page.name} page should have sufficient color contrast`, async ({
@@ -54,14 +84,14 @@ test.describe('Color Contrast Accessibility Tests', () => {
           `Found ${contrastViolations.length} color contrast violations on ${page.name} page:`,
         )
 
-        contrastViolations.forEach((violation) => {
+        contrastViolations.forEach((violation: any) => {
           console.warn(`${violation.description}:`)
-          violation.nodes.forEach((node, i) => {
+          violation.nodes.forEach((node: any, i: number) => {
             console.warn(`  ${i + 1}. ${node.html}`)
 
             if (node.any) {
               const contrastData = node.any.find(
-                (check) => check.id === 'color-contrast',
+                (check: any) => check.id === 'color-contrast',
               )
               if (contrastData && contrastData.data) {
                 console.warn(`     Foreground: ${contrastData.data.fgColor}`)
@@ -76,10 +106,8 @@ test.describe('Color Contrast Accessibility Tests', () => {
         })
       }
 
-      expect(contrastViolations.length).toBe(
-        0,
-        `Found ${contrastViolations.length} color contrast violations on ${page.name} page`,
-      )
+      expect(contrastViolations.length).toBe(0)
+      console.log(`Found ${contrastViolations.length} color contrast violations on ${page.name} page`)
 
       // Manual check of critical components
       for (const selector of CRITICAL_COMPONENTS) {
@@ -106,16 +134,16 @@ test.describe('Color Contrast Accessibility Tests', () => {
             const textContent = (el.textContent || '').trim().substring(0, 50)
 
             // Parse RGB components and calculate contrast ratio
-            function parseRgb(colorString) {
+            function parseRgb(colorString: string) {
               // Handle 'rgb(r, g, b)' format
               const rgbMatch = colorString.match(
                 /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i,
               )
-              if (rgbMatch) {
+              if (rgbMatch && rgbMatch[1] && rgbMatch[2] && rgbMatch[3]) {
                 return [
-                  parseInt(rgbMatch[1]),
-                  parseInt(rgbMatch[2]),
-                  parseInt(rgbMatch[3]),
+                  parseInt(rgbMatch[1], 10),
+                  parseInt(rgbMatch[2], 10),
+                  parseInt(rgbMatch[3], 10),
                 ]
               }
 
@@ -123,30 +151,38 @@ test.describe('Color Contrast Accessibility Tests', () => {
               const rgbaMatch = colorString.match(
                 /rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)/i,
               )
-              if (rgbaMatch) {
+              if (rgbaMatch && rgbaMatch[1] && rgbaMatch[2] && rgbaMatch[3]) {
                 return [
-                  parseInt(rgbaMatch[1]),
-                  parseInt(rgbaMatch[2]),
-                  parseInt(rgbaMatch[3]),
+                  parseInt(rgbaMatch[1], 10),
+                  parseInt(rgbaMatch[2], 10),
+                  parseInt(rgbaMatch[3], 10),
                 ]
               }
 
               return null
             }
 
-            function calculateLuminance(rgb) {
+            function calculateLuminance(rgb: number[] | null) {
+              if (!rgb) return 0;
+              
               // Convert RGB to relative luminance
-              const [r, g, b] = rgb.map((v) => {
+              const r = rgb[0];
+              const g = rgb[1];
+              const b = rgb[2];
+              
+              const sRGB = [r, g, b].map((v) => {
                 const val = v / 255
                 return val <= 0.03928
                   ? val / 12.92
                   : Math.pow((val + 0.055) / 1.055, 2.4)
               })
 
-              return 0.2126 * r + 0.7152 * g + 0.0722 * b
+              return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2]
             }
 
-            function calculateContrastRatio(bg, fg) {
+            function calculateContrastRatio(bg: number[] | null, fg: number[] | null) {
+              if (!bg || !fg) return 0;
+              
               // Calculate contrast ratio
               const bgLuminance = calculateLuminance(bg)
               const fgLuminance = calculateLuminance(fg)
@@ -162,7 +198,7 @@ test.describe('Color Contrast Accessibility Tests', () => {
 
             // Skip elements with transparent backgrounds or those we can't parse
             if (!bgRgb || !fgRgb) {
-              return { hasValidContrast: true, skip: true }
+              return { hasValidContrast: true, skip: true } as ContrastInfo
             }
 
             const contrastRatio = calculateContrastRatio(bgRgb, fgRgb)
@@ -187,7 +223,7 @@ test.describe('Color Contrast Accessibility Tests', () => {
               requiredRatio,
               hasValidContrast: contrastRatio >= requiredRatio,
               skip: false,
-            }
+            } as ContrastInfo
           }, element)
 
           // Skip elements we couldn't analyze
@@ -207,14 +243,12 @@ test.describe('Color Contrast Accessibility Tests', () => {
               `  Font size: ${contrastInfo.fontSize}, weight: ${contrastInfo.fontWeight}`,
             )
             console.warn(
-              `  Contrast ratio: ${contrastInfo.contrastRatio.toFixed(2)}:1 (required: ${contrastInfo.requiredRatio}:1)`,
+              `  Contrast ratio: ${contrastInfo.contrastRatio?.toFixed(2)}:1 (required: ${contrastInfo.requiredRatio}:1)`,
             )
           }
 
-          expect(contrastInfo.hasValidContrast).toBe(
-            true,
-            `Insufficient contrast ratio (${contrastInfo.contrastRatio.toFixed(2)}:1) for element with text "${contrastInfo.textContent}"`,
-          )
+          expect(contrastInfo.hasValidContrast).toBe(true)
+          console.log(`Insufficient contrast ratio (${contrastInfo.contrastRatio?.toFixed(2)}:1) for element with text "${contrastInfo.textContent}"`)
         }
       }
     })
@@ -255,42 +289,50 @@ test.describe('Color Contrast Accessibility Tests', () => {
 
       // Check contrast in hover state
       const hoverContrast = await page.evaluate((el) => {
-        function parseRgb(colorString) {
+        function parseRgb(colorString: string) {
           const rgbMatch = colorString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i)
-          if (rgbMatch) {
+          if (rgbMatch && rgbMatch[1] && rgbMatch[2] && rgbMatch[3]) {
             return [
-              parseInt(rgbMatch[1]),
-              parseInt(rgbMatch[2]),
-              parseInt(rgbMatch[3]),
+              parseInt(rgbMatch[1], 10),
+              parseInt(rgbMatch[2], 10),
+              parseInt(rgbMatch[3], 10),
             ]
           }
 
           const rgbaMatch = colorString.match(
             /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/i,
           )
-          if (rgbaMatch) {
+          if (rgbaMatch && rgbaMatch[1] && rgbaMatch[2] && rgbaMatch[3]) {
             return [
-              parseInt(rgbaMatch[1]),
-              parseInt(rgbaMatch[2]),
-              parseInt(rgbaMatch[3]),
+              parseInt(rgbaMatch[1], 10),
+              parseInt(rgbaMatch[2], 10),
+              parseInt(rgbaMatch[3], 10),
             ]
           }
 
           return null
         }
 
-        function calculateLuminance(rgb) {
-          const [r, g, b] = rgb.map((v) => {
+        function calculateLuminance(rgb: number[] | null) {
+          if (!rgb) return 0;
+          
+          const r = rgb[0];
+          const g = rgb[1];
+          const b = rgb[2];
+          
+          const sRGB = [r, g, b].map((v) => {
             const val = v / 255
             return val <= 0.03928
               ? val / 12.92
               : Math.pow((val + 0.055) / 1.055, 2.4)
           })
 
-          return 0.2126 * r + 0.7152 * g + 0.0722 * b
+          return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2]
         }
 
-        function calculateContrastRatio(bg, fg) {
+        function calculateContrastRatio(bg: number[] | null, fg: number[] | null) {
+          if (!bg || !fg) return 0;
+          
           const bgLuminance = calculateLuminance(bg)
           const fgLuminance = calculateLuminance(fg)
 
@@ -306,7 +348,13 @@ test.describe('Color Contrast Accessibility Tests', () => {
 
         // Skip elements with transparent backgrounds or those we can't parse
         if (!bgRgb || !fgRgb) {
-          return { hasValidContrast: true, skip: true, states: {} }
+          return { 
+            hasValidContrast: true, 
+            skip: true, 
+            states: {},
+            color: style.color,
+            bgColor: style.backgroundColor
+          } as HoverContrastInfo
         }
 
         const contrastRatio = calculateContrastRatio(bgRgb, fgRgb)
@@ -318,7 +366,8 @@ test.describe('Color Contrast Accessibility Tests', () => {
           contrastRatio,
           hasValidContrast: contrastRatio >= requiredRatio,
           skip: false,
-        }
+          states: {}
+        } as HoverContrastInfo
       }, link)
 
       // If the colors changed, check if the contrast is still sufficient
@@ -335,14 +384,12 @@ test.describe('Color Contrast Accessibility Tests', () => {
             `  Hover state - Foreground: ${hoverContrast.color}, Background: ${hoverContrast.bgColor}`,
           )
           console.warn(
-            `  Contrast ratio: ${hoverContrast.contrastRatio.toFixed(2)}:1 (required: 4.5:1)`,
+            `  Contrast ratio: ${hoverContrast.contrastRatio?.toFixed(2)}:1 (required: 4.5:1)`,
           )
         }
 
-        expect(hoverContrast.skip || hoverContrast.hasValidContrast).toBe(
-          true,
-          `Link has insufficient contrast ratio (${hoverContrast.contrastRatio.toFixed(2)}:1) in hover state`,
-        )
+        expect(hoverContrast.skip || hoverContrast.hasValidContrast).toBe(true)
+        console.log(`Link has insufficient contrast ratio (${hoverContrast.contrastRatio?.toFixed(2)}:1) in hover state`)
       }
     }
 
@@ -366,42 +413,50 @@ test.describe('Color Contrast Accessibility Tests', () => {
 
       // Check contrast in focus state
       const focusContrast = await page.evaluate((el) => {
-        function parseRgb(colorString) {
+        function parseRgb(colorString: string) {
           const rgbMatch = colorString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i)
-          if (rgbMatch) {
+          if (rgbMatch && rgbMatch[1] && rgbMatch[2] && rgbMatch[3]) {
             return [
-              parseInt(rgbMatch[1]),
-              parseInt(rgbMatch[2]),
-              parseInt(rgbMatch[3]),
+              parseInt(rgbMatch[1], 10),
+              parseInt(rgbMatch[2], 10),
+              parseInt(rgbMatch[3], 10),
             ]
           }
 
           const rgbaMatch = colorString.match(
             /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/i,
           )
-          if (rgbaMatch) {
+          if (rgbaMatch && rgbaMatch[1] && rgbaMatch[2] && rgbaMatch[3]) {
             return [
-              parseInt(rgbaMatch[1]),
-              parseInt(rgbaMatch[2]),
-              parseInt(rgbaMatch[3]),
+              parseInt(rgbaMatch[1], 10),
+              parseInt(rgbaMatch[2], 10),
+              parseInt(rgbaMatch[3], 10),
             ]
           }
 
           return null
         }
 
-        function calculateLuminance(rgb) {
-          const [r, g, b] = rgb.map((v) => {
+        function calculateLuminance(rgb: number[] | null) {
+          if (!rgb) return 0;
+          
+          const r = rgb[0];
+          const g = rgb[1];
+          const b = rgb[2];
+          
+          const sRGB = [r, g, b].map((v) => {
             const val = v / 255
             return val <= 0.03928
               ? val / 12.92
               : Math.pow((val + 0.055) / 1.055, 2.4)
           })
 
-          return 0.2126 * r + 0.7152 * g + 0.0722 * b
+          return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2]
         }
 
-        function calculateContrastRatio(bg, fg) {
+        function calculateContrastRatio(bg: number[] | null, fg: number[] | null) {
+          if (!bg || !fg) return 0;
+          
           const bgLuminance = calculateLuminance(bg)
           const fgLuminance = calculateLuminance(fg)
 
@@ -417,7 +472,16 @@ test.describe('Color Contrast Accessibility Tests', () => {
 
         // Skip elements with transparent backgrounds or those we can't parse
         if (!bgRgb || !fgRgb) {
-          return { hasValidContrast: true, skip: true }
+          return { 
+            hasValidContrast: true, 
+            skip: true,
+            states: {},
+            color: style.color,
+            bgColor: style.backgroundColor,
+            hasFocusOutline: false,
+            focusOutlineColor: null,
+            outlineHasValidContrast: true
+          } as FocusContrastInfo
         }
 
         const contrastRatio = calculateContrastRatio(bgRgb, fgRgb)
@@ -429,7 +493,7 @@ test.describe('Color Contrast Accessibility Tests', () => {
         const focusOutlineColor = hasFocusOutline ? style.outlineColor : null
 
         // Calculate contrast ratio for the focus outline if present
-        let outlineContrastRatio = null
+        let outlineContrastRatio = undefined;
         let outlineHasValidContrast = true
 
         if (hasFocusOutline && focusOutlineColor) {
@@ -450,7 +514,8 @@ test.describe('Color Contrast Accessibility Tests', () => {
           outlineContrastRatio,
           outlineHasValidContrast,
           skip: false,
-        }
+          states: {}
+        } as FocusContrastInfo
       }, button)
 
       // Check focus outline contrast
@@ -465,13 +530,10 @@ test.describe('Color Contrast Accessibility Tests', () => {
         )
         console.warn(`  Outline color: ${focusContrast.focusOutlineColor}`)
         console.warn(
-          `  Outline contrast ratio: ${focusContrast.outlineContrastRatio.toFixed(2)}:1 (required: 3:1)`,
+          `  Outline contrast ratio: ${focusContrast.outlineContrastRatio?.toFixed(2)}:1 (required: 3:1)`,
         )
 
-        expect(focusContrast.outlineHasValidContrast).toBe(
-          true,
-          `Button focus outline has insufficient contrast ratio (${focusContrast.outlineContrastRatio.toFixed(2)}:1)`,
-        )
+        expect(focusContrast.outlineHasValidContrast).toBe(true)
       }
 
       // Check text contrast in focused state
@@ -481,13 +543,10 @@ test.describe('Color Contrast Accessibility Tests', () => {
           `  Foreground: ${focusContrast.color}, Background: ${focusContrast.bgColor}`,
         )
         console.warn(
-          `  Contrast ratio: ${focusContrast.contrastRatio.toFixed(2)}:1 (required: 4.5:1)`,
+          `  Contrast ratio: ${focusContrast.contrastRatio?.toFixed(2)}:1 (required: 4.5:1)`,
         )
 
-        expect(focusContrast.hasValidContrast).toBe(
-          true,
-          `Button has insufficient text contrast ratio (${focusContrast.contrastRatio.toFixed(2)}:1) in focus state`,
-        )
+        expect(focusContrast.hasValidContrast).toBe(true)
       }
     }
   })
@@ -533,14 +592,14 @@ test.describe('Color Contrast Accessibility Tests', () => {
         `Found ${contrastViolations.length} color contrast violations in dark mode:`,
       )
 
-      contrastViolations.forEach((violation) => {
+      contrastViolations.forEach((violation: any) => {
         console.warn(`${violation.description}:`)
-        violation.nodes.forEach((node, i) => {
+        violation.nodes.forEach((node: any, i: number) => {
           console.warn(`  ${i + 1}. ${node.html}`)
 
           if (node.any) {
             const contrastData = node.any.find(
-              (check) => check.id === 'color-contrast',
+              (check: any) => check.id === 'color-contrast',
             )
             if (contrastData && contrastData.data) {
               console.warn(`     Foreground: ${contrastData.data.fgColor}`)
@@ -555,9 +614,7 @@ test.describe('Color Contrast Accessibility Tests', () => {
       })
     }
 
-    expect(contrastViolations.length).toBe(
-      0,
-      `Found ${contrastViolations.length} color contrast violations in dark mode`,
-    )
+    expect(contrastViolations.length).toBe(0)
+    console.log(`Found ${contrastViolations.length} color contrast violations in dark mode`)
   })
 })

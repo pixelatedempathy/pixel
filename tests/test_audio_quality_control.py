@@ -1,6 +1,5 @@
-from pydub import AudioSegment
-
 from pixel_voice.audio_quality_control import compute_quality_metrics
+from pydub import AudioSegment
 
 
 def test_audio_quality_metrics(tmp_path):

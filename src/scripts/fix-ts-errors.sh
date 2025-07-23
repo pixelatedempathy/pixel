@@ -16,7 +16,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Check if we're in the right environment
-if [ -z "${CONDA_DEFAULT_ENV}" ] || [ "${CONDA_DEFAULT_ENV}" != "pixelated" ]; then
+if [[ -z ${CONDA_DEFAULT_ENV} ]] || [[ ${CONDA_DEFAULT_ENV} != "pixelated" ]]; then
 	echo -e "${YELLOW}Warning: Not in the pixelated conda environment.${NC}"
 	echo -e "${YELLOW}It's recommended to run: conda activate pixelated${NC}"
 	read -p "Continue anyway? (y/n) " -n 1 -r
@@ -26,10 +26,10 @@ if [ -z "${CONDA_DEFAULT_ENV}" ] || [ "${CONDA_DEFAULT_ENV}" != "pixelated" ]; t
 	fi
 fi
 # Change to the project root directory
-if [ -z "${PROJECT_ROOT}" ]; then
+if [[ -z ${PROJECT_ROOT} ]]; then
 	PROJECT_ROOT="$(cd "$(dirname "${0}")/../.." && pwd)"
 fi
-if [ -z "${PROJECT_ROOT}" ]; then
+if [[ -z ${PROJECT_ROOT} ]]; then
 	echo -e "${RED}Error: Could not find project root directory.${NC}"
 	exit 1
 fi
@@ -42,13 +42,13 @@ echo -e "${BLUE}Project root: ${PROJECT_ROOT}${NC}"
 
 # Check if the TypeScript fixer script exists
 TS_FIXER="src/scripts/fix-ts-errors.ts"
-if [ ! -f "${TS_FIXER}" ]; then
+if [[ ! -f ${TS_FIXER} ]]; then
 	echo -e "${RED}Error: TypeScript fixer script not found at ${TS_FIXER}${NC}"
 	exit 1
 fi
 
 # Check if arguments are provided
-if [ "${1}" == "--help" ]; then
+if [[ ${1} == "--help" ]]; then
 	echo "Usage: ./fix-ts-errors.sh [options]"
 	echo ""
 	echo "Options:"
@@ -65,7 +65,7 @@ echo -e "${GREEN}Running TypeScript error fixer...${NC}"
 npx tsx "${TS_FIXER}" "$@"
 
 # Check the result
-if [ "${?}" -eq 0 ]; then
+if [[ ${?} -eq 0 ]]; then
 	echo -e "${GREEN}TypeScript error fixer completed successfully.${NC}"
 
 	# Provide helpful next steps
