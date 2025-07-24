@@ -136,3 +136,4 @@ amplifyconfiguration*
 .osv-scanner.toml
 .endgame
 packages
+pnpm-workspace.yaml
