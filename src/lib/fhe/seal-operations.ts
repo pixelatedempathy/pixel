@@ -5,7 +5,8 @@
  */
 
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
-import { SealService, SealCipherText, SealPlainText } from './seal-service'
+import { SealService } from './seal-service'
+import type { SealCipherText, SealPlainText } from './seal-service'
 import { SealResourceScope } from './seal-memory'
 import { FHEOperation, OperationError } from './types'
 import { SealSchemeType, SEAL_SUPPORTED_OPERATIONS } from './seal-types'

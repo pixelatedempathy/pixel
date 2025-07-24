@@ -38,9 +38,13 @@ frontend:
       commands:
         - 'echo "NODE_ENV=production" > .env'
         - 'echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env'
-        - pnpm add astro-aws-amplify@latest
         - pnpm run build
         - 'if [ -n "$CDN_BUCKET_NAME" ]; then node scripts/upload-to-cdn.js || echo "CDN upload failed, continuing..."; fi'
+        - 'mkdir -p .amplify-hosting/compute/default'
+        - 'cp -r dist/* .amplify-hosting/compute/default/ || true'
+        - 'cp .env .amplify-hosting/compute/default/.env || true'
+        - 'mkdir -p .amplify-hosting/static'
+        - 'cp -r dist/client/* .amplify-hosting/static/ || true'
         - ls -la .amplify-hosting/
         - 'echo "Static assets:"'
         - 'ls -la .amplify-hosting/static/ | head -10'

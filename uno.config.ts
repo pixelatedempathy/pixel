@@ -3,7 +3,6 @@ import {
   presetIcons,
   presetAttributify,
   presetTypography,
-  presetUno,
 } from 'unocss'
 
 export default defineConfig({
@@ -30,7 +29,6 @@ export default defineConfig({
     ],
   ],
   presets: [
-    presetUno(),
     presetAttributify(),
     presetIcons({
       scale: 1.2,
@@ -42,7 +40,7 @@ export default defineConfig({
     fontFamily: {
       sans: [
         'Inter',
-        '-apple-system',
+        'apple-system',
         'BlinkMacSystemFont',
         'Segoe UI',
         'Roboto',

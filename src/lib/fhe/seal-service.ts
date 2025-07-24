@@ -10,8 +10,8 @@ import { FHEOperation } from './types'
 import {
   getSchemeForMode,
   SealSchemeType,
-  SealContextOptions,
 } from './seal-types'
+import type { SealContextOptions } from './seal-types'
 import type { SealSerializationOptions, SerializedSealKeys } from './seal-types'
 import { SealContext } from './seal-context'
 import { SealMemoryManager } from './seal-memory'

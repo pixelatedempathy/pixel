@@ -9,17 +9,20 @@ import icon from 'astro-icon';
 import sentry from '@sentry/astro';
 import markdoc from '@astrojs/markdoc';
 
-import awsAmplify from 'astro-aws-amplify';
+import awsAmplify from '@pixelated/astro-aws-amplify';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://pixelatedempathy.com',
   output: 'server',
-  adapter: awsAmplify(),
+  adapter: awsAmplify({
+    mode: 'middleware'
+  }),
   trailingSlash: 'ignore',
   build: {
     format: 'directory',
+    sourcemap: false, // Disable sourcemaps to avoid transitions plugin warning
   },
   vite: {
     build: {

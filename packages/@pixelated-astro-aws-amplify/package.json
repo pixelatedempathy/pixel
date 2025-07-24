@@ -1,0 +1,42 @@
+{
+  "name": "@pixelated/astro-aws-amplify",
+  "type": "module",
+  "version": "0.2.2",
+  "description": "Astro adapter for AWS Amplify SSR (fixed packaging)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "astro",
+    "adapter",
+    "aws",
+    "amplify",
+    "ssr"
+  ],
+  "author": "Pixelated",
+  "license": "MIT",
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {}
+}

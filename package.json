@@ -154,6 +154,7 @@
     "@iconify/utils": "2.2.0",
     "@libsql/client": "^0.15.10",
     "@neondatabase/serverless": "^1.0.1",
+    "@pixelated/astro-aws-amplify": "workspace:*",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-three/drei": "^10.5.2",
@@ -169,7 +170,6 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-layers": "^4.22.0",
     "@types/ws": "^8.18.1",
-    "astro-aws-amplify": "^0.2.1",
     "astro-compress": "^2.3.8",
     "astro-icon": "^1.1.5",
     "astro-seo": "^0.8.4",
@@ -418,7 +418,6 @@
   "pnpm": {
     "overrides": {
       "path-to-regexp": "8.2.0",
-
       "@vitest/coverage-v8>glob": "^10.4.5",
       "glob": "^10.4.5",
       "rimraf": "^5.0.0",

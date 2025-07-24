@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 import { v4 as uuidv4 } from 'uuid'
-import {
+import type {
   TherapeuticGoal,
+} from '../../../lib/ai/types/TherapeuticGoals'
+import {
   GoalCategory,
   GoalStatus,
 } from '../../../lib/ai/types/TherapeuticGoals'
