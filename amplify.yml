@@ -27,11 +27,9 @@ frontend:
         - pnpm config set store-dir .pnpm-store
         - pnpm config set auto-install-peers true
         - pnpm config set strict-peer-dependencies false
+        - pnpm config set dangerouslyallowallbuilds true
         - pnpm install --no-frozen-lockfile
         - pnpm rebuild
-        - pnpm add supabase@2.31.8
-        - pnpm approve-builds --yes
-        - 'pnpm add --save-exact --no-optional @aws-sdk/client-s3'
         - 'find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "examples" \) -exec rm -rf {} + || true'
         - 'find node_modules -type f \( -name "*.md" -o -name "*.markdown" -o -name "CHANGELOG*" -o -name "*.ts" -o -name "*.tsx" -o -name "*.map" \) -delete || true'
         - 'find node_modules -type f -name "*.d.ts" ! -path "*/@types/*" -delete || true'
