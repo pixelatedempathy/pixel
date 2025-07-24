@@ -29,9 +29,7 @@ frontend:
         - pnpm config set strict-peer-dependencies false
         - pnpm config set dangerouslyallowallbuilds true
         - pnpm install --no-frozen-lockfile
-        - 'ls -la node_modules/@iconify/utils/lib/emoji/test/ || echo "parse.mjs missing!"'
         - pnpm rebuild
-        - 'find node_modules -type f -name "*.d.ts" ! -path "*/@types/*" -delete || true'
 
     build:
       commands:
