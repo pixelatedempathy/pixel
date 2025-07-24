@@ -268,6 +268,7 @@
     "@iconify-json/ri": "^1.2.5",
     "@iconify-json/uil": "^1.2.3",
     "@iconify/json": "^2.2.360",
+    "@keystatic/astro": "^5.0.6",
     "@playwright/test": "^1.54.1",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
