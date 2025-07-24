@@ -1,8 +1,8 @@
 version: 1
 frontend:
   environment:
-    _CUSTOM_IMAGE: amplify:al2023
-    NODE_OPTIONS: --max-old-space-size=12288
+    _CUSTOM_IMAGE: 'amplify:al2023'
+    NODE_OPTIONS: '--max-old-space-size=12288'
 
   phases:
     install:
@@ -15,80 +15,44 @@ frontend:
 
     preBuild:
       commands:
-        - . "$NVM_DIR/nvm.sh" && nvm install v22.16.0 && echo "node installed by arun"
+        - '. "$NVM_DIR/nvm.sh" && nvm install v22.16.0 && echo "node installed by arun"'
         - nvm use v22.16.0
         - npm i npm@latest -g
         - npm install -g pnpm
         - export SHELL=bash
         - pnpm setup
-        - export PNPM_HOME="/root/.local/share/pnpm"
-        - export PATH="$PNPM_HOME:$PATH"
-
-        # Set Node.js memory limit
-        - export NODE_OPTIONS=--max-old-space-size=12288
-
-        # Configure pnpm with optimized settings
+        - 'export PNPM_HOME="/root/.local/share/pnpm"'
+        - 'export PATH="$PNPM_HOME:$PATH"'
+        - 'export NODE_OPTIONS=--max-old-space-size=12288'
         - pnpm config set store-dir .pnpm-store
         - pnpm config set auto-install-peers true
         - pnpm config set strict-peer-dependencies false
-
-        # Remove incorrect package if it exists (before installing dependencies)
-        - if test -f package.json && grep -q "astrojs-node-aws-amplify" package.json; then pnpm remove astrojs-node-aws-amplify || true; fi
-
-        # Install all dependencies with simplified flags
+        - 'if test -f package.json && grep -q "astrojs-node-aws-amplify" package.json; then pnpm remove astrojs-node-aws-amplify || true; fi'
         - pnpm install --no-frozen-lockfile
-
-        # Ensure we have the correct Astro AWS Amplify adapter
         - pnpm add astro-aws-amplify@latest
-
-        # Verify content collections don't have non-markdown files (like docs.json)
-        # This was causing build failures - such files should be moved out of src/content/
-        - if test -f src/content/docs/docs.json; then echo "ERROR: docs.json found in content collection - should be moved"; exit 1; fi
-
+        - 'if test -f src/content/docs/docs.json; then echo "ERROR: docs.json found in content collection - should be moved"; exit 1; fi'
         - pnpm rebuild
         - pnpm install --global supabase@2.31.8
-
-        # Install AWS SDK only if needed for CDN
-        - pnpm add --save-exact --no-optional @aws-sdk/client-s3;
-
-        # Clean up unnecessary files to reduce size
-        - find node_modules -type d \( -name 'test' -o -name 'tests' -o -name '__tests__' -o -name 'examples' \) -exec rm -rf {} + || true
-        - find node_modules -type f \( -name '*.md' -o -name '*.markdown' -o -name 'CHANGELOG*' -o -name '*.ts' -o -name '*.tsx' -o -name '*.map' \) -delete || true
-        - find node_modules -type f -name '*.d.ts' ! -path '*/@types/*' -delete || true
+        - 'pnpm add --save-exact --no-optional @aws-sdk/client-s3'
+        - 'find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "examples" \) -exec rm -rf {} + || true'
+        - 'find node_modules -type f \( -name "*.md" -o -name "*.markdown" -o -name "CHANGELOG*" -o -name "*.ts" -o -name "*.tsx" -o -name "*.map" \) -delete || true'
+        - 'find node_modules -type f -name "*.d.ts" ! -path "*/@types/*" -delete || true'
 
     build:
       commands:
-        # Set environment variables
-        - echo "NODE_ENV=production" > .env
-        - echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env
-
-        # Ensure we have the correct astro-aws-amplify package (not the incorrect one)
-        - if pnpm list astrojs-node-aws-amplify > /dev/null 2>&1; then pnpm remove astrojs-node-aws-amplify; fi
+        - 'echo "NODE_ENV=production" > .env'
+        - 'echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env'
+        - 'if pnpm list astrojs-node-aws-amplify > /dev/null 2>&1; then pnpm remove astrojs-node-aws-amplify; fi'
         - pnpm add astro-aws-amplify@latest
-
-        # Build with Astro + AWS Amplify adapter (outputs to .amplify-hosting automatically)
         - pnpm run build
-
-        # The astro-aws-amplify adapter automatically creates the correct structure:
-        # - .amplify-hosting/static/ (static assets)
-        # - .amplify-hosting/compute/ (server functions)
-        # - .amplify-hosting/deploy-manifest.json (deployment config)
-
-        # Optional: Upload static assets to CDN if configured
-        - if [ -n "$CDN_BUCKET_NAME" ]; then node scripts/upload-to-cdn.js || echo "CDN upload failed, continuing..."; fi
-
-        # Verify the build output structure
+        - 'if [ -n "$CDN_BUCKET_NAME" ]; then node scripts/upload-to-cdn.js || echo "CDN upload failed, continuing..."; fi'
         - ls -la .amplify-hosting/
-        - echo "Static assets:"
-        - ls -la .amplify-hosting/static/ | head -10
-        - echo "Compute functions:"
-        - ls -la .amplify-hosting/compute/ | head -10
-
-        # Clean up development files from output
-        - find .amplify-hosting -type f \( -name '*.map' -o -name '*.ts' -o -name '*.tsx' -o -name '*.test.*' -o -name '*.spec.*' \) -delete || true
-        - find .amplify-hosting -type d -empty -delete || true
-
-        # Final size check
+        - 'echo "Static assets:"'
+        - 'ls -la .amplify-hosting/static/ | head -10'
+        - 'echo "Compute functions:"'
+        - 'ls -la .amplify-hosting/compute/ | head -10'
+        - 'find .amplify-hosting -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.test.*" -o -name "*.spec.*" \) -delete || true'
+        - 'find .amplify-hosting -type d -empty -delete || true'
         - du -sh .amplify-hosting/
 
   artifacts:
@@ -96,7 +60,6 @@ frontend:
     files:
       - '**/*'
 
-  # Disable caching to prevent size issues
   cache:
     paths: []
   customRules:
