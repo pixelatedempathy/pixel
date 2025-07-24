@@ -1,9 +1,9 @@
 ;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="22f05207-eca2-46fb-87fb-be3201f3df2a",e._sentryDebugIdIdentifier="sentry-dbid-22f05207-eca2-46fb-87fb-be3201f3df2a")}catch(e){}}();/* empty css                                             */
 /* empty css                                    */
-import '../../chunks/sentry.server.config_CxC0uPLd.mjs';
-import { c as createComponent, m as maybeRenderHead, r as renderComponent, d as renderScript, e as addAttribute, a as renderTemplate, b as createAstro } from '../../chunks/astro/server_Ck5BzePu.mjs';
-import { $ as $$AdminLayout } from '../../chunks/AdminLayout_DUgTF_Yn.mjs';
-import { $ as $$Icon } from '../../chunks/Icon_CGgyUQli.mjs';
+import '../../chunks/sentry.server.config_gtrRxMPl.mjs';
+import { c as createComponent, m as maybeRenderHead, r as renderComponent, d as renderScript, e as addAttribute, a as renderTemplate, b as createAstro } from '../../chunks/astro/server_t-wqd6mp.mjs';
+import { $ as $$AdminLayout } from '../../chunks/AdminLayout_Ciex37LV.mjs';
+import { $ as $$Icon } from '../../chunks/Icon_BlgZSp7R.mjs';
 export { renderers } from '../../renderers.mjs';
 
 const $$PatientRightsSystem = createComponent(($$result, $$props, $$slots) => {

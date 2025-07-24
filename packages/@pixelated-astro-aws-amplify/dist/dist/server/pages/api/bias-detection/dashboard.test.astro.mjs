@@ -1,11 +1,11 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="82d28735-1e41-4a3b-ba04-8103c01f392d",e._sentryDebugIdIdentifier="sentry-dbid-82d28735-1e41-4a3b-ba04-8103c01f392d")}catch(e){}}();import { B as BiasDetectionEngine } from '../../../chunks/BiasDetectionEngine_Bb-iuTug.mjs';
-import '../../../chunks/cache_BT_GBUcf.mjs';
-import '../../../chunks/astro/server_Ck5BzePu.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="82d28735-1e41-4a3b-ba04-8103c01f392d",e._sentryDebugIdIdentifier="sentry-dbid-82d28735-1e41-4a3b-ba04-8103c01f392d")}catch(e){}}();import { B as BiasDetectionEngine } from '../../../chunks/BiasDetectionEngine_LWnMxt9o.mjs';
+import '../../../chunks/cache_Dq5YBkVs.mjs';
+import '../../../chunks/astro/server_t-wqd6mp.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 vi.mock("@/lib/ai/bias-detection");
 vi.mock("@/lib/utils/logger");
-const { GET } = await import('../../../chunks/dashboard_M2CB3-GU.mjs').then(n => n._);
+const { GET } = await import('../../../chunks/dashboard_BJHOsP8K.mjs').then(n => n._);
 describe("Bias Detection Dashboard API Endpoint", () => {
   let mockLogger;
   let mockBiasEngine;

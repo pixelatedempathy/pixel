@@ -1,5 +1,5 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="ef571064-f226-48ed-a253-55bbe3f9a957",e._sentryDebugIdIdentifier="sentry-dbid-ef571064-f226-48ed-a253-55bbe3f9a957")}catch(e){}}();import { g as getCollection } from '../../../chunks/_astro_content_BVsi8R0v.mjs';
-import '../../../chunks/astro/server_Ck5BzePu.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="ef571064-f226-48ed-a253-55bbe3f9a957",e._sentryDebugIdIdentifier="sentry-dbid-ef571064-f226-48ed-a253-55bbe3f9a957")}catch(e){}}();import { g as getCollection } from '../../../chunks/_astro_content_BJQReLnb.mjs';
+import '../../../chunks/astro/server_t-wqd6mp.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 class ServerSearchClient {
@@ -92,7 +92,7 @@ if (typeof window !== "undefined") {
   window.searchClient = proxyClient;
   (async () => {
     try {
-      const { initBrowserSearch } = await import('../../../chunks/search-browser_BlyAedVc.mjs');
+      const { initBrowserSearch } = await import('../../../chunks/search-browser_DnrJog_G.mjs');
       const realClient = await initBrowserSearch();
       if (window._pendingSearchDocs.length > 0) {
         realClient.importDocuments(window._pendingSearchDocs);

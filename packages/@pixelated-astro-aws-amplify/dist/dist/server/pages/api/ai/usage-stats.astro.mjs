@@ -1,9 +1,9 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3c8c3432-b396-4a83-9e81-7647aaed1a19",e._sentryDebugIdIdentifier="sentry-dbid-3c8c3432-b396-4a83-9e81-7647aaed1a19")}catch(e){}}();import { r as requirePermission } from '../../../chunks/access-control_D-d2-rFY.mjs';
-import { g as getAIUsageStats } from '../../../chunks/analytics_CO3hhYdg.mjs';
-import { h as handleApiError } from '../../../chunks/error-handling_CA0NkQkO.mjs';
-import { c as createAuditLog } from '../../../chunks/audit_CMoAMAaW.mjs';
-import { g as getSession } from '../../../chunks/session_DeimXgPx.mjs';
-import '../../../chunks/astro/server_Ck5BzePu.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="3c8c3432-b396-4a83-9e81-7647aaed1a19",e._sentryDebugIdIdentifier="sentry-dbid-3c8c3432-b396-4a83-9e81-7647aaed1a19")}catch(e){}}();import { r as requirePermission } from '../../../chunks/access-control_BvpmOJeX.mjs';
+import { g as getAIUsageStats } from '../../../chunks/analytics_CdFa8nnj.mjs';
+import { h as handleApiError } from '../../../chunks/error-handling_DNO7GKsc.mjs';
+import { c as createAuditLog } from '../../../chunks/audit_DWq5CQbl.mjs';
+import { g as getSession } from '../../../chunks/session_CjG7jjfF.mjs';
+import '../../../chunks/astro/server_t-wqd6mp.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 const GET = async ({ request, cookies, url }) => {

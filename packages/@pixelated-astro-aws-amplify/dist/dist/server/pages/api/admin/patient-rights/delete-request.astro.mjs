@@ -1,7 +1,7 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="e369850c-b732-4aa2-9cb8-48c588c082b2",e._sentryDebugIdIdentifier="sentry-dbid-e369850c-b732-4aa2-9cb8-48c588c082b2")}catch(e){}}();import { c as createBuildSafeLogger } from '../../../../chunks/build-safe-logger_0J2m2aGD.mjs';
-import { p as protectRoute } from '../../../../chunks/serverAuth_4gmt5n21.mjs';
-import { c as createDataDeletionRequest } from '../../../../chunks/dataDeleteService_DxIH-OCS.mjs';
-import '../../../../chunks/astro/server_Ck5BzePu.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="e369850c-b732-4aa2-9cb8-48c588c082b2",e._sentryDebugIdIdentifier="sentry-dbid-e369850c-b732-4aa2-9cb8-48c588c082b2")}catch(e){}}();import { c as createBuildSafeLogger } from '../../../../chunks/build-safe-logger_tzJzO24i.mjs';
+import { p as protectRoute } from '../../../../chunks/serverAuth_DpRotyBD.mjs';
+import { c as createDataDeletionRequest } from '../../../../chunks/dataDeleteService_BSM2SCO2.mjs';
+import '../../../../chunks/astro/server_t-wqd6mp.mjs';
 export { renderers } from '../../../../renderers.mjs';
 
 const logger = createBuildSafeLogger("patient-rights-api");

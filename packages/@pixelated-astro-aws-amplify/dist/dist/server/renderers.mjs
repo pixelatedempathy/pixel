@@ -1,6 +1,6 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="c55def9a-2964-4732-abc3-ab5a66a94082",e._sentryDebugIdIdentifier="sentry-dbid-c55def9a-2964-4732-abc3-ab5a66a94082")}catch(e){}}();import React__default, { createElement } from 'react';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="a581cbfc-748f-4ac7-8e51-b793342f0605",e._sentryDebugIdIdentifier="sentry-dbid-a581cbfc-748f-4ac7-8e51-b793342f0605")}catch(e){}}();import React__default, { createElement } from 'react';
 import ReactDOM from 'react-dom/server';
-import { k as renderJSX, l as createVNode, A as AstroJSX, n as AstroUserError } from './chunks/astro/server_Ck5BzePu.mjs';
+import { k as renderJSX, l as createVNode, A as AstroJSX, n as AstroUserError } from './chunks/astro/server_t-wqd6mp.mjs';
 import 'clsx';
 
 const contexts = /* @__PURE__ */ new WeakMap();
@@ -245,6 +245,6 @@ const renderer = {
 };
 var server_default = renderer;
 
-const renderers = [Object.assign({"name":"@astrojs/react","clientEntrypoint":"@astrojs/react/client.js","serverEntrypoint":"@astrojs/react/server.js"}, { ssr: server_default$1 }),Object.assign({"name":"astro:jsx","serverEntrypoint":"file:///root/pixel/node_modules/.pnpm/@astrojs+mdx@4.3.1_astro@5.12.3_@capacitor+preferences@7.0.1_@capacitor+core@7.4.2__@ty_6d33c8855dec49d0ea99d3d824aaabd3/node_modules/@astrojs/mdx/dist/server.js"}, { ssr: server_default }),];
+const renderers = [Object.assign({"name":"@astrojs/react","clientEntrypoint":"@astrojs/react/client.js","serverEntrypoint":"@astrojs/react/server.js"}, { ssr: server_default$1 }),Object.assign({"name":"astro:jsx","serverEntrypoint":"file:///root/pixel/node_modules/.pnpm/@astrojs+mdx@4.3.1_astro@5.12.3_@capacitor+preferences@7.0.1_@capacitor+core@7.4.2__@ty_4125bab9dd544c43988d5ddbfbd89083/node_modules/@astrojs/mdx/dist/server.js"}, { ssr: server_default }),];
 
 export { renderers };

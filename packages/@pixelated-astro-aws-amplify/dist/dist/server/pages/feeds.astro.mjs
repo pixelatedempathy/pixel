@@ -1,18 +1,18 @@
 ;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="6faff19b-aa82-49b5-b21b-3721c2f1a1db",e._sentryDebugIdIdentifier="sentry-dbid-6faff19b-aa82-49b5-b21b-3721c2f1a1db")}catch(e){}}();/* empty css                                          */
 /* empty css                                 */
-import '../chunks/sentry.server.config_CxC0uPLd.mjs';
-import { b as createAstro, c as createComponent, m as maybeRenderHead, h as renderSlot, e as addAttribute, a as renderTemplate, r as renderComponent, F as Fragment } from '../chunks/astro/server_Ck5BzePu.mjs';
-import { $ as $$BaseLayout } from '../chunks/BaseLayout_BKh1dVJn.mjs';
+import '../chunks/sentry.server.config_gtrRxMPl.mjs';
+import { b as createAstro, c as createComponent, m as maybeRenderHead, h as renderSlot, e as addAttribute, a as renderTemplate, r as renderComponent, F as Fragment } from '../chunks/astro/server_t-wqd6mp.mjs';
+import { $ as $$BaseLayout } from '../chunks/BaseLayout_Cutfhivd.mjs';
 import 'clsx';
-import { e as ensureTrailingSlash, g as getUrl } from '../chunks/common_BfWY_4NZ.mjs';
-import { U as UI, F as FEATURES } from '../chunks/config_Piylsppw.mjs';
+import { e as ensureTrailingSlash, g as getUrl } from '../chunks/common_Dp__P9nz.mjs';
+import { U as UI, F as FEATURES } from '../chunks/config_f05_Kix0.mjs';
 /* empty css                                 */
-import { g as getCollection, a as getEntry, r as renderEntry } from '../chunks/_astro_content_BVsi8R0v.mjs';
-import { $ as $$Categorizer } from '../chunks/Categorizer_W01LXPZ3.mjs';
-import { $ as $$Link } from '../chunks/Link_urbCl899.mjs';
-import { f as formatDate, g as getYear, i as isSameYear } from '../chunks/datetime_q4GKrHnk.mjs';
-import { $ as $$Toc } from '../chunks/Toc_wE5inh6h.mjs';
-import { $ as $$Warning } from '../chunks/Warning_B5t82WcW.mjs';
+import { g as getCollection, a as getEntry, r as renderEntry } from '../chunks/_astro_content_BJQReLnb.mjs';
+import { $ as $$Categorizer } from '../chunks/Categorizer_BbJNXQa1.mjs';
+import { $ as $$Link } from '../chunks/Link_DHpR9-Fz.mjs';
+import { f as formatDate, g as getYear, i as isSameYear } from '../chunks/datetime_DVMvA6US.mjs';
+import { $ as $$Toc } from '../chunks/Toc_edfXXF4v.mjs';
+import { $ as $$Warning } from '../chunks/Warning_BTMKXVUP.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Astro$3 = createAstro("https://pixelatedempathy.com");

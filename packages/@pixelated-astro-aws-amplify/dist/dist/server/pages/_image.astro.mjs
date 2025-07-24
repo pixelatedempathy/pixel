@@ -1,4 +1,4 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="bd1cdfda-d90e-4994-8d10-f0645379211b",e._sentryDebugIdIdentifier="sentry-dbid-bd1cdfda-d90e-4994-8d10-f0645379211b")}catch(e){}}();import { g as getConfiguredImageService, i as imageConfig, a as isRemoteAllowed, l as lookup } from '../chunks/_astro_assets_D_Lh64bK.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="bd1cdfda-d90e-4994-8d10-f0645379211b",e._sentryDebugIdIdentifier="sentry-dbid-bd1cdfda-d90e-4994-8d10-f0645379211b")}catch(e){}}();import { g as getConfiguredImageService, i as imageConfig, a as isRemoteAllowed, l as lookup } from '../chunks/_astro_assets_Cs76h3vR.mjs';
 import { i as isRemotePath } from '../chunks/path_BuLi1_ZZ.mjs';
 export { renderers } from '../renderers.mjs';
 

@@ -8,16 +8,16 @@ import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import sentry from '@sentry/astro';
 import markdoc from '@astrojs/markdoc';
+import node from '@astrojs/node'
 
-import awsAmplify from '@pixelated/astro-aws-amplify';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || 'https://pixelatedempathy.com',
-  output: 'hybrid',
-  adapter: awsAmplify({
-    mode: 'middleware'
+  output: 'server',
+  adapter: node({
+    mode: 'standalone',
   }),
   trailingSlash: 'ignore',
   build: {

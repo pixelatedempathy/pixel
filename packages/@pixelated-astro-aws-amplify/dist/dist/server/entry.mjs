@@ -1,6 +1,6 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="e26474bf-1439-4abf-92f3-3aa195aac326",e._sentryDebugIdIdentifier="sentry-dbid-e26474bf-1439-4abf-92f3-3aa195aac326")}catch(e){}}();import { renderers } from './renderers.mjs';
-import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_DxSpqi4v.mjs';
-import { manifest } from './manifest_DxtGUMkK.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="7c106f68-36d3-4638-ac31-795ee5b79ef1",e._sentryDebugIdIdentifier="sentry-dbid-7c106f68-36d3-4638-ac31-795ee5b79ef1")}catch(e){}}();import { renderers } from './renderers.mjs';
+import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_BNzsVhFk.mjs';
+import { manifest } from './manifest_C66Nr4Y7.mjs';
 
 const serverIslandMap = new Map();;
 
@@ -228,7 +228,7 @@ const _page220 = () => import('./pages/try-demo.astro.mjs');
 const _page221 = () => import('./pages/unauthorized.astro.mjs');
 const _page222 = () => import('./pages/index.astro.mjs');
 const pageMap = new Map([
-    ["node_modules/.pnpm/astro@5.12.3_@capacitor+preferences@7.0.1_@capacitor+core@7.4.2__@types+node@24.1.0_@up_fc8f8b4c2d9b97ff249879fa36ee3437/node_modules/astro/dist/assets/endpoint/generic.js", _page0],
+    ["node_modules/.pnpm/astro@5.12.3_@capacitor+preferences@7.0.1_@capacitor+core@7.4.2__@types+node@24.1.0_@up_cfb0f03b66d0b8a91c2557c4e756814a/node_modules/astro/dist/assets/endpoint/generic.js", _page0],
     ["src/pages/404.astro", _page1],
     ["src/pages/500.astro", _page2],
     ["src/pages/about.astro", _page3],

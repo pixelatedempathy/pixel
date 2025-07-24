@@ -1,19 +1,19 @@
 ;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="02b3d867-980d-4581-a451-5a0e6bfbd385",e._sentryDebugIdIdentifier="sentry-dbid-02b3d867-980d-4581-a451-5a0e6bfbd385")}catch(e){}}();/* empty css                                             */
 /* empty css                                    */
-import '../../chunks/sentry.server.config_CxC0uPLd.mjs';
-import { b as createAstro, c as createComponent, m as maybeRenderHead, e as addAttribute, h as renderSlot, a as renderTemplate, r as renderComponent, F as Fragment } from '../../chunks/astro/server_Ck5BzePu.mjs';
-import { $ as $$BaseLayout } from '../../chunks/BaseLayout_BKh1dVJn.mjs';
+import '../../chunks/sentry.server.config_gtrRxMPl.mjs';
+import { b as createAstro, c as createComponent, m as maybeRenderHead, e as addAttribute, h as renderSlot, a as renderTemplate, r as renderComponent, F as Fragment } from '../../chunks/astro/server_t-wqd6mp.mjs';
+import { $ as $$BaseLayout } from '../../chunks/BaseLayout_Cutfhivd.mjs';
 import 'clsx';
 /* empty css                                         */
-import { P as PrivacyDashboard } from '../../chunks/PrivacyDashboard_cjzaSL3c.mjs';
+import { P as PrivacyDashboard } from '../../chunks/PrivacyDashboard_DWV1h-Mu.mjs';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { D as DashboardWidget, C as ChartWidget } from '../../chunks/ChartWidget_CaNvfb08.mjs';
+import { D as DashboardWidget, C as ChartWidget } from '../../chunks/ChartWidget_CXXAxRJj.mjs';
 import { ArrowUpRight, ArrowDownRight, Minus, Search, Download, ArrowUp, ArrowDown } from 'lucide-react';
-import { T as TableHeader, a as TableRow, b as TableHead, c as TableBody, d as TableCell } from '../../chunks/table_C1ltT84l.mjs';
-import { I as Input } from '../../chunks/input_-TQf8pj1.mjs';
-import { B as Button } from '../../chunks/button_H-9GKzIc.mjs';
+import { T as TableHeader, a as TableRow, b as TableHead, c as TableBody, d as TableCell } from '../../chunks/table_Cxoal68L.mjs';
+import { I as Input } from '../../chunks/input_DnMLFOfd.mjs';
+import { B as Button } from '../../chunks/button_QWh7Abi4.mjs';
 export { renderers } from '../../renderers.mjs';
 
 const $$Astro = createAstro("https://pixelatedempathy.com");

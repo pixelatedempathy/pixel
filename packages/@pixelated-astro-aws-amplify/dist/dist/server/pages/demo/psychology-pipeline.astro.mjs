@@ -1,16 +1,16 @@
 ;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="b34b1b31-4ba8-4174-b9c2-27ca25a52e88",e._sentryDebugIdIdentifier="sentry-dbid-b34b1b31-4ba8-4174-b9c2-27ca25a52e88")}catch(e){}}();/* empty css                                             */
 /* empty css                                    */
-import '../../chunks/sentry.server.config_CxC0uPLd.mjs';
-import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../../chunks/astro/server_Ck5BzePu.mjs';
-import { $ as $$BaseLayout } from '../../chunks/BaseLayout_BKh1dVJn.mjs';
+import '../../chunks/sentry.server.config_gtrRxMPl.mjs';
+import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../../chunks/astro/server_t-wqd6mp.mjs';
+import { $ as $$BaseLayout } from '../../chunks/BaseLayout_Cutfhivd.mjs';
 import { jsxs, jsx } from 'react/jsx-runtime';
 import { useState, useEffect } from 'react';
-import { M as MentalHealthService } from '../../chunks/service_D4iXgRzu.mjs';
-import { c as createBuildSafeLogger } from '../../chunks/build-safe-logger_0J2m2aGD.mjs';
-import { $ as $$Card } from '../../chunks/Card_C_GhxMHY.mjs';
-import { $ as $$CardHeader, a as $$CardTitle, b as $$CardContent } from '../../chunks/CardTitle_ByxQ-_k1.mjs';
-import { $ as $$CardDescription } from '../../chunks/CardDescription_CtHMKp3-.mjs';
-import { $ as $$Badge } from '../../chunks/Badge_BTf8b-6k.mjs';
+import { M as MentalHealthService } from '../../chunks/service_DsfUD04Y.mjs';
+import { c as createBuildSafeLogger } from '../../chunks/build-safe-logger_tzJzO24i.mjs';
+import { $ as $$Card } from '../../chunks/Card_DkLu_rH_.mjs';
+import { $ as $$CardHeader, a as $$CardTitle, b as $$CardContent } from '../../chunks/CardTitle_B-WlwD0P.mjs';
+import { $ as $$CardDescription } from '../../chunks/CardDescription_Ds6nOAL0.mjs';
+import { $ as $$Badge } from '../../chunks/Badge_2usZ2CMb.mjs';
 export { renderers } from '../../renderers.mjs';
 
 const PipelineOverview = ({ className }) => {
@@ -1348,7 +1348,7 @@ const ScenarioGenerationDemo = () => {
     setIsGenerating(true);
     setApiConnectionStatus("testing");
     try {
-      const { generateClientScenario } = await import('../../chunks/psychology-pipeline-demo_CVXCLqUk.mjs');
+      const { generateClientScenario } = await import('../../chunks/psychology-pipeline-demo_DJ_TyyK-.mjs');
       const requestData = {
         patientInfo: profileData.patientInfo,
         presentingProblem: profileData.presentingProblem,

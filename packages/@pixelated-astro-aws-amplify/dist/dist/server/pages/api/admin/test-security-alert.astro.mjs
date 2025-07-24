@@ -1,9 +1,9 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="98080e1b-4bc1-4f08-8ca3-c1371e0b9d78",e._sentryDebugIdIdentifier="sentry-dbid-98080e1b-4bc1-4f08-8ca3-c1371e0b9d78")}catch(e){}}();import { p as protectRoute } from '../../../chunks/serverAuth_4gmt5n21.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="98080e1b-4bc1-4f08-8ca3-c1371e0b9d78",e._sentryDebugIdIdentifier="sentry-dbid-98080e1b-4bc1-4f08-8ca3-c1371e0b9d78")}catch(e){}}();import { p as protectRoute } from '../../../chunks/serverAuth_DpRotyBD.mjs';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { g as getEnv, i as isEnvTrue } from '../../../chunks/env_Cvx1PqM2.mjs';
-import '../../../chunks/astro/server_Ck5BzePu.mjs';
-import { c as createBuildSafeLogger } from '../../../chunks/build-safe-logger_0J2m2aGD.mjs';
+import { g as getEnv, i as isEnvTrue } from '../../../chunks/env_B_mDlhzD.mjs';
+import '../../../chunks/astro/server_t-wqd6mp.mjs';
+import { c as createBuildSafeLogger } from '../../../chunks/build-safe-logger_tzJzO24i.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsucGl4ZWxhdGVkZW1wYXRoeS5jb20k", "PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpaGl2emt3Yndwa3BlYmljaGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg0ODA5NTAsImV4cCI6MjA2NDA1Njk1MH0.0JbH9qCH2vEIVsaD-R7mT7w3vkHBx6PbRscAfKxucVs", "PUBLIC_SUPABASE_URL": "https://dihivzkwbwpkpebichlk.supabase.co", "SITE": "https://pixelatedempathy.com", "SSR": true};

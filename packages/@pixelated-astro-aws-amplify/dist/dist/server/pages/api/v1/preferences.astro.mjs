@@ -1,7 +1,7 @@
-;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="fe138a7c-64c4-4b0d-9071-30ed409e27ff",e._sentryDebugIdIdentifier="sentry-dbid-fe138a7c-64c4-4b0d-9071-30ed409e27ff")}catch(e){}}();import { p as protectRoute } from '../../../chunks/serverAuth_4gmt5n21.mjs';
-import { g as getOrCreateUserSettings, a as updateUserSettings } from '../../../chunks/user-settings_Cu0o9-Tc.mjs';
-import { c as createBuildSafeLogger } from '../../../chunks/build-safe-logger_0J2m2aGD.mjs';
-import '../../../chunks/astro/server_Ck5BzePu.mjs';
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="fe138a7c-64c4-4b0d-9071-30ed409e27ff",e._sentryDebugIdIdentifier="sentry-dbid-fe138a7c-64c4-4b0d-9071-30ed409e27ff")}catch(e){}}();import { p as protectRoute } from '../../../chunks/serverAuth_DpRotyBD.mjs';
+import { g as getOrCreateUserSettings, a as updateUserSettings } from '../../../chunks/user-settings_Cx5ukUht.mjs';
+import { c as createBuildSafeLogger } from '../../../chunks/build-safe-logger_tzJzO24i.mjs';
+import '../../../chunks/astro/server_t-wqd6mp.mjs';
 export { renderers } from '../../../renderers.mjs';
 
 const logger = createBuildSafeLogger("preferences-api");
