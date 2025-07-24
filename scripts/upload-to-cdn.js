@@ -1,7 +1,10 @@
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { fromIni } from '@aws-sdk/credential-provider-ini'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Configuration - Using actual AWS values from CLI
 const BUCKET_NAME = process.env.CDN_BUCKET_NAME || 'pixel-assets-1753078684'

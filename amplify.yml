@@ -35,7 +35,18 @@ frontend:
       commands:
         - 'echo "NODE_ENV=production" > .env'
         - 'echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env'
-        - env >> .env
+        - 'echo "AWS_REGION=${AWS_REGION:-us-east-1}" >> .env'
+        - 'echo "CDN_BUCKET_NAME=${CDN_BUCKET_NAME}" >> .env'
+        - 'echo "CDN_URL=${CDN_URL}" >> .env'
+        - 'echo "CLERK_SECRET_KEY=${CLERK_SECRET_KEY}" >> .env'
+        - 'echo "EMAIL_FROM=${EMAIL_FROM}" >> .env'
+        - 'echo "PUBLIC_CLERK_PUBLISHABLE_KEY=${PUBLIC_CLERK_PUBLISHABLE_KEY}" >> .env'
+        - 'echo "PUBLIC_SENTRY_DSN=${PUBLIC_SENTRY_DSN}" >> .env'
+        - 'echo "REDIS_URL=${REDIS_URL}" >> .env'
+        - 'echo "RESEND_API_KEY=${RESEND_API_KEY}" >> .env'
+        - 'echo "SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}" >> .env'
+        - 'echo "SENTRY_DSN=${SENTRY_DSN}" >> .env'
+        - 'echo "SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}" >> .env'
         - pnpm run build
         - 'if [ -n "$CDN_BUCKET_NAME" ]; then node scripts/upload-to-cdn.js || echo "CDN upload failed, continuing..."; fi'
         - 'pnpm prune --prod'
@@ -50,10 +61,10 @@ frontend:
         - 'ls -la .amplify-hosting/static/ | head -10'
         - 'echo "Compute functions:"'
         - 'ls -la .amplify-hosting/compute/ | head -10'
-        - 'find .amplify-hosting -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.test.*" -o -name "*.spec.*" \) -delete || true'
+        - 'find .amplify-hosting -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.test.*" -o -name "*.spec.*" -o -name "*.d.ts" -o -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" \) -delete || true'
+        - 'find .amplify-hosting/compute/default/node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "docs" -o -name "examples" -o -name ".bin" -o -name ".*cache*" \) -exec rm -rf {} + || true'
+        - 'find .amplify-hosting/compute/default/node_modules -name "*.md" -delete || true'
         - 'find .amplify-hosting -type d -empty -delete || true'
-        - 'find .amplify-hosting/compute -name "node_modules" -type d -exec rm -rf {}/.*cache* \; || true'
-        - 'find .amplify-hosting/compute -name "node_modules" -type d -exec rm -rf {}/.bin \; || true'
         - du -sh .amplify-hosting/
 
   artifacts:
