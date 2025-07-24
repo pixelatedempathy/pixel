@@ -38,9 +38,9 @@ frontend:
         - env >> .env
         - pnpm run build
         - 'if [ -n "$CDN_BUCKET_NAME" ]; then node scripts/upload-to-cdn.js || echo "CDN upload failed, continuing..."; fi'
+        - 'pnpm prune --prod'
         - 'mkdir -p .amplify-hosting/compute/default'
-        - 'mv node_modules ./.amplify-hosting/compute/default'
-        - 'mv .env ./.amplify-hosting/compute/default/.env'
+        - 'cp -r node_modules ./.amplify-hosting/compute/default/'
         - 'cp -r dist/* .amplify-hosting/compute/default/ || true'
         - 'cp .env .amplify-hosting/compute/default/.env || true'
         - 'mkdir -p .amplify-hosting/static'
@@ -52,6 +52,8 @@ frontend:
         - 'ls -la .amplify-hosting/compute/ | head -10'
         - 'find .amplify-hosting -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.test.*" -o -name "*.spec.*" \) -delete || true'
         - 'find .amplify-hosting -type d -empty -delete || true'
+        - 'find .amplify-hosting/compute -name "node_modules" -type d -exec rm -rf {}/.*cache* \; || true'
+        - 'find .amplify-hosting/compute -name "node_modules" -type d -exec rm -rf {}/.bin \; || true'
         - du -sh .amplify-hosting/
 
   artifacts:
