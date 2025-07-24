@@ -125,5 +125,3 @@ __azurite_db_blob__.json
 .amplify
 amplify_outputs*
 amplifyconfiguration*
-
-packages/@pixelated-astro-aws-amplify/dist
