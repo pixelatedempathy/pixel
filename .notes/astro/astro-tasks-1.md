@@ -47,40 +47,40 @@
 - [x] Remove unused variable `monthlyTrends` or use it
 
 ## Components/admin/BackupSecurityManager.astro
-- [ ] Fix type error: Property 'recoveryTests' does not exist on type 'IntrinsicAttributes & BackupRecoveryTabProps'
-- [ ] Fix type error: Add null check for `mockBackups[0]` or provide default value
-- [ ] Remove unused interfaces or mark them as exported:
-  - [ ] `BackupReportTabProps`
-  - [ ] `BackupRecoveryTabProps`
-  - [ ] `BackupStatusTabProps`
-  - [ ] `BackupConfigurationTabProps`
-- [ ] Fix import for Alert component: Correct path for '@/components/ui/Alert'
-- [ ] Remove unused imports: `Alert`, `AlertTitle`, `AlertDescription`
+- [x] Fix type error: Property 'recoveryTests' does not exist on type 'IntrinsicAttributes & BackupRecoveryTabProps'
+- [x] Fix type error: Add null check for `mockBackups[0]` or provide default value
+- [x] Remove unused interfaces or mark them as exported:
+  - [x] `BackupReportTabProps`
+  - [x] `BackupRecoveryTabProps`
+  - [x] `BackupStatusTabProps`
+  - [x] `BackupConfigurationTabProps`
+- [x] Fix import for Alert component: Correct path for '@/components/ui/Alert'
+- [x] Remove unused imports: `Alert`, `AlertTitle`, `AlertDescription`
 
 ## Components/admin/DataDeletionLog.astro
-- [ ] Fix property access: Change `process.env.PATIENT_ID` to `process.env['PATIENT_ID']` in all instances
+- [x] Fix property access: Change `process.env.PATIENT_ID` to `process.env['PATIENT_ID']` in all instances
 
 ## Components/admin/DataDeletionRequestForm.astro
-- [ ] Fix undefined variable: Define `originalButtonText` before using it
-- [ ] Add null checks for DOM elements before accessing properties:
-  - [ ] `submitButton`
-  - [ ] `form`
-  - [ ] `scopeSpecificRadio`
-  - [ ] `scopeAllRadio`
-  - [ ] `dataCategoriesContainer`
-- [ ] Fix property access: Add type assertions for DOM elements with properties like `disabled`
+- [x] Fix undefined variable: Define `originalButtonText` before using it
+- [x] Add null checks for DOM elements before accessing properties:
+  - [x] `submitButton`
+  - [x] `form`
+  - [x] `scopeSpecificRadio`
+  - [x] `scopeAllRadio`
+  - [x] `dataCategoriesContainer`
+- [x] Fix property access: Add type assertions for DOM elements with properties like `disabled`
 
 ## Components/admin/PatientRightsSystem.astro
-- [ ] Fix property access: Change `process.env.PATIENT_ID` to `process.env['PATIENT_ID']` in all instances
+- [x] Fix property access: Change `process.env.PATIENT_ID` to `process.env['PATIENT_ID']` in all instances
 
 ## Components/admin/RetentionReports.astro
-- [ ] Remove unused variable `type` or use it
+- [x] Remove unused variable `type` or use it
 
 ## Components/admin/SecuritySettingsPanel.astro
-- [ ] Remove unused imports from '../../lib/auth/supabase'
+- [x] Remove unused imports from '../../lib/auth/supabase'
 
 ## Components/admin/TransferAuditLog.astro
-- [ ] Fix property access: Change `process.env.PATIENT_ID` to `process.env['PATIENT_ID']` in all instances
+- [x] Fix property access: Change `process.env.PATIENT_ID` to `process.env['PATIENT_ID']` in all instances
 
 ## Components/admin/__tests__/AdminDashboard.test.ts
 - [ ] Fix type error: Add proper type assertion for `AdminDashboard` in `renderAstro` calls

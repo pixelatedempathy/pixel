@@ -14,7 +14,7 @@ const auditLogEntries = [
   {
     id: 'log-001',
     timestamp: '2025-07-15T14:32:45Z',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     initiatedBy: 'Dr. Sarah Johnson',
     recipientType: 'Healthcare Provider',
     recipientDetails: 'Northwest Medical Center',
@@ -26,7 +26,7 @@ const auditLogEntries = [
   {
     id: 'log-002',
     timestamp: '2025-07-14T09:15:21Z',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     initiatedBy: 'Dr. James Wilson',
     recipientType: 'Patient Direct Access',
     recipientDetails: 'Patient Email',
@@ -38,7 +38,7 @@ const auditLogEntries = [
   {
     id: 'log-003',
     timestamp: '2025-07-13T16:45:09Z',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     initiatedBy: 'Dr. Lisa Chen',
     recipientType: 'Research Institution',
     recipientDetails: 'University Medical Research',
@@ -50,7 +50,7 @@ const auditLogEntries = [
   {
     id: 'log-004',
     timestamp: '2025-07-12T11:23:54Z',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     initiatedBy: 'Dr. Sarah Johnson',
     recipientType: 'Healthcare Provider',
     recipientDetails: 'Eastside Clinic',
@@ -63,7 +63,7 @@ const auditLogEntries = [
   {
     id: 'log-005',
     timestamp: '2025-07-10T08:12:37Z',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     initiatedBy: 'System Administrator',
     recipientType: 'Patient Direct Access',
     recipientDetails: 'Patient Portal',

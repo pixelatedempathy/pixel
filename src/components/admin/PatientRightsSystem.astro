@@ -7,7 +7,7 @@ import { Icon } from 'astro-icon/components'
 const accessRequests = [
   {
     id: 'REQ-2025-1234',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'Emily Johnson',
     type: 'data-access',
     dateRequested: '2025-06-12T08:30:00Z',
@@ -17,7 +17,7 @@ const accessRequests = [
   },
   {
     id: 'REQ-2025-1235',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'Michael Smith',
     type: 'data-export',
     dateRequested: '2025-06-15T14:20:00Z',
@@ -27,7 +27,7 @@ const accessRequests = [
   },
   {
     id: 'REQ-2025-1236',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'Sarah Williams',
     type: 'correction',
     dateRequested: '2025-06-10T09:15:00Z',
@@ -37,7 +37,7 @@ const accessRequests = [
   },
   {
     id: 'REQ-2025-1237',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'James Brown',
     type: 'data-access',
     dateRequested: '2025-06-18T16:40:00Z',
@@ -47,7 +47,7 @@ const accessRequests = [
   },
   {
     id: 'REQ-2025-1238',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'Robert Garcia',
     type: 'data-export',
     dateRequested: '2025-06-19T10:05:00Z',
@@ -57,7 +57,7 @@ const accessRequests = [
   },
   {
     id: 'REQ-2025-1239',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'Lisa Thompson',
     type: 'data-access',
     dateRequested: '2025-06-14T08:35:00Z',
@@ -67,7 +67,7 @@ const accessRequests = [
   },
   {
     id: 'REQ-2025-1240',
-    patientId: process.env.PATIENT_ID || 'example-patient-id',
+    patientId: process.env['PATIENT_ID'] || 'example-patient-id',
     patientName: 'Amanda Martinez',
     type: 'correction',
     dateRequested: '2025-06-16T15:50:00Z',

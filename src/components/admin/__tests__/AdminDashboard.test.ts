@@ -26,7 +26,7 @@ describe('AdminDashboard', () => {
     // Mock API error
     vi.mocked(getSystemMetrics).mockRejectedValueOnce(new Error('API Error'))
 
-    const { querySelector } = await renderAstro(AdminDashboard)
+    const { querySelector } = await renderAstro(AdminDashboard as any)
 
     // Check error logging
     const { createBuildSafeLogger } = await import(
@@ -59,7 +59,7 @@ describe('AdminDashboard', () => {
     }
     vi.mocked(getSystemMetrics).mockResolvedValueOnce(mockMetrics)
 
-    const { querySelector } = await renderAstro(AdminDashboard)
+    const { querySelector } = await renderAstro(AdminDashboard as any)
 
     // Check metrics are displayed correctly
     expect(querySelector('#active-users-value')).toHaveTextContent('100')
@@ -79,7 +79,7 @@ describe('AdminDashboard', () => {
   })
 
   it('initializes dashboard updates on mount', async () => {
-    const { querySelector } = await renderAstro(AdminDashboard)
+    const { querySelector } = await renderAstro(AdminDashboard as any)
     // Simulate DOMContentLoaded
     const event = new Event('DOMContentLoaded')
     document.dispatchEvent(event)
