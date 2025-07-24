@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
-const { fromIni } = require('@aws-sdk/credential-provider-ini')
+import fs from 'fs'
+import path from 'path'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { fromIni } from '@aws-sdk/credential-provider-ini'
 
 // Configuration - Using actual AWS values from CLI
 const BUCKET_NAME = process.env.CDN_BUCKET_NAME || 'pixel-assets-1753078684'
