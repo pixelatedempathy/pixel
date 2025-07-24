@@ -352,8 +352,6 @@ stages:
       name: 'Default'
       demands:
       - agent.name -equals decay
-    variables:
-    - group: clerk-secrets
     strategy:
       runOnce:
         deploy:
@@ -620,8 +618,6 @@ stages:
       name: 'Default'
       demands:
       - agent.name -equals decay
-    variables:
-    - group: clerk-secrets
     strategy:
       runOnce:
         deploy:
