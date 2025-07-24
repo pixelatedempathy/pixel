@@ -1,6 +1,7 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { defineConfig } from 'vite'
 import path from 'path'
+import fs from 'fs'
 
 import nodePolyfillPlugin from './src/plugins/vite-plugin-node-polyfill'
 import nodeExcludePlugin from './src/plugins/vite-plugin-node-exclude'
@@ -12,7 +13,7 @@ import middlewarePatchPlugin from './src/plugins/vite-plugin-middleware-patch'
 const cdnAssetMap = (() => {
   try {
     return JSON.parse(fs.readFileSync('./src/cdn-asset-map.json', 'utf-8'))
-  } catch (_) {
+  } catch {
     return {}
   }
 })()
@@ -302,6 +303,7 @@ export default defineConfig({
       'async_hooks',
       'process',
       '@fastify/otel',
+      'path-to-regexp'
     ],
   },
 })
