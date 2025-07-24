@@ -91,13 +91,14 @@ const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
 
     // Render as link if href is provided
     if (isLink) {
+      const { type, ...anchorProps } = commonProps
       return (
         <a
           ref={ref as React.ForwardedRef<HTMLAnchorElement>}
           href={href}
           target={target}
           rel={target === '_blank' ? 'noopener noreferrer' : rel}
-          {...commonProps}
+          {...anchorProps}
         >
           {contentWrapper}
         </a>

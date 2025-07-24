@@ -139,3 +139,4 @@ packages
 pnpm-workspace.yaml
 .cursorindexingignore
 .cursorignore
+.amplify-hosting

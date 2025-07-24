@@ -41,7 +41,7 @@ export function Todo({ title = 'Todo List', initialTodos = [] }: TodoProps) {
 
   // Generate a unique ID for each todo
   const generateId = () => {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2)
+    return Date.now().toString(36) + Math.random().toString(36).substring(2)
   }
 
   // Add a new todo
@@ -100,7 +100,7 @@ export function Todo({ title = 'Todo List', initialTodos = [] }: TodoProps) {
           placeholder="Add a new task..."
           value={inputValue}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
         />
 
         <button id="add-todo-btn" onClick={addTodo}>

@@ -94,9 +94,6 @@ importers:
       '@neondatabase/serverless':
         specifier: ^1.0.1
         version: 1.0.1
-      '@pixelated/astro-aws-amplify':
-        specifier: workspace:*
-        version: link:packages/@pixelated-astro-aws-amplify
       '@radix-ui/react-select':
         specifier: ^2.2.5
         version: 2.2.5(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -232,9 +229,6 @@ importers:
       preact:
         specifier: ^10.26.9
         version: 10.26.9
-      prismjs:
-        specifier: 1.30.0
-        version: 1.30.0
       promise-polyfill:
         specifier: ^8.3.0
         version: 8.3.0
@@ -398,6 +392,9 @@ importers:
       '@eslint/markdown':
         specifier: ^6.6.0
         version: 6.6.0
+      '@eslint/plugin-kit':
+        specifier: 0.3.3
+        version: 0.3.3
       '@expressive-code/plugin-collapsible-sections':
         specifier: ^0.41.3
         version: 0.41.3
@@ -734,6 +731,9 @@ importers:
       prettier-plugin-astro:
         specifier: ^0.14.1
         version: 0.14.1
+      prismjs:
+        specifier: 1.30.0
+        version: 1.30.0
       reading-time:
         specifier: ^1.5.0
         version: 1.5.0
@@ -1988,6 +1988,10 @@ packages:
 
   '@eslint/plugin-kit@0.2.8':
     resolution: {integrity: sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/plugin-kit@0.3.3':
+    resolution: {integrity: sha512-1+WqvgNMhmlAambTvT3KPtCl/Ibr68VldY2XY40SL1CE0ZXiakFR/cbTspaF5HsnpDMvcYYoJHfl4980NBjGag==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/plugin-kit@0.3.4':
@@ -14198,7 +14202,7 @@ snapshots:
     dependencies:
       '@eslint/core': 0.14.0
       '@eslint/css-tree': 3.6.2
-      '@eslint/plugin-kit': 0.3.4
+      '@eslint/plugin-kit': 0.3.3
 
   '@eslint/eslintrc@3.3.1':
     dependencies:
@@ -14226,7 +14230,7 @@ snapshots:
   '@eslint/markdown@6.6.0':
     dependencies:
       '@eslint/core': 0.14.0
-      '@eslint/plugin-kit': 0.3.4
+      '@eslint/plugin-kit': 0.3.3
       github-slugger: 2.0.0
       mdast-util-from-markdown: 2.0.2
       mdast-util-frontmatter: 2.0.1
@@ -14254,6 +14258,11 @@ snapshots:
   '@eslint/plugin-kit@0.2.8':
     dependencies:
       '@eslint/core': 0.13.0
+      levn: 0.4.1
+
+  '@eslint/plugin-kit@0.3.3':
+    dependencies:
+      '@eslint/core': 0.15.1
       levn: 0.4.1
 
   '@eslint/plugin-kit@0.3.4':
@@ -21409,7 +21418,7 @@ snapshots:
     dependencies:
       '@babel/helper-validator-identifier': 7.27.1
       '@eslint-community/eslint-utils': 4.7.0(eslint@9.31.0(jiti@2.5.0))
-      '@eslint/plugin-kit': 0.3.4
+      '@eslint/plugin-kit': 0.3.3
       change-case: 5.4.4
       ci-info: 4.3.0
       clean-regexp: 1.0.0
@@ -21493,7 +21502,7 @@ snapshots:
       '@eslint/core': 0.15.1
       '@eslint/eslintrc': 3.3.1
       '@eslint/js': 9.31.0
-      '@eslint/plugin-kit': 0.3.4
+      '@eslint/plugin-kit': 0.3.3
       '@humanfs/node': 0.16.6
       '@humanwhocodes/module-importer': 1.0.1
       '@humanwhocodes/retry': 0.4.3

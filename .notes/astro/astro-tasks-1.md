@@ -1,50 +1,50 @@
 # Astro Check Tasks - File 1
 
 ## Components/AIChatReact.tsx
-- [ ] Fix deprecated method: Replace `.substr(2, 9)` with `.substring(2, 11)` in `generateId` function
+- [x] Fix deprecated method: Replace `.substr(2, 9)` with `.substring(2, 11)` in `generateId` function
 
 ## Components/BlogSearch.tsx
-- [ ] Fix missing module: Create or import correct path for `./ui/button.js`
+- [x] Fix missing module: Create or import correct path for `./ui/button.js`
 
 ## Components/EnhancedTodo.astro
-- [ ] Add `is:inline` directive to script with `define:vars`
+- [x] Add `is:inline` directive to script with `define:vars`
 
 ## Components/MentalHealthChatDemo.astro
-- [ ] Fix type error: Property 'conversationId' does not exist on type 'IntrinsicAttributes & object'
+- [x] Fix type error: Property 'conversationId' does not exist on type 'IntrinsicAttributes & object'
 
 ## Components/MentalHealthChatDemoReact.tsx
-- [ ] Fix conditional check for Promise: Refactor `mentalHealthChat.needsIntervention()` condition
-- [ ] Fix type error in `setMessages` callback function
+- [x] Fix conditional check for Promise: Refactor `mentalHealthChat.needsIntervention()` condition
+- [x] Fix type error in `setMessages` callback function
 
 ## Components/MentalHealthHistoryChart.tsx
-- [ ] Add null check for `latest` before accessing `latest.scores`
+- [x] Add null check for `latest` before accessing `latest.scores`
 
 ## Components/Monitoring.astro
-- [ ] Add `is:inline` directive to script with external src
+- [x] Add `is:inline` directive to script with external src
 
 ## Components/PixelatedEmpathyAgentChat.tsx
-- [ ] Replace deprecated `onKeyPress` with `onKeyDown`
+- [x] Replace deprecated `onKeyPress` with `onKeyDown`
 
 ## Components/Todo.astro
-- [ ] Add null checks for `todos[todoIndex]` before accessing properties
-- [ ] Fix property access: Change `todo.id` to `todo['id']`
+- [x] Add null checks for `todos[todoIndex]` before accessing properties
+- [x] Fix property access: Change `todo.id` to `todo['id']`
 
 ## Components/TodoReact.tsx
-- [ ] Replace deprecated `onKeyPress` with `onKeyDown`
-- [ ] Fix deprecated method: Replace `.substr(2)` with `.substring(2)`
+- [x] Replace deprecated `onKeyPress` with `onKeyDown`
+- [x] Fix deprecated method: Replace `.substr(2)` with `.substring(2)`
 
 ## Components/accessibility/FocusTrap.tsx
-- [ ] Add null check for `focusableElements[0]` before calling focus()
+- [x] Add null check for `focusableElements[0]` before calling focus()
 
 ## Components/accessibility/LiveRegionSystem.astro
-- [ ] Convert JSDoc types to TypeScript types for:
-  - [ ] `announceStatus` function
-  - [ ] `announceAlert` function
-  - [ ] `log` function
-  - [ ] `announceProgress` function
+- [x] Convert JSDoc types to TypeScript types for:
+  - [x] `announceStatus` function
+  - [x] `announceAlert` function
+  - [x] `log` function
+  - [x] `announceProgress` function
 
 ## Components/admin/AccessRequestsLog.astro
-- [ ] Remove unused variable `monthlyTrends` or use it
+- [x] Remove unused variable `monthlyTrends` or use it
 
 ## Components/admin/BackupSecurityManager.astro
 - [ ] Fix type error: Property 'recoveryTests' does not exist on type 'IntrinsicAttributes & BackupRecoveryTabProps'

@@ -80,10 +80,8 @@
   window.LiveRegionSystem = {
     /**
      * Announce a status message (polite)
-     * @param {string} message - The message to announce
-     * @param {number} clearDelay - Optional delay in ms before clearing the message (default: 5000ms)
      */
-    announceStatus: (message, clearDelay = 5000) => {
+    announceStatus: (message: string, clearDelay: number = 5000) => {
       const region = document.getElementById('status-live-region')
       if (!region) return
 
@@ -98,10 +96,8 @@
 
     /**
      * Announce an alert message (assertive)
-     * @param {string} message - The message to announce
-     * @param {number} clearDelay - Optional delay in ms before clearing the message (default: 7000ms)
      */
-    announceAlert: (message, clearDelay = 7000) => {
+    announceAlert: (message: string, clearDelay: number = 7000) => {
       const region = document.getElementById('alert-live-region')
       if (!region) return
 
@@ -116,10 +112,8 @@
 
     /**
      * Add a log message (polite, accumulative)
-     * @param {string} message - The message to add to the log
-     * @param {boolean} clear - Whether to clear previous log entries
      */
-    log: (message, clear = false) => {
+    log: (message: string, clear: boolean = false) => {
       const region = document.getElementById('log-live-region')
       if (!region) return
 
@@ -137,11 +131,8 @@
 
     /**
      * Announce a progress update (polite)
-     * @param {string|number} value - Current value
-     * @param {string|number} max - Maximum value
-     * @param {string} label - Description of what's progressing
      */
-    announceProgress: (value, max, label) => {
+    announceProgress: (value: string | number, max: string | number, label: string) => {
       const region = document.getElementById('progress-live-region')
       if (!region) return
 

@@ -2,7 +2,11 @@
 import Link from '~/components/base/Link.astro'
 import { getUrl } from '~/utils/common'
 
-const { class: className } = Astro.props
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props as Props
 ---
 
 <Link

@@ -7,7 +7,6 @@ import BackupConfigurationTab from './backup/BackupConfigurationTab'
 import BackupStatusTab from './backup/BackupStatusTab'
 import BackupRecoveryTab from './backup/BackupRecoveryTab'
 import BackupReportTab from './backup/BackupReportTab'
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/Alert'
 
 // Import all types from the backup-types.ts file
 import {
@@ -92,18 +91,18 @@ interface BackupConfig {
 }
 
 // Define component prop types to match the expected props by the child components
-interface BackupConfigurationTabProps {
+export interface BackupConfigurationTabProps {
   config: BackupConfig
   onUpdateConfig(config: BackupConfig): void
 }
 
-interface BackupStatusTabProps {
+export interface BackupStatusTabProps {
   backups: Backup[]
   onCreateBackup(type: BackupType): Promise<Backup>
   onVerifyBackup(backupId: string): Promise<boolean>
 }
 
-interface BackupRecoveryTabProps {
+export interface BackupRecoveryTabProps {
   backups: Backup[]
   recoveryTests: RecoveryTest[]
   onStartRecoveryTest(
@@ -113,7 +112,7 @@ interface BackupRecoveryTabProps {
   onScheduleRecoveryTests(): Promise<void>
 }
 
-interface BackupReportTabProps {
+export interface BackupReportTabProps {
   backups: Backup[]
   recoveryTests: RecoveryTest[]
 }
@@ -267,7 +266,15 @@ const mockBackupConfig: BackupConfig = {
 const handleCreateBackup = async (type: BackupType): Promise<Backup> => {
   // In production this would call backupManager.createBackup(type)
   console.log(`Creating ${type} backup`)
-  return mockBackups[0] // Mock return
+  return mockBackups[0] || {
+    id: 'default-backup',
+    type: BackupType.FULL,
+    timestamp: new Date().toISOString(),
+    size: 0,
+    location: StorageLocation.PRIMARY,
+    status: BackupStatus.PENDING,
+    retentionDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+  }
 }
 
 const handleVerifyBackup = async (backupId: string): Promise<boolean> => {
@@ -362,8 +369,8 @@ const handleUpdateConfig = (config: BackupConfig): void => {
 
     <TabsContent value="recovery" className="space-y-4">
       <BackupRecoveryTab
-        backups={mockBackups as any}
-        recoveryTests={mockRecoveryTests as any}
+        backups={mockBackups}
+        recoveryTests={mockRecoveryTests}
         onStartRecoveryTest={handleStartRecoveryTest}
         onScheduleRecoveryTests={handleScheduleRecoveryTests}
         client:load

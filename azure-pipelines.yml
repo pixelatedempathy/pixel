@@ -296,8 +296,18 @@ stages:
 
           # Build and push Docker images with build cache optimization
           echo "Building Docker image with cache optimization..."
+          
+          # Use Dockerfile.azure if it exists, otherwise use Dockerfile
+          DOCKERFILE="Dockerfile"
+          if [ -f "Dockerfile.azure" ]; then
+            DOCKERFILE="Dockerfile.azure"
+            echo "Using Azure-specific Dockerfile: $DOCKERFILE"
+          else
+            echo "Using default Dockerfile: $DOCKERFILE"
+          fi
+          
           docker build \
-            -f Dockerfile.azure \
+            -f "$DOCKERFILE" \
             --cache-from "$ACR_LOGIN_SERVER/$(imageName):latest" \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             -t "$ACR_LOGIN_SERVER/$(imageName):$(dockerTag)" \

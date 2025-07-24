@@ -1,5 +1,5 @@
 ---
-import MentalHealthChatDemoComponent from './MentalHealthChatDemo'
+import { MentalHealthChatDemo as MentalHealthChatDemoComponent } from './MentalHealthChatDemo'
 
 export interface Props {
   conversationId?: string
@@ -38,8 +38,6 @@ const {
 
   <MentalHealthChatDemoComponent
     client:only="react"
-    {conversationId}
-    {initialConfig}
   />
 </div>
 

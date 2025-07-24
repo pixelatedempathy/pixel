@@ -110,7 +110,7 @@ const content = collectionType === 'releases' ? item.desc : item.bodyHTML
           {
             collectionType === 'releases' && (
               <span>
-                v{item.versionParts[0]}<span class={`rounded ${VERSION_COLOR[item.versionType]}`}>{item.versionParts[1]}</span>
+                v{item.versionParts[0]}<span class={`rounded ${VERSION_COLOR[item.versionType as keyof typeof VERSION_COLOR] || ''}`}>{item.versionParts[1]}</span>
               </span>
             )
           }

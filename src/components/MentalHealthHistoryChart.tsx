@@ -78,14 +78,16 @@ export function MentalHealthHistoryChart({
     }))
 
     const latest = analysisHistory[analysisHistory.length - 1]
-    const latestScores = Object.entries(latest.scores)
-      .filter(([, value]) => value > 0)
-      .map(([key, value]) => ({
-        metric: SCORE_LABELS[key as keyof typeof SCORE_LABELS] || key,
-        score: Math.round(value * 100),
-        fullMark: 100,
-      }))
-      .sort((a, b) => b.score - a.score)
+    const latestScores = latest?.scores
+      ? Object.entries(latest.scores)
+          .filter(([, value]) => value > 0)
+          .map(([key, value]) => ({
+            metric: SCORE_LABELS[key as keyof typeof SCORE_LABELS] || key,
+            score: Math.round(value * 100),
+            fullMark: 100,
+          }))
+          .sort((a, b) => b.score - a.score)
+      : []
 
     return { timeSeriesData, latestScores, hasData: true }
   }, [analysisHistory])

@@ -1,3 +1,0 @@
-# typescript incremental
-Run a TypeScript check on `src/` folder and address issues in batches of 5%. Incremental progress toward resolving all errors/warnings without interrupting workflow. Log progress/issues and document unresolved problems in `.notes/tasks/undone-zombies.md`. Re-run checks for at least 5% improvement after fixes.
-

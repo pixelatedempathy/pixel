@@ -31,7 +31,7 @@ const { title = 'Todo List', initialTodos = [] } = Astro.props
       initialTodos.map((todo: TodoItem) => (
         <li
           class={`todo-item ${todo.completed ? 'completed' : ''}`}
-          data-id={todo.id}
+          data-id={todo['id']}
         >
           <span class="todo-text">{todo.text}</span>
           <div class="todo-actions">
@@ -245,13 +245,13 @@ const { title = 'Todo List', initialTodos = [] } = Astro.props
       const todos = loadTodos()
       const todoIndex = todos.findIndex((t: TodoItem) => t.id === id)
 
-      if (todoIndex !== -1) {
+      if (todoIndex !== -1 && todos[todoIndex]) {
         todos[todoIndex].completed = !todos[todoIndex].completed
         saveTodos(todos)
 
         // Update UI
         const li = todoList?.querySelector(`li[data-id="${id}"]`)
-        if (li) {
+        if (li && todos[todoIndex]) {
           li.classList.toggle('completed')
           const completeBtn = li.querySelector('.complete-button')
           if (completeBtn) {
@@ -293,7 +293,7 @@ const { title = 'Todo List', initialTodos = [] } = Astro.props
     // Event listeners
     addButton?.addEventListener('click', addTodo)
 
-    todoInput?.addEventListener('keypress', (e) => {
+    todoInput?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         addTodo()
       }

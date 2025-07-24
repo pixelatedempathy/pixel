@@ -69,6 +69,15 @@ frontend:
         - 'rm -rf .amplify-hosting/compute/default/node_modules/@types || true'
         - 'rm -rf .amplify-hosting/compute/default/node_modules/typescript || true'
         - 'find .amplify-hosting -type d -empty -delete || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/esbuild || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/rollup || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/vite || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/@rollup || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/@esbuild || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/astro || true'
+        - 'find .amplify-hosting/compute/default/node_modules -name "*.wasm" -delete || true'
+        - 'find .amplify-hosting/compute/default/node_modules -name "*.node" -delete || true'
+        - 'find .amplify-hosting/compute/default/node_modules -size +10M -delete || true'
         - du -sh .amplify-hosting/
 
   artifacts:

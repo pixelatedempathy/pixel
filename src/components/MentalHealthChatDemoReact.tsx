@@ -172,8 +172,8 @@ export default function MentalHealthChatDemoReact({
 
       // Update user message with analysis
       if (processedMessage.mentalHealthAnalysis) {
-        setMessages((prev) =>
-          prev.map((m) =>
+        setMessages((prev: ChatMessage[]) =>
+          prev.map((m: ChatMessage) =>
             m.id === userMessage.id
               ? {
                   ...m,
@@ -188,7 +188,8 @@ export default function MentalHealthChatDemoReact({
       let responseContent = 'I understand. Can you tell me more about that?'
 
       // If intervention is needed, generate therapeutic response
-      if (mentalHealthChat.needsIntervention()) {
+      const needsIntervention = await mentalHealthChat.needsIntervention()
+      if (needsIntervention) {
         responseContent = await mentalHealthChat.generateIntervention()
       }
 

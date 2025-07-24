@@ -22,7 +22,7 @@ const SHARE_LINKS: Record<string, _ShareLink> = {
   twitter: {
     baseUrl: 'https://twitter.com/intent/tweet?text=',
     formatUrl: (url, cfg) =>
-      `${SHARE_LINKS.twitter.baseUrl}${encodeURIComponent(
+      `${SHARE_LINKS['twitter']?.baseUrl || ''}${encodeURIComponent(
         `Reading ${cfg?.[1] ? `${cfg[1]}'s ` : ''}${url}\n\nI think...`,
       )}`,
     label: 'twitter',
@@ -31,7 +31,7 @@ const SHARE_LINKS: Record<string, _ShareLink> = {
   mastodon: {
     baseUrl: 'https://elk.zone/intent/post?text=',
     formatUrl: (url, cfg) =>
-      `${SHARE_LINKS.mastodon.baseUrl}${encodeURIComponent(
+      `${SHARE_LINKS['mastodon']?.baseUrl || ''}${encodeURIComponent(
         `Reading ${cfg?.[1] ? `${cfg[1]}'s ` : ''}${url}\n\nI think...`,
       )}`,
     label: 'mastodon',
@@ -39,37 +39,37 @@ const SHARE_LINKS: Record<string, _ShareLink> = {
   },
   facebook: {
     baseUrl: 'https://www.facebook.com/sharer.php?u=',
-    formatUrl: (url) => `${SHARE_LINKS.facebook.baseUrl}${url}`,
+    formatUrl: (url) => `${SHARE_LINKS['facebook']?.baseUrl || ''}${url}`,
     label: 'facebook',
     title: 'Share this post on Facebook',
   },
   pinterest: {
     baseUrl: 'https://pinterest.com/pin/create/button/?url=',
-    formatUrl: (url) => `${SHARE_LINKS.pinterest.baseUrl}${url}`,
+    formatUrl: (url) => `${SHARE_LINKS['pinterest']?.baseUrl || ''}${url}`,
     label: 'pinterest',
     title: 'Share this post on Pinterest',
   },
   reddit: {
     baseUrl: 'https://www.reddit.com/submit?url=',
-    formatUrl: (url) => `${SHARE_LINKS.reddit.baseUrl}${url}`,
+    formatUrl: (url) => `${SHARE_LINKS['reddit']?.baseUrl || ''}${url}`,
     label: 'reddit',
     title: 'Share this post on Reddit',
   },
   telegram: {
     baseUrl: 'https://t.me/share/url?url=',
-    formatUrl: (url) => `${SHARE_LINKS.telegram.baseUrl}${url}`,
+    formatUrl: (url) => `${SHARE_LINKS['telegram']?.baseUrl || ''}${url}`,
     label: 'telegram',
     title: 'Share this post via Telegram',
   },
   whatsapp: {
     baseUrl: 'https://wa.me/?text=',
-    formatUrl: (url) => `${SHARE_LINKS.whatsapp.baseUrl}${url}`,
+    formatUrl: (url) => `${SHARE_LINKS['whatsapp']?.baseUrl || ''}${url}`,
     label: 'whatsapp',
     title: 'Share this post via WhatsApp',
   },
   email: {
     baseUrl: 'mailto:?subject=See%20this%20post&body=',
-    formatUrl: (url) => `${SHARE_LINKS.email.baseUrl}${url}`,
+    formatUrl: (url) => `${SHARE_LINKS['email']?.baseUrl || ''}${url}`,
     label: 'email',
     title: 'Share this post via email',
   },
@@ -187,6 +187,8 @@ const linkProviders = Object.entries(config)
       if (!key || !shareLinks[key]) return
 
       const linkConfig = shareLinks[key]
+      if (!linkConfig) return
+      
       const linkUrl = linkConfig.formatUrl(postUrl, cfg)
 
       const linkEl = document.createElement('a')

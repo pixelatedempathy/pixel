@@ -9,7 +9,7 @@ const projectRoot = path.resolve(__dirname, '..')
 
 // Configuration
 const HOST = process.env.HOST || '0.0.0.0'
-const PORT = process.env.PORT || process.env.WEBSITES_PORT || 3000
+const PORT = process.env.PORT || process.env.WEBSITES_PORT || 4321
 
 console.log('🚀 Starting Pixelated Astro Server...')
 console.log(`📍 Host: ${HOST}`)

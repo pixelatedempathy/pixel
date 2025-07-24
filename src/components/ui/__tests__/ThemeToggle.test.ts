@@ -36,20 +36,20 @@ describe('ThemeToggle', () => {
   })
 
   it('renders with correct base classes', async () => {
-    const { container } = await renderAstro(ThemeToggle)
-    const button = container.querySelector('button')
+    const { astroContainer } = await renderAstro(ThemeToggle as any)
+    const button = astroContainer.querySelector('button')
 
     expect(button).toHaveClass('p-2', 'rounded-md')
     expect(button).toHaveAttribute('aria-label', 'Toggle theme')
   })
 
   it('shows correct icon based on current theme', async () => {
-    const { container } = await renderAstro(ThemeToggle)
+    const { astroContainer } = await renderAstro(ThemeToggle as any)
 
     // Initially system theme (should show system icon)
-    const systemIcon = container.querySelector('#system-icon')
-    const lightIcon = container.querySelector('#sun-icon')
-    const darkIcon = container.querySelector('#moon-icon')
+    const systemIcon = astroContainer.querySelector('#system-icon')
+    const lightIcon = astroContainer.querySelector('#sun-icon')
+    const darkIcon = astroContainer.querySelector('#moon-icon')
 
     expect(systemIcon).toHaveClass('hidden')
     expect(lightIcon).toHaveClass('hidden')
@@ -57,7 +57,7 @@ describe('ThemeToggle', () => {
 
     // Simulate dark theme
     document.documentElement.classList.add('dark')
-    fireEvent.click(container.querySelector('button')!)
+    fireEvent.click(astroContainer.querySelector('button')!)
 
     expect(darkIcon).not.toHaveClass('hidden')
     expect(lightIcon).toHaveClass('hidden')
@@ -66,7 +66,7 @@ describe('ThemeToggle', () => {
     // Simulate light theme
     document.documentElement.classList.remove('dark')
     document.documentElement.classList.add('light')
-    fireEvent.click(container.querySelector('button')!)
+    fireEvent.click(astroContainer.querySelector('button')!)
 
     expect(lightIcon).not.toHaveClass('hidden')
     expect(darkIcon).toHaveClass('hidden')
@@ -74,8 +74,8 @@ describe('ThemeToggle', () => {
   })
 
   it('cycles through themes on button click', async () => {
-    const { container } = await renderAstro(ThemeToggle)
-    const button = container.querySelector('button')!
+    const { astroContainer } = await renderAstro(ThemeToggle as any)
+    const button = astroContainer.querySelector('button')!
 
     // Initial state (system)
     expect(localStorage.getItem('theme')).toBeNull()
@@ -100,8 +100,8 @@ describe('ThemeToggle', () => {
 
   it('applies custom class from props', async () => {
     const customClass = 'custom-theme-toggle'
-    const { container } = await renderAstro(ThemeToggle, { class: customClass })
-    const button = container.querySelector('button')
+    const { astroContainer } = await renderAstro(ThemeToggle as any, { class: customClass })
+    const button = astroContainer.querySelector('button')
 
     expect(button).toHaveClass(customClass)
   })
@@ -110,10 +110,10 @@ describe('ThemeToggle', () => {
     // Set initial theme preference
     localStorage.setItem('theme', 'dark')
 
-    const { container } = await renderAstro(ThemeToggle)
+    const { astroContainer } = await renderAstro(ThemeToggle as any)
 
     expect(document.documentElement.classList.contains('dark')).toBe(true)
-    expect(container.querySelector('#moon-icon')).not.toHaveClass('hidden')
+    expect(astroContainer.querySelector('#moon-icon')).not.toHaveClass('hidden')
   })
 
   it('respects system preference when no theme is set', async () => {
@@ -129,9 +129,9 @@ describe('ThemeToggle', () => {
       dispatchEvent: vi.fn(),
     }))
 
-    const { container } = await renderAstro(ThemeToggle)
+    const { astroContainer } = await renderAstro(ThemeToggle as any)
 
     expect(document.documentElement.classList.contains('dark')).toBe(true)
-    expect(container.querySelector('#system-icon')).not.toHaveClass('hidden')
+    expect(astroContainer.querySelector('#system-icon')).not.toHaveClass('hidden')
   })
 })

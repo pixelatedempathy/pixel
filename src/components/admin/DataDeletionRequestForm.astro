@@ -326,30 +326,35 @@ const deletionReasons = [
 <script>
   // Toggle data categories visibility based on deletion scope selection
   document.addEventListener('DOMContentLoaded', () => {
-    const scopeAllRadio = document.getElementById('scope-all')
-    const scopeSpecificRadio = document.getElementById('scope-specific')
+    const scopeAllRadio = document.getElementById('scope-all') as HTMLInputElement | null
+    const scopeSpecificRadio = document.getElementById('scope-specific') as HTMLInputElement | null
     const dataCategoriesContainer = document.getElementById(
       'data-categories-container',
     )
     const dataCategoryCheckboxes = document.querySelectorAll(
       'input[name="data-categories"]',
     )
-    const form = document.getElementById('deletion-request-form')
+    const form = document.getElementById('deletion-request-form') as HTMLFormElement | null
     const cancelButton = document.getElementById('cancel-button')
+
+    if (!scopeAllRadio || !scopeSpecificRadio || !dataCategoriesContainer || !form || !cancelButton) {
+      console.error('Required DOM elements not found')
+      return
+    }
 
     // Toggle data categories container visibility
     function toggleDataCategories() {
-      if (scopeSpecificRadio.checked) {
-        dataCategoriesContainer.classList.remove('hidden')
+      if (scopeSpecificRadio?.checked) {
+        dataCategoriesContainer?.classList.remove('hidden')
         // Make at least one category required when specific is selected
         dataCategoryCheckboxes.forEach((checkbox) => {
-          checkbox.setAttribute('required', 'required')
+          (checkbox as HTMLInputElement).setAttribute('required', 'required')
         })
       } else {
-        dataCategoriesContainer.classList.add('hidden')
+        dataCategoriesContainer?.classList.add('hidden')
         // Remove required attribute when "All" is selected
         dataCategoryCheckboxes.forEach((checkbox) => {
-          checkbox.removeAttribute('required')
+          (checkbox as HTMLInputElement).removeAttribute('required')
         })
       }
     }
@@ -358,8 +363,8 @@ const deletionReasons = [
     toggleDataCategories()
 
     // Add event listeners for radio buttons
-    scopeAllRadio.addEventListener('change', toggleDataCategories)
-    scopeSpecificRadio.addEventListener('change', toggleDataCategories)
+    scopeAllRadio?.addEventListener('change', toggleDataCategories)
+    scopeSpecificRadio?.addEventListener('change', toggleDataCategories)
 
     // Handle the requirement for at least one category to be selected
     function updateCategoryRequirement() {
@@ -369,12 +374,12 @@ const deletionReasons = [
 
       if (atLeastOneChecked) {
         dataCategoryCheckboxes.forEach((checkbox) => {
-          checkbox.removeAttribute('required')
+          (checkbox as HTMLInputElement).removeAttribute('required')
         })
       } else {
         dataCategoryCheckboxes.forEach((checkbox) => {
-          if (scopeSpecificRadio.checked) {
-            checkbox.setAttribute('required', 'required')
+          if (scopeSpecificRadio?.checked) {
+            (checkbox as HTMLInputElement).setAttribute('required', 'required')
           }
         })
       }
@@ -386,17 +391,17 @@ const deletionReasons = [
     })
 
     // Cancel button handler
-    cancelButton.addEventListener('click', () => {
+    cancelButton?.addEventListener('click', () => {
       // Redirect back to the main data deletion log view
       window.location.href = '/admin/patient-rights'
     })
 
     // Form submission handler
-    form.addEventListener('submit', async (event) => {
+    form?.addEventListener('submit', async (event) => {
       event.preventDefault()
 
       // Validate that at least one category is selected if 'specific' scope is chosen
-      if (scopeSpecificRadio.checked) {
+      if (scopeSpecificRadio?.checked) {
         const atLeastOneChecked = Array.from(dataCategoryCheckboxes).some(
           (checkbox) => (checkbox as HTMLInputElement).checked,
         )
@@ -412,7 +417,9 @@ const deletionReasons = [
 
       try {
         // Show loading state
-        const submitButton = form.querySelector('button[type="submit"]')
+        const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement | null
+        if (!submitButton) return
+        
         const originalButtonText = submitButton.innerHTML
         submitButton.disabled = true
         submitButton.innerHTML =
@@ -469,9 +476,12 @@ const deletionReasons = [
         }
 
         // Reset button
-        const submitButton = form.querySelector('button[type="submit"]')
-        submitButton.disabled = false
-        submitButton.innerHTML = originalButtonText
+        const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement | null
+        if (submitButton) {
+          const originalButtonText = submitButton.innerHTML
+          submitButton.disabled = false
+          submitButton.innerHTML = originalButtonText
+        }
       }
     })
   })

@@ -1,18 +1,16 @@
 ---
-import type { CollectionEntry, ContentCollectionKey } from 'astro:content'
+import type { ContentCollectionKey } from 'astro:content'
 
 interface Props {
   collectionType: ContentCollectionKey
   slug: string
   pageToc?: boolean
-  enablePrefetch?: boolean
 }
 
 const {
   collectionType,
   slug,
   pageToc = false,
-  enablePrefetch = true,
 } = Astro.props
 
 // Handle content rendering at the global scope to avoid TypeScript errors

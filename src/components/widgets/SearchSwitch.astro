@@ -1,6 +1,5 @@
 ---
 import { getUrl } from '~/utils/common'
-import { toggleFadeEffect } from '~/utils/animation'
 
 /**
  * Search component using FlexSearch
@@ -114,7 +113,6 @@ import { toggleFadeEffect } from '~/utils/animation'
 
 <script>
   /// <reference types="../../lib/search" />
-  import type { SearchDocument } from '~/lib/search'
 
   const fakeResults = [
     {
@@ -156,7 +154,7 @@ import { toggleFadeEffect } from '~/utils/animation'
       for (const data of fakeResults) {
         const searchResults = document.getElementById('search-results')!
         searchResults.innerHTML += `
-          <a href=${searchResults.dataset.base} class="search-results-item">
+          <a href=${searchResults.dataset['base']} class="search-results-item">
             <div class="search-results-title">${data.meta.title}</div>
             <div class="search-results-excerpt">${data.excerpt}</div>
           </a>`
