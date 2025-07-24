@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Input } from './ui/input.js'
-import { Button } from './ui/button.js'
+import { Button } from './ui/button/index.js'
 import { Search } from 'lucide-react'
 import { cn } from '../lib/utils.js'
 

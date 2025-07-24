@@ -195,6 +195,7 @@ class BundleAnalyzer {
         '@emotion/react',
         '@mui/material',
         'chart.js',
+        'mem0ai',
       ]
 
       console.log('🚨 Large dependencies that should be externalized:')

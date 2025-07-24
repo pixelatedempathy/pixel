@@ -17,7 +17,7 @@ export interface AIChatReactProps {
 }
 
 // Helper function to generate unique IDs
-const generateId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateId = () => `msg_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
 export default function AIChatReact({
   availableModels,

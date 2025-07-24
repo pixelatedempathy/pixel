@@ -7,13 +7,13 @@ Handles JSON-RPC over stdin/stdout for robust inter-process communication.
 import json
 import sys
 import traceback
-from typing import Any
+from typing import Any, Dict
 
 # Example: import your real model and logic here
 # from mental_llama_core import analyze_text, run_imhi_evaluation
 
 
-def send_response(response: dict[str, Any]):
+def send_response(response: Dict[str, Any]):
     sys.stdout.write(json.dumps(response) + "\n")
     sys.stdout.flush()
 
@@ -29,7 +29,7 @@ def main():
             request.get("payload", {})
             if command == "analyze_text":
                 # result = analyze_text(payload["text"], payload.get("modelParams"))
-                result: dict[str, Any] = {
+                result: Dict[str, Any] = {
                     "hasMentalHealthIssue": False,
                     "mentalHealthCategory": "none",
                     "confidence": 0.99,

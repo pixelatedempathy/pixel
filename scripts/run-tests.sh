@@ -10,7 +10,7 @@ echo -e "${YELLOW}Setting up test environment...${NC}"
 
 # Check if Redis is running
 redis-cli ping >/dev/null 2>&1
-if [[ $? -eq 0 ]]; then
+if [ $? -eq 0 ]; then
 	echo -e "${GREEN}✓ Redis is running${NC}"
 	export REDIS_AVAILABLE=true
 else
@@ -32,7 +32,7 @@ mkdir -p src/lib/services/redis/__mocks__
 echo -e "${YELLOW}Creating test mocks...${NC}"
 
 # Ensure Redis mock exists
-if [[ ! -f src/lib/services/redis/__mocks__/redis.mock.ts ]]; then
+if [ ! -f src/lib/services/redis/__mocks__/redis.mock.ts ]; then
 	echo "Creating Redis mock file"
 	cp -f vitest.setup.ts src/lib/services/redis/__mocks__/redis.mock.ts
 fi

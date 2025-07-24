@@ -30,7 +30,8 @@ def load_conversations(path: Path) -> list[Conversation]:
     elif path.suffix == ".json":
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-            conversations.extend(Conversation(**item) for item in data)
+            for item in data:
+                conversations.append(Conversation(**item))
     else:
         raise ValueError("Input file must be .jsonl or .json")
     return conversations
@@ -70,11 +71,13 @@ def main():
     report_path = Path(args.report)
 
     conversations = load_conversations(input_path)
+    print(f"Loaded {len(conversations)} conversations from {input_path}")
 
     # Deduplicate
     unique_convs, duplicates = deduplicate_conversations(
         conversations, similarity_threshold=args.dedup_threshold
     )
+    print(f"Deduplicated: {len(conversations) - len(unique_convs)} duplicates removed")
 
     # Filter by quality
     thresholds = {
@@ -84,9 +87,11 @@ def main():
     }
     results = filter_conversations(unique_convs, thresholds)
     passed = [r["conversation"] for r in results if r["passed"]]
+    print(f"Filtered: {len(passed)} conversations passed quality thresholds")
 
     # Save filtered dataset
     save_conversations(passed, output_path)
+    print(f"Saved filtered dataset to {output_path}")
 
     # Save report
     report = {
@@ -108,6 +113,7 @@ def main():
     }
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
+    print(f"Saved validation report to {report_path}")
 
 
 if __name__ == "__main__":

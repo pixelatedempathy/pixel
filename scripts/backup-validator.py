@@ -8,10 +8,11 @@ It checks for indicators of error pages, placeholders, or invalid content before
 
 import argparse
 import json
-import logging
 import re
+import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Any, Tuple, Optional
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -135,12 +136,13 @@ class BackupContentValidator:
 
         return any(re.search(pattern, content, re.IGNORECASE) for pattern in error_patterns)
 
-    def validate_memory_structure(self, memory_data: dict[str, Any]) -> tuple[bool, list[str]]:
+    def validate_memory_structure(self, memory_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
         """Validate that memory data has the expected structure"""
         errors = []
 
         # Check for required fields
         required_fields = ["content"]
+        optional_fields = ["id", "memory_id", "created_at", "metadata", "source"]
 
         errors.extend(
             f"Missing required field: {field}"
@@ -176,7 +178,7 @@ class BackupContentValidator:
 
         return not errors, errors
 
-    def validate_backup_file(self, file_path: Path) -> tuple[bool, dict[str, Any]]:
+    def validate_backup_file(self, file_path: Path) -> Tuple[bool, Dict[str, Any]]:
         """Validate an entire backup file"""
         results = {
             "file_path": str(file_path),
@@ -189,7 +191,7 @@ class BackupContentValidator:
         }
 
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             if not isinstance(data, list):
@@ -240,7 +242,7 @@ class BackupContentValidator:
 
         return results["is_valid"], results
 
-    def create_cleaned_backup(self, source_file: Path, target_file: Path) -> dict[str, Any]:
+    def create_cleaned_backup(self, source_file: Path, target_file: Path) -> Dict[str, Any]:
         """Create a cleaned backup file with only valid memories"""
         results = {
             "source_file": str(source_file),
@@ -252,7 +254,7 @@ class BackupContentValidator:
         }
 
         try:
-            with open(source_file, encoding="utf-8") as f:
+            with open(source_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             if not isinstance(data, list):
@@ -285,7 +287,7 @@ class BackupContentValidator:
 
         return results
 
-    def scan_backup_directory(self, backup_dir: Path) -> dict[str, Any]:
+    def scan_backup_directory(self, backup_dir: Path) -> Dict[str, Any]:
         """Scan all backup files in a directory"""
         results = {
             "directory": str(backup_dir),
@@ -321,7 +323,7 @@ class BackupContentValidator:
 
         return results
 
-    def _generate_recommendations(self, scan_results: dict[str, Any]) -> list[str]:
+    def _generate_recommendations(self, scan_results: Dict[str, Any]) -> List[str]:
         """Generate recommendations based on scan results"""
         recommendations = []
 
@@ -378,12 +380,22 @@ class BackupValidationCLI:
         logger.info(f"Validating file: {file_path}")
         is_valid, results = self.validator.validate_backup_file(file_path)
 
+        print(f"\nValidation Results for {file_path}:")
+        print(f"Valid: {is_valid}")
+        print(f"Total memories: {results['total_memories']}")
+        print(f"Valid memories: {results['valid_memories']}")
+        print(f"Invalid memories: {results['invalid_memories']}")
 
         if results["errors"]:
-            pass
+            print(f"Errors: {results['errors']}")
 
         if results["invalid_memory_details"]:
+            print("\nInvalid memory details:")
             for detail in results["invalid_memory_details"][:5]:
+                print(
+                    f"  Index {detail['index']}: {detail.get('errors', detail.get('error', 'Unknown error'))}"
+                )
+                print(f"    Preview: {detail['content_preview']}")
 
         return is_valid
 
@@ -395,9 +407,15 @@ class BackupValidationCLI:
         logger.info(f"Cleaning file: {source_file}")
         results = self.validator.create_cleaned_backup(source_file, cleaned_file)
 
+        print(f"\nCleaning Results:")
+        print(f"Source: {results['source_file']}")
+        print(f"Target: {results['target_file']}")
+        print(f"Original count: {results['original_count']}")
+        print(f"Cleaned count: {results['cleaned_count']}")
+        print(f"Removed count: {results['removed_count']}")
 
         if results["errors"]:
-            pass
+            print(f"Errors: {results['errors']}")
 
         return True
 
@@ -406,17 +424,32 @@ class BackupValidationCLI:
         logger.info(f"Scanning backup directory: {backup_dir}")
         results = self.validator.scan_backup_directory(backup_dir)
 
+        print(f"\nBackup Directory Scan Results:")
+        print(f"Directory: {results['directory']}")
+        print(f"Total files: {results['total_files']}")
+        print(f"Valid files: {results['valid_files']}")
+        print(f"Invalid files: {results['invalid_files']}")
 
+        print(f"\nValidation Statistics:")
         stats = results["summary"]["validation_stats"]
+        print(f"Total memories checked: {stats['total_checked']}")
+        print(f"Valid memories: {stats['valid_memories']}")
+        print(f"Invalid memories: {stats['invalid_memories']}")
 
         if results["summary"]["recommendations"]:
+            print(f"\nRecommendations:")
             for rec in results["summary"]["recommendations"]:
-                pass")
+                print(f"  • {rec}")
 
         if invalid_files := [f for f in results["file_results"] if not f["is_valid"]]:
+            print(f"\nInvalid Files Details:")
             for file_result in invalid_files[:3]:
+                print(f"  {file_result['file_path']}:")
+                print(
+                    f"    Total: {file_result['total_memories']}, Valid: {file_result['valid_memories']}, Invalid: {file_result['invalid_memories']}"
+                )
                 if file_result["errors"]:
-                    pass
+                    print(f"    Errors: {file_result['errors']}")
 
         return True
 
@@ -428,17 +461,19 @@ class BackupValidationCLI:
         try:
             if args.validate_file:
                 return self.validate_single_file(args.validate_file)
-            if args.clean_file:
+            elif args.clean_file:
                 return self.clean_single_file(args.clean_file, args.output_dir)
             else:
                 return self.scan_backup_directory(args.backup_dir)
         except Exception as e:
             logger.error(f"Error: {e}")
+            print(f"Error: {e}")
             return False
 
 
 def main():
     """Main entry point for the backup validation CLI."""
+    import argparse
 
     cli = BackupValidationCLI()
     cli.run()

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Test script to validate memory sync content validation"""
 
+import asyncio
 import sys
+import os
 from pathlib import Path
 
 # Add the scripts directory to the path
@@ -80,36 +82,50 @@ def test_memory_validation():
         ),
     ]
 
+    print("Testing memory content validation...")
+    print(f"Total test memories: {len(test_memories)}")
+
     # Test validation on each memory
     validation_results = [
         (memory, service._validate_memory_content(memory)) for memory in test_memories
     ]
 
     # Print results
-    [
+    result_messages = [
         f"{'✅ VALID' if is_valid else '❌ INVALID'}: {memory.content[:50]}..."
         for memory, is_valid in validation_results
     ]
+    print("\n".join(result_messages))
 
-    len([result for result in validation_results if result[1]])
+    valid_count = len([result for result in validation_results if result[1]])
+
+    print(f"\nValidation Results:")
+    print(f"Valid memories: {valid_count}")
+    print(f"Invalid memories: {len(test_memories) - valid_count}")
 
     # Test backup saving (should only save valid memories)
     try:
         test_backup_saving(service, test_memories)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error during backup test: {e}")
 
 
 def test_backup_saving(service, test_memories):
     backup_path = service.save_backup(test_memories, "test_validation")
+    print(f"\nBackup saved to: {backup_path}")
 
     # Read back the backup to verify only valid memories were saved
     import json
 
-    with open(backup_path) as f:
+    with open(backup_path, "r") as f:
         saved_data = json.load(f)
 
-    [f"  {i+1}: {memory['content'][:50]}..." for i, memory in enumerate(saved_data)]
+    print(f"Memories in backup file: {len(saved_data)}")
+    print("Backup contents:")
+    backup_summaries = [
+        f"  {i+1}: {memory['content'][:50]}..." for i, memory in enumerate(saved_data)
+    ]
+    print("\n".join(backup_summaries))
 
 
 if __name__ == "__main__":

@@ -12,15 +12,15 @@ echo "🔧 Creating binary artifacts for Azure deployment..."
 echo "=================================================="
 
 # Clean and create directories
-rm -rf "${ARTIFACT_DIR}" "${TEMP_BUILD_DIR}"
-mkdir -p "${ARTIFACT_DIR}" "${TEMP_BUILD_DIR}"
+rm -rf "$ARTIFACT_DIR" "$TEMP_BUILD_DIR"
+mkdir -p "$ARTIFACT_DIR" "$TEMP_BUILD_DIR"
 
 # Create a minimal Node.js environment for building
-cd "${TEMP_BUILD_DIR}"
+cd "$TEMP_BUILD_DIR"
 
 echo "📋 Setting up temporary build environment..."
-cp "${OLDPWD}/package.json" .
-cp "${OLDPWD}/pnpm-lock.yaml" .
+cp "$OLDPWD/package.json" .
+cp "$OLDPWD/pnpm-lock.yaml" .
 
 # Install dependencies to get binaries
 echo "📦 Installing dependencies to extract binaries..."
@@ -29,42 +29,42 @@ pnpm install --frozen-lockfile
 echo "🔍 Extracting essential binaries..."
 
 # Copy astro binary and its dependencies
-if [[ -f "node_modules/.bin/astro" ]]; then
-	echo "✅ Found astro binary"
-	cp "node_modules/.bin/astro" "${OLDPWD}/${ARTIFACT_DIR}/"
-
-	# Make sure it's executable
-	chmod +x "${OLDPWD}/${ARTIFACT_DIR}/astro"
-
-	# Also copy the actual astro package for completeness
-	if [[ -d "node_modules/astro" ]]; then
-		cp -r "node_modules/astro" "${OLDPWD}/${ARTIFACT_DIR}/astro-package/"
-	fi
+if [ -f "node_modules/.bin/astro" ]; then
+    echo "✅ Found astro binary"
+    cp "node_modules/.bin/astro" "$OLDPWD/$ARTIFACT_DIR/"
+    
+    # Make sure it's executable
+    chmod +x "$OLDPWD/$ARTIFACT_DIR/astro"
+    
+    # Also copy the actual astro package for completeness
+    if [ -d "node_modules/astro" ]; then
+        cp -r "node_modules/astro" "$OLDPWD/$ARTIFACT_DIR/astro-package/"
+    fi
 else
-	echo "❌ astro binary not found"
-	exit 1
+    echo "❌ astro binary not found"
+    exit 1
 fi
 
 # Copy pnpm binary if needed
-if [[ -f "node_modules/.bin/pnpm" ]]; then
-	echo "✅ Found pnpm binary"
-	cp "node_modules/.bin/pnpm" "${OLDPWD}/${ARTIFACT_DIR}/"
-	chmod +x "${OLDPWD}/${ARTIFACT_DIR}/pnpm"
+if [ -f "node_modules/.bin/pnpm" ]; then
+    echo "✅ Found pnpm binary"
+    cp "node_modules/.bin/pnpm" "$OLDPWD/$ARTIFACT_DIR/"
+    chmod +x "$OLDPWD/$ARTIFACT_DIR/pnpm"
 fi
 
 # Copy other essential binaries
 for binary in tsc tsx; do
-	if [[ -f "node_modules/.bin/${binary}" ]]; then
-		echo "✅ Foun${ $bina}ry binary"
-		cp "node_modules/.bin/${binary}" "${OLDPWD}/${ARTIFACT_DIR}/"
-		chmod +x "${OLDPWD}/${ARTIFACT_DIR}/${binary}"
-	else
-		echo "⚠${�� $bi}nary binary not found (optional)"
-	fi
+    if [ -f "node_modules/.bin/$binary" ]; then
+        echo "✅ Found $binary binary"
+        cp "node_modules/.bin/$binary" "$OLDPWD/$ARTIFACT_DIR/"
+        chmod +x "$OLDPWD/$ARTIFACT_DIR/$binary"
+    else
+        echo "⚠️ $binary binary not found (optional)"
+    fi
 done
 
 # Create a startup script that uses the artifact binaries
-cat >"${OLDPWD}/${ARTIFACT_DIR}/start-with-artifacts.sh" <<'EOF'
+cat > "$OLDPWD/$ARTIFACT_DIR/start-with-artifacts.sh" << 'EOF'
 #!/bin/bash
 
 # Startup script that uses artifact binaries as fallback
@@ -100,10 +100,10 @@ echo "🚀 Starting application with artifact binaries..."
 exec node scripts/start-server.js
 EOF
 
-chmod +x "${OLDPWD}/${ARTIFACT_DIR}/start-with-artifacts.sh"
+chmod +x "$OLDPWD/$ARTIFACT_DIR/start-with-artifacts.sh"
 
 # Create a verification script
-cat >"${OLDPWD}/${ARTIFACT_DIR}/verify-artifacts.sh" <<'EOF'
+cat > "$OLDPWD/$ARTIFACT_DIR/verify-artifacts.sh" << 'EOF'
 #!/bin/bash
 
 echo "🔍 Verifying binary artifacts..."
@@ -136,24 +136,24 @@ else
 fi
 EOF
 
-chmod +x "${OLDPWD}/${ARTIFACT_DIR}/verify-artifacts.sh"
+chmod +x "$OLDPWD/$ARTIFACT_DIR/verify-artifacts.sh"
 
 # Clean up temp directory
-cd "${OLDPWD}"
-rm -rf "${TEMP_BUILD_DIR}"
+cd "$OLDPWD"
+rm -rf "$TEMP_BUILD_DIR"
 
 echo ""
 echo "✅ Binary artifacts created successfully!"
-echo "📁 Locatio${: $ARTIFACT_}DIR"
+echo "📁 Location: $ARTIFACT_DIR"
 echo "📋 Contents:"
-ls -la "${ARTIFACT_DIR}"
+ls -la "$ARTIFACT_DIR"
 
 echo ""
 echo "📦 Artifact package size:"
-du -sh "${ARTIFACT_DIR}"
+du -sh "$ARTIFACT_DIR"
 
 echo ""
 echo "🔧 Next steps:"
 echo "1. Add artifacts to Docker image"
 echo "2. Update Dockerfile to copy artifacts to /usr/local/bin or /opt/bin"
-echo "3. Use start-with-artifacts.sh as fallback startup script"
+echo "3. Use start-with-artifacts.sh as fallback startup script" 

@@ -137,3 +137,5 @@ amplifyconfiguration*
 .endgame
 packages
 pnpm-workspace.yaml
+.cursorindexingignore
+.cursorignore

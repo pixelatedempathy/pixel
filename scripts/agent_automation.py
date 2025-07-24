@@ -14,7 +14,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 # Setup logging
 Path("logs").mkdir(exist_ok=True)
@@ -35,7 +35,7 @@ class TaskMasterInterface:
     def __init__(self):
         self.base_cmd = ["task-master"]
 
-    def _parse_task_output(self, output: str) -> dict[str, Any] | None:
+    def _parse_task_output(self, output: str) -> Optional[Dict[str, Any]]:
         """Parse task output into structured data"""
         lines = output.split("\n")
         task_info = {}
@@ -48,11 +48,11 @@ class TaskMasterInterface:
                 task_info["title"] = line.split("Title:")[1].strip()
         return task_info or None
 
-    def get_next_task(self) -> dict[str, Any] | None:
+    def get_next_task(self) -> Optional[Dict[str, Any]]:
         """Get the next available task"""
         try:
             result = subprocess.run(
-                [*self.base_cmd, "next"], capture_output=True, text=True, timeout=30, check=False
+                self.base_cmd + ["next"], capture_output=True, text=True, timeout=30, check=False
             )
 
             if result.returncode == 0:
@@ -67,11 +67,11 @@ class TaskMasterInterface:
             logger.error(f"Error getting next task: {e}")
             return None
 
-    def get_task_list(self) -> list[dict[str, Any]]:
+    def get_task_list(self) -> List[Dict[str, Any]]:
         """Get all tasks"""
         try:
             result = subprocess.run(
-                [*self.base_cmd, "list", "--with-subtasks"],
+                self.base_cmd + ["list", "--with-subtasks"],
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -91,7 +91,7 @@ class TaskMasterInterface:
         """Set task status"""
         try:
             result = subprocess.run(
-                [*self.base_cmd, "set-status", f"--id={task_id}", f"--status={status}"],
+                self.base_cmd + ["set-status", f"--id={task_id}", f"--status={status}"],
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -148,7 +148,7 @@ class AgentAutomation:
         logger.info("🔧 Executing task logic...")
         time.sleep(3)
 
-    def process_task(self, task: dict[str, Any]) -> bool:
+    def process_task(self, task: Dict[str, Any]) -> bool:
         """
         Process a single task. Override this method to integrate with your AI agent.
 
@@ -177,8 +177,9 @@ class AgentAutomation:
                 if self.taskmaster.set_task_status(task_id, "done"):
                     logger.info(f"✅ Task {task_id} marked as done")
                     return True
-                logger.error(f"❌ Failed to update task {task_id} status")
-                return False
+                else:
+                    logger.error(f"❌ Failed to update task {task_id} status")
+                    return False
 
             return True
 
@@ -238,8 +239,9 @@ class AgentAutomation:
         if next_task := self.taskmaster.get_next_task():
             logger.info(f"📋 Found task: {next_task}")
             return self.process_task(next_task)
-        logger.info("⏭️ No tasks available")
-        return False
+        else:
+            logger.info("⏭️ No tasks available")
+            return False
 
     def status_monitor(self):
         """Monitor and display task status"""

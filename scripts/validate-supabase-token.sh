@@ -10,7 +10,7 @@ set -euo pipefail
 # Get token from argument or environment variable
 TOKEN="${1:-${SUPABASE_ACCESS_TOKEN-}}"
 
-if [[ -z "${TOKEN}" ]]; then
+if [ -z "${TOKEN}" ]; then
 	echo "Error: No token provided. Please provide a token as argument or set SUPABASE_ACCESS_TOKEN environment variable."
 	exit 1
 fi
@@ -24,7 +24,7 @@ if [[ ! ${TOKEN} =~ ^sbp_ ]]; then
 fi
 
 # Validate length (should be reasonable for a token)
-if [[ ${#TOKEN} -lt 20 ]]; then
+if [ ${#TOKEN} -lt 20 ]; then
 	echo "Warning: Token seems too short for a valid Supabase access token."
 	echo "Make sure you're using the complete token without truncation."
 	exit 1

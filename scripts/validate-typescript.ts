@@ -14,49 +14,11 @@ import { existsSync, readFileSync } from 'fs'
 // TYPES
 // ============================================================================
 
-interface CompilerOptions {
-  // Required strict options
-  strict?: boolean;
-  noImplicitAny?: boolean;
-  strictNullChecks?: boolean;
-  strictFunctionTypes?: boolean;
-  strictBindCallApply?: boolean;
-  noImplicitThis?: boolean;
-  useUnknownInCatchVariables?: boolean;
-  alwaysStrict?: boolean;
-  
-  // Recommended additional options
-  noUnusedLocals?: boolean;
-  noUnusedParameters?: boolean;
-  exactOptionalPropertyTypes?: boolean;
-  noImplicitReturns?: boolean;
-  noFallthroughCasesInSwitch?: boolean;
-  noUncheckedIndexedAccess?: boolean;
-  noImplicitOverride?: boolean;
-  noPropertyAccessFromIndexSignature?: boolean;
-  
-  // Other common options
-  skipLibCheck?: boolean;
-  paths?: Record<string, string[]>;
-  baseUrl?: string;
-  outDir?: string;
-  rootDir?: string;
-  target?: string;
-  module?: string;
-  lib?: string[];
-  jsx?: string;
-  declaration?: boolean;
-  sourceMap?: boolean;
-  incremental?: boolean;
-  tsBuildInfoFile?: string;
-  [key: string]: unknown;
-}
-
 interface TSConfig {
-  compilerOptions?: CompilerOptions;
-  include?: string[];
-  exclude?: string[];
-  extends?: string;
+  compilerOptions?: Record<string, any>
+  include?: string[]
+  exclude?: string[]
+  extends?: string
 }
 
 interface ValidationResult {
@@ -323,7 +285,7 @@ function validateESLintIntegration(): ValidationResult[] {
       message: 'ESLint is properly integrated with TypeScript',
       severity: 'info',
     })
-  } catch {
+  } catch (error) {
     results.push({
       passed: false,
       message: 'ESLint integration with TypeScript has issues',

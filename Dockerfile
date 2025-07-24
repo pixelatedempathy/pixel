@@ -1,24 +1,64 @@
-# ---- Build ----
-FROM node:20-alpine AS builder
+# syntax = docker/dockerfile:1
+
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-slim AS base
+
+LABEL org.opencontainers.image.description="Astro"
+
+ARG PNPM_VERSION=10.13.1
+RUN npm install -g pnpm@$PNPM_VERSION
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential=12.* \
+    node-gyp=* \
+    pkg-config=* \
+    python-is-python3=* \
+    git=* \
+    curl=* \
+    ca-certificates=* && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
 
-COPY . .
-RUN npx astro build
+ENV NODE_ENV="production"
+ENV ASTRO_TELEMETRY_DISABLED=1
+ENV ASTRO_CACHE_DIR=/tmp/.astro
+ENV VITE_CACHE_DIR=/tmp/.vite
 
-# ---- Production Runner ----
-FROM node:20-alpine AS runner
+RUN groupadd --gid 1001 astro && \
+    useradd --uid 1001 --gid astro --shell /bin/bash --create-home astro
 
-WORKDIR /app
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.astro ./.astro
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/astro.config.* ./
+RUN mkdir -p /app && chown -R astro:astro /app
+
+FROM base AS build
+
+COPY --chown=astro:astro package.json pnpm-lock.yaml ./
+
+COPY --chown=astro:astro scripts ./scripts/
+
+COPY --chown=astro:astro . .
+
+RUN mkdir -p /tmp/.astro /app/node_modules/.astro && \
+    chmod -R 755 /tmp/.astro /app/node_modules/.astro && \
+    pnpm install --no-frozen-lockfile --prod=false && \
+    pnpm build && \
+    pnpm prune --prod
+
+FROM base
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/ || exit 1
+
+USER astro
+
+COPY --from=build --chown=astro:astro /app /app
+
+RUN mkdir -p /app/node_modules/.astro /tmp/.astro && \
+    chown -R astro:astro /app/node_modules /tmp/.astro && \
+    chmod -R 755 /app/node_modules /tmp/.astro
 
 EXPOSE 3000
 
-CMD ["npx", "astro", "start", "--host", "0.0.0.0"]
+CMD ["node", "scripts/start-server.js"]
