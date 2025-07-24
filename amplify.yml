@@ -61,9 +61,13 @@ frontend:
         - 'ls -la .amplify-hosting/static/ | head -10'
         - 'echo "Compute functions:"'
         - 'ls -la .amplify-hosting/compute/ | head -10'
-        - 'find .amplify-hosting -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.test.*" -o -name "*.spec.*" -o -name "*.d.ts" -o -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" \) -delete || true'
-        - 'find .amplify-hosting/compute/default/node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "docs" -o -name "examples" -o -name ".bin" -o -name ".*cache*" \) -exec rm -rf {} + || true'
+        - 'find .amplify-hosting -type f \( -name "*.map" -o -name "*.ts" -o -name "*.tsx" -o -name "*.test.*" -o -name "*.spec.*" -o -name "*.d.ts" -o -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" -o -name "*.tsbuildinfo" \) -delete || true'
+        - 'find .amplify-hosting/compute/default/node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "docs" -o -name "examples" -o -name ".bin" -o -name ".*cache*" -o -name "coverage" -o -name "benchmark*" -o -name "demo*" \) -exec rm -rf {} + || true'
         - 'find .amplify-hosting/compute/default/node_modules -name "*.md" -delete || true'
+        - 'find .amplify-hosting/compute/default/node_modules -name "*.json" \( -name "package.json" -prune -o -print \) -delete || true'
+        - 'find .amplify-hosting/compute/default/node_modules -type f \( -name "*.min.js.map" -o -name "*.esm.js" -o -name "*.umd.js" -o -name "*.browser.js" \) -delete || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/@types || true'
+        - 'rm -rf .amplify-hosting/compute/default/node_modules/typescript || true'
         - 'find .amplify-hosting -type d -empty -delete || true'
         - du -sh .amplify-hosting/
 
