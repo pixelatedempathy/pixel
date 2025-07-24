@@ -4,6 +4,7 @@ import {
   presetAttributify,
   presetTypography,
 } from 'unocss'
+import { presetWind3 } from '@unocss/preset-wind3';
 
 export default defineConfig({
   shortcuts: [
@@ -29,6 +30,7 @@ export default defineConfig({
     ],
   ],
   presets: [
+    presetWind3(),
     presetAttributify(),
     presetIcons({
       scale: 1.2,

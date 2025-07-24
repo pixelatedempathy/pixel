@@ -1,0 +1,20 @@
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="bb906687-8058-4d5c-9036-e9e9d6c9cd89",e._sentryDebugIdIdentifier="sentry-dbid-bb906687-8058-4d5c-9036-e9e9d6c9cd89")}catch(e){}}();import { jsx } from 'react/jsx-runtime';
+import 'react';
+import { c as cn } from './utils_y2hdiMjE.mjs';
+import './astro/server_bjkJ-nhl.mjs';
+
+function Textarea({ className, ...props }) {
+  return /* @__PURE__ */ jsx(
+    "textarea",
+    {
+      "data-slot": "textarea",
+      className: cn(
+        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        className
+      ),
+      ...props
+    }
+  );
+}
+
+export { Textarea as T };

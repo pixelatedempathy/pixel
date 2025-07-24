@@ -3,7 +3,6 @@
 /.output
 /.astro
 /.python
-/.amplify-hosting
 /.azure-artifacts/
 node_modules/
 *.node
@@ -38,7 +37,10 @@ node_modules/
 /.vscode/
 /.idea/
 /*.iml
-.cursor/mcp.json
+/.roo/
+/.cursor/
+/.goose/
+/.vscode-insiders/
 
 # test coverage
 /coverage/

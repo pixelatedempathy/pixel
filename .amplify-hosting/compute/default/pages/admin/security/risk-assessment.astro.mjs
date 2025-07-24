@@ -1,0 +1,166 @@
+;!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="51d2bad1-d16b-42c6-8297-106ba065de55",e._sentryDebugIdIdentifier="sentry-dbid-51d2bad1-d16b-42c6-8297-106ba065de55")}catch(e){}}();/* empty css                                                */
+/* empty css                                       */
+import '../../../chunks/sentry.server.config_Dy9k56IG.mjs';
+import { c as createComponent, r as renderComponent, d as renderScript, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../../../chunks/astro/server_DBAAVvAL.mjs';
+import { $ as $$AdminLayout } from '../../../chunks/AdminLayout_DQ9SjUHy.mjs';
+export { renderers } from '../../../renderers.mjs';
+
+const $$Index = createComponent(($$result, $$props, $$slots) => {
+  const riskMetrics = {
+    totalVulnerabilities: 42,
+    criticalVulnerabilities: 3,
+    highVulnerabilities: 8,
+    mediumVulnerabilities: 18,
+    lowVulnerabilities: 13,
+    complianceScore: 92,
+    lastScanDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1e3)
+    // 2 days ago
+  };
+  const recentFindings = [
+    {
+      id: "F-2025-001",
+      title: "TLS 1.2 Configuration Weakness",
+      severity: "high",
+      affectedSystem: "API Gateway",
+      discoveryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1e3),
+      status: "remediation-in-progress"
+    },
+    {
+      id: "F-2025-002",
+      title: "Missing HSTS Headers",
+      severity: "medium",
+      affectedSystem: "Web Application",
+      discoveryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1e3),
+      status: "remediation-planned"
+    },
+    {
+      id: "F-2025-003",
+      title: "Outdated NPM Dependencies",
+      severity: "medium",
+      affectedSystem: "Frontend Application",
+      discoveryDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3),
+      status: "remediation-complete"
+    },
+    {
+      id: "F-2025-004",
+      title: "Insecure Password Policy",
+      severity: "high",
+      affectedSystem: "User Management",
+      discoveryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1e3),
+      status: "remediation-verified"
+    },
+    {
+      id: "F-2025-005",
+      title: "Excessive Session Timeout",
+      severity: "low",
+      affectedSystem: "Authentication Service",
+      discoveryDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1e3),
+      status: "remediation-complete"
+    }
+  ];
+  const scheduledScans = [
+    {
+      id: "SCAN-001",
+      name: "Full Infrastructure Scan",
+      target: "All Systems",
+      frequency: "Weekly",
+      nextRun: new Date(Date.now() + 3 * 24 * 60 * 60 * 1e3)
+    },
+    {
+      id: "SCAN-002",
+      name: "Patient Data Systems Scan",
+      target: "Database and Storage Services",
+      frequency: "Daily",
+      nextRun: new Date(Date.now() + 6 * 60 * 60 * 1e3)
+    },
+    {
+      id: "SCAN-003",
+      name: "HIPAA Compliance Scan",
+      target: "All PHI Systems",
+      frequency: "Bi-weekly",
+      nextRun: new Date(Date.now() + 5 * 24 * 60 * 60 * 1e3)
+    }
+  ];
+  function formatDate(date) {
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }).format(date);
+  }
+  function getStatusBadgeClass(status) {
+    switch (status) {
+      case "remediation-in-progress":
+        return "bg-amber-100 text-amber-800";
+      case "remediation-planned":
+        return "bg-blue-100 text-blue-800";
+      case "remediation-complete":
+        return "bg-green-100 text-green-800";
+      case "remediation-verified":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  }
+  function getStatusDisplayText(status) {
+    switch (status) {
+      case "remediation-in-progress":
+        return "In Progress";
+      case "remediation-planned":
+        return "Planned";
+      case "remediation-complete":
+        return "Complete";
+      case "remediation-verified":
+        return "Verified";
+      default:
+        return "Unknown";
+    }
+  }
+  function getSeverityBadgeClass(severity) {
+    switch (severity) {
+      case "critical":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-amber-100 text-amber-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  }
+  return renderTemplate`${renderComponent($$result, "AdminLayout", $$AdminLayout, { "title": "Risk Assessment", "description": "Security Risk Assessment Dashboard" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="px-6 py-8"> <div class="flex justify-between items-center mb-6"> <h1 class="text-2xl font-bold text-gray-800">Security Risk Assessment</h1> <div class="flex space-x-3"> <a href="/admin/security/risk-assessment/scans" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
+Manage Scans
+</a> <a href="/admin/security/risk-assessment/vulnerabilities" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors">
+View Vulnerabilities
+</a> <button id="start-scan-btn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+Start New Scan
+</button> </div> </div> <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"> <div class="bg-white rounded-lg shadow-sm p-4"> <div class="flex justify-between"> <div> <h3 class="text-sm font-medium text-gray-500">
+Current Compliance Score
+</h3> <p class="text-3xl font-bold text-green-600"> ${riskMetrics.complianceScore}%
+</p> </div> <div class="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center"> <span class="text-2xl text-green-600">✓</span> </div> </div> <p class="text-xs text-gray-500 mt-2">
+Last assessment: ${formatDate(riskMetrics.lastScanDate)} </p> </div> <div class="bg-white rounded-lg shadow-sm p-4"> <h3 class="text-sm font-medium text-gray-500">
+Vulnerability Distribution
+</h3> <div class="flex items-center mt-2"> <div class="w-full bg-gray-200 rounded-full h-2.5"> <div class="flex h-2.5 rounded-full"> <div class="bg-red-500 h-2.5 rounded-l-full"${addAttribute(`width: ${riskMetrics.criticalVulnerabilities / riskMetrics.totalVulnerabilities * 100}%`, "style")}></div> <div class="bg-orange-500 h-2.5"${addAttribute(`width: ${riskMetrics.highVulnerabilities / riskMetrics.totalVulnerabilities * 100}%`, "style")}></div> <div class="bg-amber-400 h-2.5"${addAttribute(`width: ${riskMetrics.mediumVulnerabilities / riskMetrics.totalVulnerabilities * 100}%`, "style")}></div> <div class="bg-blue-400 h-2.5 rounded-r-full"${addAttribute(`width: ${riskMetrics.lowVulnerabilities / riskMetrics.totalVulnerabilities * 100}%`, "style")}></div> </div> </div> </div> <div class="grid grid-cols-4 gap-2 mt-3"> <div> <p class="text-xs text-gray-500">Critical</p> <p class="text-lg font-semibold text-red-600"> ${riskMetrics.criticalVulnerabilities} </p> </div> <div> <p class="text-xs text-gray-500">High</p> <p class="text-lg font-semibold text-orange-600"> ${riskMetrics.highVulnerabilities} </p> </div> <div> <p class="text-xs text-gray-500">Medium</p> <p class="text-lg font-semibold text-amber-600"> ${riskMetrics.mediumVulnerabilities} </p> </div> <div> <p class="text-xs text-gray-500">Low</p> <p class="text-lg font-semibold text-blue-600"> ${riskMetrics.lowVulnerabilities} </p> </div> </div> </div> <div class="bg-white rounded-lg shadow-sm p-4"> <h3 class="text-sm font-medium text-gray-500">
+Upcoming Scheduled Scans
+</h3> <ul class="mt-2 space-y-2"> ${scheduledScans.map((scan) => renderTemplate`<li class="text-sm"> <div class="flex justify-between"> <span class="font-medium text-gray-800">${scan.name}</span> <span class="text-xs text-gray-500"> ${formatDate(scan.nextRun)} </span> </div> <p class="text-xs text-gray-500">${scan.target}</p> </li>`)} </ul> </div> </div> <div class="bg-white rounded-lg shadow-sm p-6 mb-6"> <h2 class="text-lg font-semibold mb-4">Recent Security Findings</h2> <div class="overflow-x-auto"> <table class="min-w-full divide-y divide-gray-200"> <thead class="bg-gray-50"> <tr> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Finding ID</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Affected System</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discovery Date</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> </tr> </thead> <tbody class="bg-white divide-y divide-gray-200"> ${recentFindings.map((finding) => renderTemplate`<tr> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"> ${finding.id} </td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> ${finding.title} </td> <td class="px-6 py-4 whitespace-nowrap"> <span${addAttribute(`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityBadgeClass(finding.severity)}`, "class")}> ${finding.severity.charAt(0).toUpperCase() + finding.severity.slice(1)} </span> </td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> ${finding.affectedSystem} </td> <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> ${formatDate(finding.discoveryDate)} </td> <td class="px-6 py-4 whitespace-nowrap"> <span${addAttribute(`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(finding.status)}`, "class")}> ${getStatusDisplayText(finding.status)} </span> </td> <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"> <a${addAttribute(`/admin/security/risk-assessment/finding/${finding.id}`, "href")} class="text-indigo-600 hover:text-indigo-900 mr-3">
+View Details
+</a> </td> </tr>`)} </tbody> </table> </div> <div class="mt-4 text-right"> <a href="/admin/security/risk-assessment/findings" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">View All Findings</a> </div> </div> <div class="bg-white rounded-lg shadow-sm p-6 mb-6"> <h2 class="text-lg font-semibold mb-4">HIPAA Compliance Status</h2> <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> <div> <h3 class="font-medium text-gray-800 mb-2">Technical Safeguards</h3> <div class="flex items-center mb-4"> <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2"> <div class="bg-green-600 h-2.5 rounded-full" style="width: 95%"></div> </div> <span class="text-sm font-medium text-gray-700">95%</span> </div> <ul class="space-y-1 text-sm"> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Access Controls</span> </li> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Audit Controls</span> </li> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Integrity Controls</span> </li> <li class="flex items-center text-amber-800"> <span class="mr-2">⚠</span> <span>Transmission Security</span> </li> </ul> </div> <div> <h3 class="font-medium text-gray-800 mb-2">
+Administrative Safeguards
+</h3> <div class="flex items-center mb-4"> <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2"> <div class="bg-green-600 h-2.5 rounded-full" style="width: 90%"></div> </div> <span class="text-sm font-medium text-gray-700">90%</span> </div> <ul class="space-y-1 text-sm"> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Risk Analysis</span> </li> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Risk Management</span> </li> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Sanction Policy</span> </li> <li class="flex items-center text-amber-800"> <span class="mr-2">⚠</span> <span>Training Updates</span> </li> </ul> </div> <div> <h3 class="font-medium text-gray-800 mb-2">Physical Safeguards</h3> <div class="flex items-center mb-4"> <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2"> <div class="bg-green-600 h-2.5 rounded-full" style="width: 88%"></div> </div> <span class="text-sm font-medium text-gray-700">88%</span> </div> <ul class="space-y-1 text-sm"> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Facility Access</span> </li> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Workstation Use</span> </li> <li class="flex items-center text-green-800"> <span class="mr-2">✓</span> <span>Device Security</span> </li> <li class="flex items-center text-amber-800"> <span class="mr-2">⚠</span> <span>Media Disposal</span> </li> </ul> </div> </div> <div class="mt-4 text-right"> <a href="/admin/security/compliance" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">View Detailed Compliance Report</a> </div> </div> </div> ` })} ${renderScript($$result, "/root/pixel/src/pages/admin/security/risk-assessment/index.astro?astro&type=script&index=0&lang.ts")}`;
+}, "/root/pixel/src/pages/admin/security/risk-assessment/index.astro", void 0);
+
+const $$file = "/root/pixel/src/pages/admin/security/risk-assessment/index.astro";
+const $$url = "/admin/security/risk-assessment";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Index,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
