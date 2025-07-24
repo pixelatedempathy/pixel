@@ -31,7 +31,6 @@ frontend:
         - pnpm install --no-frozen-lockfile
         - pnpm rebuild
         - 'find node_modules -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "examples" \) -exec rm -rf {} + || true'
-        - 'find node_modules -type f \( -name "*.md" -o -name "*.markdown" -o -name "CHANGELOG*" -o -name "*.ts" -o -name "*.tsx" -o -name "*.map" \) -delete || true'
         - 'find node_modules -type f -name "*.d.ts" ! -path "*/@types/*" -delete || true'
 
     build:
