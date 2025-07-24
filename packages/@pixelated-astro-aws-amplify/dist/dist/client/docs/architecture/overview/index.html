@@ -1,0 +1,331 @@
+<!DOCTYPE html><html lang="en" class="dark"> <head><meta name="sentry-trace" content="0f639172fe265b3d6999f931ea16f8fb-d9c5c4576fa1eda2-0"/>
+<meta name="baggage" content="sentry-environment=production,sentry-release=0.0.1,sentry-public_key=ef4ca2c0d2530a95efb0ef55c168b661,sentry-trace_id=0f639172fe265b3d6999f931ea16f8fb,sentry-org_id=4509483611979776,sentry-sampled=false,sentry-sample_rand=0.5271000887719894,sentry-sample_rate=0.1"/><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.12.2"><title>Pixelated Empathy Architecture | Pixelated Empathy</title><meta name="description" content="Pixelated Empathy Architecture documentation"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@400;700&display=swap" rel="stylesheet"><style>*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:var(--un-default-border-color, #e5e7eb)}:before,:after{--un-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}
+</style>
+<link rel="stylesheet" href="/_astro/about.D30pwbgn.css">
+<style>article{--content-width: 740px;font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif}.prose{font-size:1.05rem;line-height:1.75}.prose p{margin-bottom:1.5em}.prose h2{font-weight:600;font-size:1.65rem;margin-top:2.5rem;margin-bottom:1rem;padding-bottom:.25rem;border-bottom:1px solid rgba(125,125,125,.3)}.prose h3{font-weight:600;font-size:1.35rem;margin-top:2rem;margin-bottom:.75rem}.prose a{color:var(--tw-prose-links);text-decoration:none;font-weight:inherit;border-bottom:1px dotted;transition:border-bottom .2s}.prose a:hover{border-bottom:1px solid}.prose img{border-radius:.5rem;margin:1.5rem 0;box-shadow:0 4px 6px -1px #0000001a,0 2px 4px -1px #0000000f}.prose code{font-size:.9em;background-color:#7d7d7d1a;padding:.2em .4em;border-radius:.25em}.prose pre code{background:none;padding:0;font-size:.8em}.prose blockquote{border-left-width:.25rem;border-left-color:#7d7d7d4d;font-style:italic;padding-left:1rem;background-color:#7d7d7d0d;border-radius:0 .25rem .25rem 0;margin:1.5rem 0;padding:.75rem 1rem}
+@keyframes astroFadeInOut{0%{opacity:1}to{opacity:0}}@keyframes astroFadeIn{0%{opacity:0;mix-blend-mode:plus-lighter}to{opacity:1;mix-blend-mode:plus-lighter}}@keyframes astroFadeOut{0%{opacity:1;mix-blend-mode:plus-lighter}to{opacity:0;mix-blend-mode:plus-lighter}}@keyframes astroSlideFromRight{0%{transform:translate(100%)}}@keyframes astroSlideFromLeft{0%{transform:translate(-100%)}}@keyframes astroSlideToRight{to{transform:translate(100%)}}@keyframes astroSlideToLeft{to{transform:translate(-100%)}}@media (prefers-reduced-motion){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}[data-astro-transition-scope]{animation:none!important}}
+</style><script type="module" src="/_astro/page.B1_mcFPJ.js"></script><style>[data-astro-transition-scope="astro-o4bj6brz-1"] { view-transition-name: post-title-undefined; }@layer astro { ::view-transition-old(post-title-undefined) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(post-title-undefined) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(post-title-undefined) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(post-title-undefined) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-o4bj6brz-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-o4bj6brz-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-o4bj6brz-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-o4bj6brz-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-o4bj6brz-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-o4bj6brz-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-o4bj6brz-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-o4bj6brz-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-nfsjoa6w-2"] { view-transition-name: astro-nfsjoa6w-2; }@layer astro { ::view-transition-old(astro-nfsjoa6w-2) { 
+	animation-duration: 90ms, 220ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1), cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both, both;
+	animation-name: astroFadeOut, astroSlideToLeft; }::view-transition-new(astro-nfsjoa6w-2) { 
+	animation-duration: 210ms, 220ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1), cubic-bezier(0.76, 0, 0.24, 1);
+	animation-delay: 30ms;
+	animation-fill-mode: both, both;
+	animation-name: astroFadeIn, astroSlideFromRight; }[data-astro-transition=back]::view-transition-old(astro-nfsjoa6w-2) { 
+	animation-name: astroFadeOut, astroSlideToRight; }[data-astro-transition=back]::view-transition-new(astro-nfsjoa6w-2) { 
+	animation-name: astroFadeIn, astroSlideFromLeft; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfsjoa6w-2"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfsjoa6w-2"] { 
+	animation-duration: 90ms, 220ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1), cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both, both;
+	animation-name: astroFadeOut, astroSlideToLeft; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfsjoa6w-2"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfsjoa6w-2"] { 
+	animation-duration: 210ms, 220ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1), cubic-bezier(0.76, 0, 0.24, 1);
+	animation-delay: 30ms;
+	animation-fill-mode: both, both;
+	animation-name: astroFadeIn, astroSlideFromRight; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfsjoa6w-2"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfsjoa6w-2"] { 
+	animation-name: astroFadeOut, astroSlideToRight; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfsjoa6w-2"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfsjoa6w-2"] { 
+	animation-name: astroFadeIn, astroSlideFromLeft; }</style></head> <body class="bg-slate-900 text-slate-100 font-geist">  <header class="sticky top-0 z-50 w-full backdrop-blur-lg bg-black/30 border-b border-slate-300/10"> <div class="max-w-6xl mx-auto px-4"> <div class="flex items-center justify-between h-16"> <!-- Site branding --> <div class="shrink-0 mr-4"> <a class="flex items-center gap-2" href="/"> <img class="h-8 w-8" src="/images/logo-light.svg" alt="Pixelated Empathy Logo"> <span class="text-xl font-bold text-slate-100 font-geist tracking-tight">
+Pixelated Empathy
+</span> </a> </div> <!-- Desktop navigation --> <nav class="hidden md:flex md:grow"> <!-- Desktop menu links --> <ul class="flex grow justify-end flex-wrap items-center"> <li> <a href="/demos" class="font-medium text-slate-300 hover:text-green-400 px-4 py-3 flex items-center transition duration-150 ease-in-out font-geist"> Training Demos </a> </li><li> <a href="/features" class="font-medium text-slate-300 hover:text-green-400 px-4 py-3 flex items-center transition duration-150 ease-in-out font-geist"> Features </a> </li><li> <a href="/blog" class="font-medium text-slate-300 hover:text-green-400 px-4 py-3 flex items-center transition duration-150 ease-in-out font-geist"> Blog </a> </li><li> <a href="/dashboard" class="font-medium text-slate-300 hover:text-green-400 px-4 py-3 flex items-center transition duration-150 ease-in-out font-geist"> Dashboard </a> </li> </ul> <!-- Dark mode toggle --> <div class="flex items-center justify-end pl-4"> <button id="theme-toggle" class="text-slate-400 hover:text-green-400"> <span class="sr-only">Toggle theme</span> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> </div> </nav> <!-- Mobile menu button (optional) --> <div class="md:hidden"> <!-- Hamburger button can be added here --> </div> </div> </div> </header> <script>
+  // Basic dark mode toggle script
+  const themeToggle = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+
+  const applyTheme = (theme) => {
+    if (theme === 'dark') {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+  };
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = html.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    applyTheme(isDark ? 'light' : 'dark');
+  });
+
+  // Apply theme on initial load
+  const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+  applyTheme(savedTheme);
+</script> <main>  <article class="max-w-prose mx-auto px-4 sm:px-0 py-12"> <header class="mb-8"> <div class="mb-6"> <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2"> <time datetime="2024-01-15T00:00:00.000Z"> Jan 15, 2024 </time>  </div> <h1 class="text-3xl sm:text-4xl font-bold mb-4 leading-tight" data-astro-transition-scope="astro-o4bj6brz-1"> Pixelated Empathy Architecture </h1> <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed"> Pixelated Empathy Architecture documentation </p> </div> <div class="flex flex-wrap gap-2 mb-6"> <a href="/blog/tags/documentation" class="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" data-astro-prefetch data-astro-transition-scope="astro-nfsjoa6w-2"> documentation </a> </div>  </header> <div class="prose dark:prose-invert prose-lg max-w-none">  <h1 id="pixelated-empathy-architecture">Pixelated Empathy Architecture</h1>
+<h2 id="system-overview">System Overview</h2>
+<p>Pixelated Empathy is built on a modern, secure, and scalable architecture that combines the best practices from various platforms while maintaining strong privacy and security measures through Zero-Knowledge Encryption and HIPAA compliance.</p>
+<h2 id="core-components">Core Components</h2>
+<h3 id="frontend-architecture">Frontend Architecture</h3>
+<tabs>
+<tab title="UI Layer">
+  The UI layer is built using React and Next.js, incorporating design elements from Liftoff's interview platform:
+<ul>
+<li>
+<p><strong>Component Structure</strong></p>
+<ul>
+<li>Atomic Design Principles</li>
+<li>Shared Component Library</li>
+<li>Theme Provider (Dark/Light modes)</li>
+<li>Responsive Layout System</li>
+</ul>
+</li>
+<li>
+<p><strong>State Management</strong></p>
+<ul>
+<li>React Context for global state</li>
+<li>React Query for server state</li>
+<li>Local storage for persistence</li>
+<li>Secure credential handling
+
+</li>
+</ul>
+</li>
+</ul>
+<tab title="Data Flow">
+  Data flow follows unidirectional principles:
+<ol>
+<li>User actions trigger state changes</li>
+<li>State updates propagate to components</li>
+<li>Side effects handled by middleware</li>
+<li>Server state synchronized via WebSocket
+
+</li>
+</ol>
+</tab></tab></tabs>
+<h3 id="backend-architecture">Backend Architecture</h3>
+<cards>
+<card title="API Layer">
+  - RESTful endpoints
+  - GraphQL interface
+  - WebSocket connections
+  - Rate limiting
+  - Request validation
+</card>
+<card title="Authentication">
+  - Supabase Auth integration
+  - JWT token management
+  - Role-based access control
+  - Session handling
+</card>
+<card title="Zero-Knowledge System">
+  - End-to-end encryption
+  - Client-side key generation
+  - Secure message passing
+  - Zero-knowledge proofs
+</card>
+</cards>
+<h2 id="database-design">Database Design</h2>
+<h3 id="supabase-schema">Supabase Schema</h3>
+<div class="expressive-code"><link rel="stylesheet" href="/_astro/ec.wkpfq.css"><script type="module" src="/_astro/ec.p1z7b.js"></script><figure class="frame"><figcaption class="header"></figcaption><pre data-language="sql"><code><div class="ec-line"><div class="code"><span style="--0:#758575DD;--1:#A0ADA0">-- Core Tables</span></div></div><div class="ec-line"><div class="code"><span style="--0:#4D9375;--1:#1E754F">CREATE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">TABLE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#80A665;--1:#59873A">users</span><span style="--0:#DBD7CAEE;--1:#393A34"> (</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">id UUID </span><span style="--0:#CB7676;--1:#AB5959">PRIMARY KEY</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> uuid_generate_v4</span><span style="--0:#666666;--1:#999999">()</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">email </span><span style="--0:#CB7676;--1:#AB5959">TEXT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">UNIQUE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">NOT NULL</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">encrypted_data JSONB,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">settings JSONB </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#C98A7D77;--1:#B5695977">'</span><span style="--0:#C98A7D;--1:#B56959">{}</span><span style="--0:#C98A7D77;--1:#B5695977">'</span><span style="--0:#DBD7CAEE;--1:#393A34">::jsonb,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">created_at </span><span style="--0:#CB7676;--1:#AB5959">TIMESTAMPTZ</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">NOW</span><span style="--0:#666666;--1:#999999">()</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">updated_at </span><span style="--0:#CB7676;--1:#AB5959">TIMESTAMPTZ</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">NOW</span><span style="--0:#666666;--1:#999999">()</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">);</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#4D9375;--1:#1E754F">CREATE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">TABLE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#80A665;--1:#59873A">sessions</span><span style="--0:#DBD7CAEE;--1:#393A34"> (</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">id UUID </span><span style="--0:#CB7676;--1:#AB5959">PRIMARY KEY</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> uuid_generate_v4</span><span style="--0:#666666;--1:#999999">()</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">user_id UUID </span><span style="--0:#CB7676;--1:#AB5959">REFERENCES</span><span style="--0:#DBD7CAEE;--1:#393A34"> users(id),</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">metadata JSONB,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">started_at </span><span style="--0:#CB7676;--1:#AB5959">TIMESTAMPTZ</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">NOW</span><span style="--0:#666666;--1:#999999">()</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">ended_at </span><span style="--0:#CB7676;--1:#AB5959">TIMESTAMPTZ</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">);</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#4D9375;--1:#1E754F">CREATE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">TABLE</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#80A665;--1:#59873A">messages</span><span style="--0:#DBD7CAEE;--1:#393A34"> (</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">id UUID </span><span style="--0:#CB7676;--1:#AB5959">PRIMARY KEY</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> uuid_generate_v4</span><span style="--0:#666666;--1:#999999">()</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">session_id UUID </span><span style="--0:#CB7676;--1:#AB5959">REFERENCES</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">sessions</span><span style="--0:#DBD7CAEE;--1:#393A34">(id),</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">encrypted_content </span><span style="--0:#CB7676;--1:#AB5959">TEXT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">NOT NULL</span><span style="--0:#DBD7CAEE;--1:#393A34">,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">metadata JSONB,</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">created_at </span><span style="--0:#CB7676;--1:#AB5959">TIMESTAMPTZ</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#CB7676;--1:#AB5959">DEFAULT</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#4D9375;--1:#1E754F">NOW</span><span style="--0:#666666;--1:#999999">()</span></div></div><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">);</span></div></div></code></pre><div class="copy"><button title="Copy to clipboard" data-copied="Copied!" data-code="-- Core TablesCREATE TABLE users (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),email TEXT UNIQUE NOT NULL,encrypted_data JSONB,settings JSONB DEFAULT &#x27;{}&#x27;::jsonb,created_at TIMESTAMPTZ DEFAULT NOW(),updated_at TIMESTAMPTZ DEFAULT NOW());CREATE TABLE sessions (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),user_id UUID REFERENCES users(id),metadata JSONB,started_at TIMESTAMPTZ DEFAULT NOW(),ended_at TIMESTAMPTZ);CREATE TABLE messages (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),session_id UUID REFERENCES sessions(id),encrypted_content TEXT NOT NULL,metadata JSONB,created_at TIMESTAMPTZ DEFAULT NOW());"><div></div></button></div></figure></div>
+<h2 id="security-architecture">Security Architecture</h2>
+<steps>
+  ### 1. Authentication Flow
+  - User registration/login via Supabase Auth
+  - JWT token generation and validation
+  - Secure session management
+<h3 id="2-zero-knowledge-implementation">2. Zero-Knowledge Implementation</h3>
+<ul>
+<li>Client-side key generation</li>
+<li>End-to-end encryption of sensitive data</li>
+<li>Zero-knowledge proof verification</li>
+</ul>
+<h3 id="3-data-protection">3. Data Protection</h3>
+<ul>
+<li>Encrypted data storage in Supabase</li>
+<li>Secure key management</li>
+<li>Regular security audits
+  
+</li>
+</ul>
+<h2 id="integration-points">Integration Points</h2>
+<h3 id="liftoff-features">Liftoff Features</h3>
+<accordiongroup>
+  <accordion title="UI Components">
+    - Chat interface adaptation - Dashboard layouts - Form components -
+    Navigation elements
+  </accordion>
+  <accordion title="State Management">
+    - Real-time updates - Cache management - Optimistic updates - Error handling
+  </accordion>
+</accordiongroup>
+<h3 id="pocketbase-inspired-features">PocketBase Inspired Features</h3>
+<accordiongroup>
+  <accordion title="Authentication System">
+    - Adapted for Supabase - Enhanced with ZK principles - Role-based access
+    control
+  </accordion>
+  <accordion title="API Structure">
+    - RESTful endpoints - Real-time subscriptions - Request validation
+  </accordion>
+</accordiongroup>
+<h2 id="performance-considerations">Performance Considerations</h2>
+<h3 id="caching-strategy">Caching Strategy</h3>
+<div class="expressive-code"><figure class="frame"><figcaption class="header"></figcaption><pre data-language="mermaid"><code><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">flowchart LR</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">Client[Client] --> Cache[Redis Cache]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">Cache --> API[API]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">API --> Database[(Database)]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">Cache -.-> Database</span></div></div></code></pre><div class="copy"><button title="Copy to clipboard" data-copied="Copied!" data-code="flowchart LR    Client[Client] --> Cache[Redis Cache]    Cache --> API[API]    API --> Database[(Database)]    Cache -.-> Database"><div></div></button></div></figure></div>
+<ul>
+<li>
+<p><strong>Client-side caching</strong></p>
+<ul>
+<li>React Query cache</li>
+<li>Service Worker cache</li>
+<li>Local storage cache</li>
+</ul>
+</li>
+<li>
+<p><strong>Server-side caching</strong></p>
+<ul>
+<li>Redis cache layer</li>
+<li>Database query cache</li>
+<li>CDN caching</li>
+</ul>
+</li>
+</ul>
+<h3 id="optimization-techniques">Optimization Techniques</h3>
+<cards>
+  <card title="Frontend Optimization">
+    - Code splitting - Lazy loading - Image optimization - Bundle size reduction
+  </card>
+  <card title="Backend Optimization">
+    - Query optimization - Connection pooling - Background job processing -
+    Resource scaling
+  </card>
+</cards>
+<h2 id="deployment-architecture">Deployment Architecture</h2>
+<h3 id="infrastructure-components">Infrastructure Components</h3>
+<ul>
+<li>
+<p><strong>Frontend</strong></p>
+</li>
+<li>
+<p>Vercel deployment</p>
+</li>
+<li>
+<p>Edge functions</p>
+</li>
+<li>
+<p>CDN distribution</p>
+</li>
+<li>
+<p><strong>Backend</strong></p>
+</li>
+<li>
+<p>Containerized services</p>
+</li>
+<li>
+<p>Auto-scaling groups</p>
+</li>
+<li>
+<p>Load balancing</p>
+</li>
+<li>
+<p><strong>Database</strong></p>
+</li>
+<li>
+<p>Supabase managed instance</p>
+</li>
+<li>
+<p>Read replicas</p>
+</li>
+<li>
+<p>Backup strategy</p>
+</li>
+</ul>
+<h2 id="monitoring--logging">Monitoring &#x26; Logging</h2>
+<h3 id="observability-stack">Observability Stack</h3>
+<ul>
+<li>
+<p><strong>Application Monitoring</strong></p>
+</li>
+<li>
+<p>Error tracking</p>
+</li>
+<li>
+<p>Performance metrics</p>
+</li>
+<li>
+<p>User analytics</p>
+</li>
+<li>
+<p><strong>Infrastructure Monitoring</strong></p>
+</li>
+<li>
+<p>Server metrics</p>
+</li>
+<li>
+<p>Database metrics</p>
+</li>
+<li>
+<p>Cache performance</p>
+</li>
+<li>
+<p><strong>Security Monitoring</strong></p>
+</li>
+<li>
+<p>Audit logs</p>
+</li>
+<li>
+<p>Access logs</p>
+</li>
+<li>
+<p>Security alerts</p>
+</li>
+</ul>
+<h2 id="development-workflow">Development Workflow</h2>
+<h3 id="local-development">Local Development</h3>
+<div class="expressive-code"><figure class="frame is-terminal"><figcaption class="header"><span class="title"></span><span class="sr-only">Terminal window</span></figcaption><pre data-language="bash"><code><div class="ec-line"><div class="code"><span style="--0:#758575DD;--1:#A0ADA0"># Frontend development</span></div></div><div class="ec-line"><div class="code"><span style="--0:#80A665;--1:#59873A">pnpm</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#C98A7D;--1:#B56959">dev</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#758575DD;--1:#A0ADA0"># Backend development</span></div></div><div class="ec-line"><div class="code"><span style="--0:#80A665;--1:#59873A">pnpm</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#C98A7D;--1:#B56959">backend:dev</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#758575DD;--1:#A0ADA0"># Database migrations</span></div></div><div class="ec-line"><div class="code"><span style="--0:#80A665;--1:#59873A">pnpm</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#C98A7D;--1:#B56959">db:migrate</span></div></div><div class="ec-line"><div class="code">
+</div></div><div class="ec-line"><div class="code"><span style="--0:#758575DD;--1:#A0ADA0"># Testing</span></div></div><div class="ec-line"><div class="code"><span style="--0:#80A665;--1:#59873A">pnpm</span><span style="--0:#DBD7CAEE;--1:#393A34"> </span><span style="--0:#C98A7D;--1:#B56959">test</span></div></div></code></pre><div class="copy"><button title="Copy to clipboard" data-copied="Copied!" data-code="pnpm devpnpm backend:devpnpm db:migratepnpm test"><div></div></button></div></figure></div>
+<h3 id="cicd-pipeline">CI/CD Pipeline</h3>
+<div class="expressive-code"><figure class="frame"><figcaption class="header"></figcaption><pre data-language="mermaid"><code><div class="ec-line"><div class="code"><span style="--0:#DBD7CAEE;--1:#393A34">graph LR</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">A[Commit] --> B[Build]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">B --> C[Test]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">C --> D[Deploy Preview]</span></div></div><div class="ec-line"><div class="code"><span class="indent"><span style="--0:#DBD7CAEE;--1:#393A34">    </span></span><span style="--0:#DBD7CAEE;--1:#393A34">D --> E[Production Deploy]</span></div></div></code></pre><div class="copy"><button title="Copy to clipboard" data-copied="Copied!" data-code="graph LR    A[Commit] --> B[Build]    B --> C[Test]    C --> D[Deploy Preview]    D --> E[Production Deploy]"><div></div></button></div></figure></div>
+<note>
+  This architecture documentation is maintained alongside the codebase and
+  updated as the system evolves. For implementation details of specific
+  components, refer to the respective documentation sections.
+</note></steps>  </div> <footer class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800"> <!-- Social Share Section --> <div class="flex justify-between items-center"> <a href="/blog" class="flex items-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" data-astro-prefetch> <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path> </svg>
+back
+</a> <div class="flex items-center"> <span class="font-mono op-50">&gt; </span> <span class="op-50">share on</span> <div id="share-links" data-post-url="https://pixelatedempathy.com/docs/architecture/overview/"></div> <script type="module">(function(){try{var e=typeof window<"u"?window:typeof global<"u"?global:typeof globalThis<"u"?globalThis:typeof self<"u"?self:{},s=new e.Error().stack;s&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[s]="d44532f8-e727-4cba-a946-b4535e6a92d6",e._sentryDebugIdIdentifier="sentry-dbid-d44532f8-e727-4cba-a946-b4535e6a92d6")}catch{}})();document.addEventListener("astro:page-load",()=>{const e=document.getElementById("share-links");if(!e)return;const s=e.getAttribute("data-post-url");if(!s)return;const d=new URL(s);e.innerHTML="";const r={twitter:{baseUrl:"https://twitter.com/intent/tweet?text=",formatUrl:(t,a)=>`${r.twitter.baseUrl}${encodeURIComponent(`Reading ${a?.[1]?`${a[1]}'s `:""}${t}
+
+I think...`)}`,label:"twitter",title:"Tweet this post"},mastodon:{baseUrl:"https://elk.zone/intent/post?text=",formatUrl:(t,a)=>`${r.mastodon.baseUrl}${encodeURIComponent(`Reading ${a?.[1]?`${a[1]}'s `:""}${t}
+
+I think...`)}`,label:"mastodon",title:"Share this post on Mastodon"},facebook:{baseUrl:"https://www.facebook.com/sharer.php?u=",formatUrl:t=>`${r.facebook.baseUrl}${t}`,label:"facebook",title:"Share this post on Facebook"},pinterest:{baseUrl:"https://pinterest.com/pin/create/button/?url=",formatUrl:t=>`${r.pinterest.baseUrl}${t}`,label:"pinterest",title:"Share this post on Pinterest"},reddit:{baseUrl:"https://www.reddit.com/submit?url=",formatUrl:t=>`${r.reddit.baseUrl}${t}`,label:"reddit",title:"Share this post on Reddit"},telegram:{baseUrl:"https://t.me/share/url?url=",formatUrl:t=>`${r.telegram.baseUrl}${t}`,label:"telegram",title:"Share this post via Telegram"},whatsapp:{baseUrl:"https://wa.me/?text=",formatUrl:t=>`${r.whatsapp.baseUrl}${t}`,label:"whatsapp",title:"Share this post via WhatsApp"},email:{baseUrl:"mailto:?subject=See%20this%20post&body=",formatUrl:t=>`${r.email.baseUrl}${t}`,label:"email",title:"Share this post via email"}},p=Array.from(document.querySelectorAll("[data-provider-key]"));p.forEach((t,a)=>{const n=t.getAttribute("data-provider-key"),b=t.getAttribute("data-provider-config"),h=b?JSON.parse(b):null;if(!n||!r[n])return;const l=r[n],c=l.formatUrl(d,h),o=document.createElement("a");if(o.href=c,o.textContent=l.label,o.className="op-50! hover:op-75! op-transition",o.title=l.title,o.rel="noopener noreferrer",o.target="_blank",e.appendChild(o),a<p.length-1){const i=document.createElement("span");i.className="op-25",i.textContent="/",e.appendChild(i)}})});</script> <span data-provider-key="twitter" data-provider-config="[true,&#34;@GradiantAscent&#34;]" style="display: none;"></span><span data-provider-key="facebook" data-provider-config="true" style="display: none;"></span>  <a class="op-60 no-underline hover:op-100 op-50! hover:op-75! op-transition" href="https://twitter.com/intent/tweet?text=Reading%20%40GradiantAscent's%20https%3A%2F%2Fpixelatedempathy.com%2Fdocs%2Farchitecture%2Foverview%2F%0A%0AI%20think..." target="_blank" rel="noopener noreferrer" title="Tweet this post"> twitter </a> <span class="op-25">/</span> <a class="op-60 no-underline hover:op-100 op-50! hover:op-75! op-transition" href="https://www.facebook.com/sharer.php?u=https://pixelatedempathy.com/docs/architecture/overview/" target="_blank" rel="noopener noreferrer" title="Share this post on Facebook"> facebook </a>  </div> </div> </footer> </article>  <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="1fI8Lz" prefix="r1" component-url="/_astro/KonamiTrigger.C5Y9yFl2.js" component-export="KonamiTrigger" renderer-url="/_astro/client.DQt9LJhF.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;KonamiTrigger&quot;,&quot;value&quot;:true}"></astro-island> </main> <!-- <Footer /> --> </body></html> 

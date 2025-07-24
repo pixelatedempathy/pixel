@@ -15,8 +15,6 @@ node_modules/
 /pnpm-debug.log*
 /browser-compatibility/
 /build-errors.md
-/packages/@pixelated-astro-aws-amplify/dist
-/packages/@pixelated-astro-aws-amplify/node_modules
 
 # environment variables and credentials
 /.env
