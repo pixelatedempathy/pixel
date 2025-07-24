@@ -266,7 +266,7 @@ export function useCrisisDetection({
     }
 
     return {
-      id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `alert-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       timestamp: new Date(),
       level,
       message,

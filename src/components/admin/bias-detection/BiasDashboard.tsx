@@ -70,7 +70,7 @@ import {
   CheckCircle,
 } from 'lucide-react'
 import { createBuildSafeLogger } from '@/lib/logging/build-safe-logger'
-import type { BiasDashboardData } from '@/lib/ai/bias-detection'
+import type { BiasDashboardData, BiasAnalysisResult, DashboardRecommendation } from '@/lib/ai/bias-detection'
 
 const logger = createBuildSafeLogger('bias-dashboard')
 
@@ -524,11 +524,21 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
             }
             return {
               ...prev,
-              alerts: prev.alerts.map((alert) =>
-                alert.alertId === alertId
-                  ? { ...alert, acknowledged: true, status: action }
-                  : alert,
-              ),
+              alerts: prev.alerts.map((alert) => {
+                if (alert.alertId === alertId) {
+                  // Ensure timestamp is a Date and all BiasAlert fields are present
+                  return {
+                    ...alert,
+                    acknowledged: true,
+                    status: action,
+                    timestamp: alert.timestamp instanceof Date ? alert.timestamp : new Date(alert.timestamp!),
+                  } as typeof alert
+                }
+                return {
+                  ...alert,
+                  timestamp: alert.timestamp instanceof Date ? alert.timestamp : new Date(alert.timestamp!),
+                } as typeof alert
+              }),
             }
           })
         }
@@ -807,7 +817,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
             switch (data.type) {
               case 'bias_alert':
                 // Add new alert to the list
-                setDashboardData((prev) => {
+                setDashboardData((prev: BiasDashboardData | null) => {
                   if (!prev) {
                     return prev
                   }
@@ -828,14 +838,14 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
 
               case 'session_update':
                 // Update session data
-                setDashboardData((prev) => {
+                setDashboardData((prev: BiasDashboardData | null) => {
                   if (!prev) {
                     return prev
                   }
                   const updatedSession = data.session
                   return {
                     ...prev,
-                    recentAnalyses: prev.recentAnalyses.map((session) =>
+                    recentAnalyses: prev.recentAnalyses.map((session: BiasAnalysisResult) =>
                       session.sessionId === updatedSession.sessionId
                         ? updatedSession
                         : session,
@@ -849,7 +859,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
 
               case 'metrics_update':
                 // Update summary metrics
-                setDashboardData((prev) => {
+                setDashboardData((prev: BiasDashboardData | null) => {
                   if (!prev) {
                     return prev
                   }
@@ -866,7 +876,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
 
               case 'trends_update':
                 // Update trend data
-                setDashboardData((prev) => {
+                setDashboardData((prev: BiasDashboardData | null) => {
                   if (!prev) {
                     return prev
                   }
@@ -1805,7 +1815,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
                       name="exportFormat"
                       value="csv"
                       checked={exportFormat === 'csv'}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setExportFormat(e.target.value as 'csv')
                       }
                       className="rounded"
@@ -1833,7 +1843,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
                       name="exportFormat"
                       value="pdf"
                       checked={exportFormat === 'pdf'}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setExportFormat(e.target.value as 'pdf')
                       }
                       className="rounded"
@@ -2298,7 +2308,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
               <select
                 id="bias-score-filter"
                 value={biasScoreFilter}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setBiasScoreFilter(
                     e.target.value as 'all' | 'low' | 'medium' | 'high',
                   )
@@ -2324,7 +2334,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
               <select
                 id="alert-level-filter"
                 value={alertLevelFilter}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setAlertLevelFilter(
                     e.target.value as
                       | 'all'
@@ -2804,9 +2814,9 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) =>
-                          `${name} ${(percent * 100).toFixed(0)}%`
-                        }
+                        label={({ name, percent }) => {
+                          return `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
+                        }}
                         animationDuration={1000}
                         animationBegin={0}
                       >
@@ -2833,15 +2843,13 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
                                 <p>Count: {payload[0]?.value}</p>
                                 <p>
                                   Percentage:{' '}
-                                  {(payload[0]?.payload?.percent * 100).toFixed(
-                                    1,
-                                  )}
+                                  {payload[0]?.payload?.percent ? (payload[0].payload.percent * 100).toFixed(1) : 0}
                                   %
                                 </p>
                               </div>
-                            )
+                            );
                           }
-                          return null
+                          return null;
                         }}
                       />
                       <Legend />
@@ -2870,9 +2878,9 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
                         outerRadius={80}
                         fill="#82ca9d"
                         dataKey="value"
-                        label={({ name, percent }) =>
-                          `${name} ${(percent * 100).toFixed(0)}%`
-                        }
+                        label={({ name, percent }) => {
+                          return `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
+                        }}
                         animationDuration={1000}
                         animationBegin={0}
                       >
@@ -2899,15 +2907,13 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
                                 <p>Count: {payload[0]?.value}</p>
                                 <p>
                                   Percentage:{' '}
-                                  {(payload[0]?.payload?.percent * 100).toFixed(
-                                    1,
-                                  )}
+                                  {payload[0]?.payload?.percent ? (payload[0].payload.percent * 100).toFixed(1) : 0}
                                   %
                                 </p>
                               </div>
-                            )
+                            );
                           }
-                          return null
+                          return null;
                         }}
                       />
                       <Legend />
@@ -3333,7 +3339,7 @@ export const BiasDashboard: React.FC<BiasDashboardProps> = ({
           {/* Recommendations Tab */}
           <TabsContent value="recommendations" className="space-y-4">
             {recommendations?.length > 0 ? (
-              recommendations.map((rec) => (
+              recommendations.map((rec: DashboardRecommendation) => (
                 <Card key={rec.id}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">

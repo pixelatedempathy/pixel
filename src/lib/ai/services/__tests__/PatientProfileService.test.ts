@@ -1,16 +1,17 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   PatientProfileService,
-  ProfileIdentifier,
+  type ProfileIdentifier,
 } from '../PatientProfileService'
 import type { PatientProfile } from '../../models/patient'
 import type { TherapeuticProgress } from '../../types/CognitiveModel'
 import { KVStore } from '../../../db/KVStore'
 
 // Mock KVStore
-jest.mock('../../../db/KVStore')
+vi.mock('../../../db/KVStore')
 
 describe('PatientProfileService', () => {
-  let mockKvStore: jest.Mocked<KVStore>
+  let mockKvStore: vi.Mocked<KVStore>
   let patientProfileService: PatientProfileService
   let sampleProfile: PatientProfile
   const profilePrefix = 'profile_'
@@ -28,6 +29,7 @@ describe('PatientProfileService', () => {
       rapportScore: 6, // Initial test value
       therapistPerception: 'neutral', // Initial test value
       transferenceState: 'none', // Initial test value
+      skillsAcquired: ['basic coping skills'], // Required property
     }
 
     sampleProfile = {
@@ -160,9 +162,10 @@ describe('PatientProfileService', () => {
       const savedProfileArgument = mockKvStore.set.mock
         .calls[0][1] as PatientProfile
       expect(savedProfileArgument.conversationHistory.length).toBe(1)
-      expect(savedProfileArgument.conversationHistory[0].content).toBe(
-        'Hello therapist',
-      )
+      const firstMessage = savedProfileArgument.conversationHistory[0]
+      if (firstMessage) {
+        expect(firstMessage.content).toBe('Hello therapist')
+      }
       // Crucially, check if the alliance metric is preserved
       expect(
         savedProfileArgument.cognitiveModel.therapeuticProgress.trustLevel,

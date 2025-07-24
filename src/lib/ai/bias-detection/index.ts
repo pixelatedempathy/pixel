@@ -25,6 +25,8 @@ export type {
   BiasAlertConfig,
   BiasReportConfig,
   BiasExplanationConfig,
+  BiasDashboardData,
+  DashboardRecommendation,
 } from './types'
 
 // Re-export interfaces (avoiding PerformanceMetrics duplicate)

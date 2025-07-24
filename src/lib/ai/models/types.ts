@@ -1,3 +1,17 @@
+export type ModelCapability =
+  | 'chat'
+  | 'sentiment'
+  | 'crisis'
+  | 'response'
+  | 'intervention'
+  | 'analysis'
+  | 'reasoning'
+  | 'code-generation'
+  | 'summarization'
+  | 'therapeutic-planning'
+  | 'emotion-validation'
+  | 'safety-assessment'
+
 export * from './ai-types'
 
 export interface AIModel {

@@ -157,9 +157,11 @@ function detectShifts(maps: DimensionalMap[]): MultidimensionalPattern[] {
   const changeThreshold = 0.5 // Minimum change to consider a shift
 
   for (let i = 1; i < maps.length - 1; i++) {
-    const prev = maps[i - 1].dimensions
-    const curr = maps[i].dimensions
-    const next = maps[i + 1].dimensions
+    const prev = maps[i - 1]?.dimensions
+    const curr = maps[i]?.dimensions
+    const next = maps[i + 1]?.dimensions
+
+    if (!prev || !curr || !next) continue
 
     // Calculate magnitude of change
     const changeMagnitude = calculateDimensionalDistance(prev, curr)
@@ -199,27 +201,35 @@ function detectStability(maps: DimensionalMap[]): MultidimensionalPattern[] {
   let isStable = true
 
   for (let i = 1; i < maps.length; i++) {
+    const prevMap = maps[i - 1]
+    const currMap = maps[i]
+    if (!prevMap?.dimensions || !currMap?.dimensions) continue
+
     const change = calculateDimensionalDistance(
-      maps[i - 1].dimensions,
-      maps[i].dimensions,
+      prevMap.dimensions,
+      currMap.dimensions,
     )
 
     if (change > stabilityThreshold) {
       // End of stable period
       if (isStable && i - stableStart >= minStabilityLength) {
         const stableWindow = maps.slice(stableStart, i)
-        stablePatterns.push({
-          id: `stability-${stableStart}-${Date.now()}`,
-          type: 'stability',
-          timeRange: {
-            start: stableWindow[0].timestamp,
-            end: stableWindow[stableWindow.length - 1].timestamp,
-          },
-          description: 'Stable emotional state period',
-          dimensions: stableWindow.map((w) => w.dimensions),
-          confidence: calculateStabilityConfidence(stableWindow),
-          significance: i - stableStart,
-        })
+        const firstWindow = stableWindow[0]
+        const lastWindow = stableWindow[stableWindow.length - 1]
+        if (firstWindow && lastWindow) {
+          stablePatterns.push({
+            id: `stability-${stableStart}-${Date.now()}`,
+            type: 'stability',
+            timeRange: {
+              start: firstWindow.timestamp,
+              end: lastWindow.timestamp,
+            },
+            description: 'Stable emotional state period',
+            dimensions: stableWindow.map((w) => w.dimensions),
+            confidence: calculateStabilityConfidence(stableWindow),
+            significance: i - stableStart,
+          })
+        }
       }
       stableStart = i
       isStable = false
@@ -272,7 +282,11 @@ function calculateAutocorrelation(maps: DimensionalMap[], lag: number): number {
   let correlation = 0
 
   for (let i = 0; i < n; i++) {
-    correlation += values[i] * values[i + lag]
+    const value = values[i]
+    const lagValue = values[i + lag]
+    if (value !== undefined && lagValue !== undefined) {
+      correlation += value * lagValue
+    }
   }
 
   return correlation / n

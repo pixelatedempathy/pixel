@@ -65,6 +65,11 @@ const createTestCognitiveModel = (
     resistanceLevel: 3,
     changeReadiness: 'contemplation',
     sessionProgressLog: [],
+    skillsAcquired: ['basic coping skills'],
+    trustLevel: 5,
+    rapportScore: 5,
+    therapistPerception: 'neutral',
+    transferenceState: 'none',
   } as TherapeuticProgress,
 })
 
@@ -171,8 +176,11 @@ describe('PatientProfileService', () => {
 
       expect(updatedProfile).not.toBeNull()
       expect(updatedProfile?.conversationHistory).toHaveLength(1)
-      expect(updatedProfile?.conversationHistory[0].content).toBe('Hello there')
-      expect(updatedProfile?.conversationHistory[0].role).toBe('patient')
+      const firstMessage = updatedProfile?.conversationHistory[0]
+      if (firstMessage) {
+        expect(firstMessage.content).toBe('Hello there')
+        expect(firstMessage.role).toBe('patient')
+      }
       expect(mockKvStoreInstance.set).toHaveBeenCalledWith(
         `profile_hist1`,
         expect.objectContaining({

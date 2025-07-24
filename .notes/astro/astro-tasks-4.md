@@ -1,5 +1,12 @@
 # Astro Check Tasks - File 4
 
+Run 'astro check' on the project root at the beginning and end of the task **only**.
+This is both so that we don't over-extend resources, and to make sure the errors are present and/or gone.
+Roughly every 10 tsks (including at the start), reference OpenMemory MCP to see if there's helpful context.
+Also, after those roughly 10 tasks, log the task run / event to OpenMemory for further context base usage in future.
+Make sure to check off the boxes / tasks roughly every 5-10 that are completed as well.
+Doesn't need to be immediate, per task. But after a good chunk, to keep progress visible.
+
 ## Lib/ai/mental-llama/evidence/utils/semanticEvidenceParser.ts
 - [ ] Fix type error: Change `clinicalRelevance` type from string to number or update the type definition
 

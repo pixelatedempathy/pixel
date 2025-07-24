@@ -124,8 +124,11 @@ describe('BeliefConsistencyService', () => {
       )
       expect(result.isConsistent).toBe(false)
       expect(result.contradictionsFound).toHaveLength(1)
-      expect(result.contradictionsFound[0].type).toBe('belief')
-      expect(result.contradictionsFound[0].conflictingText).toBe(belief1.belief)
+      const contradiction = result.contradictionsFound[0]
+      if (contradiction) {
+        expect(contradiction.type).toBe('belief')
+        expect(contradiction.conflictingText).toBe(belief1.belief)
+      }
     })
 
     it('should detect inconsistency with a core belief (negation: "i am never failing" vs "I am always failing")', async () => {
@@ -144,7 +147,10 @@ describe('BeliefConsistencyService', () => {
       )
       expect(result.isConsistent).toBe(false)
       expect(result.contradictionsFound).toHaveLength(1)
-      expect(result.contradictionsFound[0].type).toBe('belief')
+      const contradiction = result.contradictionsFound[0]
+      if (contradiction) {
+        expect(contradiction.type).toBe('belief')
+      }
     })
 
     it('should detect inconsistency with recent patient statement (negation: "i do not hate pizza" vs "I hate pizza")', async () => {
@@ -166,8 +172,11 @@ describe('BeliefConsistencyService', () => {
       )
       expect(result.isConsistent).toBe(false)
       expect(result.contradictionsFound).toHaveLength(1)
-      expect(result.contradictionsFound[0].type).toBe('statement')
-      expect(result.contradictionsFound[0].conflictingText).toBe('I hate pizza')
+      const contradiction = result.contradictionsFound[0]
+      if (contradiction) {
+        expect(contradiction.type).toBe('statement')
+        expect(contradiction.conflictingText).toBe('I hate pizza')
+      }
     })
 
     it('should only check against N recent patient statements', async () => {
@@ -217,8 +226,11 @@ describe('BeliefConsistencyService', () => {
         3,
       )
       expect(result.isConsistent).toBe(false)
-      expect(result.contradictionsFound[0].type).toBe('statement')
-      expect(result.contradictionsFound[0].conflictingText).toBe(oldStatement)
+      const contradiction = result.contradictionsFound[0]
+      if (contradiction) {
+        expect(contradiction.type).toBe('statement')
+        expect(contradiction.conflictingText).toBe(oldStatement)
+      }
     })
   })
 })

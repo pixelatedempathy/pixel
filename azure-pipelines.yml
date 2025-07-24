@@ -318,6 +318,8 @@ stages:
           docker push "$ACR_LOGIN_SERVER/$(imageName):$(dockerTag)"
           docker push "$ACR_LOGIN_SERVER/$(imageName):latest"
 
+
+
           # Verify the push was successful
           echo "Verifying image push was successful..."
           sleep 5  # Give ACR a moment to process the push

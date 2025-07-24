@@ -29,7 +29,7 @@ const { images, imageProps = {}, class: className } = Astro.props
   effect="fade"
 >
   {
-    images.map((item) => (
+    images.map((item: { src: ImageMetadata | string; alt: string }) => (
       <swiper-slide>
         {typeof item.src === 'string' ? (
           <img

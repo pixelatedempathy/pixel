@@ -93,21 +93,26 @@ export function parseSemanticEvidenceResponse(
 
       // Extract and validate clinical relevance
       const rawClinicalRelevance = evidenceObj['clinicalRelevance']
-      const validClinicalRelevanceValues = [
-        'critical',
-        'significant',
-        'supportive',
-        'contextual',
-      ]
-      const clinicalRelevance =
-        typeof rawClinicalRelevance === 'string' &&
-        validClinicalRelevanceValues.includes(rawClinicalRelevance)
-          ? (rawClinicalRelevance as
-              | 'critical'
-              | 'significant'
-              | 'supportive'
-              | 'contextual')
-          : 'supportive'
+      let clinicalRelevance = 0.5 // default
+      if (typeof rawClinicalRelevance === 'number') {
+        clinicalRelevance = Math.min(Math.max(rawClinicalRelevance, 0), 1)
+      } else if (typeof rawClinicalRelevance === 'string') {
+        // Convert string values to numbers for backward compatibility
+        switch (rawClinicalRelevance) {
+          case 'critical':
+            clinicalRelevance = 1.0
+            break
+          case 'significant':
+            clinicalRelevance = 0.75
+            break
+          case 'supportive':
+            clinicalRelevance = 0.5
+            break
+          case 'contextual':
+            clinicalRelevance = 0.25
+            break
+        }
+      }
 
       // Extract other fields with safe defaults
       const category =
@@ -200,27 +205,26 @@ export function validateEvidenceItem(item: unknown): {
 
   // Extract and validate clinical relevance
   const rawClinicalRelevance = evidenceObj['clinicalRelevance']
-  const validClinicalRelevanceValues = [
-    'critical',
-    'significant',
-    'supportive',
-    'contextual',
-  ]
-  const clinicalRelevance =
-    typeof rawClinicalRelevance === 'string' &&
-    validClinicalRelevanceValues.includes(rawClinicalRelevance)
-      ? (rawClinicalRelevance as
-          | 'critical'
-          | 'significant'
-          | 'supportive'
-          | 'contextual')
-      : 'supportive'
-
-  if (
-    rawClinicalRelevance !== undefined &&
-    (typeof rawClinicalRelevance !== 'string' ||
-      !validClinicalRelevanceValues.includes(rawClinicalRelevance))
-  ) {
+  let clinicalRelevance = 0.5 // default
+  if (typeof rawClinicalRelevance === 'number') {
+    clinicalRelevance = Math.min(Math.max(rawClinicalRelevance, 0), 1)
+  } else if (typeof rawClinicalRelevance === 'string') {
+    // Convert string values to numbers for backward compatibility
+    switch (rawClinicalRelevance) {
+      case 'critical':
+        clinicalRelevance = 1.0
+        break
+      case 'significant':
+        clinicalRelevance = 0.75
+        break
+      case 'supportive':
+        clinicalRelevance = 0.5
+        break
+      case 'contextual':
+        clinicalRelevance = 0.25
+        break
+    }
+  } else if (rawClinicalRelevance !== undefined) {
     errors.push('Invalid clinical relevance value, using default')
   }
 

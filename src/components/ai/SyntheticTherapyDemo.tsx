@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -172,7 +172,6 @@ export default function SyntheticTherapyDemo() {
             <div className="space-y-2">
               <Label htmlFor="numSessions">Number of Sessions</Label>
               <Slider
-                id="numSessions"
                 min={1}
                 max={5}
                 step={1}
@@ -190,7 +189,6 @@ export default function SyntheticTherapyDemo() {
             <div className="space-y-2">
               <Label htmlFor="maxTurns">Max Turns per Conversation</Label>
               <Slider
-                id="maxTurns"
                 min={1}
                 max={10}
                 step={1}

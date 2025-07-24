@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import {
-  PatientResponseService,
-  PatientResponseStyleConfig,
-} from '../PatientResponseService'
+import { PatientResponseService } from '../PatientResponseService'
+import type { PatientResponseStyleConfig } from '../PatientResponseService'
 import { PatientProfileService } from '../PatientProfileService'
 import { BeliefConsistencyService } from '../BeliefConsistencyService'
 import type { PatientProfile } from '../../models/patient'
@@ -68,6 +66,7 @@ describe('PatientResponseService', () => {
       rapportScore: 5,
       therapistPerception: 'neutral',
       transferenceState: 'none',
+      skillsAcquired: ['basic coping skills'], // Required property
     }
 
     // Sample Patient Profile

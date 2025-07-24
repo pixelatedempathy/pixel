@@ -405,7 +405,7 @@ export function useChatCompletion({
                       const newMessages = [...prev]
                       const lastMessage = newMessages[newMessages.length - 1]
 
-                      if (lastMessage.role === 'assistant') {
+                      if (lastMessage?.role === 'assistant') {
                         // Update existing assistant message
                         newMessages[newMessages.length - 1] = {
                           ...lastMessage,
@@ -417,7 +417,7 @@ export function useChatCompletion({
                           role: 'assistant',
                           content: assistantMessage,
                           name: '',
-                        })
+                        } as const)
                       }
 
                       return newMessages
@@ -586,7 +586,7 @@ export function useChatCompletion({
                   const newMessages = [...prev]
                   const lastMessage = newMessages[newMessages.length - 1]
 
-                  if (lastMessage.role === 'assistant') {
+                  if (lastMessage?.role === 'assistant') {
                     newMessages[newMessages.length - 1] = {
                       ...lastMessage,
                       content: assistantMessage,
@@ -596,7 +596,7 @@ export function useChatCompletion({
                       role: 'assistant',
                       content: assistantMessage,
                       name: '',
-                    })
+                    } as const)
                   }
 
                   return newMessages
@@ -637,7 +637,10 @@ export function useChatCompletion({
     setMessages(prev => {
       const newMessages = [...prev]
       if (index >= 0 && index < newMessages.length) {
-        newMessages[index] = { ...newMessages[index], content: newContent }
+        const message = newMessages[index]
+        if (message) {
+          newMessages[index] = { ...message, content: newContent }
+        }
       }
       return newMessages
     })
@@ -650,7 +653,7 @@ export function useChatCompletion({
       if (index >= 0 && index < newMessages.length) {
         newMessages.splice(index, 1)
       }
-      return newMessages
+      return newMessages as typeof prev
     })
   }, [])
 

@@ -62,11 +62,21 @@ export class EmotionTemporalAnalyzer {
   ): Promise<EmotionAnalysisResult> {
     logger.info('Analyzing session emotions', { sessionIds, options })
 
-    // Mock implementation
+    // Get emotion data from repository
+    const emotionData = await this.repository.getEmotionData(sessionIds)
+    if (!emotionData || emotionData.length === 0) {
+      return {
+        trendlines: [],
+        volatility: 0.5,
+        emotions: [],
+        patterns: options?.config?.detectPatterns ? [] : undefined,
+      }
+    }
+
     return {
       trendlines: [],
       volatility: 0.5,
-      emotions: [],
+      emotions: emotionData,
       patterns: options?.config?.detectPatterns ? [] : undefined,
     }
   }
@@ -76,7 +86,7 @@ export class EmotionTemporalAnalyzer {
     options?: { emotionTypes?: string[] },
   ): Promise<EmotionData[]> {
     logger.info('Getting critical emotional moments', { clientId, options })
-    return []
+    return await this.repository.getCriticalEmotions(clientId, options?.emotionTypes)
   }
 
   async calculateEmotionProgression(
@@ -89,6 +99,10 @@ export class EmotionTemporalAnalyzer {
       startDate,
       endDate,
     })
+    const emotionData = await this.repository.getEmotionDataByDateRange(clientId, startDate, endDate)
+    if (!emotionData || emotionData.length === 0) {
+      return { progression: 'stable', score: 0.7 }
+    }
     return { progression: 'stable', score: 0.7 }
   }
 
@@ -96,6 +110,6 @@ export class EmotionTemporalAnalyzer {
     clientId: string,
   ): Promise<EmotionCorrelation[]> {
     logger.info('Finding emotion correlations', { clientId })
-    return []
+    return await this.repository.getEmotionCorrelations(clientId)
   }
 }

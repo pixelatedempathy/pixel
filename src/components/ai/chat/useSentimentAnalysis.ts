@@ -106,8 +106,8 @@ function generateSentimentInsights(results: SentimentAnalysisResult[]): Sentimen
 
   // Generate emotional trends
   const emotionalTrends = []
-  const negativeRatio = (sentimentCounts.negative ?? 0) / results.length
-  const positiveRatio = (sentimentCounts.positive ?? 0) / results.length
+  const negativeRatio = (sentimentCounts['negative'] ?? 0) / results.length
+  const positiveRatio = (sentimentCounts['positive'] ?? 0) / results.length
 
   if (negativeRatio > 0.6) {
     emotionalTrends.push('Predominantly negative emotional pattern')

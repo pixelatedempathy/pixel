@@ -113,9 +113,9 @@ User response:
       // Extract content from common response shapes
       const completionRecord = completion as unknown as Record<string, unknown>
       const rawContent =
-        (completionRecord.content as string | undefined) ||
+        (completionRecord['content'] as string | undefined) ||
         (
-          completionRecord.choices as unknown as
+          completionRecord['choices'] as unknown as
             | Array<{ message?: { content?: string } }>
             | undefined
         )?.[0]?.message?.content ||

@@ -60,7 +60,22 @@ export class EdgeComputing {
       logger.debug('Executing edge compute task', {
         taskId: task.id,
         type: task.type,
+        endpoint: this.config.endpoint,
       })
+
+      // Check if task execution time exceeds max latency
+      if (Date.now() - startTime > this.config.maxLatency) {
+        // Try fallback endpoint if available
+        if (this.config.fallbackEndpoint) {
+          logger.warn('Switching to fallback endpoint due to latency', {
+            taskId: task.id,
+            originalEndpoint: this.config.endpoint,
+            fallbackEndpoint: this.config.fallbackEndpoint,
+          })
+        } else {
+          throw new Error('Task execution exceeded max latency')
+        }
+      }
 
       // Simulate edge computation with appropriate latency
       const simulatedLatency = 50 + Math.random() * 100 // 50-150ms
@@ -75,6 +90,7 @@ export class EdgeComputing {
           data: task.payload,
           model: 'edge-ai-v1',
           confidence: 0.85 + Math.random() * 0.15,
+          region: this.config.region,
         },
         metrics: this.generateMockMetrics(),
         executionTime: Date.now() - startTime,
@@ -83,6 +99,7 @@ export class EdgeComputing {
       logger.info('Edge compute task completed', {
         taskId: task.id,
         executionTime: result.executionTime,
+        region: this.config.region,
       })
 
       return result

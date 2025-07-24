@@ -9,7 +9,6 @@ interface UseResponseGenerationOptions {
   maxTokens?: number
   responseType?: 'general' | 'therapeutic' | 'creative' | 'analytical'
   streamingEnabled?: boolean
-  _contextWindow?: number
   systemPrompt?: string
   onError?: (error: Error) => void
   onComplete?: (response: string) => void

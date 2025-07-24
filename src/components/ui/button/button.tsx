@@ -36,23 +36,26 @@ export const buttonVariants = cva(
 )
 
 const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
-  ({
-    className,
-    variant,
-    size,
-    loading = false,
-    loadingText,
-    showSpinner = true,
-    disabled = false,
-    fullWidth = false,
-    leftIcon,
-    rightIcon,
-    children,
-    href,
-    target,
-    rel,
-    ...props
-  }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      loading = false,
+      loadingText,
+      showSpinner = true,
+      disabled = false,
+      fullWidth = false,
+      leftIcon,
+      rightIcon,
+      children,
+      href,
+      target,
+      rel,
+      ...props
+    }: ButtonProps,
+    ref: React.ForwardedRef<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
     // Determine if this should be a link
     const isLink = isLinkButton({ href })
 
@@ -91,7 +94,8 @@ const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
 
     // Render as link if href is provided
     if (isLink) {
-      const { type, ...anchorProps } = commonProps
+      // Remove 'type' from commonProps for anchor
+  const { type: _type, ...anchorProps } = commonProps as { type?: string }
       return (
         <a
           ref={ref as React.ForwardedRef<HTMLAnchorElement>}

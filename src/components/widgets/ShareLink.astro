@@ -21,55 +21,85 @@ const postUrlString = Astro.url.toString()
 const SHARE_LINKS: Record<string, _ShareLink> = {
   twitter: {
     baseUrl: 'https://twitter.com/intent/tweet?text=',
-    formatUrl: (url, cfg) =>
-      `${SHARE_LINKS['twitter']?.baseUrl || ''}${encodeURIComponent(
+    formatUrl: (url, cfg) => {
+      const twitterConfig = SHARE_LINKS['twitter']
+      if (!twitterConfig) return ''
+      return `${twitterConfig.baseUrl}${encodeURIComponent(
         `Reading ${cfg?.[1] ? `${cfg[1]}'s ` : ''}${url}\n\nI think...`,
-      )}`,
+      )}`
+    },
     label: 'twitter',
     title: 'Tweet this post',
   },
   mastodon: {
     baseUrl: 'https://elk.zone/intent/post?text=',
-    formatUrl: (url, cfg) =>
-      `${SHARE_LINKS['mastodon']?.baseUrl || ''}${encodeURIComponent(
+    formatUrl: (url, cfg) => {
+      const mastodonConfig = SHARE_LINKS['mastodon']
+      if (!mastodonConfig) return ''
+      return `${mastodonConfig.baseUrl}${encodeURIComponent(
         `Reading ${cfg?.[1] ? `${cfg[1]}'s ` : ''}${url}\n\nI think...`,
-      )}`,
+      )}`
+    },
     label: 'mastodon',
     title: 'Share this post on Mastodon',
   },
   facebook: {
     baseUrl: 'https://www.facebook.com/sharer.php?u=',
-    formatUrl: (url) => `${SHARE_LINKS['facebook']?.baseUrl || ''}${url}`,
+    formatUrl: (url) => {
+      const facebookConfig = SHARE_LINKS['facebook']
+      if (!facebookConfig) return ''
+      return `${facebookConfig.baseUrl}${url}`
+    },
     label: 'facebook',
     title: 'Share this post on Facebook',
   },
   pinterest: {
     baseUrl: 'https://pinterest.com/pin/create/button/?url=',
-    formatUrl: (url) => `${SHARE_LINKS['pinterest']?.baseUrl || ''}${url}`,
+    formatUrl: (url) => {
+      const pinterestConfig = SHARE_LINKS['pinterest']
+      if (!pinterestConfig) return ''
+      return `${pinterestConfig.baseUrl}${url}`
+    },
     label: 'pinterest',
     title: 'Share this post on Pinterest',
   },
   reddit: {
     baseUrl: 'https://www.reddit.com/submit?url=',
-    formatUrl: (url) => `${SHARE_LINKS['reddit']?.baseUrl || ''}${url}`,
+    formatUrl: (url) => {
+      const redditConfig = SHARE_LINKS['reddit']
+      if (!redditConfig) return ''
+      return `${redditConfig.baseUrl}${url}`
+    },
     label: 'reddit',
     title: 'Share this post on Reddit',
   },
   telegram: {
     baseUrl: 'https://t.me/share/url?url=',
-    formatUrl: (url) => `${SHARE_LINKS['telegram']?.baseUrl || ''}${url}`,
+    formatUrl: (url) => {
+      const telegramConfig = SHARE_LINKS['telegram']
+      if (!telegramConfig) return ''
+      return `${telegramConfig.baseUrl}${url}`
+    },
     label: 'telegram',
     title: 'Share this post via Telegram',
   },
   whatsapp: {
     baseUrl: 'https://wa.me/?text=',
-    formatUrl: (url) => `${SHARE_LINKS['whatsapp']?.baseUrl || ''}${url}`,
+    formatUrl: (url) => {
+      const whatsappConfig = SHARE_LINKS['whatsapp']
+      if (!whatsappConfig) return ''
+      return `${whatsappConfig.baseUrl}${url}`
+    },
     label: 'whatsapp',
     title: 'Share this post via WhatsApp',
   },
   email: {
     baseUrl: 'mailto:?subject=See%20this%20post&body=',
-    formatUrl: (url) => `${SHARE_LINKS['email']?.baseUrl || ''}${url}`,
+    formatUrl: (url) => {
+      const emailConfig = SHARE_LINKS['email']
+      if (!emailConfig) return ''
+      return `${emailConfig.baseUrl}${url}`
+    },
     label: 'email',
     title: 'Share this post via email',
   },
@@ -119,55 +149,77 @@ const linkProviders = Object.entries(config)
     > = {
       twitter: {
         baseUrl: 'https://twitter.com/intent/tweet?text=',
-        formatUrl: (url, cfg) =>
-          `${shareLinks.twitter.baseUrl}${encodeURIComponent(
+        formatUrl: (url, cfg) => {
+          const baseUrl = shareLinks['twitter']?.baseUrl || ''
+          return `${baseUrl}${encodeURIComponent(
             `Reading ${cfg?.[1] ? `${cfg[1]}'s ` : ''}${url}\n\nI think...`,
-          )}`,
+          )}`
+        },
         label: 'twitter',
         title: 'Tweet this post',
       },
       mastodon: {
         baseUrl: 'https://elk.zone/intent/post?text=',
-        formatUrl: (url, cfg) =>
-          `${shareLinks.mastodon.baseUrl}${encodeURIComponent(
+        formatUrl: (url, cfg) => {
+          const baseUrl = shareLinks['mastodon']?.baseUrl || ''
+          return `${baseUrl}${encodeURIComponent(
             `Reading ${cfg?.[1] ? `${cfg[1]}'s ` : ''}${url}\n\nI think...`,
-          )}`,
+          )}`
+        },
         label: 'mastodon',
         title: 'Share this post on Mastodon',
       },
       facebook: {
         baseUrl: 'https://www.facebook.com/sharer.php?u=',
-        formatUrl: (url) => `${shareLinks.facebook.baseUrl}${url}`,
+        formatUrl: (url) => {
+          const baseUrl = shareLinks['facebook']?.baseUrl || ''
+          return `${baseUrl}${url}`
+        },
         label: 'facebook',
         title: 'Share this post on Facebook',
       },
       pinterest: {
         baseUrl: 'https://pinterest.com/pin/create/button/?url=',
-        formatUrl: (url) => `${shareLinks.pinterest.baseUrl}${url}`,
+        formatUrl: (url) => {
+          const baseUrl = shareLinks['pinterest']?.baseUrl || ''
+          return `${baseUrl}${url}`
+        },
         label: 'pinterest',
         title: 'Share this post on Pinterest',
       },
       reddit: {
         baseUrl: 'https://www.reddit.com/submit?url=',
-        formatUrl: (url) => `${shareLinks.reddit.baseUrl}${url}`,
+        formatUrl: (url) => {
+          const baseUrl = shareLinks['reddit']?.baseUrl || ''
+          return `${baseUrl}${url}`
+        },
         label: 'reddit',
         title: 'Share this post on Reddit',
       },
       telegram: {
         baseUrl: 'https://t.me/share/url?url=',
-        formatUrl: (url) => `${shareLinks.telegram.baseUrl}${url}`,
+        formatUrl: (url) => {
+          const baseUrl = shareLinks['telegram']?.baseUrl || ''
+          return `${baseUrl}${url}`
+        },
         label: 'telegram',
         title: 'Share this post via Telegram',
       },
       whatsapp: {
         baseUrl: 'https://wa.me/?text=',
-        formatUrl: (url) => `${shareLinks.whatsapp.baseUrl}${url}`,
+        formatUrl: (url) => {
+          const baseUrl = shareLinks['whatsapp']?.baseUrl || ''
+          return `${baseUrl}${url}`
+        },
         label: 'whatsapp',
         title: 'Share this post via WhatsApp',
       },
       email: {
         baseUrl: 'mailto:?subject=See%20this%20post&body=',
-        formatUrl: (url) => `${shareLinks.email.baseUrl}${url}`,
+        formatUrl: (url) => {
+          const baseUrl = shareLinks['email']?.baseUrl || ''
+          return `${baseUrl}${url}`
+        },
         label: 'email',
         title: 'Share this post via email',
       },
@@ -188,7 +240,7 @@ const linkProviders = Object.entries(config)
 
       const linkConfig = shareLinks[key]
       if (!linkConfig) return
-      
+
       const linkUrl = linkConfig.formatUrl(postUrl, cfg)
 
       const linkEl = document.createElement('a')

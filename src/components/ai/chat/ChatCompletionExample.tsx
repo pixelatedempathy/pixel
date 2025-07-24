@@ -230,7 +230,7 @@ export default function ChatCompletionExample() {
           <textarea
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             placeholder="Type your message here... (Enter to send, Shift+Enter for new line)"
             className="flex-1 p-3 border rounded-lg resize-none"
             rows={3}

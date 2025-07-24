@@ -1,4 +1,4 @@
-import type { AIModel } from './types'
+import type { AIModel, ModelCapability } from './types'
 import { createBuildSafeLogger } from '../../logging/build-safe-logger'
 import { config as envConfig } from '@/config/env.config'
 

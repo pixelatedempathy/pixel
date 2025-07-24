@@ -39,14 +39,14 @@ describe('SemanticEvidenceParser', () => {
       expect(result).toHaveLength(2)
       const firstItem = result[0]!
       expect(firstItem).toMatchObject({
-        text: 'I feel hopeless',
+        content: 'I feel hopeless',
         type: 'direct_quote',
         confidence: 0.8,
-        relevance: 'high',
-        category: 'depression_symptom',
-        clinicalRelevance: 'significant',
+        severity: 'high',
+        source: 'depression_symptom',
+        clinicalRelevance: 0.75, // converted from 'significant'
       })
-      expect(firstItem.metadata?.semanticRationale).toBe(
+      expect(firstItem.context?.semanticRationale).toBe(
         'Indicates depressive mood',
       )
     })
@@ -220,9 +220,9 @@ describe('SemanticEvidenceParser', () => {
 
       expect(result.isValid).toBe(true)
       expect(result.evidenceItem).toBeDefined()
-      expect(result.evidenceItem?.text).toBe('Valid evidence text')
+      expect(result.evidenceItem?.content).toBe('Valid evidence text')
       expect(result.evidenceItem?.confidence).toBe(0.8)
-      expect(result.evidenceItem?.clinicalRelevance).toBe('significant')
+      expect(result.evidenceItem?.clinicalRelevance).toBe(0.75) // converted from 'significant'
       expect(result.errors).toHaveLength(0)
     })
 
@@ -297,9 +297,9 @@ describe('SemanticEvidenceParser', () => {
 
       expect(result.isValid).toBe(true)
       expect(result.evidenceItem?.confidence).toBe(0.5)
-      expect(result.evidenceItem?.clinicalRelevance).toBe('supportive')
-      expect(result.evidenceItem?.category).toBe('semantic_analysis')
-      expect(result.evidenceItem?.metadata?.semanticRationale).toBe(
+      expect(result.evidenceItem?.clinicalRelevance).toBe(0.5) // default value
+      expect(result.evidenceItem?.source).toBe('semantic_analysis')
+      expect(result.evidenceItem?.context?.semanticRationale).toBe(
         'Generated via semantic analysis',
       )
     })

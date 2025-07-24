@@ -355,6 +355,11 @@ export const sampleCognitiveModels: CognitiveModel[] = [
       rapportScore: 5,
       therapistPerception: 'neutral',
       transferenceState: 'none',
+      skillsAcquired: [
+        'Basic thought challenging',
+        'Activity scheduling',
+        'Mindfulness techniques'
+      ],
     },
   },
 
@@ -738,6 +743,11 @@ export const sampleCognitiveModels: CognitiveModel[] = [
       rapportScore: 5,
       therapistPerception: 'neutral',
       transferenceState: 'none',
+      skillsAcquired: [
+        'Deep breathing',
+        'Progressive muscle relaxation',
+        'Basic cognitive restructuring'
+      ],
     },
   },
 
@@ -1120,6 +1130,11 @@ export const sampleCognitiveModels: CognitiveModel[] = [
       rapportScore: 4,
       therapistPerception: 'neutral',
       transferenceState: 'none',
+      skillsAcquired: [
+        'Grounding techniques',
+        'Safety planning',
+        'Basic emotional regulation'
+      ],
     },
   },
 ]

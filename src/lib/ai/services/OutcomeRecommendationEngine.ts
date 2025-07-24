@@ -90,8 +90,8 @@ function generateForecasts(
 
   // Consider recent emotion state for risk assessment
   const emotionIntensity = context.recentEmotionState.intensity
-  const baseRisk =
-    emotionIntensity > 0.7 ? 'high' : emotionIntensity > 0.4 ? 'medium' : 'low'
+  const baseRisk: 'low' | 'moderate' | 'high' =
+    emotionIntensity > 0.7 ? 'high' : emotionIntensity > 0.4 ? 'moderate' : 'low'
 
   return desiredOutcomes.map((outcome, index) => {
     // Calculate confidence based on multiple factors
@@ -107,7 +107,7 @@ function generateForecasts(
     )
 
     // Adjust risk based on multiple factors
-    const riskFactors = [
+    const riskFactors: Array<'low' | 'moderate' | 'high'> = [
       baseRisk,
       context.mentalHealthAnalysis?.riskLevel || 'low',
       index > desiredOutcomes.length / 2 ? 'high' : 'low', // Later outcomes are riskier
@@ -146,12 +146,11 @@ function generateForecasts(
  * Calculate overall risk level based on multiple risk factors.
  */
 function calculateRisk(
-  factors: ('low' | 'moderate' | 'high')[],
-): 'low' | 'medium' | 'high' {
+  factors: Array<'low' | 'moderate' | 'high'>,
+): 'low' | 'moderate' | 'high' {
   const riskScores = {
     low: 0,
     moderate: 1,
-    medium: 1,
     high: 2,
   }
 
@@ -161,20 +160,20 @@ function calculateRisk(
     }, 0) / factors.length
 
   if (avgScore > 1.5) return 'high'
-  if (avgScore > 0.5) return 'medium'
+  if (avgScore > 0.5) return 'moderate'
   return 'low'
 }
 
 /**
  * Generate contraindications based on risk level.
  */
-function generateContraindications(risk: 'low' | 'medium' | 'high'): string[] {
+function generateContraindications(risk: 'low' | 'moderate' | 'high'): string[] {
   const base = ['Acute suicidal ideation', 'Active psychosis']
 
   if (risk === 'high') {
     return [...base, 'Severe depression', 'Unstable environment']
   }
-  if (risk === 'medium') {
+  if (risk === 'moderate') {
     return [...base, 'Moderate depression']
   }
   return base
@@ -183,13 +182,13 @@ function generateContraindications(risk: 'low' | 'medium' | 'high'): string[] {
 /**
  * Generate potential side effects based on risk level.
  */
-function generateSideEffects(risk: 'low' | 'medium' | 'high'): string[] {
+function generateSideEffects(risk: 'low' | 'moderate' | 'high'): string[] {
   const base = ['Temporary mood fluctuations', 'Initial anxiety increase']
 
   if (risk === 'high') {
     return [...base, 'Significant emotional distress', 'Sleep pattern changes']
   }
-  if (risk === 'medium') {
+  if (risk === 'moderate') {
     return [...base, 'Moderate emotional distress']
   }
   return base

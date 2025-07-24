@@ -29,9 +29,9 @@ export interface MentalLLaMAModelConfigResult {
 export async function verifyMentalLLaMAModelConfiguration(): Promise<MentalLLaMAModelConfigResult> {
   try {
     const env = getEnv
-    const apiKey = env.env?.MENTALLAMA_API_KEY
-    const endpoint7B = env.env?.MENTALLAMA_ENDPOINT_URL_7B
-    // const endpoint13B = env.env?.MENTALLAMA_ENDPOINT_URL_13B; // Check 13B if it's considered essential or default
+    const apiKey = env['MENTALLAMA_API_KEY']
+    const endpoint7B = env['MENTALLAMA_ENDPOINT_URL_7B']
+    // const endpoint13B = env['MENTALLAMA_ENDPOINT_URL_13B']; // Check 13B if it's considered essential or default
 
     const requiredVars = {
       MENTALLAMA_API_KEY: !!apiKey,
