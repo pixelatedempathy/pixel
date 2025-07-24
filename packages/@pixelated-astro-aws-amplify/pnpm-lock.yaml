@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@pixelated-astro-aws-amplify':
-        specifier: link:packages/@pixelated-astro-aws-amplify
-        version: link:packages/@pixelated-astro-aws-amplify
       astro:
         specifier: ^4.0.0 || ^5.0.0
         version: 5.12.3(@types/node@22.16.5)(rollup@4.45.1)(typescript@5.8.3)
