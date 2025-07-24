@@ -377,6 +377,9 @@ importers:
       '@astrojs/ts-plugin':
         specifier: ^1.10.4
         version: 1.10.4
+      '@aws-sdk/credential-provider-ini':
+        specifier: ^3.848.0
+        version: 3.848.0
       '@axe-core/playwright':
         specifier: ^4.10.2
         version: 4.10.2(playwright-core@1.54.1)

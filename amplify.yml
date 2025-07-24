@@ -35,9 +35,12 @@ frontend:
       commands:
         - 'echo "NODE_ENV=production" > .env'
         - 'echo "CDN_BASE_URL=${CDN_BASE_URL:-/}" >> .env'
+        - env >> .env
         - pnpm run build
         - 'if [ -n "$CDN_BUCKET_NAME" ]; then node scripts/upload-to-cdn.js || echo "CDN upload failed, continuing..."; fi'
         - 'mkdir -p .amplify-hosting/compute/default'
+        - 'mv node_modules ./.amplify-hosting/compute/default'
+        - 'mv .env ./.amplify-hosting/compute/default/.env'
         - 'cp -r dist/* .amplify-hosting/compute/default/ || true'
         - 'cp .env .amplify-hosting/compute/default/.env || true'
         - 'mkdir -p .amplify-hosting/static'
@@ -67,6 +70,12 @@ frontend:
       status: 200
     - source: '/<*>'
       target: '/<*>/index.html'
+      status: 200
+    - source: '/blog/page/<page>'
+      target: '/blog/page/<page>/index.html'
+      status: 200
+    - source: '/blog/page/<page>/'
+      target: '/blog/page/<page>/index.html'
       status: 200
     - source: '/blog/<slug>'
       target: '/blog/<slug>/index.html'
