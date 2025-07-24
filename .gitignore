@@ -125,3 +125,11 @@ __azurite_db_blob__.json
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+.plandex-v2
+.gooseignore
+.madgerc
+.nolint
+.markdownlintignore
+.markdownlint.json
+.osv-scanner.toml
+.endgame

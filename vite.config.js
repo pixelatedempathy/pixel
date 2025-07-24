@@ -9,7 +9,6 @@ import externalNodePlugin from './src/plugins/vite-plugin-external-node'
 import flexsearchSSRPlugin from './src/plugins/vite-plugin-flexsearch-ssr'
 import middlewarePatchPlugin from './src/plugins/vite-plugin-middleware-patch'
 
-// Import the CDN asset map if it exists
 const cdnAssetMap = (() => {
   try {
     return JSON.parse(fs.readFileSync('./src/cdn-asset-map.json', 'utf-8'))
@@ -20,7 +19,6 @@ const cdnAssetMap = (() => {
 
 export default defineConfig({
   plugins: [
-    // CDN asset URL replacer
     {
       name: 'cdn-asset-replacer',
       transform(code, id) {
@@ -31,7 +29,6 @@ export default defineConfig({
           id.endsWith('.ts') ||
           id.endsWith('.js')
         ) {
-          // Replace asset paths with CDN URLs in code
           Object.entries(cdnAssetMap).forEach(([localPath, cdnUrl]) => {
             code = code.replace(
               new RegExp(`(['"])${localPath.replace(/\//g, '\\/')}(['"])`, 'g'),
@@ -122,14 +119,12 @@ export default defineConfig({
     target: 'node22',
     minify: false,
     emptyOutDir: false,
-    sourcemap: false,
+  sourcemap: true,
     rollupOptions: {
       onwarn(warning, warn) {
-        // Suppress sourcemap warnings
         if (warning.code === 'SOURCEMAP_ERROR') {
           return
         }
-        // Suppress missing source map warnings
         if (warning.message.includes('Failed to load source map')) {
           return
         }

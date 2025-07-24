@@ -21,8 +21,7 @@ export function createExports(manifest: SSRManifest) {
     };
     
     const url = new URL(amplifyEvent.rawUrl || 
-      (amplifyEvent.requestContext?.domainName || 'localhost') + 
-      (amplifyEvent.rawPath || '/'));
+      `https://${amplifyEvent.requestContext?.domainName || 'localhost'}${amplifyEvent.rawPath || '/'}`);
     
     // Handle query parameters
     if (amplifyEvent.queryStringParameters) {
@@ -53,14 +52,16 @@ export function createExports(manifest: SSRManifest) {
 
       // Handle different content types
       const contentType = response.headers.get('content-type') || 'text/html';
-      let body = await response.text();
       let isBase64Encoded = false;
+      let body: string;
 
       // Handle binary content
       if (contentType.includes('image/') || contentType.includes('application/octet-stream')) {
         const buffer = await response.arrayBuffer();
         body = Buffer.from(buffer).toString('base64');
         isBase64Encoded = true;
+      } else {
+        body = await response.text();
       }
 
       return {
@@ -70,11 +71,11 @@ export function createExports(manifest: SSRManifest) {
         isBase64Encoded,
       };
     } catch (error) {
-      console.error('SSR Error:', error);
+      console.error('Error rendering request:', error);
       return {
         statusCode: 500,
-        headers: { 'content-type': 'text/html' },
-        body: '<!DOCTYPE html><html><body><h1>Internal Server Error</h1></body></html>',
+        headers: { 'content-type': 'text/plain' },
+        body: 'Internal Server Error',
         isBase64Encoded: false,
       };
     }

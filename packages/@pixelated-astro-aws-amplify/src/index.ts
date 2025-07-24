@@ -11,7 +11,7 @@ function getAdapter(_options: Options = {}): AstroAdapter {
     exports: ['handler'],
     supportedAstroFeatures: {
       hybridOutput: 'stable',
-      staticOutput: 'stable',
+      staticOutput: 'unsupported',
       serverOutput: 'stable',
     },
   };
@@ -23,10 +23,6 @@ export default function createIntegration(options: Options = {}): AstroIntegrati
     hooks: {
       'astro:config:setup': ({ updateConfig }) => {
         updateConfig({
-          build: {
-            client: new URL('./dist/client/', import.meta.url),
-            server: new URL('./dist/server/', import.meta.url),
-          },
           vite: {
             define: {
               'process.env.ASTRO_ADAPTER': JSON.stringify('@pixelated/astro-aws-amplify'),

@@ -4,9 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PostCard from '@/components/blog/PostCard.astro';
 import Pagination from '@/components/blog/Pagination.astro';
 
-export const prerender = true;
-
-// This page uses dynamic routing with pagination, so it's intentionally not prerendered
+// This page uses dynamic routing with pagination and is server-rendered (not prerendered)
 export async function getStaticPaths({ paginate }: any) {
   const allPosts = await getCollection('blog', ({ data }: CollectionEntry<'blog'>) => {
     return import.meta.env.PROD ? !data.draft : true;
@@ -20,6 +18,9 @@ export async function getStaticPaths({ paginate }: any) {
 }
 
 const { page } = Astro.props;
+if (!page) {
+  throw new Error("Astro.props.page is undefined. Check your routing and pagination setup.");
+}
 const { data: posts, currentPage, totalPages, url } = page;
 ---
 

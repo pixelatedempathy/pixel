@@ -22,7 +22,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   build: {
     format: 'directory',
-    sourcemap: false, // Disable sourcemaps to avoid transitions plugin warning
+  sourcemap: true,
   },
   vite: {
     build: {
