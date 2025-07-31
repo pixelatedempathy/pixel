@@ -1,5 +1,5 @@
 ---
-type: "manual"
+type: "agent_requested"
 description: "When working with python or torch or cuda to develop AI and/or LLM work"
 ---
 #Optimized Python LLM Development Guide

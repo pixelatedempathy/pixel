@@ -1,5 +1,5 @@
 {
-  "include": ["src", "tests", "ai", "api", "pixel_voice"],
+  "include": ["src", "tests", "ai"],
   "exclude": ["node_modules", "stubs", "venv", "env", "build", "dist"],
   "extraPaths": ["stubs"],
   "typeCheckingMode": "basic",
@@ -7,5 +7,5 @@
   "reportMissingImports": false,
   "reportMissingModuleSource": false,
   "reportPrivateUsage": false,
-  "pythonVersion": "3.13"
+  "pythonVersion": "3.11"
 }
