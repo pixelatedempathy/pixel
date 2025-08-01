@@ -1,70 +1,70 @@
 ---
-// Note: This is a new header component created to address your feedback.
-// The original has been backed up to Header.astro.bak
-
+// Enhanced professional header with sophisticated design
 const navLinks = [
-  { name: 'Training Demos', href: '/demo-hub' },
-  { name: 'Features', href: '/features' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Experience Demos', href: '/demo-hub' },
+  { name: 'Capabilities', href: '/features' },
+  { name: 'About', href: '/about' },
+  { name: 'Partnership', href: '/contact' },
 ];
-
-// A simple dark mode toggle placeholder component might be needed if not globally available
-// For example, using a component like 'accessible-astro-components/DarkMode'
 ---
 
-<header class="sticky top-0 z-50 w-full backdrop-blur-lg bg-black/30 border-b border-slate-300/10">
-  <div class="max-w-6xl mx-auto px-4">
-    <div class="flex items-center justify-between h-16">
-      <!-- Site branding -->
+<header class="sticky top-0 z-50 w-full backdrop-blur-lg bg-charcoal-950/95 border-b border-healing-400/20 shadow-professional">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-center justify-between h-20">
+      <!-- Enhanced Site Branding -->
       <div class="flex items-center">
-        <a class="flex items-center gap-3 hover:opacity-80 transition-opacity" href="/">
-          <img
-            src="/favicon.svg"
-            alt="Pixelated Empathy Logo"
-            class="w-8 h-8 flex-shrink-0"
-          />
-          <span class="text-xl font-bold text-slate-100 font-geist tracking-tight whitespace-nowrap">
-            Pixelated Empathy
-          </span>
+        <a class="flex items-center gap-4 hover:opacity-90 transition-all duration-300 ease-professional" href="/">
+          <div class="relative">
+            <div class="absolute inset-0 bg-healing-400/20 rounded-lg blur-sm"></div>
+            <img
+              src="/favicon.svg"
+              alt="Pixelated Empathy Logo"
+              class="relative w-10 h-10 flex-shrink-0 rounded-lg"
+            />
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xl font-extrabold text-white font-geist tracking-tight whitespace-nowrap">
+              Pixelated Empathy
+            </span>
+            <span class="text-xs font-medium text-healing-400/80 tracking-wide">
+              Elite Therapy Training
+            </span>
+          </div>
         </a>
       </div>
 
-      <!-- Desktop navigation -->
-      <nav class="hidden md:flex items-center ml-auto">
-        <!-- Desktop menu links -->
+      <!-- Enhanced Desktop Navigation -->
+      <nav class="hidden lg:flex items-center ml-auto">
         <ul class="flex items-center space-x-8">
           {navLinks.map(link => (
             <li>
               <a
                 href={link.href}
-                class="text-sm font-medium text-slate-300 hover:text-green-400 transition-colors duration-200 font-geist"
+                class="text-sm font-semibold text-healing-200/90 hover:text-healing-400 transition-all duration-300 ease-professional font-geist px-3 py-2 rounded-professional hover:bg-healing-500/10 relative group"
               >
                 {link.name}
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-healing-400 transition-all duration-300 group-hover:w-full"></span>
               </a>
             </li>
           ))}
         </ul>
 
-        <!-- Dark mode toggle -->
+        <!-- Professional Action Button -->
         <div class="ml-8 flex items-center">
-          <button
-            id="theme-toggle"
-            class="p-2 text-slate-400 hover:text-green-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
-            aria-label="Toggle theme"
+          <a
+            href="/contact"
+            class="px-6 py-3 bg-gradient-to-r from-healing-500 to-healing-600 hover:from-healing-400 hover:to-healing-500 text-white font-bold text-sm rounded-professional transition-all duration-300 ease-professional transform hover:scale-105 shadow-professional hover:shadow-healing"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-            </svg>
-          </button>
+            Schedule Partnership
+          </a>
         </div>
       </nav>
 
-      <!-- Mobile menu button -->
-      <div class="md:hidden">
+      <!-- Enhanced Mobile Menu Button -->
+      <div class="lg:hidden">
         <button
           id="mobile-menu-button"
-          class="p-2 text-slate-400 hover:text-green-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
+          class="p-3 text-healing-300 hover:text-healing-400 hover:bg-healing-500/10 rounded-professional transition-all duration-300 ease-professional"
           aria-label="Toggle mobile menu"
           aria-expanded="false"
         >
@@ -76,17 +76,25 @@ const navLinks = [
     </div>
   </div>
 
-  <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden bg-black/95 backdrop-blur-lg border-b border-slate-300/10">
-    <div class="px-4 py-4 space-y-2">
+  <!-- Enhanced Mobile Menu -->
+  <div id="mobile-menu" class="hidden lg:hidden bg-charcoal-950/98 backdrop-blur-lg border-b border-healing-400/20">
+    <div class="px-6 py-6 space-y-3">
       {navLinks.map(link => (
         <a
           href={link.href}
-          class="block px-3 py-2 text-base font-medium text-slate-300 hover:text-green-400 hover:bg-slate-800/50 rounded-lg transition-all duration-200 font-geist"
+          class="block px-4 py-3 text-base font-semibold text-healing-200/90 hover:text-healing-400 hover:bg-healing-500/10 rounded-professional transition-all duration-300 ease-professional font-geist"
         >
           {link.name}
         </a>
       ))}
+      <div class="pt-4 border-t border-healing-400/20">
+        <a
+          href="/contact"
+          class="block px-4 py-3 bg-gradient-to-r from-healing-500 to-healing-600 hover:from-healing-400 hover:to-healing-500 text-white font-bold text-center rounded-professional transition-all duration-300 ease-professional"
+        >
+          Schedule Partnership
+        </a>
+      </div>
     </div>
   </div>
 </header>

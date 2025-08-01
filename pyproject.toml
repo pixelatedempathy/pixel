@@ -42,7 +42,6 @@ dependencies = [
   "torchaudio",
   "pyarrow>=21.0.0",
   "black>=25.1.0",
-  "cognee>=0.2.1",
 ]
 
 [project.optional-dependencies]
@@ -97,7 +96,7 @@ select = [
   "PL",
   "RUF",
 ]
-ignore = ["E501"]
+ignore = ["E501", "UP017", "PLR2004"]
 
 [tool.ruff.isort]
 known-first-party = ["ai", "src", "api"]

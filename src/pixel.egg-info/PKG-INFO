@@ -39,7 +39,6 @@ Requires-Dist: torchvision
 Requires-Dist: torchaudio
 Requires-Dist: pyarrow>=21.0.0
 Requires-Dist: black>=25.1.0
-Requires-Dist: cognee>=0.2.1
 Provides-Extra: test
 Requires-Dist: pytest; extra == "test"
 Requires-Dist: pytest-cov; extra == "test"
